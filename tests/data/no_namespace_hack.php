@@ -17,6 +17,7 @@ class GenericClass<Tk, Tv> {
 }
 
 abstract final class AbstractFinalClass {
+  abstract public function iAmAlsoNotAGlobalFunction(): void;
 }
 
 class :foo {
