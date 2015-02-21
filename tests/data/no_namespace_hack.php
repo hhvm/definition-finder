@@ -39,6 +39,7 @@ function generic_function<Tk, Tv>(): void {
 
 const MY_CONST = 456;
 const int MY_TYPED_CONST = 123;
+define('MY_OLD_STYLE_CONST', 789);
 
 type MyType = int;
 type MyGenericType<T> = string;

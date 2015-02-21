@@ -83,6 +83,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
       Vector {
         $this->getPrefix().'MY_CONST',
         $this->getPrefix().'MY_TYPED_CONST',
+        $this->getPrefix().'MY_OLD_STYLE_CONST',
       },
       $this->parser?->getConstants(),
     );
