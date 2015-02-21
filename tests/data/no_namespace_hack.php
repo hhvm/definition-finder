@@ -14,9 +14,13 @@ class SimpleClass {
 }
 
 class GenericClass<Tk, Tv> {
+  const int FOO = 42;
 }
 
 abstract final class AbstractFinalClass {
+}
+
+abstract class AbstractClass {
   abstract public function iAmAlsoNotAGlobalFunction(): void;
 }
 

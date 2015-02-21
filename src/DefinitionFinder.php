@@ -20,6 +20,7 @@ enum DefinitionToken: int {
   TYPE_DEF = 403; // facebook/hhvm#4872
   NEWTYPE_DEF = 405; // facebook/hhvm#4872
   FUNCTION_DEF = T_FUNCTION;
+  CONST_DEF = T_CONST;
 }
 
 class FileParser {
@@ -33,6 +34,7 @@ class FileParser {
   private Vector<string> $types = Vector { };
   private Vector<string> $newtypes = Vector { };
   private Vector<string> $functions = Vector { };
+  private Vector<string> $constants = Vector { };
 
   private function __construct(
     private string $file,
@@ -73,6 +75,7 @@ class FileParser {
   public function getTypes(): Vector<string> { return $this->types; }
   public function getNewtypes(): Vector<string> { return $this->newtypes; }
   public function getFunctions(): Vector<string> { return $this->functions; }
+  public function getConstants(): Vector<string> { return $this->constants; }
 
   ///// Implementation /////
 
@@ -172,6 +175,9 @@ class FileParser {
         break;
       case DefinitionToken::FUNCTION_DEF:
         $this->functions[] = $fqn;
+        break;
+      case DefinitionToken::CONST_DEF:
+        $this->constants[] = $fqn;
         break;
     }
   }

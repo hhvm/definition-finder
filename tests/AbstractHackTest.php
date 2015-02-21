@@ -27,6 +27,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
         $this->getPrefix().'SimpleClass',
         $this->getPrefix().'GenericClass',
         $this->getPrefix().'AbstractFinalClass',
+        $this->getPrefix().'AbstractClass',
         $this->getPrefix().'xhp_foo',
         $this->getPrefix().'xhp_foo__bar',
       },
@@ -70,9 +71,19 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(
       Vector {
         $this->getPrefix().'simple_function',
-        $this->getPRefix().'generic_function',
+        $this->getPrefix().'generic_function',
       },
       $this->parser?->getFunctions(),
+    );
+  }
+
+  public function testConstants(): void {
+    // Makes sure that GenericClass::NOT_A_GLOBAL_CONSTANT is not returned
+    $this->assertEquals(
+      Vector {
+        $this->getPrefix().'MY_CONST',
+      },
+      $this->parser?->getConstants(),
     );
   }
 }
