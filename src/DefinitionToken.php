@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 /*
  *  Copyright (c) 2015, Facebook, Inc.
  *  All rights reserved.
@@ -8,6 +8,8 @@
  *  of patent rights can be found in the PATENTS file in the same directory.
  *
  */
+
+namespace Facebook\DefinitionFinder;
 
 enum DefinitionToken: int {
   NAMESPACE_DEF = T_NAMESPACE;
