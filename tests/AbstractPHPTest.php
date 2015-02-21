@@ -9,21 +9,24 @@
  *
  */
 
-class SimpleNoNamespacePHPTest extends PHPUnit_Framework_TestCase {
+abstract class AbstractPHPTest extends PHPUnit_Framework_TestCase {
   private ?Facebook\DefinitionFinder\FileParser $parser;
+
+  abstract protected function getFilename(): string;
+  abstract protected function getPrefix(): string;
 
   protected function setUp(): void {
     $this->parser = \Facebook\DefinitionFinder\FileParser::fromFile(
-      __DIR__.'/data/no_namespace_php.php'
+      __DIR__.'/data/'.$this->getFilename(),
     );
   }
 
   public function testClasses(): void {
     $this->assertEquals(
       Vector {
-        'SimpleClass',
-        'SimpleAbstractClass',
-        'SimpleFinalClass',
+        $this->getPrefix().'SimpleClass',
+        $this->getPrefix().'SimpleAbstractClass',
+        $this->getPrefix().'SimpleFinalClass',
       },
       $this->parser?->getClasses(),
     );
@@ -31,14 +34,14 @@ class SimpleNoNamespacePHPTest extends PHPUnit_Framework_TestCase {
 
   public function testInterfaces(): void {
     $this->assertEquals(
-      Vector { 'SimpleInterface' },
+      Vector { $this->getPrefix().'SimpleInterface' },
       $this->parser?->getInterfaces(),
     );
   }
 
   public function testTraits(): void {
     $this->assertEquals(
-      Vector { 'SimpleTrait' },
+      Vector { $this->getPrefix().'SimpleTrait' },
       $this->parser?->getTraits(),
     );
   }
