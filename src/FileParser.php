@@ -135,7 +135,7 @@ class FileParser {
     $next = array_shift($this->tokens);
     $next_type = is_array($next) ? $next[0] : null;
     invariant(
-      $next_type === T_STRING || $next_type = T_XHP_LABEL,
+      $next_type === T_STRING || $next_type === T_XHP_LABEL,
       'Expected definition name after %s in %s',
       $tname,
       $this->file,
