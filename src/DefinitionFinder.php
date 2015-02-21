@@ -19,6 +19,7 @@ enum DefinitionToken: int {
   ENUM_DEF = T_ENUM;
   TYPE_DEF = 403; // facebook/hhvm#4872
   NEWTYPE_DEF = 405; // facebook/hhvm#4872
+  FUNCTION_DEF = T_FUNCTION;
 }
 
 class FileParser {
@@ -31,6 +32,7 @@ class FileParser {
   private Vector<string> $enums = Vector { };
   private Vector<string> $types = Vector { };
   private Vector<string> $newtypes = Vector { };
+  private Vector<string> $functions = Vector { };
 
   private function __construct(
     private string $file,
@@ -70,6 +72,7 @@ class FileParser {
   public function getEnums(): Vector<string> { return $this->enums; }
   public function getTypes(): Vector<string> { return $this->types; }
   public function getNewtypes(): Vector<string> { return $this->newtypes; }
+  public function getFunctions(): Vector<string> { return $this->functions; }
 
   ///// Implementation /////
 
@@ -162,7 +165,10 @@ class FileParser {
         $this->types[] = $fqn;
         break;
       case DefinitionToken::NEWTYPE_DEF:
-        $this->newtypes[]= $fqn;
+        $this->newtypes[] = $fqn;
+        break;
+      case DefinitionToken::FUNCTION_DEF:
+        $this->functions[] = $fqn;
         break;
     }
   }

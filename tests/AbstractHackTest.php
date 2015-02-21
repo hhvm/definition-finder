@@ -24,6 +24,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
   public function testClasses(): void {
     $this->assertEquals(
       Vector {
+        $this->getPrefix().'SimpleClass',
         $this->getPrefix().'GenericClass',
         $this->getPrefix().'AbstractFinalClass',
         $this->getPrefix().'xhp_foo',
@@ -59,6 +60,19 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
         $this->getPrefix().'MyEnum',
       },
       $this->parser?->getEnums(),
+    );
+  }
+
+  public function testFunctions(): void {
+    // As well as testing that these functions were mentioned,
+    // this also checks that SimpelClass::iAmNotAGlobalFunction
+    // was not listed
+    $this->assertEquals(
+      Vector {
+        $this->getPrefix().'simple_function',
+        $this->getPRefix().'generic_function',
+      },
+      $this->parser?->getFunctions(),
     );
   }
 }
