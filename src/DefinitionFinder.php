@@ -177,8 +177,28 @@ class FileParser {
         $this->functions[] = $fqn;
         break;
       case DefinitionToken::CONST_DEF:
-        $this->constants[] = $fqn;
+        $this->consumeConstantDefinition($name);
         break;
+    }
+  }
+
+  private function consumeConstantDefinition(string $first): void {
+    $name = $first;
+    while ($this->tokens) {
+      $next = array_shift($this->tokens);
+      $next_type = is_array($next) ? $next[0] : null;
+      if ($next_type === T_WHITESPACE) {
+        continue;
+      }
+      if ($next_type === T_STRING) {
+        // const TYPENAME CONSTNAME = foo
+        $name = $next[1];
+        continue;
+      }
+      if ($next === '=') {
+        $this->constants[] = $this->namespace.$name;
+        return;
+      }
     }
   }
 
