@@ -97,11 +97,17 @@ class FileParser {
         }
 
         $ttype = $token[0];
-        if (DefinitionToken::isValid($ttype)) {
-          $this->consumeDefinition($ttype);
-        }
         if ($ttype === T_CLOSE_TAG) {
           break;
+        }
+        if (DefinitionToken::isValid($ttype)) {
+          $this->consumeDefinition($ttype);
+          continue;
+        }
+        // I hate you, PHP.
+        if ($ttype === T_STRING && strtolower($token[1]) === 'define') {
+          $this->consumeOldConstantDefinition();
+          continue;
         }
       }
     } 
@@ -132,7 +138,7 @@ class FileParser {
       $next_type === T_STRING || $next_type = T_XHP_LABEL,
       'Expected definition name after %s in %s',
       $tname,
-      realpath($this->file),
+      $this->file,
     );
     $name = $next[1];
     if ($next_type === T_XHP_LABEL) {
@@ -141,7 +147,7 @@ class FileParser {
         '%s is only valid as an XHP class name, not a %s - in %s',
         $name,
         $tname,
-        realpath($this->file),
+        $this->file,
       );
       // 'class :foo:bar' is really 'class xhp_foo__bar'
       $name = 'xhp_'.str_replace(':', '__', substr($name, 1));
@@ -182,6 +188,15 @@ class FileParser {
     }
   }
 
+  /**
+   * /const CONST_NAME =/
+   * /const type_name CONST_NAME =/
+   *
+   * - 'const' and the next token are no longer in $this->tokens
+   * - 'first' is either CONST_NAME or type_name. Both are T_STRING
+   *
+   * Figure out which.
+   */
   private function consumeConstantDefinition(string $first): void {
     $name = $first;
     while ($this->tokens) {
@@ -200,6 +215,53 @@ class FileParser {
         return;
       }
     }
+  }
+
+  /**
+   * define ('FOO', value);
+   * define (FOO, value); // yep, this is different. I *REALLY* hate php.
+   *
+   * 'define' has been consumed, that's it
+   */
+  private function consumeOldConstantDefinition(): void {
+    $this->consumeWhitespace();
+    $next = array_shift($this->tokens);
+    invariant(
+      $next === '(',
+      'Expected define to be followed by a paren in %s',
+      $this->file,
+    );
+    $this->consumeWhitespace();
+    $next = array_shift($this->tokens);
+    $next_type = is_array($next) ? $next[0] : null;
+    invariant(
+      $next_type === T_CONSTANT_ENCAPSED_STRING || $next_type === T_STRING,
+      'Expected arg to define() to be a T_CONSTANT_ENCAPSED_STRING or '.
+      'T_STRING, got %s in %s',
+      token_name($next_type),
+      $this->file,
+    );
+    $name = $next[1];
+    if ($next_type === T_STRING) {
+      // CONST_NAME
+      $this->constants[] = $this->namespace.$name;
+    } else {
+      // 'CONST_NAME' or "CONST_NAME"
+      invariant(
+        $name[0] == $name[strlen($name) - 1],
+        'Mismatched quotes',
+      );
+      $this->constants[] = $this->namespace.
+        substr($name, 1, strlen($name) - 2);
+    }
+  }
+
+  private function consumeWhitespace(): void {
+    $next = array_shift($this->tokens);
+    if (is_array($next) && $next[0] === T_WHITESPACE) {
+      return;
+    }
+    array_unshift($this->tokens, $next);
   }
 
   private function consumeNamespaceDefinition(string $base): void {
