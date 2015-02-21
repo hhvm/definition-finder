@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 /*
  *  Copyright (c) 2015, Facebook, Inc.
  *  All rights reserved.
@@ -13,7 +13,7 @@ namespace Facebook\DefinitionFinder;
 
 class FileParser {
   private ?string $data;
-  private array $tokens = [];
+  private array<mixed> $tokens = [];
   private string $namespace = '';
   private Vector<string> $classes = Vector { };
   private Vector<string> $interfaces = Vector { };
