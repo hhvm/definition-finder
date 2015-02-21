@@ -1,0 +1,4 @@
+language: php
+php:
+ - hhvm
+ - hhvm-nightly
