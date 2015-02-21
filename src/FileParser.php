@@ -132,6 +132,10 @@ class FileParser {
       $tname,
       realpath($this->file),
     );
+    if ($def_type === DefinitionToken::NAMESPACE_DEF) {
+      $this->consumeNamespaceDefinition();
+      return;
+    }
     $next = array_shift($this->tokens);
     $next_type = is_array($next) ? $next[0] : null;
     invariant(
@@ -156,7 +160,7 @@ class FileParser {
 
     switch ($def_type) {
       case DefinitionToken::NAMESPACE_DEF:
-        $this->consumeNamespaceDefinition($name);
+        invariant_violation('Should have already consumed namespace :/');
         break;
       case DefinitionToken::CLASS_DEF:
         $this->classes[] = $fqn;
@@ -264,32 +268,32 @@ class FileParser {
     array_unshift($this->tokens, $next);
   }
 
-  private function consumeNamespaceDefinition(string $base): void {
-    $name = $base;
+  private function consumeNamespaceDefinition(): void {
+    $parts = [];
     do {
+      $this->consumeWhitespace();
       $next = array_shift($this->tokens);
       $next_type = is_array($next) ? $next[0] : null;
-      if ($next_type === T_NS_SEPARATOR) {
-        $next = array_shift($this->tokens);
-        $next_type = is_array($next) ? $next[0] : null;
-        invariant(
-          $next_type === T_STRING,
-          'Expected T_STRING after T_NS_SEPARATOR in %s, got %s',
-          $this->file,
-          token_name($next_type),
-        );
-        $name .= "\\".$next[1];
-      } else {
+      if ($next_type === T_STRING) {
+        $parts[] = $next[1];
+        continue;
+      } else if ($next_type === T_NS_SEPARATOR) {
+        continue;
+      } else if ($next === '{' || $next === ';') {
         break;
       }
+      invariant_violation(
+        'Unexpected token %s in %s',
+        var_export($next, true),
+        $this->file,
+      );
     } while ($this->tokens);
 
-    $this->namespace = str_replace(
-      "\\\\",
-      "\\",
-      $name."\\",
-    );
-
+    if ($parts) {
+      $this->namespace = implode('\\', $parts).'\\';
+    } else {
+      $this->namespace = '';
+    }
   }
 
   private function skipToAndConsumeBlock(): void {
