@@ -135,7 +135,7 @@ class FileParser {
     $next = array_shift($this->tokens);
     $next_type = is_array($next) ? $next[0] : null;
     invariant(
-      $next_type === T_STRING || $next_type === T_XHP_LABEL,
+      $next_type === T_STRING || $next_type === T_XHP_LABEL || $next === '&',
       'Expected definition name after %s in %s',
       $tname,
       $this->file,
@@ -151,6 +151,23 @@ class FileParser {
       );
       // 'class :foo:bar' is really 'class xhp_foo__bar'
       $name = 'xhp_'.str_replace(':', '__', substr($name, 1));
+    }
+    if ($next === '&') {
+      invariant(
+        $def_type === DefinitionToken::FUNCTION_DEF,
+        'Found a %s with ampersand, do not understand - in %s',
+        $tname,
+        $this->file,
+      );
+      $next = array_shift($this->tokens);
+      $next_type = is_array($next) ? $next[0] : null;
+      invariant(
+        $next_type === T_STRING,
+        'Expecting & to be proceeded by function name, got %s - in %s',
+        token_name($next_type),
+        $this->file,
+      );
+      $name = $next[1];
     }
     $fqn = $this->namespace.$name;
 

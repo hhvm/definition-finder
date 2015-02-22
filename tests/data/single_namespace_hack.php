@@ -39,6 +39,8 @@ function simple_function(): void {
 function generic_function<Tk, Tv>(): void {
 }
 
+function &byref_return_function() { }
+
 const MY_CONST = 456;
 const int MY_TYPED_CONST = 123;
 define('MY_OLD_STYLE_CONST', 789);
