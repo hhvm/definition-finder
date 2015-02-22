@@ -57,4 +57,14 @@ EOF
     );
     $this->assertEquals(Vector { 'foo' }, $p->getFunctions());
   }
+
+  public function testAsParameter(): void {
+    $p = FileParser::FromData(<<<EOF
+<?php
+spl_autoload_register(function(\$class) { });
+function foo() { }
+EOF
+    );
+    $this->assertEquals(Vector { 'foo' }, $p->getFunctions());
+  }
 }
