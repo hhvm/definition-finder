@@ -80,7 +80,7 @@ class FileParser {
     while ($this->tokens) {
       $this->skipToCode();
       while ($this->tokens) {
-        $token = array_shift($this->tokens);
+        list ($token, $ttype) = $this->shiftToken();
         if ($token === '(') {
           ++$parens_depth;
         }
@@ -88,20 +88,20 @@ class FileParser {
           --$parens_depth;
         }
 
-        if ($parens_depth !== 0 || !is_array($token)) {
+        if ($parens_depth !== 0 || $ttype === null) {
           continue;
         }
 
-        $ttype = $token[0];
         if ($ttype === T_CLOSE_TAG) {
           break;
         }
+
         if (DefinitionToken::isValid($ttype)) {
-          $this->consumeDefinition($ttype);
+          $this->consumeDefinition(DefinitionToken::assert($ttype));
           continue;
         }
         // I hate you, PHP.
-        if ($ttype === T_STRING && strtolower($token[1]) === 'define') {
+        if ($ttype === T_STRING && strtolower($token) === 'define') {
           $this->consumeOldConstantDefinition();
           continue;
         }
@@ -113,8 +113,7 @@ class FileParser {
   private function skipToCode(): void {
     $token_type = null;
     do {
-      $token = array_shift($this->tokens);
-      $token_type = is_array($token) ? $token[0] : null;
+      list ($token, $token_type) = $this->shiftToken();
     } while ($this->tokens && $token_type !== T_OPEN_TAG);
   }
 
@@ -123,106 +122,42 @@ class FileParser {
 
     $this->consumeWhitespace();
 
-    if ($def_type === DefinitionToken::NAMESPACE_DEF) {
-      $this->consumeNamespaceDefinition();
-      return;
-    }
-    $next = array_shift($this->tokens);
-    $next_type = is_array($next) ? $next[0] : null;
-    invariant(
-      $next_type === T_STRING || $next_type === T_XHP_LABEL || $next === '&',
-      'Expected definition name after %s in %s',
-      $tname,
-      $this->file,
-    );
-    $name = $next[1];
-    if ($next_type === T_XHP_LABEL) {
-      invariant(
-        $def_type === DefinitionToken::CLASS_DEF,
-        '%s is only valid as an XHP class name, not a %s - in %s',
-        $name,
-        $tname,
-        $this->file,
-      );
-      // 'class :foo:bar' is really 'class xhp_foo__bar'
-      $name = 'xhp_'.str_replace(':', '__', substr($name, 1));
-    }
-    if ($next === '&') {
-      invariant(
-        $def_type === DefinitionToken::FUNCTION_DEF,
-        'Found a %s with ampersand, do not understand - in %s',
-        $tname,
-        $this->file,
-      );
-      $next = array_shift($this->tokens);
-      $next_type = is_array($next) ? $next[0] : null;
-      invariant(
-        $next_type === T_STRING,
-        'Expecting & to be proceeded by function name, got %s - in %s',
-        token_name($next_type),
-        $this->file,
-      );
-      $name = $next[1];
-    }
-    $fqn = $this->namespace.$name;
-
     switch ($def_type) {
       case DefinitionToken::NAMESPACE_DEF:
-        invariant_violation('Should have already consumed namespace :/');
-        break;
+        $this->consumeNamespaceDefinition();
+        return;
       case DefinitionToken::CLASS_DEF:
-        $this->classes[] = $fqn;
-        $this->skipToAndConsumeBlock();
-        break;
       case DefinitionToken::INTERFACE_DEF:
-        $this->interfaces[] = $fqn;
-        $this->skipToAndConsumeBlock();
-        break;
       case DefinitionToken::TRAIT_DEF:
-        $this->traits[] = $fqn;
-        $this->skipToAndConsumeBlock();
-        break;
-      case DefinitionToken::ENUM_DEF:
-        $this->enums[] = $fqn;
-        break;
-      case DefinitionToken::TYPE_DEF:
-        $this->types[] = $fqn;
-        $this->consumeStatement();
-        break;
-      case DefinitionToken::NEWTYPE_DEF:
-        $this->newtypes[] = $fqn;
-        $this->consumeStatement();
-        break;
+        $this->consumeClassDefinition($def_type);
+        return;
       case DefinitionToken::FUNCTION_DEF:
-        $this->functions[] = $fqn;
-        $this->consumeStatement();
-        break;
+        $this->consumeFunctionDefinition();
+        return;
       case DefinitionToken::CONST_DEF:
-        $this->consumeConstantDefinition($name);
-        break;
+        $this->consumeConstantDefinition();
+        return;
+      case DefinitionToken::TYPE_DEF:
+      case DefinitionToken::NEWTYPE_DEF:
+      case DefinitionToken::ENUM_DEF:
+        $this->consumeSimpleDefinition($def_type);
+        return;
     }
   }
 
   /**
    * /const CONST_NAME =/
    * /const type_name CONST_NAME =/
-   *
-   * - 'const' and the next token are no longer in $this->tokens
-   * - 'first' is either CONST_NAME or type_name. Both are T_STRING
-   *
-   * Figure out which.
    */
-  private function consumeConstantDefinition(string $first): void {
-    $name = $first;
+  private function consumeConstantDefinition(): void {
+    $name = null;
     while ($this->tokens) {
-      $next = array_shift($this->tokens);
-      $next_type = is_array($next) ? $next[0] : null;
+      list ($next, $next_type) = $this->shiftToken();
       if ($next_type === T_WHITESPACE) {
         continue;
       }
       if ($next_type === T_STRING) {
-        // const TYPENAME CONSTNAME = foo
-        $name = $next[1];
+        $name = $next;
         continue;
       }
       if ($next === '=') {
@@ -230,6 +165,7 @@ class FileParser {
         return;
       }
     }
+    $this->consumeStatement();
   }
 
   /**
@@ -247,8 +183,7 @@ class FileParser {
       $this->file,
     );
     $this->consumeWhitespace();
-    $next = array_shift($this->tokens);
-    $next_type = is_array($next) ? $next[0] : null;
+    list ($next, $next_type) = $this->shiftToken();
     invariant(
       $next_type === T_CONSTANT_ENCAPSED_STRING || $next_type === T_STRING,
       'Expected arg to define() to be a T_CONSTANT_ENCAPSED_STRING or '.
@@ -256,7 +191,7 @@ class FileParser {
       token_name($next_type),
       $this->file,
     );
-    $name = $next[1];
+    $name = $next;
     if ($next_type === T_STRING) {
       // CONST_NAME
       $this->constants[] = $this->namespace.$name;
@@ -284,10 +219,9 @@ class FileParser {
     $parts = [];
     do {
       $this->consumeWhitespace();
-      $next = array_shift($this->tokens);
-      $next_type = is_array($next) ? $next[0] : null;
+      list($next, $next_type) = $this->shiftToken();
       if ($next_type === T_STRING) {
-        $parts[] = $next[1];
+        $parts[] = $next;
         continue;
       } else if ($next_type === T_NS_SEPARATOR) {
         continue;
@@ -311,8 +245,8 @@ class FileParser {
   private function skipToAndConsumeBlock(): void {
     $nesting = 0;
     while ($this->tokens) {
-      $next = array_shift($this->tokens);
-      if ($next === '{' || is_array($next) && $next[0] == T_CURLY_OPEN) {
+      list($next, $next_type) = $this->shiftToken();
+      if ($next === '{' || $next_type === T_CURLY_OPEN) {
         ++$nesting;
       } else if ($next === '}') { // no such thing as T_CURLY_CLOSE
         --$nesting;
@@ -335,5 +269,102 @@ class FileParser {
         return;
       }
     }
+  }
+
+  private function shiftToken(): (string, ?int) {
+    $token = array_shift($this->tokens);
+    if (is_array($token)) {
+      return tuple($token[1], $token[0]);
+    }
+    return tuple($token, null);
+  }
+
+  private function consumeClassDefinition(DefinitionToken $def_type): void {
+    list($v, $t) = $this->shiftToken();
+    if ($t === T_STRING) {
+      $name = $v;
+    } else {
+      invariant(
+        $t === T_XHP_LABEL,
+        'Unknown class token %d in %s',
+        token_name($t),
+        $this->file,
+      );
+      invariant(
+        $def_type === DefinitionToken::CLASS_DEF,
+        'Seeing an XHP class name for a %s in %s',
+        token_name($def_type),
+        $this->file,
+      );
+      // 'class :foo:bar' is really 'class xhp_foo__bar'
+      $name = 'xhp_'.str_replace(':', '__', substr($v, 1));
+    }
+    $fqn = $this->namespace.$name;
+    switch ($def_type) {
+      case DefinitionToken::CLASS_DEF:
+        $this->classes[] = $fqn;
+        break;
+      case DefinitionToken::INTERFACE_DEF:
+        $this->interfaces[] = $fqn;
+        break;
+      case DefinitionToken::TRAIT_DEF:
+        $this->traits[] = $fqn;
+        break;
+      default:
+        invariant_violation(
+          'Trying to define %s as a class',
+          token_name($def_type),
+        );
+    }
+    $this->skipToAndConsumeBlock();
+  }
+
+  private function consumeSimpleDefinition(DefinitionToken $def_type): void {
+    list($next, $next_type) = $this->shiftToken();
+    invariant(
+      $next_type === T_STRING,
+      'Expected a string for %s, got %d - in %s',
+      token_name($def_type),
+      $next_type,
+      $this->file,
+    );
+    $fqn = $this->namespace.$next;
+    switch ($def_type) {
+      case DefinitionToken::TYPE_DEF:
+        $this->types[] = $fqn;
+        break;
+      case DefinitionToken::NEWTYPE_DEF:
+        $this->newtypes[] = $fqn;
+        break;
+      case DefinitionToken::ENUM_DEF:
+        $this->enums[] = $fqn;
+        $this->skipToAndConsumeBlock();
+        return;
+      default:
+        invariant_violation(
+          '%d is not a simple definition',
+          $def_type,
+        );
+    }
+    $this->consumeStatement();
+  }
+
+  private function consumeFunctionDefinition(): void {
+    list($next, $next_type) = $this->shiftToken();
+    if ($next === '&') {
+      // byref return
+      $this->consumeWhitespace();
+      list($next, $next_type) = $this->shiftToken();
+    }
+    if ($next === '(') {
+      // rvalue
+      return;
+    }
+    invariant(
+      $next_type === T_STRING,
+      'Expected a function name in %s',
+      $this->file,
+    );
+    $this->functions[] = $this->namespace.$next;
   }
 }
