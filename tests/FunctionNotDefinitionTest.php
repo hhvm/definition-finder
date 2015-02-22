@@ -17,23 +17,23 @@ use \Facebook\DefinitionFinder\FileParser;
  */
 final class FunctionNotDefinitionTest extends PHPUnit_Framework_TestCase {
   public function testActuallyAFunction(): void {
-    $p = FileParser::fromData('<?hh function foo();');
+    $p = FileParser::FromData('<?hh function foo();');
     $this->assertEquals(Vector { 'foo' }, $p->getFunctions());
   }
 
   public function testFunctionTypeAlias(): void {
-    $p = FileParser::fromData('<?hh newtype Foo = function(int): void;');
+    $p = FileParser::FromData('<?hh newtype Foo = function(int): void;');
     $this->assertEquals(Vector { }, $p->getFunctions());
     $this->assertEquals(Vector { 'Foo' }, $p->getNewtypes());
 
     // Add extra whitespace
-    $p = FileParser::fromData('<?hh newtype Foo = function (int): void;');
+    $p = FileParser::FromData('<?hh newtype Foo = function (int): void;');
     $this->assertEquals(Vector { }, $p->getFunctions());
     $this->assertEquals(Vector { 'Foo' }, $p->getNewtypes());
   }
 
   public function testFunctionReturnType(): void {
-    $p = FileParser::fromData(<<<EOF
+    $p = FileParser::FromData(<<<EOF
 <?hh
 function foo(\$bar): (function():void) { return \$bar; }
 EOF
@@ -42,12 +42,12 @@ EOF
   }
 
   public function testAsParameterType(): void {
-    $p = FileParser::fromData('<?hh function foo((function():void) $callback) { }');
+    $p = FileParser::FromData('<?hh function foo((function():void) $callback) { }');
     $this->assertEquals(Vector { 'foo' }, $p->getFunctions());
   }
 
   public function testUsingAnonymousFunctions(): void {
-    $p = FileParser::fromData(<<<EOF
+    $p = FileParser::FromData(<<<EOF
 <?hh
 function foo() {
   \$x = function() { return 'bar'; };

@@ -16,7 +16,7 @@ abstract class AbstractPHPTest extends PHPUnit_Framework_TestCase {
   abstract protected function getPrefix(): string;
 
   protected function setUp(): void {
-    $this->parser = \Facebook\DefinitionFinder\FileParser::fromFile(
+    $this->parser = \Facebook\DefinitionFinder\FileParser::FromFile(
       __DIR__.'/data/'.$this->getFilename(),
     );
   }

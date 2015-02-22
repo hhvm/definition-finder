@@ -34,7 +34,7 @@ class FileParser {
 
   ///// Constructors /////
 
-  public static function fromFile(
+  public static function FromFile(
     string $filename,
   ): FileParser {
     return new FileParser(
@@ -43,7 +43,7 @@ class FileParser {
     );
   }
 
-  public static function fromData(
+  public static function FromData(
     string $data,
     ?string $filename = null,
   ): FileParser {

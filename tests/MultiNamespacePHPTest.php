@@ -13,7 +13,7 @@ final class MultiNamespacePHPTest extends PHPUnit_Framework_TestCase {
   private ?Facebook\DefinitionFinder\FileParser $parser;
 
   protected function setUp(): void {
-    $this->parser = \Facebook\DefinitionFinder\FileParser::fromFile(
+    $this->parser = \Facebook\DefinitionFinder\FileParser::FromFile(
       __DIR__.'/data/multi_namespace_php.php',
     );
   }
