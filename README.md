@@ -20,6 +20,8 @@ Status
 
 Work in progress.
 
+**API IS NOT YET STABLE**
+
 License
 -------
 
