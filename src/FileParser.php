@@ -96,8 +96,8 @@ class FileParser {
           break;
         }
 
-        if (DefinitionToken::isValid($ttype)) {
-          $this->consumeDefinition(DefinitionToken::assert($ttype));
+        if (DefinitionType::isValid($ttype)) {
+          $this->consumeDefinition(DefinitionType::assert($ttype));
           continue;
         }
         // I hate you, PHP.
@@ -117,29 +117,29 @@ class FileParser {
     } while ($this->tokens && $token_type !== T_OPEN_TAG);
   }
 
-  private function consumeDefinition(DefinitionToken $def_type): void {
+  private function consumeDefinition(DefinitionType $def_type): void {
     $tname = token_name($def_type);
 
     $this->consumeWhitespace();
 
     switch ($def_type) {
-      case DefinitionToken::NAMESPACE_DEF:
+      case DefinitionType::NAMESPACE_DEF:
         $this->consumeNamespaceDefinition();
         return;
-      case DefinitionToken::CLASS_DEF:
-      case DefinitionToken::INTERFACE_DEF:
-      case DefinitionToken::TRAIT_DEF:
+      case DefinitionType::CLASS_DEF:
+      case DefinitionType::INTERFACE_DEF:
+      case DefinitionType::TRAIT_DEF:
         $this->consumeClassDefinition($def_type);
         return;
-      case DefinitionToken::FUNCTION_DEF:
+      case DefinitionType::FUNCTION_DEF:
         $this->consumeFunctionDefinition();
         return;
-      case DefinitionToken::CONST_DEF:
+      case DefinitionType::CONST_DEF:
         $this->consumeConstantDefinition();
         return;
-      case DefinitionToken::TYPE_DEF:
-      case DefinitionToken::NEWTYPE_DEF:
-      case DefinitionToken::ENUM_DEF:
+      case DefinitionType::TYPE_DEF:
+      case DefinitionType::NEWTYPE_DEF:
+      case DefinitionType::ENUM_DEF:
         $this->consumeSimpleDefinition($def_type);
         return;
     }
@@ -279,7 +279,7 @@ class FileParser {
     return tuple($token, null);
   }
 
-  private function consumeClassDefinition(DefinitionToken $def_type): void {
+  private function consumeClassDefinition(DefinitionType $def_type): void {
     list($v, $t) = $this->shiftToken();
     if ($t === T_STRING) {
       $name = $v;
@@ -291,7 +291,7 @@ class FileParser {
         $this->file,
       );
       invariant(
-        $def_type === DefinitionToken::CLASS_DEF,
+        $def_type === DefinitionType::CLASS_DEF,
         'Seeing an XHP class name for a %s in %s',
         token_name($def_type),
         $this->file,
@@ -301,13 +301,13 @@ class FileParser {
     }
     $fqn = $this->namespace.$name;
     switch ($def_type) {
-      case DefinitionToken::CLASS_DEF:
+      case DefinitionType::CLASS_DEF:
         $this->classes[] = $fqn;
         break;
-      case DefinitionToken::INTERFACE_DEF:
+      case DefinitionType::INTERFACE_DEF:
         $this->interfaces[] = $fqn;
         break;
-      case DefinitionToken::TRAIT_DEF:
+      case DefinitionType::TRAIT_DEF:
         $this->traits[] = $fqn;
         break;
       default:
@@ -319,7 +319,7 @@ class FileParser {
     $this->skipToAndConsumeBlock();
   }
 
-  private function consumeSimpleDefinition(DefinitionToken $def_type): void {
+  private function consumeSimpleDefinition(DefinitionType $def_type): void {
     list($next, $next_type) = $this->shiftToken();
     invariant(
       $next_type === T_STRING,
@@ -330,13 +330,13 @@ class FileParser {
     );
     $fqn = $this->namespace.$next;
     switch ($def_type) {
-      case DefinitionToken::TYPE_DEF:
+      case DefinitionType::TYPE_DEF:
         $this->types[] = $fqn;
         break;
-      case DefinitionToken::NEWTYPE_DEF:
+      case DefinitionType::NEWTYPE_DEF:
         $this->newtypes[] = $fqn;
         break;
-      case DefinitionToken::ENUM_DEF:
+      case DefinitionType::ENUM_DEF:
         $this->enums[] = $fqn;
         $this->skipToAndConsumeBlock();
         return;

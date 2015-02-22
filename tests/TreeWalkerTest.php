@@ -25,7 +25,7 @@ final class TreeWalkerTest extends PHPUnit_Framework_TestCase {
       $w->getClasses()->keys(),
     );
     $this->assertContains(
-      'Facebook\DefinitionFinder\DefinitionToken',
+      'Facebook\DefinitionFinder\DefinitionType',
       $w->getEnums()->keys(),
     );
     $this->assertContains(

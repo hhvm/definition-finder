@@ -11,7 +11,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-enum DefinitionToken: int {
+enum DefinitionType: int {
   NAMESPACE_DEF = T_NAMESPACE;
   CLASS_DEF = T_CLASS;
   INTERFACE_DEF = T_INTERFACE;
