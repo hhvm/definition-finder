@@ -300,9 +300,9 @@ class FileParser {
     $nesting = 0;
     while ($this->tokens) {
       $next = array_shift($this->tokens);
-      if ($next === '{') {
+      if ($next === '{' || is_array($next) && $next[0] == T_CURLY_OPEN) {
         ++$nesting;
-      } else if ($next === '}') {
+      } else if ($next === '}') { // no such thing as T_CURLY_CLOSE
         --$nesting;
         if ($nesting === 0) {
           return;
