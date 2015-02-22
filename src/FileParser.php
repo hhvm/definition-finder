@@ -56,14 +56,14 @@ class FileParser {
   ///// Accessors /////
 
   public function getFilename(): string { return $this->file; }
-  public function getClasses(): Vector<string> { return $this->classes; }
-  public function getInterfaces(): Vector<string> { return $this->interfaces; }
-  public function getTraits(): Vector<string> { return $this->traits; }
-  public function getEnums(): Vector<string> { return $this->enums; }
-  public function getTypes(): Vector<string> { return $this->types; }
-  public function getNewtypes(): Vector<string> { return $this->newtypes; }
-  public function getFunctions(): Vector<string> { return $this->functions; }
-  public function getConstants(): Vector<string> { return $this->constants; }
+  public function getClasses(): \ConstVector<string> { return $this->classes; }
+  public function getInterfaces(): \ConstVector<string> { return $this->interfaces; }
+  public function getTraits(): \ConstVector<string> { return $this->traits; }
+  public function getEnums(): \ConstVector<string> { return $this->enums; }
+  public function getTypes(): \ConstVector<string> { return $this->types; }
+  public function getNewtypes(): \ConstVector<string> { return $this->newtypes; }
+  public function getFunctions(): \ConstVector<string> { return $this->functions; }
+  public function getConstants(): \ConstVector<string> { return $this->constants; }
 
   ///// Implementation /////
 
