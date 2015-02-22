@@ -76,11 +76,19 @@ class FileParser {
     );
     $this->tokens = token_get_all($data);
 
+    $parens_depth = 0;
     while ($this->tokens) {
       $this->skipToCode();
       while ($this->tokens) {
         $token = array_shift($this->tokens);
-        if (!is_array($token)) {
+        if ($token === '(') {
+          ++$parens_depth;
+        }
+        if ($token === ')') {
+          --$parens_depth;
+        }
+
+        if ($parens_depth !== 0 || !is_array($token)) {
           continue;
         }
 
@@ -249,6 +257,7 @@ class FileParser {
       $this->constants[] = $this->namespace.
         substr($name, 1, strlen($name) - 2);
     }
+    $this->consumeStatement();
   }
 
   private function consumeWhitespace(): void {
