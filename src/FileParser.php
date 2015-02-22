@@ -121,13 +121,8 @@ class FileParser {
   private function consumeDefinition(DefinitionToken $def_type): void {
     $tname = token_name($def_type);
 
-    $next = array_shift($this->tokens);
-    invariant(
-      is_array($next) && $next[0] === T_WHITESPACE,
-      'Expect whitespace after %s in %s',
-      $tname,
-      realpath($this->file),
-    );
+    $this->consumeWhitespace();
+
     if ($def_type === DefinitionToken::NAMESPACE_DEF) {
       $this->consumeNamespaceDefinition();
       return;
