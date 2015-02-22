@@ -44,11 +44,11 @@ class FileParser {
   }
 
   public static function fromData(
-    string $filename,
     string $data,
+    ?string $filename = null,
   ): FileParser {
     return new FileParser(
-      $filename,
+      $filename === null ? '__DATA__' : $filename,
       $data,
     );
   }
