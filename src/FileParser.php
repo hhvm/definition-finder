@@ -22,12 +22,13 @@ class FileParser {
 
   // Results
   private Vector<ScannedClass> $classes = Vector { };
+  private Vector<ScannedFunction> $functions = Vector { };
+
   private Vector<string> $interfaces = Vector { };
   private Vector<string> $traits = Vector { };
   private Vector<string> $enums = Vector { };
   private Vector<string> $types = Vector { };
   private Vector<string> $newtypes = Vector { };
-  private Vector<string> $functions = Vector { };
   private Vector<string> $constants = Vector { };
 
   private function __construct(
@@ -65,16 +66,25 @@ class FileParser {
   public function getClasses(): \ConstVector<ScannedClass> {
     return $this->classes;
   }
-  public function getClassNames(): \ConstVector<string> {
-    return $this->classes->map($class ==> $class->getName());
+  public function getFunctions(): \ConstVector<ScannedFunction> {
+    return $this->functions;
   }
   public function getInterfaces(): \ConstVector<string> { return $this->interfaces; }
   public function getTraits(): \ConstVector<string> { return $this->traits; }
   public function getEnums(): \ConstVector<string> { return $this->enums; }
   public function getTypes(): \ConstVector<string> { return $this->types; }
   public function getNewtypes(): \ConstVector<string> { return $this->newtypes; }
-  public function getFunctions(): \ConstVector<string> { return $this->functions; }
   public function getConstants(): \ConstVector<string> { return $this->constants; }
+
+  ///// Convenience /////
+
+  public function getClassNames(): \ConstVector<string> {
+    return $this->getClasses()->map($class ==> $class->getName());
+  }
+
+  public function getFunctionNames(): \ConstVector<string> {
+    return $this->getFunctions()->map($class ==> $class->getName());
+  }
 
   ///// Implementation /////
 
@@ -385,7 +395,12 @@ class FileParser {
       'Expected a function name in %s',
       $this->file,
     );
-    $this->functions[] = $this->namespace.$next;
+    $this->functions[] = new ScannedFunction(
+      shape('filename' => $this->file),
+      $this->namespace.$next,
+      $this->attributes,
+    );
+    $this->attributes = Map { };
   }
 
   private function consumeUserAttributes(): void {

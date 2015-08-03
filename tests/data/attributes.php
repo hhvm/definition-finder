@@ -25,3 +25,9 @@ class ClassWithIntAttribute {}
 
 <<Foo('bar','baz')>>
 class ClassWithMultipleAttributeValues {}
+
+<<FunctionFoo>>
+function function_after_classes(): void {}
+
+<<ClassFoo>>
+class ClassAfterFunction {}

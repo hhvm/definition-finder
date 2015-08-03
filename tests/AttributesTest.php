@@ -12,17 +12,20 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use Facebook\DefinitionFinder\FileParser;
+use Facebook\DefinitionFinder\ScannedBase;
 use Facebook\DefinitionFinder\ScannedClass;
+use Facebook\DefinitionFinder\ScannedFunction;
 
 class ClassAttributesTest extends \PHPUnit_Framework_TestCase {
-  private \ConstVector<ScannedClass> $classes
-    = Vector {};
+  private \ConstVector<ScannedClass> $classes = Vector {};
+  private \ConstVector<ScannedFunction> $functions = Vector {};
 
   protected function setUp(): void {
     $parser = FileParser::FromFile(
-      __DIR__.'/data/class_attributes.php'
+      __DIR__.'/data/attributes.php'
     );
     $this->classes = $parser->getClasses();
+    $this->functions = $parser->getFunctions();
   }
 
   public function testSingleSimpleAttribute(): void {
@@ -62,12 +65,35 @@ class ClassAttributesTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
-  private function findClass(string $name): ScannedClass {
-    foreach ($this->classes as $class) {
-      if ($class->getName() === "Facebook\\DefinitionFinder\\Test\\".$name) {
-        return $class;
+  public function testFunctionHasAttributes(): void {
+    $func = $this->findScanned($this->functions, 'function_after_classes');
+    $this->assertEquals(
+      Map { 'FunctionFoo' => Vector { } },
+      $func->getAttributes(),
+    );
+  }
+
+  public function testFunctionAttrsDontPolluteClass(): void {
+    $class = $this->findClass('ClassAfterFunction');
+    $this->assertEquals(
+      Map { 'ClassFoo' => Vector {} },
+      $class->getAttributes(),
+    );
+  }
+
+  private function findScanned<T as ScannedBase>(
+    \ConstVector<T> $container,
+    string $name, 
+  ): T {
+    foreach ($container as $scanned) {
+      if ($scanned->getName() === "Facebook\\DefinitionFinder\\Test\\".$name) {
+        return $scanned;
       }
     }
-    invariant_violation('Could not find class %s', $name);
+    invariant_violation('Could not find scannned%s', $name);
+  }
+
+  private function findClass(string $name): ScannedClass {
+    return $this->findScanned($this->classes, $name);
   }
 }

@@ -18,17 +18,17 @@ use \Facebook\DefinitionFinder\FileParser;
 final class FunctionNotDefinitionTest extends PHPUnit_Framework_TestCase {
   public function testActuallyAFunction(): void {
     $p = FileParser::FromData('<?hh function foo();');
-    $this->assertEquals(Vector { 'foo' }, $p->getFunctions());
+    $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
   }
 
   public function testFunctionTypeAlias(): void {
     $p = FileParser::FromData('<?hh newtype Foo = function(int): void;');
-    $this->assertEquals(Vector { }, $p->getFunctions());
+    $this->assertEquals(Vector { }, $p->getFunctionNames());
     $this->assertEquals(Vector { 'Foo' }, $p->getNewtypes());
 
     // Add extra whitespace
     $p = FileParser::FromData('<?hh newtype Foo = function (int): void;');
-    $this->assertEquals(Vector { }, $p->getFunctions());
+    $this->assertEquals(Vector { }, $p->getFunctionNames());
     $this->assertEquals(Vector { 'Foo' }, $p->getNewtypes());
   }
 
@@ -38,12 +38,12 @@ final class FunctionNotDefinitionTest extends PHPUnit_Framework_TestCase {
 function foo(\$bar): (function():void) { return \$bar; }
 EOF
     );
-    $this->assertEquals(Vector { 'foo' }, $p->getFunctions());
+    $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
   }
 
   public function testAsParameterType(): void {
     $p = FileParser::FromData('<?hh function foo((function():void) $callback) { }');
-    $this->assertEquals(Vector { 'foo' }, $p->getFunctions());
+    $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
   }
 
   public function testUsingAnonymousFunctions(): void {
@@ -55,7 +55,7 @@ function foo() {
 }
 EOF
     );
-    $this->assertEquals(Vector { 'foo' }, $p->getFunctions());
+    $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
   }
 
   public function testAsParameter(): void {
@@ -65,11 +65,11 @@ spl_autoload_register(function(\$class) { });
 function foo() { }
 EOF
     );
-    $this->assertEquals(Vector { 'foo' }, $p->getFunctions());
+    $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
   }
 
   public function testAsRVal(): void {
     $p = FileParser::FromData('<?php $f = function(){};');
-    $this->assertEmpty($p->getFunctions());
+    $this->assertEmpty($p->getFunctionNames());
   }
 }
