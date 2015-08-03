@@ -12,10 +12,6 @@
 namespace Facebook\DefinitionFinder;
 
 class FileParser {
-  // Input
-  private ?string $data;
-  private array<mixed> $tokens = [];
-
   // Temporary state
   private string $namespace = '';
   private Map<string,Vector<mixed>> $attributes = Map { };
@@ -33,9 +29,8 @@ class FileParser {
 
   private function __construct(
     private string $file,
-    string $data,
+    private TokenQueue $tokenQueue,
   ) {
-    $this->data = $data;
     $this->consumeFile();
   }
 
@@ -44,10 +39,7 @@ class FileParser {
   public static function FromFile(
     string $filename,
   ): FileParser {
-    return new FileParser(
-      $filename,
-      file_get_contents($filename),
-    );
+    return self::FromData(file_get_contents($filename), $filename);
   }
 
   public static function FromData(
@@ -56,7 +48,7 @@ class FileParser {
   ): FileParser {
     return new FileParser(
       $filename === null ? '__DATA__' : $filename,
-      $data,
+      new TokenQueue($data),
     );
   }
 
@@ -89,19 +81,12 @@ class FileParser {
   ///// Implementation /////
 
   private function consumeFile(): void {
-    $data = $this->data;
-    invariant(
-      $data !== null,
-      'somehow got constructed with null data for %s',
-      $this->file,
-    );
-    $this->tokens = token_get_all($data);
-
+    $tq = $this->tokenQueue;
     $parens_depth = 0;
-    while ($this->tokens) {
+    while ($tq->haveTokens()) {
       $this->skipToCode();
-      while ($this->tokens) {
-        list ($token, $ttype) = $this->shiftToken();
+      while ($tq->haveTokens()) {
+        list ($token, $ttype) = $tq->shift();
         if ($token === '(') {
           ++$parens_depth;
         }
@@ -132,14 +117,13 @@ class FileParser {
         }
       }
     }
-    $this->data = '';
   }
 
   private function skipToCode(): void {
     $token_type = null;
     do {
-      list ($token, $token_type) = $this->shiftToken();
-    } while ($this->tokens && $token_type !== T_OPEN_TAG);
+      list ($token, $token_type) = $this->tokenQueue->shift();
+    } while ($this->tokenQueue->haveTokens() && $token_type !== T_OPEN_TAG);
   }
 
   private function consumeDefinition(DefinitionType $def_type): void {
@@ -176,8 +160,8 @@ class FileParser {
    */
   private function consumeConstantDefinition(): void {
     $name = null;
-    while ($this->tokens) {
-      list ($next, $next_type) = $this->shiftToken();
+    while ($this->tokenQueue->haveTokens()) {
+      list ($next, $next_type) = $this->tokenQueue->shift();
       if ($next_type === T_WHITESPACE) {
         continue;
       }
@@ -200,15 +184,17 @@ class FileParser {
    * 'define' has been consumed, that's it
    */
   private function consumeOldConstantDefinition(): void {
+    $tq = $this->tokenQueue;
+
     $this->consumeWhitespace();
-    $next = array_shift($this->tokens);
+    list($next, $_) = $tq->shift();
     invariant(
       $next === '(',
       'Expected define to be followed by a paren in %s',
       $this->file,
     );
     $this->consumeWhitespace();
-    list ($next, $next_type) = $this->shiftToken();
+    list ($next, $next_type) = $tq->shift();
     invariant(
       $next_type === T_CONSTANT_ENCAPSED_STRING || $next_type === T_STRING,
       'Expected arg to define() to be a T_CONSTANT_ENCAPSED_STRING or '.
@@ -233,18 +219,18 @@ class FileParser {
   }
 
   private function consumeWhitespace(): void {
-    $next = array_shift($this->tokens);
-    if (is_array($next) && $next[0] === T_WHITESPACE) {
+    list($t, $ttype) = $this->tokenQueue->shift();
+    if ($ttype === T_WHITESPACE) {
       return;
     }
-    array_unshift($this->tokens, $next);
+    $this->tokenQueue->unshift($t, $ttype);
   }
 
   private function consumeNamespaceDefinition(): void {
     $parts = [];
     do {
       $this->consumeWhitespace();
-      list($next, $next_type) = $this->shiftToken();
+      list($next, $next_type) = $this->tokenQueue->shift();
       if ($next_type === T_STRING) {
         $parts[] = $next;
         continue;
@@ -258,7 +244,7 @@ class FileParser {
         var_export($next, true),
         $this->file,
       );
-    } while ($this->tokens);
+    } while ($this->tokenQueue->haveTokens());
 
     if ($parts) {
       $this->namespace = implode('\\', $parts).'\\';
@@ -269,8 +255,8 @@ class FileParser {
 
   private function skipToAndConsumeBlock(): void {
     $nesting = 0;
-    while ($this->tokens) {
-      list($next, $next_type) = $this->shiftToken();
+    while ($this->tokenQueue->haveTokens()) {
+      list($next, $next_type) = $this->tokenQueue->shift();
       if ($next === '{' || $next_type === T_CURLY_OPEN) {
         ++$nesting;
       } else if ($next === '}') { // no such thing as T_CURLY_CLOSE
@@ -283,29 +269,21 @@ class FileParser {
   }
 
   private function consumeStatement(): void {
-    while ($this->tokens) {
-      $next = array_shift($this->tokens);
-      if ($next === ';') {
+    while ($this->tokenQueue->haveTokens()) {
+      list($tv, $ttype) = $this->tokenQueue->shift();
+      if ($tv === ';') {
         return;
       }
-      if ($next === '{') {
-        array_unshift($this->tokens, $next);
+      if ($tv === '{') {
+        $this->tokenQueue->unshift($tv, $ttype);
         $this->skipToAndConsumeBlock();
         return;
       }
     }
   }
 
-  private function shiftToken(): (string, ?int) {
-    $token = array_shift($this->tokens);
-    if (is_array($token)) {
-      return tuple($token[1], $token[0]);
-    }
-    return tuple($token, null);
-  }
-
   private function consumeClassDefinition(DefinitionType $def_type): void {
-    list($v, $t) = $this->shiftToken();
+    list($v, $t) = $this->tokenQueue->shift();
     if ($t === T_STRING) {
       $name = $v;
     } else {
@@ -350,7 +328,7 @@ class FileParser {
   }
 
   private function consumeSimpleDefinition(DefinitionType $def_type): void {
-    list($next, $next_type) = $this->shiftToken();
+    list($next, $next_type) = $this->tokenQueue->shift();
     invariant(
       $next_type === T_STRING,
       'Expected a string for %s, got %d - in %s',
@@ -380,11 +358,11 @@ class FileParser {
   }
 
   private function consumeFunctionDefinition(): void {
-    list($next, $next_type) = $this->shiftToken();
+    list($next, $next_type) = $this->tokenQueue->shift();
     if ($next === '&') {
       // byref return
       $this->consumeWhitespace();
-      list($next, $next_type) = $this->shiftToken();
+      list($next, $next_type) = $this->tokenQueue->shift();
     }
     if ($next === '(') {
       // rvalue
@@ -405,12 +383,12 @@ class FileParser {
 
   private function consumeUserAttributes(): void {
     while (true) {
-      list($name, $_) = $this->shiftToken();
+      list($name, $_) = $this->tokenQueue->shift();
       if (!$this->attributes->containsKey($name)) {
         $this->attributes[$name] = Vector { };
       }
 
-      list($t, $ttype) = $this->shiftToken();
+      list($t, $ttype) = $this->tokenQueue->shift();
       if ($ttype === T_SR) { // this was the last attribute
         return;
       }
@@ -425,7 +403,7 @@ class FileParser {
       );
 
       while (true) {
-        list($value, $ttype) = $this->shiftToken();
+        list($value, $ttype) = $this->tokenQueue->shift();
         switch ((int) $ttype) {
           case T_CONSTANT_ENCAPSED_STRING:
             $this->attributes[$name][] = substr($value, 1, -1);
@@ -439,13 +417,13 @@ class FileParser {
               $ttype
             );
         }
-        list($t, $_) = $this->shiftToken();
+        list($t, $_) = $this->tokenQueue->shift();
         if ($t === ')') {
           break;
         }
         invariant($t === ',', 'Expected attribute value to be followed by , or )');
       }
-      list($t, $ttype) = $this->shiftToken();
+      list($t, $ttype) = $this->tokenQueue->shift();
       if ($ttype === T_SR) {
         return;
       }
