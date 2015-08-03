@@ -12,9 +12,15 @@
 namespace Facebook\DefinitionFinder;
 
 class FileParser {
+  // Input
   private ?string $data;
   private array<mixed> $tokens = [];
+
+  // Temporary state
   private string $namespace = '';
+  private Map<string,Vector<mixed>> $attributes = Map { };
+
+  // Results
   private Vector<ScannedClass> $classes = Vector { };
   private Vector<string> $interfaces = Vector { };
   private Vector<string> $traits = Vector { };
@@ -101,6 +107,10 @@ class FileParser {
           break;
         }
 
+        if ($ttype === T_SL) {
+          $this->consumeUserAttributes();
+        }
+
         if (DefinitionType::isValid($ttype)) {
           $this->consumeDefinition(DefinitionType::assert($ttype));
           continue;
@@ -111,7 +121,7 @@ class FileParser {
           continue;
         }
       }
-    } 
+    }
     $this->data = '';
   }
 
@@ -310,6 +320,7 @@ class FileParser {
         $this->classes[] = new ScannedClass(
           shape('filename' => $this->file),
           $fqn,
+          $this->attributes,
         );
         break;
       case DefinitionType::INTERFACE_DEF:
@@ -324,6 +335,7 @@ class FileParser {
           token_name($def_type),
         );
     }
+    $this->attributes = Map { };
     $this->skipToAndConsumeBlock();
   }
 
@@ -374,5 +386,58 @@ class FileParser {
       $this->file,
     );
     $this->functions[] = $this->namespace.$next;
+  }
+
+  private function consumeUserAttributes(): void {
+    while (true) {
+      list($name, $_) = $this->shiftToken();
+      if (!$this->attributes->containsKey($name)) {
+        $this->attributes[$name] = Vector { };
+      }
+
+      list($t, $ttype) = $this->shiftToken();
+      if ($ttype === T_SR) { // this was the last attribute
+        return;
+      }
+      if ($t === ',') { // there's another
+        continue;
+      }
+
+      // this attribute has values
+      invariant(
+        $t === '(',
+        'Expected attribute name to be followed by >>, (, or ,',
+      );
+
+      while (true) {
+        list($value, $ttype) = $this->shiftToken();
+        switch ((int) $ttype) {
+          case T_CONSTANT_ENCAPSED_STRING:
+            $this->attributes[$name][] = substr($value, 1, -1);
+            break;
+          case T_LNUMBER:
+            $this->attributes[$name][] = (int) $value;
+            break;
+          default:
+            invariant_violation(
+              "Invalid attribute value token type: %d",
+              $ttype
+            );
+        }
+        list($t, $_) = $this->shiftToken();
+        if ($t === ')') {
+          break;
+        }
+        invariant($t === ',', 'Expected attribute value to be followed by , or )');
+      }
+      list($t, $ttype) = $this->shiftToken();
+      if ($ttype === T_SR) {
+        return;
+      }
+      invariant(
+        $t === ',',
+        'Expected attribute value list to be followed by >> or ,',
+      );
+    }
   }
 }
