@@ -56,7 +56,7 @@ class TreeWalker implements TreeDefinitions {
     }
     foreach ($files as $file) {
       $fp = FileParser::FromFile($file);
-      self::addDefs($this->classes, $file, $fp->getClasses());
+      self::addDefs($this->classes, $file, $fp->getClassNames());
       self::addDefs($this->interfaces, $file, $fp->getInterfaces());
       self::addDefs($this->traits, $file, $fp->getTraits());
       self::addDefs($this->enums, $file, $fp->getEnums());

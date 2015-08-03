@@ -23,7 +23,7 @@ final class CurlyTest extends PHPUnit_Framework_TestCase {
 
   public function testDefinitions(): void {
     $p = FileParser::FromFile(self::DATA_FILE);
-    $this->assertEquals(Vector { 'Foo' }, $p->getClasses());
+    $this->assertEquals(Vector { 'Foo' }, $p->getClassNames());
     $this->assertEquals(Vector { 'my_func' }, $p->getFunctions());
   }
 

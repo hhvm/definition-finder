@@ -31,7 +31,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
         $this->getPrefix().'xhp_foo',
         $this->getPrefix().'xhp_foo__bar',
       },
-      $this->parser?->getClasses(),
+      $this->parser?->getClassNames(),
     );
   }
 

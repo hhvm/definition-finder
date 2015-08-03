@@ -15,7 +15,7 @@ class FileParser {
   private ?string $data;
   private array<mixed> $tokens = [];
   private string $namespace = '';
-  private Vector<string> $classes = Vector { };
+  private Vector<ScannedClass> $classes = Vector { };
   private Vector<string> $interfaces = Vector { };
   private Vector<string> $traits = Vector { };
   private Vector<string> $enums = Vector { };
@@ -56,7 +56,12 @@ class FileParser {
   ///// Accessors /////
 
   public function getFilename(): string { return $this->file; }
-  public function getClasses(): \ConstVector<string> { return $this->classes; }
+  public function getClasses(): \ConstVector<ScannedClass> {
+    return $this->classes;
+  }
+  public function getClassNames(): \ConstVector<string> {
+    return $this->classes->map($class ==> $class->getName());
+  }
   public function getInterfaces(): \ConstVector<string> { return $this->interfaces; }
   public function getTraits(): \ConstVector<string> { return $this->traits; }
   public function getEnums(): \ConstVector<string> { return $this->enums; }
@@ -302,7 +307,10 @@ class FileParser {
     $fqn = $this->namespace.$name;
     switch ($def_type) {
       case DefinitionType::CLASS_DEF:
-        $this->classes[] = $fqn;
+        $this->classes[] = new ScannedClass(
+          shape('filename' => $this->file),
+          $fqn,
+        );
         break;
       case DefinitionType::INTERFACE_DEF:
         $this->interfaces[] = $fqn;
