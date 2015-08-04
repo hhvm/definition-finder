@@ -38,6 +38,16 @@ abstract class Consumer {
     }
   }
 
+  protected function skipToBlock(): void {
+    while ($this->tq->haveTokens()) {
+      list($next, $next_type) = $this->tq->shift();
+      if ($next === '{' || $next_type === T_CURLY_OPEN) {
+        return;
+      }
+    }
+    invariant_violation('no block');
+  }
+
   protected function consumeBlock(): void {
     $nesting = 1;
     while ($this->tq->haveTokens()) {

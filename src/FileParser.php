@@ -295,56 +295,26 @@ class FileParser {
   }
 
   private function consumeClassDefinition(DefinitionType $def_type): void {
-    list($v, $t) = $this->tokenQueue->shift();
-    if ($t === T_STRING) {
-      $name = $v;
-    } else {
-      invariant(
-        $t === T_XHP_LABEL,
-        'Unknown class token %d in %s',
-        token_name($t),
-        $this->file,
-      );
-      invariant(
-        $def_type === DefinitionType::CLASS_DEF,
-        'Seeing an XHP class name for a %s in %s',
-        token_name($def_type),
-        $this->file,
-      );
-      // 'class :foo:bar' is really 'class xhp_foo__bar'
-      $name = 'xhp_'.str_replace(':', '__', substr($v, 1));
-    }
-    $fqn = $this->namespace.$name;
-    switch ($def_type) {
-      case DefinitionType::CLASS_DEF:
-        $this->classes[] = new ScannedClass(
-          shape('filename' => $this->file),
-          $fqn,
-          $this->attributes,
-        );
-        break;
-      case DefinitionType::INTERFACE_DEF:
-        $this->interfaces[] = new ScannedInterface(
-          shape('filename' => $this->file),
-          $fqn,
-          $this->attributes,
-        );
-        break;
-      case DefinitionType::TRAIT_DEF:
-        $this->traits[] = new ScannedTrait(
-          shape('filename' => $this->file),
-          $fqn,
-          $this->attributes,
-        );
-        break;
-      default:
-        invariant_violation(
-          'Trying to define %s as a class',
-          token_name($def_type),
-        );
-    }
+    $def_type = ClassDefinitionType::assert($def_type);
+
+    $builder = (new ClassConsumer($def_type, $this->tokenQueue))
+      ->getBuilder()
+      ->setNamespace($this->namespace)
+      ->setPosition(shape('filename' => $this->file))
+      ->setAttributes($this->attributes);
     $this->attributes = Map { };
-    $this->skipToAndConsumeBlock();
+
+    switch ($def_type) {
+      case ClassDefinitionType::CLASS_DEF:
+        $this->classes[] = $builder->build(ScannedClass::class);
+        break;
+      case ClassDefinitionType::INTERFACE_DEF:
+        $this->interfaces[] = $builder->build(ScannedInterface::class);
+        break;
+      case ClassDefinitionType::TRAIT_DEF:
+        $this->traits[] = $builder->build(ScannedTrait::class);
+        break;
+    }
   }
 
   private function consumeSimpleDefinition(DefinitionType $def_type): void {
