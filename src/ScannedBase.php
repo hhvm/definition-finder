@@ -23,7 +23,7 @@ abstract class ScannedBase {
   ) {
   }
 
-  abstract public static function getType(): DefinitionType;
+  abstract public static function getType(): ?DefinitionType;
 
   public function getFileName(): string {
     return $this->position['filename'];
