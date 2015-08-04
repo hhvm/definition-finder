@@ -358,26 +358,15 @@ class FileParser {
   }
 
   private function consumeFunctionDefinition(): void {
-    list($next, $next_type) = $this->tokenQueue->shift();
-    if ($next === '&') {
-      // byref return
-      $this->consumeWhitespace();
-      list($next, $next_type) = $this->tokenQueue->shift();
-    }
-    if ($next === '(') {
-      // rvalue
+    $builder = (new FunctionConsumer($this->tokenQueue))->getBuilder();
+    if (!$builder) {
       return;
     }
-    invariant(
-      $next_type === T_STRING,
-      'Expected a function name in %s',
-      $this->file,
-    );
-    $this->functions[] = new ScannedFunction(
-      shape('filename' => $this->file),
-      $this->namespace.$next,
-      $this->attributes,
-    );
+    $this->functions[] = $builder
+      ->setNamespace($this->namespace)
+      ->setPosition(shape('filename' => $this->file))
+      ->setAttributes($this->attributes)
+      ->build();
     $this->attributes = Map { };
   }
 
