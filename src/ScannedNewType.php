@@ -11,28 +11,18 @@
 
 namespace Facebook\DefinitionFinder;
 
-final class ScannedFunction extends ScannedBase {
+final class ScannedNewtype extends ScannedBase {
   public static function getType(): DefinitionType {
-    return DefinitionType::FUNCTION_DEF;
+    return DefinitionType::NEWTYPE_DEF;
   }
 }
 
-final class ScannedFunctionBuilder
-  extends ScannedSingleTypeBuilder<ScannedFunction> {
-
-  private ?bool $byRefReturn;
-
-
-  public function setByRefReturn(bool $v): this {
-    $this->byRefReturn = $v;
-    return $this;
-  }
-
-  public function build(): ScannedFunction {
-    return new ScannedFunction(
+class ScannedNewtypeBuilder extends ScannedSingleTypeBuilder<ScannedNewtype> {
+  public function build(): ScannedNewtype {
+    return new ScannedNewtype(
       nullthrows($this->position),
       nullthrows($this->namespace).$this->name,
-      nullthrows($this->attributes),
+      /* attributes = */ Map { },
     );
   }
 }

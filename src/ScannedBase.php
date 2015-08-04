@@ -51,6 +51,11 @@ abstract class ScannedBaseBuilder {
     return $this;
   }
 
+  public function prefixNamespace(string $name): this {
+    $this->namespace = $name.nullthrows($this->namespace);
+    return $this;
+  }
+
   public function setPosition(SourcePosition $pos): this {
     $this->position = $pos;
     return $this;
@@ -64,20 +69,6 @@ abstract class ScannedBaseBuilder {
   }
 }
 
-final class ScannedEnum extends ScannedBase {
-  public static function getType(): DefinitionType {
-    return DefinitionType::ENUM_DEF;
-  }
-}
-
-final class ScannedType extends ScannedBase {
-  public static function getType(): DefinitionType {
-    return DefinitionType::TYPE_DEF;
-  }
-}
-
-final class ScannedNewtype extends ScannedBase {
-  public static function getType(): DefinitionType {
-    return DefinitionType::NEWTYPE_DEF;
-  }
+abstract class ScannedSingleTypeBuilder<T> extends ScannedBaseBuilder {
+  abstract public function build(): T;
 }

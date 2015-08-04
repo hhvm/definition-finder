@@ -11,28 +11,18 @@
 
 namespace Facebook\DefinitionFinder;
 
-final class ScannedFunction extends ScannedBase {
+final class ScannedEnum extends ScannedBase {
   public static function getType(): DefinitionType {
-    return DefinitionType::FUNCTION_DEF;
+    return DefinitionType::ENUM_DEF;
   }
 }
 
-final class ScannedFunctionBuilder
-  extends ScannedSingleTypeBuilder<ScannedFunction> {
-
-  private ?bool $byRefReturn;
-
-
-  public function setByRefReturn(bool $v): this {
-    $this->byRefReturn = $v;
-    return $this;
-  }
-
-  public function build(): ScannedFunction {
-    return new ScannedFunction(
+class ScannedEnumBuilder extends ScannedSingleTypeBuilder<ScannedEnum> {
+  public function build(): ScannedEnum {
+    return new ScannedEnum(
       nullthrows($this->position),
       nullthrows($this->namespace).$this->name,
-      nullthrows($this->attributes),
+      /* attributes = */ Map { },
     );
   }
 }

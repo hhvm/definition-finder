@@ -50,6 +50,7 @@ final class ScannedTrait extends ScannedClass {
 }
 
 final class ScannedClassBuilder extends ScannedBaseBuilder {
+
   public function __construct(
     private ClassDefinitionType $type,
     string $name,
