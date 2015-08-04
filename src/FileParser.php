@@ -177,26 +177,11 @@ class FileParser {
    * /const type_name CONST_NAME =/
    */
   private function consumeConstantDefinition(): void {
-    $name = null;
-    while ($this->tokenQueue->haveTokens()) {
-      list ($next, $next_type) = $this->tokenQueue->shift();
-      if ($next_type === T_WHITESPACE) {
-        continue;
-      }
-      if ($next_type === T_STRING) {
-        $name = $next;
-        continue;
-      }
-      if ($next === '=') {
-        $this->constants[] = new ScannedConstant(
-          shape('filename' => $this->file),
-          $this->namespace.nullthrows($name),
-          null,
-        );
-        return;
-      }
-    }
-    $this->consumeStatement();
+    $this->constants[] = (new ConstantConsumer($this->tokenQueue))
+      ->getBuilder()
+      ->setPosition(shape('filename' => $this->file))
+      ->setNamespace($this->namespace)
+      ->build();
   }
 
   /**
