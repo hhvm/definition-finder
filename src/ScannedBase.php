@@ -63,3 +63,21 @@ abstract class ScannedBaseBuilder {
     return $this;
   }
 }
+
+final class ScannedEnum extends ScannedBase {
+  public static function getType(): DefinitionType {
+    return DefinitionType::ENUM_DEF;
+  }
+}
+
+final class ScannedType extends ScannedBase {
+  public static function getType(): DefinitionType {
+    return DefinitionType::TYPE_DEF;
+  }
+}
+
+final class ScannedNewtype extends ScannedBase {
+  public static function getType(): DefinitionType {
+    return DefinitionType::NEWTYPE_DEF;
+  }
+}

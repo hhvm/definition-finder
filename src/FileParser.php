@@ -23,9 +23,9 @@ class FileParser {
   private Vector<ScannedTrait> $traits = Vector { };
   private Vector<ScannedConstant> $constants = Vector { };
 
-  private Vector<string> $enums = Vector { };
-  private Vector<string> $types = Vector { };
-  private Vector<string> $newtypes = Vector { };
+  private Vector<ScannedEnum> $enums = Vector { };
+  private Vector<ScannedType> $types = Vector { };
+  private Vector<ScannedNewtype> $newtypes = Vector { };
 
   private function __construct(
     private string $file,
@@ -71,20 +71,6 @@ class FileParser {
     return $this->constants;
   }
 
-  ///// Need converting to new (Scanned*) API /////
-
-  public function getEnumNames(): \ConstVector<string> {
-    return $this->enums;
-  }
-
-  public function getTypeNames(): \ConstVector<string> {
-    return $this->types;
-  }
-
-  public function getNewtypeNames(): \ConstVector<string> {
-    return $this->newtypes;
-  }
-
   ///// Convenience /////
 
   public function getClassNames(): \ConstVector<string> {
@@ -105,6 +91,18 @@ class FileParser {
 
   public function getConstantNames(): \ConstVector<string> {
     return $this->getConstants()->map($constant ==> $constant->getName());
+  }
+
+  public function getEnumNames(): \ConstVector<string> {
+    return $this->enums->map($x ==> $x->getName());
+  }
+
+  public function getTypeNames(): \ConstVector<string> {
+    return $this->types->map($x ==> $x->getName());
+  }
+
+  public function getNewtypeNames(): \ConstVector<string> {
+    return $this->newtypes->map($x ==> $x->getName());
   }
 
   ///// Implementation /////
@@ -308,13 +306,25 @@ class FileParser {
     $fqn = $this->namespace.$next;
     switch ($def_type) {
       case DefinitionType::TYPE_DEF:
-        $this->types[] = $fqn;
+        $this->types[] = new ScannedType(
+          shape('filename' => $this->file),
+          $fqn,
+          Map { }
+        );
         break;
       case DefinitionType::NEWTYPE_DEF:
-        $this->newtypes[] = $fqn;
+        $this->newtypes[] = new ScannedNewtype(
+          shape('filename' => $this->file),
+          $fqn,
+          Map { }
+        );
         break;
       case DefinitionType::ENUM_DEF:
-        $this->enums[] = $fqn;
+        $this->enums[] = new ScannedEnum(
+          shape('filename' => $this->file),
+          $fqn,
+          Map { }
+        );
         $this->skipToAndConsumeBlock();
         return;
       default:
