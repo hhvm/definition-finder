@@ -88,7 +88,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
         $this->getPrefix().'MY_OTHER_OLD_STYLE_CONST',
         $this->getPrefix().'NOW_IM_JUST_FUCKING_WITH_YOU',
       },
-      $this->parser?->getConstants(),
+      $this->parser?->getConstantNames(),
     );
   }
 }

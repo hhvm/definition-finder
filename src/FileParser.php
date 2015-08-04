@@ -25,7 +25,7 @@ class FileParser {
   private Vector<string> $enums = Vector { };
   private Vector<string> $types = Vector { };
   private Vector<string> $newtypes = Vector { };
-  private Vector<string> $constants = Vector { };
+  private Vector<ScannedConstant> $constants = Vector { };
 
   private function __construct(
     private string $file,
@@ -70,7 +70,9 @@ class FileParser {
   public function getEnums(): \ConstVector<string> { return $this->enums; }
   public function getTypes(): \ConstVector<string> { return $this->types; }
   public function getNewtypes(): \ConstVector<string> { return $this->newtypes; }
-  public function getConstants(): \ConstVector<string> { return $this->constants; }
+  public function getConstants(): \ConstVector<ScannedConstant> {
+    return $this->constants;
+  }
 
   ///// Convenience /////
 
@@ -88,6 +90,10 @@ class FileParser {
 
   public function getFunctionNames(): \ConstVector<string> {
     return $this->getFunctions()->map($class ==> $class->getName());
+  }
+
+  public function getConstantNames(): \ConstVector<string> {
+    return $this->getConstants()->map($constant ==> $constant->getName());
   }
 
   ///// Implementation /////
@@ -182,7 +188,11 @@ class FileParser {
         continue;
       }
       if ($next === '=') {
-        $this->constants[] = $this->namespace.$name;
+        $this->constants[] = new ScannedConstant(
+          shape('filename' => $this->file),
+          $this->namespace.nullthrows($name),
+          null,
+        );
         return;
       }
     }
@@ -215,18 +225,19 @@ class FileParser {
       $this->file,
     );
     $name = $next;
-    if ($next_type === T_STRING) {
-      // CONST_NAME
-      $this->constants[] = $this->namespace.$name;
-    } else {
+    if ($next_type !== T_STRING) {
       // 'CONST_NAME' or "CONST_NAME"
       invariant(
-        $name[0] == $name[strlen($name) - 1],
+        $name[0] === $name[strlen($name) - 1],
         'Mismatched quotes',
       );
-      $this->constants[] = $this->namespace.
-        substr($name, 1, strlen($name) - 2);
+      $name = substr($name, 1, strlen($name) - 2);
     }
+    $this->constants[] = new ScannedConstant(
+      shape('filename' => $this->file),
+      $this->namespace.$name,
+      null,
+    );
     $this->consumeStatement();
   }
 

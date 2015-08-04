@@ -15,9 +15,9 @@ namespace Facebook\DefinitionFinder;
 abstract class ScannedClass extends ScannedBase {
 
   public function __construct(
-    private SourcePosition $position,
-    private string $name,
-    private Map<string, Vector<mixed>> $attributes,
+    SourcePosition $position,
+    string $name,
+    Map<string, Vector<mixed>> $attributes,
   ) {
     parent::__construct($position, $name, $attributes);
   }
