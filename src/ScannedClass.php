@@ -11,19 +11,37 @@
 
 namespace Facebook\DefinitionFinder;
 
-final class ScannedClass extends ScannedBase {
+<<__ConsistentConstruct>>
+class ScannedClass extends ScannedBase {
+
+  public function __construct(
+    private SourcePosition $position,
+    private string $name,
+    private Map<string, Vector<mixed>> $attributes,
+  ) {
+    parent::__construct($position, $name, $attributes);
+  }
+
   public static function getType(): DefinitionType {
     return DefinitionType::CLASS_DEF;
   }
+
+  public function isInterface(): bool {
+    return static::getType() === DefinitionType::INTERFACE_DEF;
+  }
+
+  public function isTrait(): bool {
+    return static::getType() === DefinitionType::TRAIT_DEF;
+  }
 }
 
-final class ScannedInterface extends ScannedBase {
+final class ScannedInterface extends ScannedClass {
   public static function getType(): DefinitionType {
     return DefinitionType::INTERFACE_DEF;
   }
 }
 
-final class ScannedTrait extends ScannedBase {
+final class ScannedTrait extends ScannedClass {
   public static function getType(): DefinitionType {
     return DefinitionType::TRAIT_DEF;
   }
@@ -38,8 +56,8 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
   }
 
   // Can be safe in 3.9, assuming D2311514 is cherry-picked
-  //public function build<T as ScannedBase>(classname<T> $what): T {
-  public function build<T as ScannedBase>(string $what): T {
+  // public function build<T as ScannedClass>(classname<T> $what): T {
+  public function build<T as ScannedClass>(string $what): T {
     // UNSAFE
     ClassDefinitionType::assert($what::getType());
     invariant(

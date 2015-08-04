@@ -15,7 +15,6 @@ type SourcePosition = shape(
   'filename' => string,
 );
 
-<<__ConsistentConstruct>>
 abstract class ScannedBase {
   public function __construct(
     private SourcePosition $position,
