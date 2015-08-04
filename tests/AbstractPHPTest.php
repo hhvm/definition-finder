@@ -35,14 +35,14 @@ abstract class AbstractPHPTest extends PHPUnit_Framework_TestCase {
   public function testInterfaces(): void {
     $this->assertEquals(
       Vector { $this->getPrefix().'SimpleInterface' },
-      $this->parser?->getInterfaces(),
+      $this->parser?->getInterfaceNames(),
     );
   }
 
   public function testTraits(): void {
     $this->assertEquals(
       Vector { $this->getPrefix().'SimpleTrait' },
-      $this->parser?->getTraits(),
+      $this->parser?->getTraitNames(),
     );
   }
 }

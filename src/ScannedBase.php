@@ -39,3 +39,8 @@ abstract class ScannedBase {
 final class ScannedClass extends ScannedBase {
 }
 
+final class ScannedInterface extends ScannedBase {
+}
+
+final class ScannedTrait extends ScannedBase {
+}

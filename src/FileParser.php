@@ -19,9 +19,9 @@ class FileParser {
   // Results
   private Vector<ScannedClass> $classes = Vector { };
   private Vector<ScannedFunction> $functions = Vector { };
+  private Vector<ScannedInterface> $interfaces = Vector { };
+  private Vector<ScannedTrait> $traits = Vector { };
 
-  private Vector<string> $interfaces = Vector { };
-  private Vector<string> $traits = Vector { };
   private Vector<string> $enums = Vector { };
   private Vector<string> $types = Vector { };
   private Vector<string> $newtypes = Vector { };
@@ -58,11 +58,15 @@ class FileParser {
   public function getClasses(): \ConstVector<ScannedClass> {
     return $this->classes;
   }
+  public function getInterfaces(): \ConstVector<ScannedInterface> {
+    return $this->interfaces;
+  }
+  public function getTraits(): \ConstVector<ScannedTrait> {
+    return $this->traits;
+  }
   public function getFunctions(): \ConstVector<ScannedFunction> {
     return $this->functions;
   }
-  public function getInterfaces(): \ConstVector<string> { return $this->interfaces; }
-  public function getTraits(): \ConstVector<string> { return $this->traits; }
   public function getEnums(): \ConstVector<string> { return $this->enums; }
   public function getTypes(): \ConstVector<string> { return $this->types; }
   public function getNewtypes(): \ConstVector<string> { return $this->newtypes; }
@@ -72,6 +76,14 @@ class FileParser {
 
   public function getClassNames(): \ConstVector<string> {
     return $this->getClasses()->map($class ==> $class->getName());
+  }
+  
+  public function getInterfaceNames(): \ConstVector<string> {
+    return $this->getInterfaces()->map($x ==> $x->getName());
+  }
+
+  public function getTraitNames(): \ConstVector<string> {
+    return $this->getTraits()->map($x ==> $x->getName());
   }
 
   public function getFunctionNames(): \ConstVector<string> {
@@ -312,10 +324,18 @@ class FileParser {
         );
         break;
       case DefinitionType::INTERFACE_DEF:
-        $this->interfaces[] = $fqn;
+        $this->interfaces[] = new ScannedInterface(
+          shape('filename' => $this->file),
+          $fqn,
+          $this->attributes,
+        );
         break;
       case DefinitionType::TRAIT_DEF:
-        $this->traits[] = $fqn;
+        $this->traits[] = new ScannedTrait(
+          shape('filename' => $this->file),
+          $fqn,
+          $this->attributes,
+        );
         break;
       default:
         invariant_violation(
