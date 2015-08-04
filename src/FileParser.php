@@ -21,11 +21,11 @@ class FileParser {
   private Vector<ScannedBasicClass> $classes = Vector { };
   private Vector<ScannedInterface> $interfaces = Vector { };
   private Vector<ScannedTrait> $traits = Vector { };
+  private Vector<ScannedConstant> $constants = Vector { };
 
   private Vector<string> $enums = Vector { };
   private Vector<string> $types = Vector { };
   private Vector<string> $newtypes = Vector { };
-  private Vector<ScannedConstant> $constants = Vector { };
 
   private function __construct(
     private string $file,
@@ -67,11 +67,22 @@ class FileParser {
   public function getFunctions(): \ConstVector<ScannedFunction> {
     return $this->functions;
   }
-  public function getEnums(): \ConstVector<string> { return $this->enums; }
-  public function getTypes(): \ConstVector<string> { return $this->types; }
-  public function getNewtypes(): \ConstVector<string> { return $this->newtypes; }
   public function getConstants(): \ConstVector<ScannedConstant> {
     return $this->constants;
+  }
+
+  ///// Need converting to new (Scanned*) API /////
+
+  public function getEnumNames(): \ConstVector<string> {
+    return $this->enums;
+  }
+
+  public function getTypeNames(): \ConstVector<string> {
+    return $this->types;
+  }
+
+  public function getNewtypeNames(): \ConstVector<string> {
+    return $this->newtypes;
   }
 
   ///// Convenience /////
