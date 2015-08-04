@@ -191,39 +191,11 @@ class FileParser {
    * 'define' has been consumed, that's it
    */
   private function consumeOldConstantDefinition(): void {
-    $tq = $this->tokenQueue;
-
-    $this->consumeWhitespace();
-    list($next, $_) = $tq->shift();
-    invariant(
-      $next === '(',
-      'Expected define to be followed by a paren in %s',
-      $this->file,
-    );
-    $this->consumeWhitespace();
-    list ($next, $next_type) = $tq->shift();
-    invariant(
-      $next_type === T_CONSTANT_ENCAPSED_STRING || $next_type === T_STRING,
-      'Expected arg to define() to be a T_CONSTANT_ENCAPSED_STRING or '.
-      'T_STRING, got %s in %s',
-      token_name($next_type),
-      $this->file,
-    );
-    $name = $next;
-    if ($next_type !== T_STRING) {
-      // 'CONST_NAME' or "CONST_NAME"
-      invariant(
-        $name[0] === $name[strlen($name) - 1],
-        'Mismatched quotes',
-      );
-      $name = substr($name, 1, strlen($name) - 2);
-    }
-    $this->constants[] = new ScannedConstant(
-      shape('filename' => $this->file),
-      $this->namespace.$name,
-      null,
-    );
-    $this->consumeStatement();
+    $this->constants[] = (new DefineConsumer($this->tokenQueue))
+      ->getBuilder()
+      ->setPosition(shape('filename' => $this->file))
+      ->setNamespace($this->namespace)
+      ->build();
   }
 
   private function consumeWhitespace(): void {
