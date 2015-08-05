@@ -19,6 +19,7 @@ abstract class ScannedClass extends ScannedBase {
     string $name,
     Map<string, Vector<mixed>> $attributes,
     ?string $docblock,
+    private \ConstVector<ScannedMethod> $methods,
   ) {
     parent::__construct($position, $name, $attributes, $docblock);
   }
@@ -29,5 +30,9 @@ abstract class ScannedClass extends ScannedBase {
 
   public function isTrait(): bool {
     return static::getType() === DefinitionType::TRAIT_DEF;
+  }
+
+  public function getMethods(): \ConstVector<ScannedMethod> {
+    return $this->methods;
   }
 }

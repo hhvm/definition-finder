@@ -22,6 +22,10 @@ abstract class ScannedBase {
 
   abstract public static function getType(): ?DefinitionType;
 
+  public function getPosition(): SourcePosition {
+    return $this->position;
+  }
+
   public function getDocComment(): ?string {
     return $this->docComment;
   }
