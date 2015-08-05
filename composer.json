@@ -15,6 +15,7 @@
       "src/"
     ],
     "files": [
+      "src/typedefs.php",
       "src/utils.php"
     ]
   }
