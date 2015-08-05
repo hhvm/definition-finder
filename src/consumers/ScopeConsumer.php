@@ -23,13 +23,23 @@ class ScopeConsumer extends Consumer {
 
     $tq = $this->tq;
     $parens_depth = 0;
-    while ($tq->haveTokens()) {
+    $scope_depth = 1;
+    while ($tq->haveTokens() && $scope_depth > 0) {
       list ($token, $ttype) = $tq->shift();
       if ($token === '(') {
         ++$parens_depth;
       }
       if ($token === ')') {
         --$parens_depth;
+      }
+
+      if ($token === '{' || $ttype == T_CURLY_OPEN) {
+        ++$scope_depth;
+        continue;
+      }
+      if ($token === '}') { // no such thing as T_CURLY_CLOSE
+        --$scope_depth;
+        continue;
       }
 
       if ($parens_depth !== 0 || $ttype === null) {

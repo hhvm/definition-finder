@@ -90,7 +90,7 @@ class ClassAttributesTest extends \PHPUnit_Framework_TestCase {
         return $scanned;
       }
     }
-    invariant_violation('Could not find scannned%s', $name);
+    invariant_violation('Could not find scanned %s', $name);
   }
 
   private function findClass(string $name): ScannedClass {

@@ -46,7 +46,7 @@ final class ClassConsumer extends Consumer {
     }
 
     $this->skipToBlock();
-    $this->consumeBlock();
-    return new ScannedClassBuilder($this->type, $name);
+    return (new ScannedClassBuilder($this->type, $name))
+      ->setContents((new ScopeConsumer($this->tq))->getBuilder());
   }
 }
