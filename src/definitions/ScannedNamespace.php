@@ -17,7 +17,12 @@ class ScannedNamespace extends ScannedBase {
     string $name,
     private ScannedScope $contents,
   ) {
-    parent::__construct($position, $name, /* attributes = */ Map { });
+    parent::__construct(
+      $position,
+      $name,
+      /* attributes = */ Map { },
+      /* docblock = */ null,
+    );
   }
 
   public static function getType(): ?DefinitionType {

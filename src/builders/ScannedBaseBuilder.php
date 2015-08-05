@@ -15,6 +15,7 @@ abstract class ScannedBaseBuilder {
   protected ?string $namespace;
   protected ?SourcePosition $position;
   protected ?Map<string, Vector<mixed>> $attributes;
+  protected ?string $docblock;
 
   public function __construct(protected string $name) {
   }
@@ -31,6 +32,11 @@ abstract class ScannedBaseBuilder {
 
   public function setPosition(SourcePosition $pos): this {
     $this->position = $pos;
+    return $this;
+  }
+
+  public function setDocComment(?string $docblock): this {
+    $this->docblock = $docblock;
     return $this;
   }
 

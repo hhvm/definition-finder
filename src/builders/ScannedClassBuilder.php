@@ -35,6 +35,7 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
       nullthrows($this->position),
       nullthrows($this->namespace).$this->name,
       nullthrows($this->attributes),
+      $this->docblock,
     );
   }
 

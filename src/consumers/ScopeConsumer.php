@@ -19,6 +19,7 @@ class ScopeConsumer extends Consumer {
   public function getBuilder(): ScannedScopeBuilder {
     $builder = (new ScannedScopeBuilder())->setNamespace('');
     $attrs = Map { };
+    $docblock = null;
 
     $tq = $this->tq;
     $parens_depth = 0;
@@ -44,13 +45,20 @@ class ScopeConsumer extends Consumer {
         continue;
       }
 
+      if ($ttype === T_DOC_COMMENT) {
+        $docblock = $token;
+        continue;
+      }
+
       if (DefinitionType::isValid($ttype)) {
         $this->consumeDefinition(
           $builder,
           DefinitionType::assert($ttype),
           $attrs,
+          $docblock,
         );
         $attrs = Map { };
+        $docblock = null;
         continue;
       }
 
@@ -68,6 +76,7 @@ class ScopeConsumer extends Consumer {
     ScannedScopeBuilder $builder,
     DefinitionType $def_type,
     AttributeMap $attrs,
+    ?string $docblock,
    ): void {
     $this->consumeWhitespace();
 
@@ -82,22 +91,31 @@ class ScopeConsumer extends Consumer {
           (new ClassConsumer(ClassDefinitionType::assert($def_type), $this->tq))
             ->getBuilder()
             ->setAttributes($attrs)
+            ->setDocComment($docblock)
         );
         return;
       case DefinitionType::FUNCTION_DEF:
         $fb = (new FunctionConsumer($this->tq))
           ->getBuilder();
         if ($fb) {
-          $builder->addFunction($fb->setAttributes($attrs) );
+          $builder->addFunction(
+            $fb
+              ->setAttributes($attrs)
+              ->setDocComment($docblock)
+          );
         }
         return;
       case DefinitionType::CONST_DEF:
-        $builder->addConstant((new ConstantConsumer($this->tq))->getBuilder());
+        $builder->addConstant(
+          (new ConstantConsumer($this->tq))
+          ->getBuilder()
+          ->setDocComment($docblock)
+        );
         return;
       case DefinitionType::TYPE_DEF:
       case DefinitionType::NEWTYPE_DEF:
       case DefinitionType::ENUM_DEF:
-        $this->consumeSimpleDefinition($builder, $def_type);
+        $this->consumeSimpleDefinition($builder, $def_type, $docblock);
         return;
     }
   }
@@ -160,6 +178,7 @@ class ScopeConsumer extends Consumer {
   private function consumeSimpleDefinition(
     ScannedScopeBuilder $builder,
     DefinitionType $def_type,
+    ?string $docblock,
   ): void {
     list($name, $ttype) = $this->tq->shift();
     invariant(
@@ -170,13 +189,19 @@ class ScopeConsumer extends Consumer {
     );
     switch ($def_type) {
       case DefinitionType::TYPE_DEF:
-        $builder->addType(new ScannedTypeBuilder($name));
+        $builder->addType(
+          (new ScannedTypeBuilder($name))->setDocComment($docblock)
+        );
         break;
       case DefinitionType::NEWTYPE_DEF:
-        $builder->addNewtype(new ScannedNewtypeBuilder($name));
+        $builder->addNewtype(
+          (new ScannedNewtypeBuilder($name))->setDocComment($docblock)
+        );
         break;
       case DefinitionType::ENUM_DEF:
-        $builder->addEnum(new ScannedEnumBuilder($name));
+        $builder->addEnum(
+          (new ScannedEnumBuilder($name))->setDocComment($docblock)
+        );
         $this->skipToBlock();
         $this->consumeBlock();
         return;

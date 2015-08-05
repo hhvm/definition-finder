@@ -18,8 +18,9 @@ abstract class ScannedClass extends ScannedBase {
     SourcePosition $position,
     string $name,
     Map<string, Vector<mixed>> $attributes,
+    ?string $docblock,
   ) {
-    parent::__construct($position, $name, $attributes);
+    parent::__construct($position, $name, $attributes, $docblock);
   }
 
   public function isInterface(): bool {

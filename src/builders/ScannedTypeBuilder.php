@@ -17,6 +17,7 @@ class ScannedTypeBuilder extends ScannedSingleTypeBuilder<ScannedType> {
       nullthrows($this->position),
       nullthrows($this->namespace).$this->name,
       /* attributes = */ Map { },
+      $this->docblock,
     );
   }
 }

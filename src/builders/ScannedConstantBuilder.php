@@ -24,6 +24,7 @@ class ScannedConstantBuilder extends ScannedSingleTypeBuilder<ScannedConstant> {
       nullthrows($this->position),
       nullthrows($this->namespace).$this->name,
       $this->value,
+      $this->docblock,
     );
   }
 }

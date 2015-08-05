@@ -16,10 +16,15 @@ abstract class ScannedBase {
     private SourcePosition $position,
     private string $name,
     private Map<string, Vector<mixed>> $attributes,
+    private ?string $docComment,
   ) {
   }
 
   abstract public static function getType(): ?DefinitionType;
+
+  public function getDocComment(): ?string {
+    return $this->docComment;
+  }
 
   public function getFileName(): string {
     return $this->position['filename'];
