@@ -11,5 +11,8 @@
 
 namespace Facebook\DefinitionFinder;
 
-final class ScannedFunction extends ScannedFunctionAbstract {
+abstract class ScannedFunctionAbstract extends ScannedBase {
+  public static function getType(): DefinitionType {
+    return DefinitionType::FUNCTION_DEF;
+  }
 }
