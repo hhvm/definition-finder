@@ -3,7 +3,7 @@
   "description": "Find definitions in PHP or Hack files. Useful for autoloaders.",
   "keywords": ["hack", "definitions", "hhvm", "autoload"],
   "homepage": "https://github.com/fredemmott/definitions-finder",
-  "license": ["MIT"],
+  "license": ["BSD-3-Clause"],
   "require": {
     "hhvm": "*"
   },
