@@ -155,7 +155,7 @@ class FunctionConsumer extends Consumer {
       }
       return new ScannedTypehint($type, $generics);
     }
-    invariant($type !== null, 'did not find a type');
+    invariant($type !== null, 'expected a type at line %d', $this->tq->getLine());
     return new ScannedTypehint($type, $generics);
   }
 

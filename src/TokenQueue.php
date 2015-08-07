@@ -15,16 +15,20 @@ namespace Facebook\DefinitionFinder;
 type TokenValue = string;
 type TokenType = ?int;
 type Token = (TokenValue, TokenType);
+type TokenWithLine = (Token, int);
 
 class TokenQueue {
-  private Vector<Token> $tokens = Vector {};
+  private Vector<TokenWithLine> $tokens = Vector {};
+  private int $line = 0;
 
   public function __construct(string $data) {
+    $line = 0;
     foreach (token_get_all($data) as $token) {
       if (is_array($token)) {
-        $this->tokens[] = tuple($token[1], $token[0]);
+        $line = $token[2];
+        $this->tokens[] = tuple(tuple($token[1], $token[0]), $line);
       } else {
-        $this->tokens[] = tuple($token, null);
+        $this->tokens[] = tuple(tuple($token, null), $line);
       }
     }
   }
@@ -39,11 +43,14 @@ class TokenQueue {
 
   public function shift(): Token {
     invariant($this->haveTokens(), 'tried to shift without tokens');
-    return array_shift($this->tokens);
+    list($token, $line) = array_shift($this->tokens);
+    $this->line = $line;
+    return $token;
   }
 
   public function unshift(TokenValue $v, TokenType $t): void {
-    array_unshift($this->tokens, tuple($v, $t));
+    $token = tuple($v, $t);
+    array_unshift($this->tokens, tuple($token, $this->line));
   }
 
   public function peek(): Token {
@@ -51,5 +58,9 @@ class TokenQueue {
     list($s, $ttype) = $t;
     $this->unshift($s, $ttype);
     return $t;
+  }
+
+  public function getLine(): int {
+    return $this->line;
   }
 }
