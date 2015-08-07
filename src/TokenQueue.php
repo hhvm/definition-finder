@@ -45,4 +45,11 @@ class TokenQueue {
   public function unshift(TokenValue $v, TokenType $t): void {
     array_unshift($this->tokens, tuple($v, $t));
   }
+
+  public function peek(): Token {
+    $t = $this->shift();
+    list($s, $ttype) = $t;
+    $this->unshift($s, $ttype);
+    return $t;
+  }
 }
