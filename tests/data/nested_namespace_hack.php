@@ -44,6 +44,14 @@ function constrained_generic_function<Tk as arraykey, Tv>(): void {
 
 function &byref_return_function() { }
 
+function returns_int(): int { return 123; }
+
+function returns_generic(): Vector<int> { return Vector { 123 }; }
+
+function returns_nested_generic(): Vector<Vector<int>> {
+  return Vector { Vector { 123 } };
+}
+
 const MY_CONST = 456;
 const int MY_TYPED_CONST = 123;
 define('MY_OLD_STYLE_CONST', 789);

@@ -18,6 +18,7 @@ abstract class ScannedFunctionAbstract extends ScannedBase {
     Map<string, Vector<mixed>> $attributes,
     ?string $docComment,
     private \ConstVector<ScannedGeneric> $generics,
+    private ?ScannedTypehint $returnType,
   ) {
     parent::__construct($position, $name, $attributes, $docComment);
   }
@@ -28,5 +29,9 @@ abstract class ScannedFunctionAbstract extends ScannedBase {
 
   public function getGenerics(): \ConstVector<ScannedGeneric> {
     return $this->generics;
+  }
+
+  public function getReturnType(): ?ScannedTypehint {
+    return $this->returnType;
   }
 }

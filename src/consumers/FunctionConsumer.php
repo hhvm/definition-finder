@@ -40,12 +40,23 @@ class FunctionConsumer extends Consumer {
     }
     $params = $this->consumeParameterList();
 
+    $this->consumeWhitespace();
+    list($t, $ttype) = $tq->peek();
+    $return_type = null;
+    if ($t === ':') {
+      $tq->shift();
+      $this->consumeWhitespace();
+      $return_type = $this->consumeType();
+    }
+
     return (new ScannedFunctionBuilder($name))
       ->setByRefReturn($by_ref_return)
-      ->setGenerics($generics);
+      ->setGenerics($generics)
+      ->setReturnType($return_type);
   }
 
-  private function consumeParameterList(): \ConstVector<(?string, string)> {
+  private function consumeParameterList(
+  ): \ConstVector<(?ScannedTypehint, string)> {
     $tq = $this->tq;
     list($t, $ttype) = $tq->shift();
     invariant($t === '(', 'expected parameter list, got %s', $t);
@@ -79,8 +90,10 @@ class FunctionConsumer extends Consumer {
     return $params;
   }
 
-  private function consumeType(): string {
-    $type = '';
+  private function consumeType(): ScannedTypehint {
+    $type = null;
+    $generics = Vector { };
+
     $nesting = 0;
     while ($this->tq->haveTokens()) {
       list($t, $ttype) = $this->tq->shift();
@@ -92,18 +105,47 @@ class FunctionConsumer extends Consumer {
         continue;
       }
 
-      $type .= $t;
-      if ($t === '{' || $ttype === T_TYPELIST_LT || $t === '(') {
+      // Handle functions
+      if ($t === '(') {
         ++$nesting;
+        continue;
       }
-      if ($t === '}' || $ttype === T_TYPELIST_GT || $t === ')') {
+      if ($t === ')') {
         --$nesting;
         if ($nesting === 0) {
           break;
         }
+        continue;
       }
+
+      if ($ttype !== T_STRING) {
+        continue;
+      }
+
+      $type = $t;
+
+      // consume generics and recurse
+      $this->consumeWhitespace();
+      list($t, $ttype) = $this->tq->peek();
+      if ($ttype === T_TYPELIST_LT) {
+        $this->tq->shift();
+        while ($this->tq->haveTokens()) {
+          $this->consumeWhitespace();
+          $generics[] = $this->consumeType();
+          $this->consumeWhitespace();
+
+          list($t, $ttype) = $this->tq->shift();
+          if ($ttype === T_TYPELIST_GT) {
+            break;
+          }
+          invariant($t === ',', 'expected > or , after generic type');
+        }
+        break;
+      }
+      return new ScannedTypehint($type, $generics);
     }
-    return $type;
+    invariant($type !== null, 'did not find a type');
+    return new ScannedTypehint($type, $generics);
   }
 
   private function consumeGenerics(): \ConstVector<ScannedGeneric> {

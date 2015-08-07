@@ -9,6 +9,9 @@
  *
  */
 
+use Facebook\DefinitionFinder\ScannedFunction;
+use Facebook\DefinitionFinder\ScannedTypehint;
+
 abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
   private ?Facebook\DefinitionFinder\FileParser $parser;
 
@@ -74,6 +77,9 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
         $this->getPrefix().'generic_function',
         $this->getPrefix().'constrained_generic_function',
         $this->getPrefix().'byref_return_function',
+        $this->getPrefix().'returns_int',
+        $this->getPrefix().'returns_generic',
+        $this->getPrefix().'returns_nested_generic',
       },
       $this->parser?->getFunctionNames(),
     );
@@ -94,34 +100,64 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testFunctionGenerics(): void {
-    $funcs = $this->parser?->getFunctions();
-
-    $func = $funcs?->filter(
-      $x ==> $x->getName() === $this->getPrefix().'generic_function'
-    )?->get(0);
+    $func = $this->getFunction('generic_function');
 
     $this->assertEquals(
       Vector {'Tk', 'Tv'},
-      $func?->getGenerics()?->map($x ==> $x->getName()),
+      $func->getGenerics()->map($x ==> $x->getName()),
     );
 
     $this->assertEquals(
       Vector {null, null},
-      $func?->getGenerics()?->map($x ==> $x->getConstraint()),
+      $func->getGenerics()->map($x ==> $x->getConstraint()),
     );
 
-    $func = $funcs?->filter(
-      $x ==> $x->getName() === $this->getPrefix().'constrained_generic_function'
-    )?->get(0);
+    $func = $this->getFunction('constrained_generic_function');
 
     $this->assertEquals(
       Vector {'Tk', 'Tv'},
-      $func?->getGenerics()?->map($x ==> $x->getName()),
+      $func->getGenerics()->map($x ==> $x->getName()),
     );
 
     $this->assertEquals(
       Vector {'arraykey', null},
-      $func?->getGenerics()?->map($x ==> $x->getConstraint()),
+      $func->getGenerics()->map($x ==> $x->getConstraint()),
     );
+  }
+
+  public function testFunctionReturnTypes(): void {
+    $type = $this->getFunction('returns_int')->getReturnType();
+    $this->assertSame('int', $type?->getTypehint());
+    $this->assertEmpty($type?->getGenerics());
+
+    $type = $this->getFunction('returns_generic')->getReturnType();
+    $this->assertSame('Vector', $type?->getTypehint());
+    $generics = $type?->getGenerics();
+    $this->assertSame(1, count($generics));
+    $sub_type = $generics?->get(0);
+    $this->assertSame('int', $sub_type?->getTypehint());
+    $this->assertEmpty($sub_type?->getGenerics());
+
+    $type = $this->getFunction('returns_nested_generic')->getReturnType();
+    $this->assertSame('Vector', $type?->getTypehint());
+    $generics = $type?->getGenerics();
+    $this->assertSame(1, count($generics));
+    $sub_type = $generics?->get(0);
+    $this->assertSame('Vector', $sub_type?->getTypehint());
+    $sub_generics = $sub_type?->getGenerics();
+    $this->assertSame(1, count($sub_generics));
+    $sub_sub_type = $sub_generics?->get(0);
+    $this->assertSame('int', $sub_sub_type?->getTypehint());
+    $this->assertEmpty($sub_sub_type?->getGenerics());
+  }
+
+  private function getFunction(string $name): ScannedFunction {
+    $funcs = $this->parser?->getFunctions();
+
+    $func = $funcs?->filter(
+      $x ==> $x->getName() === ($this->getPrefix().$name)
+    )?->get(0);
+    invariant($func !== null, 'Could not find function %s', $name);
+    return $func;
   }
 }
