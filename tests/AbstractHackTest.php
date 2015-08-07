@@ -72,6 +72,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
       Vector {
         $this->getPrefix().'simple_function',
         $this->getPrefix().'generic_function',
+        $this->getPrefix().'constrained_generic_function',
         $this->getPrefix().'byref_return_function',
       },
       $this->parser?->getFunctionNames(),

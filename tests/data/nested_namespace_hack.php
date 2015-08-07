@@ -39,6 +39,9 @@ function simple_function(): void {
 function generic_function<Tk, Tv>(): void {
 }
 
+function constrained_generic_function<Tk as arraykey, Tv>(): void {
+}
+
 function &byref_return_function() { }
 
 const MY_CONST = 456;
