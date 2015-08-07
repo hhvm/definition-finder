@@ -92,4 +92,36 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
       $this->parser?->getConstantNames(),
     );
   }
+
+  public function testFunctionGenerics(): void {
+    $funcs = $this->parser?->getFunctions();
+
+    $func = $funcs?->filter(
+      $x ==> $x->getName() === $this->getPrefix().'generic_function'
+    )?->get(0);
+
+    $this->assertEquals(
+      Vector {'Tk', 'Tv'},
+      $func?->getGenerics()?->map($x ==> $x->getName()),
+    );
+
+    $this->assertEquals(
+      Vector {null, null},
+      $func?->getGenerics()?->map($x ==> $x->getConstraint()),
+    );
+
+    $func = $funcs?->filter(
+      $x ==> $x->getName() === $this->getPrefix().'constrained_generic_function'
+    )?->get(0);
+
+    $this->assertEquals(
+      Vector {'Tk', 'Tv'},
+      $func?->getGenerics()?->map($x ==> $x->getName()),
+    );
+
+    $this->assertEquals(
+      Vector {'arraykey', null},
+      $func?->getGenerics()?->map($x ==> $x->getConstraint()),
+    );
+  }
 }

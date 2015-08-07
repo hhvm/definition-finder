@@ -15,10 +15,16 @@ final class ScannedFunctionBuilder
   extends ScannedSingleTypeBuilder<ScannedFunction> {
 
   private ?bool $byRefReturn;
+  private ?\ConstVector<ScannedGeneric> $generics = null;
 
 
   public function setByRefReturn(bool $v): this {
     $this->byRefReturn = $v;
+    return $this;
+  }
+
+  public function setGenerics(\ConstVector<ScannedGeneric> $generics): this {
+    $this->generics = $generics;
     return $this;
   }
 
@@ -28,6 +34,7 @@ final class ScannedFunctionBuilder
       nullthrows($this->namespace).$this->name,
       nullthrows($this->attributes),
       $this->docblock,
+      nullthrows($this->generics),
     );
   }
 }

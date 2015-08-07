@@ -34,14 +34,15 @@ class FunctionConsumer extends Consumer {
     $name = $t;
  
     list($_, $ttype) = $tq->peek();
-    $generics = null;
+    $generics = Vector { };
     if ($ttype === T_TYPELIST_LT) {
-      $generics = $this->consumeType();
+      $generics = $this->consumeGenerics();
     }
     $params = $this->consumeParameterList();
 
     return (new ScannedFunctionBuilder($name))
-      ->setByRefReturn($by_ref_return);
+      ->setByRefReturn($by_ref_return)
+      ->setGenerics($generics);
   }
 
   private function consumeParameterList(): \ConstVector<(?string, string)> {
@@ -51,7 +52,7 @@ class FunctionConsumer extends Consumer {
 
     $params = Vector { };
     $param_type = null;
-    while (true) {
+    while ($tq->haveTokens()) {
       list($t, $ttype) = $tq->shift();
 
       if ($t === ')') {
@@ -81,7 +82,7 @@ class FunctionConsumer extends Consumer {
   private function consumeType(): string {
     $type = '';
     $nesting = 0;
-    while (true) {
+    while ($this->tq->haveTokens()) {
       list($t, $ttype) = $this->tq->shift();
 
       if ($ttype === T_WHITESPACE) {
@@ -103,5 +104,57 @@ class FunctionConsumer extends Consumer {
       }
     }
     return $type;
+  }
+
+  private function consumeGenerics(): \ConstVector<ScannedGeneric> {
+    $tq = $this->tq;
+    list($t, $ttype) = $tq->shift();
+    invariant($ttype = T_TYPELIST_LT, 'Consuming generics, but not a typelist');
+
+    $ret = Vector { };
+
+    $name = null;
+    $constraint = null;
+
+    while ($tq->haveTokens()) {
+      list($t, $ttype) = $tq->shift();
+
+      invariant(
+        $ttype !== T_TYPELIST_LT,
+        "nested generic type",
+      );
+
+      if ($ttype === T_WHITESPACE) {
+        continue;
+      }
+
+      if ($ttype === T_TYPELIST_GT) {
+        if ($name !== null) {
+          $ret[] = new ScannedGeneric($name, $constraint);
+        }
+        return $ret;
+      }
+
+      if ($t === ',') {
+        $ret[] = new ScannedGeneric(nullthrows($name), $constraint);
+        $name = null;
+        $constraint = null;
+        continue;
+      }
+
+      if ($name === null) {
+        invariant($ttype === T_STRING, 'expected type variable name');
+        $name = $t;
+        continue;
+      }
+
+      if ($ttype === T_AS) {
+        continue;
+      }
+
+      invariant($ttype === T_STRING, 'expected type constraint');
+      $constraint = $t;
+    }
+    invariant_violation('never reached end of generics definition');
   }
 }
