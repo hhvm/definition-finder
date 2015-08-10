@@ -27,16 +27,12 @@ function foo(): (string, string);
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
-    $this->assertEquals(
-      [
-        'tuple',
-        [
-          ['string', []],
-          ['string', []],
-        ],
-      ],
-      $this->sthToArray($function->getReturnType()),
-    );
+    $type = $function->getReturnType();
+    $this->assertNotNull($type);
+    assert($type !== null);
+
+    $this->assertSame('tuple', $type->getTypeName());
+    $this->assertSame('(string,string)', $type->getTypeText());
   }
 
   public function testContainerOfTuples(): void {
@@ -50,22 +46,10 @@ function foo(): Vector<(string, string)>;
     $function = $parser->getFunction('foo');
 
     $return_type = $function->getReturnType();
+    assert($return_type !== null);
 
-    $this->assertEquals(
-      [
-        'Vector',
-        [
-          [
-            'tuple',
-            [
-              ['string', []],
-              ['string', []],
-            ],
-          ],
-        ],
-      ],
-      $this->sthToArray($function->getReturnType()),
-    );
+    $this->assertSame('Vector', $return_type->getTypeName());
+    $this->assertSame('Vector<(string,string)>', $return_type->getTypeText());
   }
 
   public function testTupleParameterType(): void {
@@ -83,8 +67,8 @@ function foo((string, string) $bar) {};
       $params->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      [['tuple', [['string', []], ['string', []]]]],
-      $params->map($x ==> $this->sthToArray($x->getTypehint()))->toArray(),
+      ['(string,string)'],
+      $params->map($x ==> $x->getTypehint()?->getTypeText()),
     );
   }
 

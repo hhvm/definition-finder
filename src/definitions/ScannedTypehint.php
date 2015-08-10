@@ -30,4 +30,19 @@ class ScannedTypehint {
   public function getGenericTypes(): \ConstVector<ScannedTypehint> {
     return $this->generics;
   }
+
+  public function getTypeText(): string {
+    $base = $this->getTypeName();
+    invariant(strpbrk($base, '<>') === false, 'generics in type text');
+    $generics = $this->getGenericTypes();
+    if ($generics) {
+      $sub = implode(',',$generics->map($g ==> $g->getTypeText()));
+      if ($base === 'tuple') {
+        return '('.$sub.')';
+      } else {
+        return $base.'<'.$sub.'>';
+      }
+    }
+    return $base;
+  }
 }
