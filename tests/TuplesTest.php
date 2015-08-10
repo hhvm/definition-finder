@@ -97,6 +97,6 @@ function foo((string, string) $bar) {};
       $x ==> $this->sthToArray($x),
     )->toArray();
 
-    return [$typehint->getTypehint(), $generics];
+    return [$typehint->getTypeName(), $generics];
   }
 }

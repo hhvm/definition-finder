@@ -127,27 +127,27 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
   public function testFunctionReturnTypes(): void {
     $type = $this->getFunction('returns_int')->getReturnType();
-    $this->assertSame('int', $type?->getTypehint());
+    $this->assertSame('int', $type?->getTypeName());
     $this->assertEmpty($type?->getGenerics());
 
     $type = $this->getFunction('returns_generic')->getReturnType();
-    $this->assertSame('Vector', $type?->getTypehint());
+    $this->assertSame('Vector', $type?->getTypeName());
     $generics = $type?->getGenerics();
     $this->assertSame(1, count($generics));
     $sub_type = $generics?->get(0);
-    $this->assertSame('int', $sub_type?->getTypehint());
+    $this->assertSame('int', $sub_type?->getTypeName());
     $this->assertEmpty($sub_type?->getGenerics());
 
     $type = $this->getFunction('returns_nested_generic')->getReturnType();
-    $this->assertSame('Vector', $type?->getTypehint());
+    $this->assertSame('Vector', $type?->getTypeName());
     $generics = $type?->getGenerics();
     $this->assertSame(1, count($generics));
     $sub_type = $generics?->get(0);
-    $this->assertSame('Vector', $sub_type?->getTypehint());
+    $this->assertSame('Vector', $sub_type?->getTypeName());
     $sub_generics = $sub_type?->getGenerics();
     $this->assertSame(1, count($sub_generics));
     $sub_sub_type = $sub_generics?->get(0);
-    $this->assertSame('int', $sub_sub_type?->getTypehint());
+    $this->assertSame('int', $sub_sub_type?->getTypeName());
     $this->assertEmpty($sub_sub_type?->getGenerics());
   }
 

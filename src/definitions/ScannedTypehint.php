@@ -14,13 +14,13 @@ namespace Facebook\DefinitionFinder;
 /** Represents a parameter, property, constant, or return type hint */
 class ScannedTypehint {
   public function __construct(
-    private string $typehint,
+    private string $typeName,
     private \ConstVector<ScannedTypehint> $generics,
   ) {
   }
 
-  public function getTypehint(): string {
-    return $this->typehint;
+  public function getTypeName(): string {
+    return $this->typeName;
   }
 
   public function isGeneric(): bool {
