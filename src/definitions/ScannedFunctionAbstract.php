@@ -19,6 +19,7 @@ abstract class ScannedFunctionAbstract extends ScannedBase {
     ?string $docComment,
     private \ConstVector<ScannedGeneric> $generics,
     private ?ScannedTypehint $returnType,
+    private \ConstVector<ScannedParameter> $parameters,
   ) {
     parent::__construct($position, $name, $attributes, $docComment);
   }
@@ -33,5 +34,9 @@ abstract class ScannedFunctionAbstract extends ScannedBase {
 
   public function getReturnType(): ?ScannedTypehint {
     return $this->returnType;
+  }
+
+  public function getParameters(): \ConstVector<ScannedParameter> {
+    return $this->parameters;
   }
 }

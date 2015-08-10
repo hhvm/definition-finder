@@ -32,36 +32,36 @@ class FunctionConsumer extends Consumer {
 
     invariant($ttype === T_STRING, 'Expected function name');
     $name = $t;
+
+    $builder = (new ScannedFunctionBuilder($name))
+      ->setByRefReturn($by_ref_return);
  
     list($_, $ttype) = $tq->peek();
     $generics = Vector { };
     if ($ttype === T_TYPELIST_LT) {
       $generics = $this->consumeGenerics();
     }
-    $params = $this->consumeParameterList();
+    $builder
+      ->setGenerics($generics)
+      ->setParameters($this->consumeParameterList());
 
     $this->consumeWhitespace();
     list($t, $ttype) = $tq->peek();
-    $return_type = null;
     if ($t === ':') {
       $tq->shift();
       $this->consumeWhitespace();
-      $return_type = $this->consumeType();
+      $builder->setReturnType($this->consumeType());
     }
-
-    return (new ScannedFunctionBuilder($name))
-      ->setByRefReturn($by_ref_return)
-      ->setGenerics($generics)
-      ->setReturnType($return_type);
+    return $builder;
   }
 
-  private function consumeParameterList(
-  ): \ConstVector<(?ScannedTypehint, string)> {
+  private function consumeParameterList(): \ConstVector<ScannedParameter> {
     $tq = $this->tq;
     list($t, $ttype) = $tq->shift();
     invariant($t === '(', 'expected parameter list, got %s', $t);
 
     $params = Vector { };
+
     $visibility = null;
     $param_type = null;
     while ($tq->haveTokens()) {
@@ -72,7 +72,7 @@ class FunctionConsumer extends Consumer {
       }
 
       if ($ttype === T_VARIABLE) {
-        $params[] = tuple($param_type, $t);
+        $params[] = new ScannedParameter($t, $param_type);
         $param_type = null;
         $visibility = null;
         continue;
