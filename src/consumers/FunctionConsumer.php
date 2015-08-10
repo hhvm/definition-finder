@@ -62,6 +62,7 @@ class FunctionConsumer extends Consumer {
     invariant($t === '(', 'expected parameter list, got %s', $t);
 
     $params = Vector { };
+    $visibility = null;
     $param_type = null;
     while ($tq->haveTokens()) {
       list($t, $ttype) = $tq->shift();
@@ -73,10 +74,20 @@ class FunctionConsumer extends Consumer {
       if ($ttype === T_VARIABLE) {
         $params[] = tuple($param_type, $t);
         $param_type = null;
+        $visibility = null;
         continue;
       }
 
       if ($ttype === T_WHITESPACE || $t === ',') {
+        continue;
+      }
+
+      if (
+        $ttype === T_PRIVATE
+        || $ttype === T_PUBLIC
+        || $ttype === T_PROTECTED
+      ) {
+        $visibility = $ttype;
         continue;
       }
       

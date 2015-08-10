@@ -104,4 +104,10 @@ class FileParser {
   public function getNewtypeNames(): \ConstVector<string> {
     return $this->getNewtypes()->map($x ==> $x->getName());
   }
+
+  public function getClass(string $name): ScannedClass {
+    $classes = $this->getClasses()->filter($x ==> $x->getName() === $name);
+    invariant(count($classes) === 1, 'no such class: %s', $name);
+    return $classes->at(0);
+  }
 }
