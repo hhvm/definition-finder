@@ -77,8 +77,15 @@ function foo((string, string) $bar) {};
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
-    // Test still at least checks they're not a parse error
-    $this->markTestIncomplete('Parameters not currently exposed to API');
+    $params = $function->getParameters();
+    $this->assertEquals(
+      Vector { '$bar' },
+      $params->map($x ==> $x->getName()),
+    );
+    $this->assertEquals(
+      [['tuple', [['string', []], ['string', []]]]],
+      $params->map($x ==> $this->sthToArray($x->getTypehint()))->toArray(),
+    );
   }
 
   private function sthToArray(?ScannedTypehint $typehint): ?array<mixed> {

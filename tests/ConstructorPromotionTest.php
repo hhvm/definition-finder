@@ -45,15 +45,16 @@ class Foo {
     $this->assertNotNull($constructor, 'did not find constructor');
     assert($constructor instanceof ScannedMethod);
 
-    $this->markTestIncomplete('Parameters can not be retrieved yet');
 
-/*
-    $params = $this->constructor->getParameters();
-    $this->assertSame(3, count($params));
-
-    $this->assertSame('foo', $params[0]->getName());
-    $this->assertSame('string', $params[0]->getType());
-*/
+    $params = $constructor->getParameters();
+    $this->assertEquals(
+      Vector { '$foo', '$bar', '$baz' },
+      $params->map($x ==> $x->getName()),
+    );
+    $this->assertEquals(
+      Vector { 'string', 'mixed', 'int' },
+      $params->map($x ==> $x->getTypehint()?->getTypehint()),
+    );
   }
 
   public function testClassProperties(): void {
