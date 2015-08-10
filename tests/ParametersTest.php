@@ -43,7 +43,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $this->assertSame('$bar', $param->getName());
     $typehint = $param->getTypehint();
     $this->assertSame('string', $typehint?->getTypeName());
-    $this->assertEmpty($typehint?->getGenerics());
+    $this->assertEmpty($typehint?->getGenericTypes());
   }
 
   public function testWithGenericType(): void {
@@ -60,11 +60,11 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $this->assertSame('Vector', $typehint?->getTypeName());
     $this->assertEquals(
       Vector { 'string' },
-      $typehint?->getGenerics()?->map($x ==> $x->getTypeName()),
+      $typehint?->getGenericTypes()?->map($x ==> $x->getTypeName()),
     );
     $this->assertEquals(
       Vector { Vector { } },
-      $typehint?->getGenerics()?->map($x ==> $x->getGenerics()),
+      $typehint?->getGenericTypes()?->map($x ==> $x->getGenericTypes()),
     );
   }
 }

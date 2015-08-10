@@ -104,51 +104,51 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       Vector {'Tk', 'Tv'},
-      $func->getGenerics()->map($x ==> $x->getName()),
+      $func->getGenericTypes()->map($x ==> $x->getName()),
     );
 
     $this->assertEquals(
       Vector {null, null},
-      $func->getGenerics()->map($x ==> $x->getConstraint()),
+      $func->getGenericTypes()->map($x ==> $x->getConstraint()),
     );
 
     $func = $this->getFunction('constrained_generic_function');
 
     $this->assertEquals(
       Vector {'Tk', 'Tv'},
-      $func->getGenerics()->map($x ==> $x->getName()),
+      $func->getGenericTypes()->map($x ==> $x->getName()),
     );
 
     $this->assertEquals(
       Vector {'arraykey', null},
-      $func->getGenerics()->map($x ==> $x->getConstraint()),
+      $func->getGenericTypes()->map($x ==> $x->getConstraint()),
     );
   }
 
   public function testFunctionReturnTypes(): void {
     $type = $this->getFunction('returns_int')->getReturnType();
     $this->assertSame('int', $type?->getTypeName());
-    $this->assertEmpty($type?->getGenerics());
+    $this->assertEmpty($type?->getGenericTypes());
 
     $type = $this->getFunction('returns_generic')->getReturnType();
     $this->assertSame('Vector', $type?->getTypeName());
-    $generics = $type?->getGenerics();
+    $generics = $type?->getGenericTypes();
     $this->assertSame(1, count($generics));
     $sub_type = $generics?->get(0);
     $this->assertSame('int', $sub_type?->getTypeName());
-    $this->assertEmpty($sub_type?->getGenerics());
+    $this->assertEmpty($sub_type?->getGenericTypes());
 
     $type = $this->getFunction('returns_nested_generic')->getReturnType();
     $this->assertSame('Vector', $type?->getTypeName());
-    $generics = $type?->getGenerics();
+    $generics = $type?->getGenericTypes();
     $this->assertSame(1, count($generics));
     $sub_type = $generics?->get(0);
     $this->assertSame('Vector', $sub_type?->getTypeName());
-    $sub_generics = $sub_type?->getGenerics();
+    $sub_generics = $sub_type?->getGenericTypes();
     $this->assertSame(1, count($sub_generics));
     $sub_sub_type = $sub_generics?->get(0);
     $this->assertSame('int', $sub_sub_type?->getTypeName());
-    $this->assertEmpty($sub_sub_type?->getGenerics());
+    $this->assertEmpty($sub_sub_type?->getGenericTypes());
   }
 
   private function getFunction(string $name): ScannedFunction {

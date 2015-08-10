@@ -27,7 +27,7 @@ class ScannedTypehint {
     return (bool) $this->generics;
   }
 
-  public function getGenerics(): \ConstVector<ScannedTypehint> {
+  public function getGenericTypes(): \ConstVector<ScannedTypehint> {
     return $this->generics;
   }
 }

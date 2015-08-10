@@ -28,7 +28,7 @@ abstract class ScannedFunctionAbstract extends ScannedBase {
     return DefinitionType::FUNCTION_DEF;
   }
 
-  public function getGenerics(): \ConstVector<ScannedGeneric> {
+  public function getGenericTypes(): \ConstVector<ScannedGeneric> {
     return $this->generics;
   }
 
