@@ -149,7 +149,11 @@ class FunctionConsumer extends Consumer {
           if ($ttype === T_TYPELIST_GT) {
             break;
           }
-          invariant($t === ',', 'expected > or , after generic type');
+          invariant(
+            $t === ',',
+            'expected > or , after generic type at line %d',
+            $this->tq->getLine(),
+          );
         }
         break;
       }
