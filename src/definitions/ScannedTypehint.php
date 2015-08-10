@@ -15,7 +15,7 @@ namespace Facebook\DefinitionFinder;
 class ScannedTypehint {
   public function __construct(
     private string $typehint,
-    private ?\ConstVector<ScannedTypehint> $generics,
+    private \ConstVector<ScannedTypehint> $generics,
   ) {
   }
 
@@ -24,10 +24,10 @@ class ScannedTypehint {
   }
 
   public function isGeneric(): bool {
-    return $this->generics !== null;
+    return (bool) $this->generics;
   }
 
-  public function getGenerics(): ?\ConstVector<ScannedTypehint> {
+  public function getGenerics(): \ConstVector<ScannedTypehint> {
     return $this->generics;
   }
 }

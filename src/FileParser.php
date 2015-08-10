@@ -110,4 +110,10 @@ class FileParser {
     invariant(count($classes) === 1, 'no such class: %s', $name);
     return $classes->at(0);
   }
+
+  public function getFunction(string $name): ScannedFunction{
+    $functiones = $this->getFunctions()->filter($x ==> $x->getName() === $name);
+    invariant(count($functiones) === 1, 'no such function: %s', $name);
+    return $functiones->at(0);
+  }
 }

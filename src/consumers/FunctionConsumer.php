@@ -118,8 +118,30 @@ class FunctionConsumer extends Consumer {
 
       // Handle functions
       if ($t === '(') {
-        ++$nesting;
-        continue;
+        $this->consumeWhitespace();
+        list($t, $ttype) = $this->tq->peek();
+        if ($ttype === T_FUNCTION) {
+          ++$nesting;
+          continue;
+        }
+
+        $type = 'tuple';
+        while ($this->tq->haveTokens()) {
+          $this->consumeWhitespace();
+          $generics[] = $this->consumeType();
+          $this->consumeWhitespace();
+
+          list($t, $_) = $this->tq->shift();
+          if ($t === ')') {
+            break;
+          }
+          invariant(
+            $t === ',',
+            'expected ) or , after tuple member at line %d',
+            $this->tq->getLine(),
+          );
+        }
+        break;
       }
       if ($t === ')') {
         --$nesting;
@@ -157,7 +179,7 @@ class FunctionConsumer extends Consumer {
         }
         break;
       }
-      return new ScannedTypehint($type, $generics);
+      break;
     }
     invariant($type !== null, 'expected a type at line %d', $this->tq->getLine());
     return new ScannedTypehint($type, $generics);
