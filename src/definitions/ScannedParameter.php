@@ -16,7 +16,11 @@ class ScannedParameter {
     private string $name,
     private ?ScannedTypehint $type,
     private bool $byref,
+    private bool $variadic,
   ) {
+    if ($variadic) {
+      invariant($type === null, 'variadics must be untyped');
+    }
   }
 
   public function getName(): string {
@@ -29,5 +33,9 @@ class ScannedParameter {
 
   public function isPassedByReference(): bool {
     return $this->byref;
+  }
+
+  public function isVariadic(): bool {
+    return $this->variadic;
   }
 }

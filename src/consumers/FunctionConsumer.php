@@ -101,7 +101,14 @@ class FunctionConsumer extends Consumer {
       if ($ttype === T_VARIABLE) {
         $this->consumeDefaultValue();
         $name = substr($t, 1); // remove '$'
-        $params[] = new ScannedParameter($name, $param_type, $byref);
+        if (!$variadic) {
+          invariant(
+            count($params->filter($param ==> $param->isVariadic())) === 0,
+            'non-variadic parameter after variadic at line %d',
+            $tq->getLine(),
+          );
+        }
+        $params[] = new ScannedParameter($name, $param_type, $byref, $variadic);
         $param_type = null;
         $visibility = null;
         $byref = false;

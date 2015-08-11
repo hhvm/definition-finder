@@ -210,16 +210,28 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testWithVariadicParam(): void {
-    $data = '<?hh function foo(...$bar) {}';
+    $data = '<?hh function foo(string $bar, ...$baz) {}';
 
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
+    $params = $function->getParameters();
 
     $this->assertEquals(
-      Vector { 'bar' },
-      $function->getParameters()->map($x ==> $x->getName()),
+      Vector { 'bar', 'baz' },
+      $params->map($x ==> $x->getName()),
     );
 
-    $this->markTestIncomplete('isVariadic() is not implemented');
+    $this->assertEquals(
+      Vector { false, true },
+      $params->map($x ==> $x->isVariadic()),
+    );
+
+    $this->assertEquals(
+      Vector {
+        new ScannedTypehint('string', Vector { }),
+        null,
+      },
+      $params->map($x ==> $x->getTypehint()),
+    );
   }
 }
