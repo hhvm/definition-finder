@@ -60,7 +60,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   /** Omitting public/protected/private is permitted in PHP */
   public function testDefaultMethodVisibility(): void {
-    $parser = FileParser::FromFile(__DIR__.'/data/php_method_visibility.php');
+    $parser = FileParser::FromFile(__DIR__.'/data/php_class_contents.php');
     $funcs = $parser->getClass('Foo')->getMethods();
 
     $this->assertEquals(
@@ -83,5 +83,46 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       $this->class?->getMethods()?->map($x ==> $x->isStatic()),
       'isPublic',
     );
+  }
+
+  public function testPropertyNames(): void {
+    $this->assertEquals(
+      Vector { 'foo', 'herp' },
+      $this->class?->getProperties()?->map($x ==> $x->getName()),
+    );
+  }
+
+  public function testPropertyVisibility(): void {
+    $this->assertEquals(
+      Vector { false, true },
+      $this->class?->getProperties()?->map($x ==> $x->isPublic()),
+    );
+  }
+
+  public function testPropertyTypes(): void {
+    $this->assertEquals(
+      Vector { 'bool', 'string' },
+      $this->class?->getProperties()?->map(
+        $x ==> $x->getTypehint()?->getTypeName()
+      ),
+    );
+  }
+
+  public function testTypelessProperty(): void {
+    $parser = FileParser::FromFile(__DIR__.'/data/php_class_contents.php');
+    $props = $parser->getClass('Foo')->getProperties();
+
+    $this->assertEquals(
+      Vector { 'untypedProperty' },
+      $props->map($x ==> $x->getName()),
+    );
+    $this->assertEquals(
+      Vector { null },
+      $props->map($x ==> $x->getTypehint()),
+    );
+  }
+
+  public function testStaticProperty(): void {
+    $this->markTestIncomplete();
   }
 }

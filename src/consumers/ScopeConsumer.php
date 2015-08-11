@@ -76,7 +76,42 @@ class ScopeConsumer extends Consumer {
       }
 
       if (VisibilityToken::isValid($ttype)) {
+        invariant(
+          $this->scopeType === ScopeType::CLASS_SCOPE,
+          "Don't understand public/private/protected outside of a class ".
+          "at line %d",
+          $tq->getLine(),
+        );
         $visibility = VisibilityToken::assert($ttype);
+
+        // Do we have a property?
+        $this->consumeWhitespace();
+        list($t, $ttype) = $tq->peek();
+        $property_type = null;
+        if ($ttype === T_STRING) {
+          $property_type = ((new TypehintConsumer($tq))->getTypehint());
+          $this->consumeWhitespace();
+        }
+        list($t, $ttype) = $tq->peek();
+        if ($ttype === T_VARIABLE) {
+          $tq->shift();
+          $name = substr($t, 1); // remove prefixed '$'
+          $builder->addProperty(
+            (new ScannedPropertyBuilder($name))
+            ->setAttributes($attrs)
+            ->setDocComment($docblock)
+            ->setVisibility($visibility)
+            ->setTypehint($property_type)
+          );
+
+          $attrs = Map { };
+          $docblock = null;
+          $visibility = null;
+          $static = false;
+
+          $this->consumeStatement();
+        }
+        continue;
       }
 
       if (DefinitionType::isValid($ttype)) {
