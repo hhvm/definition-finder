@@ -30,8 +30,13 @@ class FunctionConsumer extends Consumer {
       return null;
     }
 
+    /* Regex taken from http://php.net/manual/en/functions.user-defined.php
+     *
+     * Some things other than T_STRING are valid, eg 'function select() {}' has
+     * a T_SELECT
+     */
     invariant(
-      $ttype === T_STRING,
+      preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $t) === 1,
       'Expected function name at line %d',
       $tq->getLine(),
     );
