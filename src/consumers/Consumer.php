@@ -18,14 +18,14 @@ abstract class Consumer {
   }
 
   protected function consumeWhitespace(): void {
-    if ($this->tq->isEmpty()) {
-      return;
+    while (!$this->tq->isEmpty()) {
+      list($_, $ttype) = $this->tq->peek();
+      if ($ttype === T_WHITESPACE || $ttype === T_COMMENT) {
+        $this->tq->shift();
+        continue;
+      }
+      break;
     }
-    list($t, $ttype) = $this->tq->shift();
-    if ($ttype === T_WHITESPACE) {
-      return;
-    }
-    $this->tq->unshift($t, $ttype);
   }
 
   protected function consumeStatement(): void {

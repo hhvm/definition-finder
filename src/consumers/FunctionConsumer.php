@@ -97,7 +97,7 @@ class FunctionConsumer extends Consumer {
         continue;
       }
 
-      if ($ttype === T_WHITESPACE || $t === ',') {
+      if ($ttype === T_WHITESPACE || $t === ',' || $ttype === T_COMMENT) {
         continue;
       }
 

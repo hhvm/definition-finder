@@ -191,4 +191,15 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       $function->getParameters()->map($x ==> $x->getTypehint()),
     );
   }
+
+  public function testWithCommentedParam(): void {
+    $data = '<?hh function foo(/* foo */ $bar) {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+
+    $this->assertEquals(
+      Vector { '$bar' },
+      $function->getParameters()->map($x ==> $x->getName()),
+    );
+  }
 }
