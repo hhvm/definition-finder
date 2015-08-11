@@ -82,6 +82,7 @@ class FunctionConsumer extends Consumer {
       }
 
       if ($ttype === T_VARIABLE) {
+        $this->consumeDefaultValue();
         $params[] = new ScannedParameter($t, $param_type);
         $param_type = null;
         $visibility = null;
@@ -247,5 +248,44 @@ class FunctionConsumer extends Consumer {
       $constraint = $t;
     }
     invariant_violation('never reached end of generics definition');
+  }
+
+  private function consumeDefaultValue(): ?string {
+    $this->consumeWhitespace();
+    list($t, $_) = $this->tq->peek();
+    if ($t !== '=') {
+      return null;
+    }
+
+    $this->tq->shift();
+    $nesting = 0;
+    $default = '';
+    while($this->tq->haveTokens()) {
+      $this->consumeWhitespace();
+      list($t, $_) = $this->tq->peek();
+
+      if ($nesting === 0) {
+        if ($t === ',' || $t === ')') {
+          break;
+        }
+      }
+      $this->tq->shift();
+
+      $default .= $t;
+      if ($t === '(') {
+        $nesting++;
+        continue;
+      }
+
+      if ($t === ')') {
+        $nesting--;
+        if ($nesting === 0) {
+          break;
+        }
+        continue;
+      }
+    }
+
+    return $default;
   }
 }

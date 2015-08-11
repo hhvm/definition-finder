@@ -64,10 +64,6 @@ class ParameterVariantsTest extends \PHPUnit_Framework_TestCase {
     $this->markTestIncomplete("can't currently retrieve default values");
   }
 
-  /**
-   * @depends testParameterWithDefault
-   * @depends testTypedParameter
-   */
   public function testTypedParameterWithDefault(): void {
     $data = '<?hh function foo(string $bar = "baz") {}';
     $parser = FileParser::FromData($data);
