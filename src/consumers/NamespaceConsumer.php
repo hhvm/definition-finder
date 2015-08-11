@@ -35,7 +35,10 @@ class NamespaceConsumer extends Consumer {
     $ns = $parts ? (implode('\\', $parts).'\\') : '';
 
     $builder = (new ScannedNamespaceBuilder($ns))
-      ->setContents((new ScopeConsumer($this->tq))->getBuilder());
+      ->setContents(
+        (new ScopeConsumer($this->tq, ScopeType::NAMESPACE_SCOPE))
+          ->getBuilder()
+    );
     return $builder;
   }
 }

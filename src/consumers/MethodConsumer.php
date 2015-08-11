@@ -11,10 +11,10 @@
 
 namespace Facebook\DefinitionFinder;
 
-class FunctionConsumer extends FunctionAbstractConsumer<ScannedFunction> {
+class MethodConsumer extends FunctionAbstractConsumer<ScannedMethod> {
   protected static function ConstructBuilder(
     string $name,
-  ): ScannedFunctionBuilder {
-    return new ScannedFunctionBuilder($name);
+  ): ScannedMethodBuilder {
+    return new ScannedMethodBuilder($name);
   }
 }

@@ -1,4 +1,4 @@
-<?hh // strict
+<?php
 /*
  *  Copyright (c) 2015, Facebook, Inc.
  *  All rights reserved.
@@ -9,12 +9,8 @@
  *
  */
 
-namespace Facebook\DefinitionFinder;
-
-class FunctionConsumer extends FunctionAbstractConsumer<ScannedFunction> {
-  protected static function ConstructBuilder(
-    string $name,
-  ): ScannedFunctionBuilder {
-    return new ScannedFunctionBuilder($name);
-  }
+class Foo {
+  function defaultVisibility() {}
+  private function privateVisibility() {}
+  function alsoDefaultVisibility() {}
 }

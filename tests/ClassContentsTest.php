@@ -41,7 +41,40 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testMethodVisibility(): void {
-    $this->markTestIncomplete();
+    $this->assertEquals(
+      Vector {true, false, false, true},
+      $this->class?->getMethods()?->map($x ==> $x->isPublic()),
+      'isPublic',
+    );
+    $this->assertEquals(
+      Vector {false, true, false, false},
+      $this->class?->getMethods()?->map($x ==> $x->isProtected()),
+      'isProtected',
+    );
+    $this->assertEquals(
+      Vector {false, false, true, false},
+      $this->class?->getMethods()?->map($x ==> $x->isPrivate()),
+      'isPrivate',
+    );
+  }
+
+  /** Omitting public/protected/private is permitted in PHP */
+  public function testDefaultMethodVisibility(): void {
+    $parser = FileParser::FromFile(__DIR__.'/data/php_method_visibility.php');
+    $funcs = $parser->getClass('Foo')->getMethods();
+
+    $this->assertEquals(
+      Vector {
+        'defaultVisibility',
+        'privateVisibility',
+        'alsoDefaultVisibility',
+      },
+      $funcs->map($x ==> $x->getName()),
+    );
+    $this->assertEquals(
+      Vector { true, false, true },
+      $funcs->map($x ==> $x->isPublic()),
+    );
   }
   
   public function testMethodsAreStatic(): void {

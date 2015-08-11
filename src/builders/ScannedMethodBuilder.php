@@ -11,11 +11,13 @@
 
 namespace Facebook\DefinitionFinder;
 
-final class ScannedFunctionBuilder
-  extends ScannedFunctionAbstractBuilder<ScannedFunction> {
+final class ScannedMethodBuilder
+  extends ScannedFunctionAbstractBuilder<ScannedMethod> {
 
-  public function build(): ScannedFunction {
-    return new ScannedFunction(
+  protected ?VisibilityToken $visibility;
+
+  public function build(): ScannedMethod{
+    return new ScannedMethod(
       nullthrows($this->position),
       nullthrows($this->namespace).$this->name,
       nullthrows($this->attributes),
@@ -23,6 +25,12 @@ final class ScannedFunctionBuilder
       nullthrows($this->generics),
       $this->returnType,
       nullthrows($this->parameters),
+      nullthrows($this->visibility),
     );
+  }
+  
+  public function setVisibility(VisibilityToken $visibility): this {
+    $this->visibility = $visibility;
+    return $this;
   }
 }

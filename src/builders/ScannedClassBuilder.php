@@ -46,24 +46,12 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
       ->setNamespace('')
       ->build();
 
-    $methods = $scope->getFunctions()->map(
-      $f ==> new ScannedMethod(
-        $f->getPosition(),
-        $f->getName(),
-        $f->getAttributes(),
-        $f->getDocComment(),
-        $f->getGenericTypes(),
-        $f->getReturnType(),
-        $f->getParameters(),
-      )
-    );
-
     return /* UNSAFE_EXPR */ new $what(
       nullthrows($this->position),
       nullthrows($this->namespace).$this->name,
       nullthrows($this->attributes),
       $this->docblock,
-      $methods,
+      $scope->getMethods(),
     );
   }
 

@@ -19,3 +19,9 @@ type SourcePosition = shape(
 );
 
 type AttributeMap = Map<string, Vector<mixed>>;
+
+enum VisibilityToken: int {
+  T_PUBLIC = T_PUBLIC;
+  T_PRIVATE = T_PRIVATE;
+  T_PROTECTED = T_PROTECTED;
+}

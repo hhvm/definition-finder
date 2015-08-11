@@ -11,7 +11,20 @@
 
 namespace Facebook\DefinitionFinder;
 
+enum ScopeType: string {
+  FILE_SCOPE = 'file';
+  NAMESPACE_SCOPE = 'namespace';
+  CLASS_SCOPE = 'class';
+}
+
 class ScopeConsumer extends Consumer {
+  public function __construct(
+    TokenQueue $tq,
+    private ScopeType $scopeType,
+  ) {
+    parent::__construct($tq);
+  }
+
   public function getBuilder(): ScannedScopeBuilder {
     $builder = (new ScannedScopeBuilder())->setNamespace('');
     $attrs = Map { };
@@ -20,6 +33,7 @@ class ScopeConsumer extends Consumer {
     $tq = $this->tq;
     $parens_depth = 0;
     $scope_depth = 1;
+    $visibility = null;
     while ($tq->haveTokens() && $scope_depth > 0) {
       list ($token, $ttype) = $tq->shift();
       if ($token === '(') {
@@ -56,15 +70,21 @@ class ScopeConsumer extends Consumer {
         continue;
       }
 
+      if (VisibilityToken::isValid($ttype)) {
+        $visibility = VisibilityToken::assert($ttype);
+      }
+
       if (DefinitionType::isValid($ttype)) {
         $this->consumeDefinition(
           $builder,
           DefinitionType::assert($ttype),
           $attrs,
           $docblock,
+          $visibility,
         );
         $attrs = Map { };
         $docblock = null;
+        $visibility = null;
         continue;
       }
 
@@ -83,6 +103,7 @@ class ScopeConsumer extends Consumer {
     DefinitionType $def_type,
     AttributeMap $attrs,
     ?string $docblock,
+    ?VisibilityToken $visibility,
    ): void {
     $this->consumeWhitespace();
 
@@ -101,14 +122,31 @@ class ScopeConsumer extends Consumer {
         );
         return;
       case DefinitionType::FUNCTION_DEF:
-        $fb = (new FunctionConsumer($this->tq))
-          ->getBuilder();
-        if ($fb) {
-          $builder->addFunction(
-            $fb
-              ->setAttributes($attrs)
-              ->setDocComment($docblock)
+        if ($this->scopeType === ScopeType::CLASS_SCOPE) {
+          $fb = (new MethodConsumer($this->tq))->getBuilder();
+        } else {
+          $fb = (new FunctionConsumer($this->tq))->getBuilder();
+        }
+
+        if (!$fb) {
+          return;
+        }
+
+        $fb
+          ->setAttributes($attrs)
+          ->setDocComment($docblock);
+         if ($fb instanceof ScannedFunctionBuilder) {
+           $builder->addFunction($fb);
+         } else {
+          invariant(
+            $fb instanceof ScannedMethodBuilder,
+            'unknown function builder type: %s',
+            get_class($fb),
           );
+          if ($visibility === null) {
+            $visibility = VisibilityToken::T_PUBLIC;
+          }
+          $builder->addMethod($fb->setVisibility($visibility));
         }
         return;
       case DefinitionType::CONST_DEF:

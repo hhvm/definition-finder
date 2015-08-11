@@ -19,6 +19,7 @@ class ScannedScope extends ScannedBase {
     private \ConstVector<ScannedInterface> $interfaces,
     private \ConstVector<ScannedTrait> $traits,
     private \ConstVector<ScannedFunction> $functions,
+    private \ConstVector<ScannedMethod> $methods,
     private \ConstVector<ScannedConstant> $constants,
     private \ConstVector<ScannedEnum> $enums,
     private \ConstVector<ScannedType> $types,
@@ -50,6 +51,10 @@ class ScannedScope extends ScannedBase {
 
   public function getFunctions(): \ConstVector<ScannedFunction> {
     return $this->functions;
+  }
+
+  public function getMethods(): \ConstVector<ScannedMethod> {
+    return $this->methods;
   }
 
   public function getConstants(): \ConstVector<ScannedConstant> {

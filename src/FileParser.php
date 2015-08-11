@@ -18,7 +18,7 @@ class FileParser {
     private string $file,
     TokenQueue $tq,
   ) {
-    $this->defs = (new ScopeConsumer($tq))
+    $this->defs = (new ScopeConsumer($tq, ScopeType::FILE_SCOPE))
       ->getBuilder()
       ->setPosition(shape('filename' => $file))
       ->build();
