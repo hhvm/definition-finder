@@ -152,16 +152,19 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testWithByRefParam(): void {
-    $data = '<?hh function foo(&$bar) {}';
+    $data = '<?hh function foo(&$bar, $baz) {}';
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
     $this->assertEquals(
-      Vector { 'bar' },
-      $function->getParameters()->map($x ==> $x->getName()),
+      Vector { 'bar', 'baz' },
+      $params->map($x ==> $x->getName()),
     );
-    $this->markTestIncomplete('byref status not exposed');
+    $this->assertEquals(
+      Vector { true, false },
+      $params->map($x ==> $x->isPassedByReference()),
+    );
   }
 
   public function testWithTypedByRefParam(): void {
@@ -172,13 +175,16 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $params = $function->getParameters();
     $this->assertEquals(
       Vector { 'bar' },
-      $function->getParameters()->map($x ==> $x->getName()),
+      $params->map($x ==> $x->getName()),
     );
     $this->assertEquals(
       Vector { new ScannedTypehint('string', Vector { }) },
-      $function->getParameters()->map($x ==> $x->getTypehint()),
+      $params->map($x ==> $x->getTypehint()),
     );
-    $this->markTestIncomplete('byref status not exposed');
+    $this->assertEquals(
+      Vector { true },
+      $params->map($x ==> $x->isPassedByReference()),
+    );
   }
 
   public function testWithArrayParam(): void {

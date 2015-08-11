@@ -101,7 +101,7 @@ class FunctionConsumer extends Consumer {
       if ($ttype === T_VARIABLE) {
         $this->consumeDefaultValue();
         $name = substr($t, 1); // remove '$'
-        $params[] = new ScannedParameter($name, $param_type);
+        $params[] = new ScannedParameter($name, $param_type, $byref);
         $param_type = null;
         $visibility = null;
         $byref = false;

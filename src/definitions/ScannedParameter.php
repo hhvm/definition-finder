@@ -15,6 +15,7 @@ class ScannedParameter {
   public function __construct(
     private string $name,
     private ?ScannedTypehint $type,
+    private bool $byref,
   ) {
   }
 
@@ -24,5 +25,9 @@ class ScannedParameter {
 
   public function getTypehint(): ?ScannedTypehint {
     return $this->type;
+  }
+
+  public function isPassedByReference(): bool {
+    return $this->byref;
   }
 }
