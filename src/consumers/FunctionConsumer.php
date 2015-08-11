@@ -164,11 +164,28 @@ class FunctionConsumer extends Consumer {
         continue;
       }
 
-      if ($ttype !== T_STRING) {
+      if ($ttype !== T_STRING && $ttype !== T_NS_SEPARATOR) {
         continue;
       }
 
       $type = $t;
+      // Handle \foo
+      if ($ttype === T_NS_SEPARATOR) {
+        list($t, $_) = $this->tq->shift();
+        $type .= $t;
+      }
+
+      // Handle \foo\bar and foo\bar
+      while ($this->tq->haveTokens()) {
+        list($_, $ttype) = $this->tq->peek();
+        if ($ttype !== T_NS_SEPARATOR) {
+          break;
+        }
+        $this->tq->shift();
+        $type .= "\\";
+        list($t, $_) = $this->tq->shift();
+        $type .= $t;
+      }
 
       // consume generics and recurse
       $this->consumeWhitespace();

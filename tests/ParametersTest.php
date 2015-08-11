@@ -102,4 +102,36 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     );
     $this->markTestIncomplete("can't currently retrieve default values");
   }
+
+  public function testWithRootNamespacedType(): void {
+    $data = '<?hh function foo(\Iterator $bar) {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+
+    $params = $function->getParameters();
+    $this->assertEquals(
+      Vector { '$bar' },
+      $function->getParameters()->map($x ==> $x->getName()),
+    );
+    $this->assertEquals(
+      Vector { new ScannedTypehint('\Iterator', Vector { }) },
+      $function->getParameters()->map($x ==> $x->getTypehint()),
+    );
+  }
+
+  public function testWithNamespacedType(): void {
+    $data = '<?hh function foo(\Foo\Bar $bar) {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+
+    $params = $function->getParameters();
+    $this->assertEquals(
+      Vector { '$bar' },
+      $function->getParameters()->map($x ==> $x->getName()),
+    );
+    $this->assertEquals(
+      Vector { new ScannedTypehint('\Foo\Bar', Vector { }) },
+      $function->getParameters()->map($x ==> $x->getTypehint()),
+    );
+  }
 }
