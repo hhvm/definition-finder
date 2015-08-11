@@ -60,6 +60,7 @@ class FunctionConsumer extends Consumer {
   }
 
   private function consumeParameterList(): \ConstVector<ScannedParameter> {
+    $this->consumeWhitespace();
     $tq = $this->tq;
     list($t, $ttype) = $tq->shift();
     invariant(
