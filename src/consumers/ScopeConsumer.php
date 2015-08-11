@@ -46,7 +46,7 @@ class ScopeConsumer extends Consumer {
         $this->consumeNonCode();
       }
 
-      if ($ttype === T_SL) {
+      if ($ttype === T_SL && $scope_depth === 1 && $parens_depth === 0) {
         $attrs = $this->consumeUserAttributes();
         continue;
       }
