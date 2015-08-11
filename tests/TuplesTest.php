@@ -63,7 +63,7 @@ function foo((string, string) $bar) {};
 
     $params = $function->getParameters();
     $this->assertEquals(
-      Vector { '$bar' },
+      Vector { 'bar' },
       $params->map($x ==> $x->getName()),
     );
     $this->assertEquals(

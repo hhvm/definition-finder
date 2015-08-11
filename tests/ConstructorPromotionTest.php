@@ -48,7 +48,7 @@ class Foo {
 
     $params = $constructor->getParameters();
     $this->assertEquals(
-      Vector { '$foo', '$bar', '$baz' },
+      Vector { 'foo', 'bar', 'baz' },
       $params->map($x ==> $x->getName()),
     );
     $this->assertEquals(

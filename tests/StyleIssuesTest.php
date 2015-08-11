@@ -20,7 +20,7 @@ class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
-      Vector { '$bar' },
+      Vector { 'bar' },
       $fun->getParameters()->map($x ==> $x->getName()),
     );
   }
