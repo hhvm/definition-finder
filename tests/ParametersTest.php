@@ -180,4 +180,15 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     );
     $this->markTestIncomplete('byref status not exposed');
   }
+
+  public function testWithArrayParam(): void {
+    $data = '<?hh function foo(array $bar) {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+
+    $this->assertEquals(
+      Vector { new ScannedTypehint('array', Vector { }) },
+      $function->getParameters()->map($x ==> $x->getTypehint()),
+    );
+  }
 }

@@ -176,6 +176,7 @@ class FunctionConsumer extends Consumer {
         $ttype !== T_STRING
         && $ttype !== T_NS_SEPARATOR
         && $ttype !== T_CALLABLE
+        && $ttype !== T_ARRAY
       ) {
         continue;
       }
