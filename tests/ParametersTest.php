@@ -134,4 +134,20 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       $function->getParameters()->map($x ==> $x->getTypehint()),
     );
   }
+
+  public function testWithLegacyCallableType(): void {
+    $data = '<?hh function foo(callable $bar) {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+
+    $params = $function->getParameters();
+    $this->assertEquals(
+      Vector { '$bar' },
+      $function->getParameters()->map($x ==> $x->getName()),
+    );
+    $this->assertEquals(
+      Vector { new ScannedTypehint('callable', Vector { }) },
+      $function->getParameters()->map($x ==> $x->getTypehint()),
+    );
+  }
 }

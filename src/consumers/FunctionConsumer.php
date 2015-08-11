@@ -164,7 +164,11 @@ class FunctionConsumer extends Consumer {
         continue;
       }
 
-      if ($ttype !== T_STRING && $ttype !== T_NS_SEPARATOR) {
+      if (
+        $ttype !== T_STRING
+        && $ttype !== T_NS_SEPARATOR
+        && $ttype !== T_CALLABLE
+      ) {
         continue;
       }
 
