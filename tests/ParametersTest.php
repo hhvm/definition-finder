@@ -150,4 +150,34 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       $function->getParameters()->map($x ==> $x->getTypehint()),
     );
   }
+
+  public function testWithByRefParam(): void {
+    $data = '<?hh function foo(&$bar) {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+
+    $params = $function->getParameters();
+    $this->assertEquals(
+      Vector { '$bar' },
+      $function->getParameters()->map($x ==> $x->getName()),
+    );
+    $this->markTestIncomplete('byref status not exposed');
+  }
+
+  public function testWithTypedByRefParam(): void {
+    $data = '<?hh function foo(string &$bar) {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+
+    $params = $function->getParameters();
+    $this->assertEquals(
+      Vector { '$bar' },
+      $function->getParameters()->map($x ==> $x->getName()),
+    );
+    $this->assertEquals(
+      Vector { new ScannedTypehint('string', Vector { }) },
+      $function->getParameters()->map($x ==> $x->getTypehint()),
+    );
+    $this->markTestIncomplete('byref status not exposed');
+  }
 }

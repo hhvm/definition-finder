@@ -75,6 +75,7 @@ class FunctionConsumer extends Consumer {
 
     $visibility = null;
     $param_type = null;
+    $byref = false;
     while ($tq->haveTokens()) {
       list($t, $ttype) = $tq->shift();
 
@@ -82,11 +83,17 @@ class FunctionConsumer extends Consumer {
         break;
       }
 
+      if ($t === '&') {
+        $byref = true;
+        continue;
+      }
+
       if ($ttype === T_VARIABLE) {
         $this->consumeDefaultValue();
         $params[] = new ScannedParameter($t, $param_type);
         $param_type = null;
         $visibility = null;
+        $byref = false;
         continue;
       }
 
