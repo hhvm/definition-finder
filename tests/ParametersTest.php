@@ -14,11 +14,12 @@ namespace Facebook\DefinitionFinder\Test;
 use Facebook\DefinitionFinder\FileParser;
 use Facebook\DefinitionFinder\ScannedClass;
 use Facebook\DefinitionFinder\ScannedMethod;
+use Facebook\DefinitionFinder\ScannedTypehint;
 
 class ParameterTest extends \PHPUnit_Framework_TestCase {
   public function testWithoutTypes(): void {
     $data = '<?hh function foo($bar, $baz) {}';
-    
+
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
@@ -33,7 +34,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testWithSimpleType(): void {
     $data = '<?hh function foo(string $bar) {}';
-    
+
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
@@ -48,7 +49,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testWithGenericType(): void {
     $data = '<?hh function foo(Vector<string> $bar) {}';
-    
+
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
@@ -66,5 +67,39 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       Vector { Vector { } },
       $typehint?->getGenericTypes()?->map($x ==> $x->getGenericTypes()),
     );
+  }
+
+  public function testTestWithDefault(): void {
+    $data = '<?hh function foo($bar = "baz") {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+
+    $params = $function->getParameters();
+    $this->assertEquals(
+      Vector { '$bar' },
+      $function->getParameters()->map($x ==> $x->getName()),
+    );
+    $this->assertEquals(
+      Vector { null },
+      $function->getParameters()->map($x ==> $x->getTypehint()),
+    );
+    $this->markTestIncomplete("can't currently retrieve default values");
+  }
+
+  public function testWithTypeAndDefault(): void {
+    $data = '<?hh function foo(string $bar = "baz") {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+
+    $params = $function->getParameters();
+    $this->assertEquals(
+      Vector { '$bar' },
+      $function->getParameters()->map($x ==> $x->getName()),
+    );
+    $this->assertEquals(
+      Vector { new ScannedTypehint('string', Vector { }) },
+      $function->getParameters()->map($x ==> $x->getTypehint()),
+    );
+    $this->markTestIncomplete("can't currently retrieve default values");
   }
 }
