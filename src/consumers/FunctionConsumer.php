@@ -99,7 +99,7 @@ class FunctionConsumer extends Consumer {
       }
 
       if ($ttype === T_VARIABLE) {
-        $this->consumeDefaultValue();
+        $default = $this->consumeDefaultValue();
         $name = substr($t, 1); // remove '$'
         if (!$variadic) {
           invariant(
@@ -108,7 +108,13 @@ class FunctionConsumer extends Consumer {
             $tq->getLine(),
           );
         }
-        $params[] = new ScannedParameter($name, $param_type, $byref, $variadic);
+        $params[] = new ScannedParameter(
+          $name,
+          $param_type,
+          $byref,
+          $variadic,
+          $default,
+        );
         $param_type = null;
         $visibility = null;
         $byref = false;

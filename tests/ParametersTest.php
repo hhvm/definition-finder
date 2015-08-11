@@ -69,21 +69,30 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
-  public function testTestWithDefault(): void {
-    $data = '<?hh function foo($bar = "baz") {}';
+  public function testWithDefault(): void {
+    $data = '<?hh function foo($bar, $baz = "herp") {}';
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
     $this->assertEquals(
-      Vector { 'bar' },
-      $function->getParameters()->map($x ==> $x->getName()),
+      Vector { 'bar', 'baz' },
+      $params->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { null },
-      $function->getParameters()->map($x ==> $x->getTypehint()),
+      Vector { null, null },
+      $params->map($x ==> $x->getTypehint()),
     );
-    $this->markTestIncomplete("can't currently retrieve default values");
+    $this->assertEquals(
+      Vector { false, true },
+      $params->map($x ==> $x->isOptional()),
+    );
+    $this->assertEquals(
+      Vector { '"herp"' },
+      $params
+        ->filter($x ==> $x->isOptional() && $x->getName() === 'baz')
+        ->map($x ==> $x->getDefaultString()),
+    );
   }
 
   public function testWithTypeAndDefault(): void {
@@ -100,7 +109,10 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       Vector { new ScannedTypehint('string', Vector { }) },
       $function->getParameters()->map($x ==> $x->getTypehint()),
     );
-    $this->markTestIncomplete("can't currently retrieve default values");
+    $this->assertEquals(
+      Vector { '"baz"' },
+      $params->map($x ==> $x->getDefaultString()),
+    );
   }
 
   public function testWithRootNamespacedType(): void {
