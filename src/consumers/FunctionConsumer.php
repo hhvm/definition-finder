@@ -30,7 +30,11 @@ class FunctionConsumer extends Consumer {
       return null;
     }
 
-    invariant($ttype === T_STRING, 'Expected function name');
+    invariant(
+      $ttype === T_STRING,
+      'Expected function name at line %d',
+      $tq->getLine(),
+    );
     $name = $t;
 
     $builder = (new ScannedFunctionBuilder($name))
@@ -58,7 +62,13 @@ class FunctionConsumer extends Consumer {
   private function consumeParameterList(): \ConstVector<ScannedParameter> {
     $tq = $this->tq;
     list($t, $ttype) = $tq->shift();
-    invariant($t === '(', 'expected parameter list, got %s', $t);
+    invariant(
+      $t === '(',
+      'expected parameter list, got "%s" (%d) at line %d',
+      $t,
+      $ttype,
+      $this->tq->getLine(),
+    );
 
     $params = Vector { };
 
@@ -93,7 +103,9 @@ class FunctionConsumer extends Consumer {
       
       invariant(
         $param_type === null,
-        'found two things that look like typehints for the same parameter',
+        'found two things that look like typehints for the same parameter '.
+        'at line %d',
+        $tq->getLine(),
       );
       $tq->unshift($t, $ttype);
       $param_type = $this->consumeType();

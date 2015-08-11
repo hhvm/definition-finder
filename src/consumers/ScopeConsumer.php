@@ -145,7 +145,8 @@ class ScopeConsumer extends Consumer {
       // this attribute has values
       invariant(
         $t === '(',
-        'Expected attribute name to be followed by >>, (, or ,',
+        'Expected attribute name to be followed by >>, (, or , at line %d',
+        $this->tq->getLine(),
       );
 
       while (true) {
@@ -168,7 +169,11 @@ class ScopeConsumer extends Consumer {
         if ($t === ')') {
           break;
         }
-        invariant($t === ',', 'Expected attribute value to be followed by , or )');
+        invariant(
+          $t === ',',
+          'Expected attribute value to be followed by , or ) at line %d',
+          $this->tq->getLine(),
+        );
       }
       list($t, $ttype) = $this->tq->shift();
       if ($ttype === T_SR) {
