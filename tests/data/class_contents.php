@@ -12,5 +12,9 @@
 namespace Facebook\DefinitionFinder\Test;
 
 class ClassWithContents {
-  public function doFoo(): void {}
+  public function publicMethod(): void {}
+  protected function protectedMethod(): void {}
+  private function privateMethod(): void {}
+
+  public static function PublicStaticMethod(): void {}
 }

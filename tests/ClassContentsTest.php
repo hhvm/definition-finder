@@ -28,14 +28,23 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
-  public function testHasMethod(): void {
-    $this->assertNotEmpty($this->class?->getMethods());
+  public function testMethodNames(): void {
+    $this->assertEquals(
+      Vector {
+        'publicMethod',
+        'protectedMethod',
+        'privateMethod',
+        'PublicStaticMethod',
+      },
+      $this->class?->getMethods()?->map($x ==> $x->getName()),
+    );
   }
 
-  public function testMethodName(): void {
-    $this->assertSame(
-      'doFoo',
-      $this->class?->getMethods()?->get(0)?->getName(),
-    );
+  public function testMethodVisibility(): void {
+    $this->markTestIncomplete();
+  }
+  
+  public function testMethodsAreStatic(): void {
+    $this->markTestIncomplete();
   }
 }
