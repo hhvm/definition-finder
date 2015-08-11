@@ -67,7 +67,7 @@ function foo((string, string) $bar) {};
       $params->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      ['(string,string)'],
+      Vector {'(string,string)'},
       $params->map($x ==> $x->getTypehint()?->getTypeText()),
     );
   }
