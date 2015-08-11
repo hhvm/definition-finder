@@ -15,6 +15,7 @@ final class ScannedMethodBuilder
   extends ScannedFunctionAbstractBuilder<ScannedMethod> {
 
   protected ?VisibilityToken $visibility;
+  private ?bool $static;
 
   public function build(): ScannedMethod{
     return new ScannedMethod(
@@ -26,11 +27,17 @@ final class ScannedMethodBuilder
       $this->returnType,
       nullthrows($this->parameters),
       nullthrows($this->visibility),
+      nullthrows($this->static),
     );
   }
   
   public function setVisibility(VisibilityToken $visibility): this {
     $this->visibility = $visibility;
+    return $this;
+  }
+
+  public function setStatic(bool $static): this {
+    $this->static = $static;
     return $this;
   }
 }

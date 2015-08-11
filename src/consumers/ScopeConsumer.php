@@ -34,6 +34,7 @@ class ScopeConsumer extends Consumer {
     $parens_depth = 0;
     $scope_depth = 1;
     $visibility = null;
+    $static = false;
     while ($tq->haveTokens() && $scope_depth > 0) {
       list ($token, $ttype) = $tq->shift();
       if ($token === '(') {
@@ -70,6 +71,10 @@ class ScopeConsumer extends Consumer {
         continue;
       }
 
+      if ($ttype === T_STATIC) {
+        $static = true;
+      }
+
       if (VisibilityToken::isValid($ttype)) {
         $visibility = VisibilityToken::assert($ttype);
       }
@@ -81,10 +86,12 @@ class ScopeConsumer extends Consumer {
           $attrs,
           $docblock,
           $visibility,
+          $static,
         );
         $attrs = Map { };
         $docblock = null;
         $visibility = null;
+        $static = false;
         continue;
       }
 
@@ -104,6 +111,7 @@ class ScopeConsumer extends Consumer {
     AttributeMap $attrs,
     ?string $docblock,
     ?VisibilityToken $visibility,
+    bool $static,
    ): void {
     $this->consumeWhitespace();
 
@@ -146,7 +154,11 @@ class ScopeConsumer extends Consumer {
           if ($visibility === null) {
             $visibility = VisibilityToken::T_PUBLIC;
           }
-          $builder->addMethod($fb->setVisibility($visibility));
+          $builder->addMethod(
+            $fb
+            ->setVisibility($visibility)
+            ->setStatic($static)
+          );
         }
         return;
       case DefinitionType::CONST_DEF:
