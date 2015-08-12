@@ -88,6 +88,22 @@ class ClassAttributesTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
+  public function testParameterHasAttribute(): void {
+    $data = '<?hh function foo(<<Bar>> $baz) {}';
+    $parser = FileParser::FromData($data);
+    $fun = $parser->getFunction('foo');
+    $params = $fun->getParameters();
+    $this->assertEquals(
+      Vector { 'baz' },
+      $params->map($x ==> $x->getName()),
+    );
+
+    $this->assertEquals(
+      Vector { Map { 'Bar' => Vector { } } },
+      $params->map($x ==> $x->getAttributes()),
+    );
+  }
+
   private function findScanned<T as ScannedBase>(
     \ConstVector<T> $container,
     string $name, 
@@ -103,5 +119,4 @@ class ClassAttributesTest extends \PHPUnit_Framework_TestCase {
   private function findClass(string $name): ScannedClass {
     return $this->findScanned($this->classes, $name);
   }
-
 }

@@ -91,6 +91,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
     $param_type = null;
     $byref = false;
     $variadic = false;
+    $attrs = Map { };
     while ($tq->haveTokens()) {
       list($t, $ttype) = $tq->shift();
 
@@ -128,12 +129,13 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
           ->setIsVariadic($variadic)
           ->setDefaultString($default)
           ->setVisibility($visibility)
-          ->setAttributes(Map { })
+          ->setAttributes($attrs)
         );
         $param_type = null;
         $visibility = null;
         $byref = false;
         $variadic = false;
+        $attrs = Map { };
         continue;
       }
 
@@ -149,6 +151,11 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
           $tq->getLine(),
         );
         $visibility = VisibilityToken::assert($ttype);
+        continue;
+      }
+
+      if ($ttype === T_SL) {
+        $attrs = (new UserAttributesConsumer($this->tq))->getUserAttributes();
         continue;
       }
       
