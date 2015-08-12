@@ -246,4 +246,14 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       $params->map($x ==> $x->getTypehint()),
     );
   }
+
+  public function testWithHackCallableTypehint(): void {
+    $data = '<?hh function foo((function(int): string) $bar) {}';
+    $parser = FileParser::FromData($data);
+    $fun = $parser->getFunction('foo');
+    $this->assertEquals(
+      Vector { '(function(int):string)' },
+      $fun->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+    );
+  }
 }

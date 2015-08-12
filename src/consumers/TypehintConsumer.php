@@ -31,11 +31,19 @@ final class TypehintConsumer extends Consumer {
         continue;
       }
 
+      if ($nesting !== 0) {
+        $type .= $t;
+        if ($t === '(') {
+          ++$nesting;
+        }
+      }
+
       // Handle functions
-      if ($t === '(') {
+      if ($t === '(' && $nesting === 0) {
         $this->consumeWhitespace();
         list($t, $ttype) = $this->tq->peek();
         if ($ttype === T_FUNCTION) {
+          $type = '(';
           ++$nesting;
           continue;
         }
@@ -58,6 +66,7 @@ final class TypehintConsumer extends Consumer {
         }
         break;
       }
+
       if ($t === ')') {
         --$nesting;
         if ($nesting === 0) {
@@ -72,6 +81,10 @@ final class TypehintConsumer extends Consumer {
         && $ttype !== T_CALLABLE
         && $ttype !== T_ARRAY
       ) {
+        continue;
+      }
+
+      if ($nesting !== 0) {
         continue;
       }
 
