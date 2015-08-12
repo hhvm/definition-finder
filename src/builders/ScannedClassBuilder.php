@@ -77,6 +77,7 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
       $this->docblock,
       $methods,
       $properties,
+      $scope->getConstants(),
     );
   }
 

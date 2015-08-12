@@ -58,6 +58,41 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
+  public function testHackConstants(): void {
+    $constants = $this->class?->getConstants();
+    $this->assertEquals(
+      Vector { 'FOO' },
+      $constants?->map($x ==> $x->getName()),
+    );
+    $this->assertEquals(
+      Vector { 'string' },
+      $constants?->map($x ==> $x->getTypehint()?->getTypeName()),
+    );
+    $this->assertEquals(
+      Vector { '/** FooDoc */' },
+      $constants?->map($x ==> $x->getDocComment()),
+    );
+  }
+
+  public function testPHPConstants(): void {
+    $parser = FileParser::FromFile(__DIR__.'/data/php_class_contents.php');
+    $class = $parser->getClass('Foo');
+    $constants = $class->getConstants();
+
+    $this->assertEquals(
+      Vector { 'FOO' },
+      $constants->map($x ==> $x->getName()),
+    );
+    $this->assertEquals(
+      Vector { null },
+      $constants->map($x ==> $x->getTypehint()),
+    );
+    $this->assertEquals(
+      Vector { '/** FooDoc */' },
+      $constants->map($x ==> $x->getDocComment()),
+    );
+  }
+
   /** Omitting public/protected/private is permitted in PHP */
   public function testDefaultMethodVisibility(): void {
     $parser = FileParser::FromFile(__DIR__.'/data/php_class_contents.php');

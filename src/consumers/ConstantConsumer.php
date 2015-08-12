@@ -23,6 +23,7 @@ final class ConstantConsumer extends Consumer {
     $name = null;
     $value = null;
     $builder = null;
+    $typehint = null;
 
     while ($this->tq->haveTokens()) {
       list ($next, $next_type) = $this->tq->shift();
@@ -30,14 +31,26 @@ final class ConstantConsumer extends Consumer {
         continue;
       }
       if ($next_type === T_STRING) {
-        $name = $next;
-        continue;
+        $this->consumeWhitespace();
+        list($_, $nnt) = $this->tq->peek();
+        if ($nnt === T_STRING) {
+          $this->tq->unshift($next, $next_type);
+          $typehint = (new TypehintConsumer($this->tq))->getTypehint();
+          continue;
+        } else {
+          $name = $next;
+          continue;
+        }
       }
       if ($next === '=') {
         $builder = new ScannedConstantBuilder(
           nullthrows($name),
           $value,
+          $typehint,
         );
+        $name = null;
+        $value = null;
+        $typehint = null;
         break;
       }
     }

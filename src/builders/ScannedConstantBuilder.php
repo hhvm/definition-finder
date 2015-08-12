@@ -15,6 +15,7 @@ class ScannedConstantBuilder extends ScannedSingleTypeBuilder<ScannedConstant> {
   public function __construct(
     string $name,
     private mixed $value,
+    private ?ScannedTypehint $typehint,
   ) {
     parent::__construct($name);
   }
@@ -23,8 +24,9 @@ class ScannedConstantBuilder extends ScannedSingleTypeBuilder<ScannedConstant> {
     return new ScannedConstant(
       nullthrows($this->position),
       nullthrows($this->namespace).$this->name,
-      $this->value,
       $this->docblock,
+      $this->value,
+      $this->typehint,
     );
   }
 }

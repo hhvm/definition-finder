@@ -21,6 +21,7 @@ abstract class ScannedClass extends ScannedBase {
     ?string $docblock,
     private \ConstVector<ScannedMethod> $methods,
     private \ConstVector<ScannedProperty> $properties,
+    private \ConstVector<ScannedConstant> $constants,
   ) {
     parent::__construct($position, $name, $attributes, $docblock);
   }
@@ -39,5 +40,9 @@ abstract class ScannedClass extends ScannedBase {
 
   public function getProperties(): \ConstVector<ScannedProperty> {
     return $this->properties;
+  }
+
+  public function getConstants(): \ConstVector<ScannedConstant> {
+    return $this->constants;
   }
 }
