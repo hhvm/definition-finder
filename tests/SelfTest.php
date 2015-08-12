@@ -32,14 +32,27 @@ class SelfTest extends \PHPUnit_Framework_TestCase {
     $this->assertNotNull($parser);
   }
 
-  public function testSystemLib(): void {
-    $systemlib = '/tmp/systemlib.php';
-    file_put_contents($systemlib, $this->getSection('systemlib'));
-    $parser = FileParser::FromFile($systemlib);
+  public function elfSectionsProvider(): array<array<string>> {
+    return $this->getSectionList()
+      ->toVector()
+      ->map($x ==> [$x])
+      ->toArray();
   }
 
-  public function testExtensions(): void {
-    $this->markTestIncomplete('Fix systemlib first ^_^');
+  /**
+   * @dataProvider elfSectionsProvider
+   */
+  public function testELFSection(string $elf_section): void {
+    try {
+      $parser = FileParser::FromData($this->getSection($elf_section));
+    } catch (\Exception $e) {
+      file_put_contents(
+        '/tmp/'.$elf_section.'.php',
+        $this->getSection($elf_section),
+      );
+      throw $e;
+    }
+    $this->assertNotNull($parser);
   }
 
   <<__Memoize>>
