@@ -122,7 +122,48 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
-  public function testStaticProperty(): void {
-    $this->markTestIncomplete();
+  public function staticPropertyProvider(): array<array<mixed>> {
+    return [
+      ['default', '<?php class Foo { static $bar; }', null],
+      ['public static', '<?php class Foo { public static $bar; }', null],
+      ['static public', '<?php class Foo { static public $bar; }', null],
+      [
+        'public static string',
+        '<?hh class Foo { public static string $bar; }',
+        'string',
+      ],
+      [
+        'static public string',
+        '<?hh class Foo { static public string $bar; }',
+        'string',
+      ],
+    ];
+  }
+
+  /** @dataProvider staticPropertyProvider */
+  public function testStaticProperty(
+    string $_,
+    string $code,
+    ?string $type,
+  ): void {
+    $parser = FileParser::FromData($code);
+    $class = $parser->getClass('Foo');
+    $props = $class->getProperties();
+
+    $this->assertEquals(
+      Vector { 'bar' },
+      $props->map($x ==> $x->getName()),
+    );
+
+    $this->assertEquals(
+      Vector { $type },
+      $props->map($x ==> $x->getTypehint()?->getTypeName()),
+    );
+
+  
+    $this->assertEquals(
+      Vector { true },
+      $props->map($x ==> $x->isStatic()),
+    );
   }
 }

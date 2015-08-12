@@ -14,6 +14,7 @@ namespace Facebook\DefinitionFinder;
 class ScannedPropertyBuilder extends ScannedSingleTypeBuilder<ScannedProperty> {
   private ?ScannedTypehint $typehint;
   private ?VisibilityToken $visibility;
+  private ?bool $isStatic;
 
   public function setVisibility(VisibilityToken $visibility): this {
     $this->visibility = $visibility;
@@ -25,6 +26,11 @@ class ScannedPropertyBuilder extends ScannedSingleTypeBuilder<ScannedProperty> {
     return $this;
   }
 
+  public function setIsStatic(bool $static): this {
+    $this->isStatic = $static;
+    return $this;
+  }
+
   public function build(): ScannedProperty {
     return new ScannedProperty(
       nullthrows($this->position),
@@ -33,6 +39,7 @@ class ScannedPropertyBuilder extends ScannedSingleTypeBuilder<ScannedProperty> {
       $this->docblock,
       $this->typehint,
       nullthrows($this->visibility),
+      nullthrows($this->isStatic),
     );
   }
 }
