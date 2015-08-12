@@ -92,6 +92,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
     $byref = false;
     $variadic = false;
     $attrs = Map { };
+    $doc = null;
     while ($tq->haveTokens()) {
       list($t, $ttype) = $tq->shift();
 
@@ -130,12 +131,14 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
           ->setDefaultString($default)
           ->setVisibility($visibility)
           ->setAttributes($attrs)
+          ->setDocComment($doc)
         );
         $param_type = null;
         $visibility = null;
         $byref = false;
         $variadic = false;
         $attrs = Map { };
+        $doc = null;
         continue;
       }
 
@@ -156,6 +159,11 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
 
       if ($ttype === T_SL) {
         $attrs = (new UserAttributesConsumer($this->tq))->getUserAttributes();
+        continue;
+      }
+
+      if ($ttype === T_DOC_COMMENT) {
+        $doc = $t;
         continue;
       }
       
