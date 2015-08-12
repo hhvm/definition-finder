@@ -44,4 +44,14 @@ class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
       $fun->getAttributes()->keys(),
     );
   }
+
+  public function testWhitespaceBetweenAttributesWithValue(): void {
+    $data = '<?hh <<Herp("herpderp"), Derp>> function foo() {}';
+    $parser = FileParser::FromData($data);
+    $fun = $parser->getFunction('foo');
+    $this->assertEquals(
+      Map { 'Herp' => Vector { 'herpderp' }, 'Derp' => Vector {} },
+      $fun->getAttributes(),
+    );
+  }
 }

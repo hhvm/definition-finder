@@ -33,13 +33,15 @@ final class UserAttributesConsumer extends Consumer {
       invariant(
         $t === '(',
         "Expected attribute name to be followed by >>, (, or , at line %d; ".
-        "- got '%s' (%d)",
+        "got '%s' (%d) for attr '%s'",
         $this->tq->getLine(),
         $t,
         $ttype,
+        $name,
       );
 
-      while (true) {
+      // Possibly multiple values
+      while ($this->tq->haveTokens()) {
         list($value, $ttype) = $this->tq->shift();
         switch ((int) $ttype) {
           case T_CONSTANT_ENCAPSED_STRING:
@@ -66,6 +68,7 @@ final class UserAttributesConsumer extends Consumer {
           $this->tq->getLine(),
         );
       }
+
       list($t, $ttype) = $this->tq->shift();
       if ($ttype === T_SR) {
         return $attrs;
@@ -75,6 +78,7 @@ final class UserAttributesConsumer extends Consumer {
         'Expected attribute value list to be followed by >> or , at line %d',
         $this->tq->getLine(),
       );
+      $this->consumeWhitespace();
     }
     invariant_violation(
       'attribute list did not end at line %d',
