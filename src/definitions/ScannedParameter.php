@@ -11,22 +11,26 @@
 
 namespace Facebook\DefinitionFinder;
 
-class ScannedParameter {
+class ScannedParameter extends ScannedBase {
   public function __construct(
-    private string $name,
+    SourcePosition $position,
+    string $name,
+    Map<string, Vector<mixed>> $attributes,
+    ?string $docComment,
     private ?ScannedTypehint $type,
     private bool $byref,
     private bool $variadic,
     private ?string $defaultString,
     private ?VisibilityToken $visibility,
   ) {
+    parent::__construct($position, $name, $attributes, $docComment);
     if ($variadic) {
       invariant($type === null, 'variadics must be untyped');
     }
   }
 
-  public function getName(): string {
-    return $this->name;
+  public static function getType(): ?DefinitionType {
+    return null;
   }
 
   public function getTypehint(): ?ScannedTypehint {

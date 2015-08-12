@@ -56,10 +56,10 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
             // Not using the builder as we should have all the data up front,
             // and I want the typechecker to notice if we're missing something
             $properties[] = new ScannedProperty(
-              nullthrows($this->position),
+              $param->getPosition(),
               $param->getName(),
-              /* attributes = */ Map { },
-              /* doc comment = */ null,
+              $param->getAttributes(),
+              $param->getDocComment(),
               $param->getTypehint(),
               $param->__getVisibility(),
               /* is static = */ false,
