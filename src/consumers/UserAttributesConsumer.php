@@ -25,6 +25,7 @@ final class UserAttributesConsumer extends Consumer {
         return $attrs;
       }
       if ($t === ',') { // there's another
+        $this->consumeWhitespace();
         continue;
       }
 
