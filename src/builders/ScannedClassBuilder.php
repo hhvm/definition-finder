@@ -46,13 +46,37 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
       ->setNamespace('')
       ->build();
 
+    $methods = $scope->getMethods();
+    $properties = new Vector($scope->getProperties());
+
+    foreach ($methods as $method) {
+      if ($method->getName() === '__construct') {
+        foreach ($method->getParameters() as $param) {
+          if ($param->__isPromoted()) {
+            // Not using the builder as we should have all the data up front,
+            // and I want the typechecker to notice if we're missing something
+            $properties[] = new ScannedProperty(
+              nullthrows($this->position),
+              $param->getName(),
+              /* attributes = */ Map { },
+              /* doc comment = */ null,
+              $param->getTypehint(),
+              $param->__getVisibility(),
+              /* is static = */ false,
+            );
+          }
+        }
+        break;
+      }
+    }
+
     return /* UNSAFE_EXPR */ new $what(
       nullthrows($this->position),
       nullthrows($this->namespace).$this->name,
       nullthrows($this->attributes),
       $this->docblock,
-      $scope->getMethods(),
-      $scope->getProperties(),
+      $methods,
+      $properties,
     );
   }
 

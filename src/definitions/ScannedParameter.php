@@ -18,6 +18,7 @@ class ScannedParameter {
     private bool $byref,
     private bool $variadic,
     private ?string $defaultString,
+    private ?VisibilityToken $visibility,
   ) {
     if ($variadic) {
       invariant($type === null, 'variadics must be untyped');
@@ -50,5 +51,18 @@ class ScannedParameter {
       'trying to retrieve default for non-optional param',
     );
     return nullthrows($this->defaultString);
+  }
+
+  public function __isPromoted(): bool {
+    return $this->visibility !== null;
+  }
+
+  public function __getVisibility(): VisibilityToken {
+    $v = $this->visibility;
+    invariant(
+      $v !== null,
+      'Tried to get visibility for a non-promoted parameter',
+    );
+    return $v;
   }
 }

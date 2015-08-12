@@ -58,6 +58,23 @@ class Foo {
   }
 
   public function testClassProperties(): void {
-    $this->markTestIncomplete('Members can not be retrieved yet');
+    $props = $this->class?->getProperties();
+
+    $this->assertEquals(
+      Vector { 'foo', 'bar', 'baz' },
+      $props?->map($x ==> $x->getName()),
+    );
+
+    $this->assertEquals(
+      Vector { true, false, false },
+      $props?->map($x ==> $x->isPublic()),
+    );
+
+    $this->assertEquals(
+      Vector { 'string', 'mixed', 'int' },
+      $props?->map($x ==> $x->getTypehint()?->getTypeName()),
+    );
+
+    $this->markTestIncomplete('attributes, doc comment');
   }
 }
