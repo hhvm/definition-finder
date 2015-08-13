@@ -99,6 +99,21 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
     );
   }
 
+  public function testClassGenerics(): void {
+    $class = $this->parser?->getClass($this->getPrefix().'GenericClass');
+    assert($class !== null);
+
+    $this->assertEquals(
+      Vector {'Tk', 'Tv'},
+      $class->getGenericTypes()->map($x ==> $x->getName()),
+    );
+
+    $this->assertEquals(
+      Vector {null, null},
+      $class->getGenericTypes()->map($x ==> $x->getConstraint()),
+    );
+  }
+
   public function testFunctionGenerics(): void {
     $func = $this->getFunction('generic_function');
 
@@ -152,11 +167,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
   }
 
   private function getFunction(string $name): ScannedFunction {
-    $funcs = $this->parser?->getFunctions();
-
-    $func = $funcs?->filter(
-      $x ==> $x->getName() === ($this->getPrefix().$name)
-    )?->get(0);
+    $func = $this->parser?->getFunction($this->getPrefix().$name);
     invariant($func !== null, 'Could not find function %s', $name);
     return $func;
   }

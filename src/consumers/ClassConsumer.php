@@ -45,11 +45,18 @@ final class ClassConsumer extends Consumer {
       $name = 'xhp_'.str_replace(':', '__', substr($v, 1));
     }
 
+    list($_, $ttype) = $this->tq->peek();
+    $generics = Vector { };
+    if ($ttype == T_TYPELIST_LT) {
+      $generics = (new GenericsConsumer($this->tq))->getGenerics();
+    }
+
     $this->skipToBlock();
     return (new ScannedClassBuilder($this->type, $name))
       ->setContents(
         (new ScopeConsumer($this->tq, ScopeType::CLASS_SCOPE))
-          ->getBuilder()
-    );
+        ->getBuilder()
+      )
+      ->setGenericTypes($generics);
   }
 }

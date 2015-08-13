@@ -13,6 +13,14 @@ namespace Facebook\DefinitionFinder;
 
 final class ScannedClassBuilder extends ScannedBaseBuilder {
   private ?ScannedScopeBuilder $scopeBuilder;
+  protected ?\ConstVector<ScannedGeneric> $generics = null;
+
+  public function setGenericTypes(
+    \ConstVector<ScannedGeneric> $generics,
+  ): this {
+    $this->generics = $generics;
+    return $this;
+  }
 
   public function __construct(
     private ClassDefinitionType $type,
@@ -78,6 +86,7 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
       $methods,
       $properties,
       $scope->getConstants(),
+      nullthrows($this->generics),
     );
   }
 
