@@ -10,7 +10,9 @@
  */
 namespace Facebook\DefinitionFinder;
 
-abstract class ScannedFunctionAbstract extends ScannedBase {
+abstract class ScannedFunctionAbstract
+  extends ScannedBase
+  implements HasScannedGenerics {
   public function __construct(
     SourcePosition $position,
     string $name,
