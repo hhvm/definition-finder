@@ -47,14 +47,15 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testConstrainedGenerics(): void {
-    $data = '<?hh class Foo<Tk as Bar> {}';
+    $data = '<?hh class Foo<T1 as Bar, T2 super Baz> {}';
     $parser = FileParser::FromData($data);
     $class = $parser->getClass('Foo');
 
     $this->assertEquals(
-      Vector { 'Bar' },
+      Vector { 'Bar', 'Baz' },
       $class->getGenericTypes()->map($x ==> $x->getConstraint()),
     );
+    $this->markTestIncomplete('check for subtype or supertype');
   }
 
   public function testVariance(): void {

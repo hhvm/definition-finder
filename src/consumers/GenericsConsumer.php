@@ -11,6 +11,8 @@
 
 namespace Facebook\DefinitionFinder;
 
+const int T_SUPER = 436;
+
 class GenericsConsumer extends Consumer {
   public function getGenerics(): \ConstVector<ScannedGeneric> {
     $tq = $this->tq;
@@ -69,7 +71,7 @@ class GenericsConsumer extends Consumer {
         continue;
       }
 
-      if ($ttype === T_AS) {
+      if ($ttype === T_AS || $ttype === T_SUPER) {
         continue;
       }
 
