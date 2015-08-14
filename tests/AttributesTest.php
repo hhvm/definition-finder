@@ -16,7 +16,7 @@ use Facebook\DefinitionFinder\ScannedBase;
 use Facebook\DefinitionFinder\ScannedClass;
 use Facebook\DefinitionFinder\ScannedFunction;
 
-class ClassAttributesTest extends \PHPUnit_Framework_TestCase {
+class AttributesTest extends \PHPUnit_Framework_TestCase {
   private \ConstVector<ScannedClass> $classes = Vector {};
   private \ConstVector<ScannedFunction> $functions = Vector {};
 
@@ -101,6 +101,16 @@ class ClassAttributesTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(
       Vector { Map { 'Bar' => Vector { } } },
       $params->map($x ==> $x->getAttributes()),
+    );
+  }
+
+  public function testConcatenatedValues(): void {
+    $data = "<?hh <<__Deprecated('herp'.'derp')>> function foo(){}";
+    $parser = FileParser::FromData($data);
+    $fun = $parser->getFunction('foo');
+    $this->assertEquals(
+      Map { '__Deprecated' => Vector { 'herpderp' } },
+      $fun->getAttributes(),
     );
   }
 

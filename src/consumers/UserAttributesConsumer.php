@@ -41,14 +41,19 @@ final class UserAttributesConsumer extends Consumer {
       );
 
       // Possibly multiple values
+      $attr_value = null;
       while ($this->tq->haveTokens()) {
         list($value, $ttype) = $this->tq->shift();
         switch ((int) $ttype) {
           case T_CONSTANT_ENCAPSED_STRING:
-            $value = substr($value, 1, -1);
+            $attr_value .= substr($value, 1, -1);
             break;
           case T_LNUMBER:
-            $value = (int) $value;
+            if ($attr_value === null) {
+              $attr_value = (int) $value;
+            } else {
+              $attr_value .= $value;
+            }
             break;
           default:
             invariant_violation(
@@ -57,11 +62,18 @@ final class UserAttributesConsumer extends Consumer {
               $ttype
             );
         }
-        $attrs[$name][] = $value;
         list($t, $_) = $this->tq->shift();
+        if ($t === '.') {
+          continue;
+        }
+
+        $attrs[$name][] = $attr_value;
+        $attr_value = null;
+
         if ($t === ')') {
           break;
         }
+
         invariant(
           $t === ',',
           'Expected attribute value to be followed by , or ) at line %d',
