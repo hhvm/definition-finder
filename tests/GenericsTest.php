@@ -12,6 +12,7 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use Facebook\DefinitionFinder\FileParser;
+use Facebook\DefinitionFinder\RelationshipToken;
 
 class GenericsTest extends \PHPUnit_Framework_TestCase {
   public function testClassHasGenerics(): void {
@@ -26,7 +27,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       Vector { null, null },
-      $class->getGenericTypes()->map($x ==> $x->getConstraint()),
+      $class->getGenericTypes()->map($x ==> $x->getConstraintTypeName()),
     );
   }
 
@@ -42,7 +43,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       Vector { null, null },
-      $function->getGenericTypes()->map($x ==> $x->getConstraint()),
+      $function->getGenericTypes()->map($x ==> $x->getConstraintTypeName()),
     );
   }
 
@@ -53,9 +54,12 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       Vector { 'Bar', 'Baz' },
-      $class->getGenericTypes()->map($x ==> $x->getConstraint()),
+      $class->getGenericTypes()->map($x ==> $x->getConstraintTypeName()),
     );
-    $this->markTestIncomplete('check for subtype or supertype');
+    $this->assertEquals(
+      Vector { RelationshipToken::SUBTYPE, RelationshipToken::SUPERTYPE },
+      $class->getGenericTypes()->map($x ==> $x->getConstraintRelationship()),
+    );
   }
 
   public function testVariance(): void {

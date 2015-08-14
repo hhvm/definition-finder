@@ -110,7 +110,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       Vector {null, null},
-      $class->getGenericTypes()->map($x ==> $x->getConstraint()),
+      $class->getGenericTypes()->map($x ==> $x->getConstraintTypeName()),
     );
   }
 
@@ -124,7 +124,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       Vector {null, null},
-      $func->getGenericTypes()->map($x ==> $x->getConstraint()),
+      $func->getGenericTypes()->map($x ==> $x->getConstraintTypeName()),
     );
 
     $func = $this->getFunction('constrained_generic_function');
@@ -136,7 +136,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       Vector {'arraykey', null},
-      $func->getGenericTypes()->map($x ==> $x->getConstraint()),
+      $func->getGenericTypes()->map($x ==> $x->getConstraintTypeName()),
     );
   }
 

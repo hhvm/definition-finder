@@ -16,6 +16,7 @@ class ScannedGeneric {
     private string $name,
     private ?string $constraint,
     private VarianceToken $variance,
+    private ?RelationshipToken $relationship,
   ) {
   }
 
@@ -23,8 +24,12 @@ class ScannedGeneric {
     return $this->name;
   }
 
-  public function getConstraint(): ?string {
+  public function getConstraintTypeName(): ?string {
     return $this->constraint;
+  }
+
+  public function getConstraintRelationship(): ?RelationshipToken {
+    return $this->relationship;
   }
 
   public function isContravariant(): bool {

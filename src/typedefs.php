@@ -31,3 +31,8 @@ enum VarianceToken: string {
   INVARIANT = '';
   CONTRAVARIANT = '-';
 }
+
+enum RelationshipToken: string {
+  SUBTYPE = 'as';
+  SUPERTYPE = 'super';
+}
