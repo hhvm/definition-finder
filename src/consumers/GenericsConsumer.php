@@ -21,6 +21,7 @@ class GenericsConsumer extends Consumer {
 
     $name = null;
     $constraint = null;
+    $variance = VarianceToken::INVARIANT;
 
     while ($tq->haveTokens()) {
       list($t, $ttype) = $tq->shift();
@@ -36,15 +37,25 @@ class GenericsConsumer extends Consumer {
 
       if ($ttype === T_TYPELIST_GT) {
         if ($name !== null) {
-          $ret[] = new ScannedGeneric($name, $constraint);
+          $ret[] = new ScannedGeneric($name, $constraint, $variance);
         }
         return $ret;
       }
 
+      if ($t === '-' || $t === '+') {
+        $variance = VarianceToken::assert($t);
+        continue;
+      }
+
       if ($t === ',') {
-        $ret[] = new ScannedGeneric(nullthrows($name), $constraint);
+        $ret[] = new ScannedGeneric(
+          nullthrows($name),
+          $constraint,
+          $variance,
+        );
         $name = null;
         $constraint = null;
+        $variance = VarianceToken::INVARIANT;
         continue;
       }
 

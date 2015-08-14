@@ -25,3 +25,9 @@ enum VisibilityToken: int {
   T_PRIVATE = T_PRIVATE;
   T_PROTECTED = T_PROTECTED;
 }
+
+enum VarianceToken: string {
+  COVARIANT = '+';
+  INVARIANT = '';
+  CONTRAVARIANT = '-';
+}
