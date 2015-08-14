@@ -11,6 +11,8 @@
 
 namespace Facebook\DefinitionFinder;
 
+const int T_SHAPE = 402;
+
 final class TypehintConsumer extends Consumer {
   public function getTypehint(): ScannedTypehint {
     return $this->consumeType();
@@ -38,12 +40,23 @@ final class TypehintConsumer extends Consumer {
         }
       }
 
+      if ($ttype === T_SHAPE) {
+        $type = $t;
+        continue;
+      }
+
       // Handle functions
       if ($t === '(' && $nesting === 0) {
         $this->consumeWhitespace();
         list($t, $ttype) = $this->tq->peek();
         if ($ttype === T_FUNCTION) {
           $type = '(';
+          ++$nesting;
+          continue;
+        }
+
+        if ($type !== null) {
+          $type .= '(';
           ++$nesting;
           continue;
         }

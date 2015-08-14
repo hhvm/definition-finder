@@ -256,4 +256,14 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       $fun->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
     );
   }
+
+  public function testEmptyShapeTypehint(): void {
+    $data = '<?hh function foo(shape() $bar) {}';
+    $parser = FileParser::FromData($data);
+    $fun = $parser->getFunction('foo');
+    $this->assertEquals(
+      Vector { 'shape()' },
+      $fun->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+    );
+  }
 }
