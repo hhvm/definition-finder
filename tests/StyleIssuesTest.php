@@ -64,4 +64,14 @@ class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
       $fun->getAttributes(),
     );
   }
+
+  public function testWhitespaceBetweenConcatenatedAttributeParts(): void {
+    $data = '<?hh <<Foo("herp". "derp")>> function herp() {}';
+    $parser = FileParser::FromData($data);
+    $fun = $parser->getFunction('herp');
+    $this->assertEquals(
+      Map { 'Foo' => Vector { 'herpderp' } },
+      $fun->getAttributes(),
+    );
+  }
 }
