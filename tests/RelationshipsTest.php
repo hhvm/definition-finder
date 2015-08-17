@@ -52,4 +52,24 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
       $def->getInterfaceNames(),
     );
   }
+
+  public function testClassExtendsGeneric(): void {
+    $data = '<?hh class Foo extends Bar<Baz> {}';
+    $def = FileParser::FromData($data)->getClass('Foo');
+    $this->assertSame('Bar', $def->getParentClassName());
+    $this->assertSame(
+      'Bar<Baz>',
+      $def->getParentClassInfo()?->getTypeText(),
+    );
+  }
+
+  public function testClassImplementsGenerics(): void {
+    $data = '<?hh class Foo implements Iterable<Tk,Tv> {}';
+    $def = FileParser::FromData($data)->getClass('Foo');
+    $this->assertEquals(Vector { 'Iterable' }, $def->getInterfaceNames());
+    $this->assertEquals(
+      Vector { 'Iterable<Tk,Tv>' },
+      $def->getInterfaceInfo()->map($x ==> $x->getTypeText()),
+    );
+  }
 }

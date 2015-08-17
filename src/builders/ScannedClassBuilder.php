@@ -14,8 +14,8 @@ namespace Facebook\DefinitionFinder;
 final class ScannedClassBuilder extends ScannedBaseBuilder {
   private ?ScannedScopeBuilder $scopeBuilder;
   protected \ConstVector<ScannedGeneric> $generics = Vector { };
-  private \ConstVector<string> $interfaces = Vector { };
-  private ?string $parent = null;
+  private \ConstVector<ScannedTypehint> $interfaces = Vector { };
+  private ?ScannedTypehint $parent = null;
 
   public function setGenericTypes(
     \ConstVector<ScannedGeneric> $generics,
@@ -37,12 +37,14 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
     return $this;
   }
 
-  public function setParentClassName(string $parent): this {
+  public function setParentClassInfo(ScannedTypehint $parent): this {
     $this->parent = $parent;
     return $this;
   }
 
-  public function setInterfaceNames(\ConstVector<string> $interfaces): this {
+  public function setInterfaces(
+    \ConstVector<ScannedTypehint> $interfaces,
+  ): this {
     $this->interfaces = $interfaces;
     return $this;
   }
