@@ -94,26 +94,21 @@ final class ClassConsumer extends Consumer {
 
   private function consumeClassList(): \ConstVector<string> {
     $classes = Vector { };
-    $class = null;
     while ($this->tq->haveTokens()) {
       $this->consumeWhitespace();
-      list ($t, $ttype) = $this->tq->shift();
+      list ($t, $ttype) = $this->tq->peek();
       if ($t === ',') {
-        invariant($class !== null, 'empty class name');
-        $classes[] = $class;
-        $class = null;
+        $this->tq->shift();
         continue;
       }
 
       if ($t === '{' || $ttype === T_IMPLEMENTS || $ttype === T_EXTENDS) {
-        $this->tq->unshift($t, $ttype);
         break;
       }
 
-      $class .= $t;
-    }
-    if ($class !== null) {
-      $classes[] = $class;
+      $classes[] = (new TypehintConsumer($this->tq))
+        ->getTypehint()
+        ->getTypeName();
     }
     return $classes;
   }
