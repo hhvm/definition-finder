@@ -105,15 +105,28 @@ class FileParser {
     return $this->getNewtypes()->map($x ==> $x->getName());
   }
 
-  public function getClass(string $name): ScannedClass {
-    $classes = $this->getClasses()->filter($x ==> $x->getName() === $name);
-    invariant(count($classes) === 1, 'no such class: %s', $name);
-    return $classes->at(0);
+  public function getClass(string $name): ScannedBasicClass {
+    return self::GetX($name, $this->getClasses());
+  }
+
+  public function getInterface(string $name): ScannedInterface {
+    return self::GetX($name, $this->getInterfaces());
+  }
+
+  public function getTrait(string $name): ScannedTrait {
+    return self::GetX($name, $this->getTraits());
   }
 
   public function getFunction(string $name): ScannedFunction{
-    $functiones = $this->getFunctions()->filter($x ==> $x->getName() === $name);
-    invariant(count($functiones) === 1, 'no such function: %s', $name);
-    return $functiones->at(0);
+    return self::GetX($name, $this->getFunctions());
+  }
+
+  private static function GetX<T as ScannedBase>(
+    string $name,
+    \ConstVector<T> $defs,
+  ): T {
+    $defs = $defs->filter($x ==> $x->getName() === $name);
+    invariant(count($defs) === 1, 'not found: %s', $name);
+    return $defs->at(0);
   }
 }
