@@ -45,18 +45,76 @@ final class ClassConsumer extends Consumer {
       $name = 'xhp_'.str_replace(':', '__', substr($v, 1));
     }
 
+    $builder = (new ScannedClassBuilder($this->type, $name));
+
     list($_, $ttype) = $this->tq->peek();
-    $generics = Vector { };
     if ($ttype == T_TYPELIST_LT) {
-      $generics = (new GenericsConsumer($this->tq))->getGenerics();
+      $builder->setGenericTypes(
+        (new GenericsConsumer($this->tq))->getGenerics(),
+      );
     }
 
-    $this->skipToBlock();
-    return (new ScannedClassBuilder($this->type, $name))
+    while ($this->tq->haveTokens()) {
+      list($t, $ttype) = $this->tq->shift();
+      if ($t === '{') {
+        break;
+      }
+
+      if ($ttype === T_EXTENDS) {
+        if ($this->type === ClassDefinitionType::INTERFACE_DEF) {
+          $builder->setInterfaceNames($this->consumeClassList());
+        } else {
+          $parents = $this->consumeClassList();
+          invariant(
+            count($parents) === 1,
+            'only interfaces can have more than 1 parent at line %d',
+            $this->tq->getLine(),
+          );
+          $builder->setParentClassName($parents[0]);
+        }
+        continue;
+      }
+
+      if ($ttype === T_IMPLEMENTS) {
+        invariant(
+           $this->type !== ClassDefinitionType::INTERFACE_DEF,
+           'interfaces can not implement interfaces at line %d',
+           $this->tq->getLine(),
+        );
+        $builder->setInterfaceNames($this->consumeClassList());
+      }
+    }
+
+    return $builder
       ->setContents(
         (new ScopeConsumer($this->tq, ScopeType::CLASS_SCOPE))
         ->getBuilder()
-      )
-      ->setGenericTypes($generics);
+      );
+  }
+
+  private function consumeClassList(): \ConstVector<string> {
+    $classes = Vector { };
+    $class = null;
+    while ($this->tq->haveTokens()) {
+      $this->consumeWhitespace();
+      list ($t, $ttype) = $this->tq->shift();
+      if ($t === ',') {
+        invariant($class !== null, 'empty class name');
+        $classes[] = $class;
+        $class = null;
+        continue;
+      }
+
+      if ($t === '{' || $ttype === T_IMPLEMENTS || $ttype === T_EXTENDS) {
+        $this->tq->unshift($t, $ttype);
+        break;
+      }
+
+      $class .= $t;
+    }
+    if ($class !== null) {
+      $classes[] = $class;
+    }
+    return $classes;
   }
 }
