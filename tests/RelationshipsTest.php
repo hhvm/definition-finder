@@ -64,11 +64,25 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testClassImplementsGenerics(): void {
-    $data = '<?hh class Foo implements Iterable<Tk,Tv> {}';
+    $data = '<?hh class Foo implements KeyedIterable<Tk,Tv> {}';
     $def = FileParser::FromData($data)->getClass('Foo');
+    $this->assertEquals(Vector { 'KeyedIterable' }, $def->getInterfaceNames());
+    $this->assertEquals(
+      Vector { 'KeyedIterable<Tk,Tv>' },
+      $def->getInterfaceInfo()->map($x ==> $x->getTypeText()),
+    );
+  }
+
+  public function testClassImplementsNestedGenerics(): void {
+    $data = '<?hh class VectorIterable<Tv> implements Iterable<Vector<Tv>> {}';
+    $def = FileParser::FromData($data)->getClass('VectorIterable');
     $this->assertEquals(Vector { 'Iterable' }, $def->getInterfaceNames());
     $this->assertEquals(
-      Vector { 'Iterable<Tk,Tv>' },
+      Vector { Vector { 'Vector' } },
+      $def->getInterfaceInfo()->map($x ==> $x->getGenericTypes()->map($y ==> $y->getTypeName())),
+    );
+    $this->assertEquals(
+      Vector { 'Iterable<Vector<Tv>>' },
       $def->getInterfaceInfo()->map($x ==> $x->getTypeText()),
     );
   }
