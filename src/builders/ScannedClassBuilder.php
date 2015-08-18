@@ -49,19 +49,14 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
     return $this;
   }
 
-  // Can be safe in 3.9, assuming D2311514 is cherry-picked
-  // public function build<T as ScannedClass>(classname<T> $what): T {
-  public function build<T as ScannedClass>(string $what): T {
-    {
-      // UNSAFE
-      ClassDefinitionType::assert($what::getType());
-      invariant(
-        $this->type === $what::getType(),
-        "Can't build a %s for a %s",
-        $what,
-        token_name($this->type),
-      );
-    }
+  public function build<T as ScannedClass>(classname<T> $what): T {
+    ClassDefinitionType::assert($what::getType());
+    invariant(
+      $this->type === $what::getType(),
+      "Can't build a %s for a %s",
+      $what,
+      token_name($this->type),
+    );
 
     $scope = nullthrows($this->scopeBuilder)
       ->setPosition(nullthrows($this->position))
@@ -92,7 +87,7 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
       }
     }
 
-    return /* UNSAFE_EXPR */ new $what(
+    return new $what(
       nullthrows($this->position),
       nullthrows($this->namespace).$this->name,
       nullthrows($this->attributes),
