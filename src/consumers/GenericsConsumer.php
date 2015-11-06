@@ -89,12 +89,21 @@ class GenericsConsumer extends Consumer {
         continue;
       }
 
+      $constraint = null;
+
       invariant(
-        $ttype === T_STRING,
+        $ttype === T_STRING || $ttype === T_NS_SEPARATOR,
         'expected type constraint at line %d',
         $tq->getLine(),
       );
       $constraint = $t;
+
+      list($t, $ttype) = $tq->peek();
+      while ($ttype === T_STRING || $ttype === T_NS_SEPARATOR) {
+        $tq->shift();
+        $constraint .= $t;
+        list($t, $ttype) = $tq->peek();
+      }
     }
     invariant_violation('never reached end of generics definition');
   }

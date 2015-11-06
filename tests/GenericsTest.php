@@ -61,6 +61,16 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
       $class->getGenericTypes()->map($x ==> $x->getConstraintRelationship()),
     );
   }
+  public function testNamespacedConstrainedGenerics(): void {
+    $data = '<?hh class Foo<T as \Bar\Baz> {}';
+    $parser = FileParser::FromData($data);
+    $class = $parser->getClass('Foo');
+
+    $this->assertEquals(
+      Vector { '\Bar\Baz' },
+      $class->getGenericTypes()->map($x ==> $x->getConstraintTypeName()),
+    );
+  }
 
   public function testVariance(): void {
     $data = '<?hh class Foo<-Ta, Tb, +Tc> {}';
