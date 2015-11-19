@@ -106,7 +106,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       $function->getParameters()->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { new ScannedTypehint('string', Vector { }) },
+      Vector { new ScannedTypehint('string', Vector { }, false) },
       $function->getParameters()->map($x ==> $x->getTypehint()),
     );
     $this->assertEquals(
@@ -126,7 +126,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       $function->getParameters()->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { new ScannedTypehint('\Iterator', Vector { }) },
+      Vector { new ScannedTypehint('\Iterator', Vector { }, false) },
       $function->getParameters()->map($x ==> $x->getTypehint()),
     );
   }
@@ -142,7 +142,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       $function->getParameters()->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { new ScannedTypehint('\Foo\Bar', Vector { }) },
+      Vector { new ScannedTypehint('\Foo\Bar', Vector { }, false) },
       $function->getParameters()->map($x ==> $x->getTypehint()),
     );
   }
@@ -158,7 +158,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       $function->getParameters()->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { new ScannedTypehint('callable', Vector { }) },
+      Vector { new ScannedTypehint('callable', Vector { }, false) },
       $function->getParameters()->map($x ==> $x->getTypehint()),
     );
   }
@@ -190,7 +190,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       $params->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { new ScannedTypehint('string', Vector { }) },
+      Vector { new ScannedTypehint('string', Vector { }, false) },
       $params->map($x ==> $x->getTypehint()),
     );
     $this->assertEquals(
@@ -205,7 +205,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $function = $parser->getFunction('foo');
 
     $this->assertEquals(
-      Vector { new ScannedTypehint('array', Vector { }) },
+      Vector { new ScannedTypehint('array', Vector { }, false) },
       $function->getParameters()->map($x ==> $x->getTypehint()),
     );
   }
@@ -240,7 +240,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       Vector {
-        new ScannedTypehint('string', Vector { }),
+        new ScannedTypehint('string', Vector { }, false),
         null,
       },
       $params->map($x ==> $x->getTypehint()),
@@ -264,6 +264,34 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(
       Vector { 'shape()' },
       $fun->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+    );
+  }
+
+  public function testNonNullableTypehint(): void {
+    $data = '<?hh function foo(Herp $derp) {}';
+    $parser = FileParser::FromData($data);
+    $fun = $parser->getFunction('foo');
+    $this->assertEquals(
+      Vector { 'Herp' },
+      $fun->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+    );
+    $this->assertEquals(
+      Vector { false },
+      $fun->getParameters()->map($p ==> $p->getTypehint()?->isNullable()),
+    );
+  }
+
+  public function testNullableTypehint(): void {
+    $data = '<?hh function foo(?Herp $derp) {}';
+    $parser = FileParser::FromData($data);
+    $fun = $parser->getFunction('foo');
+    $this->assertEquals(
+      Vector { 'Herp' },
+      $fun->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+    );
+    $this->assertEquals(
+      Vector { true },
+      $fun->getParameters()->map($p ==> $p->getTypehint()?->isNullable()),
     );
   }
 }

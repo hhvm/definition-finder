@@ -19,6 +19,7 @@ final class TypehintConsumer extends Consumer {
   }
 
   private function consumeType(): ScannedTypehint {
+    $nullable = false;
     $type = null;
     $generics = Vector { };
 
@@ -88,6 +89,10 @@ final class TypehintConsumer extends Consumer {
         continue;
       }
 
+      if ($ttype === null && $t === '?') {
+        $nullable = true;
+      }
+
       if (
         $ttype !== T_STRING
         && $ttype !== T_NS_SEPARATOR
@@ -145,6 +150,6 @@ final class TypehintConsumer extends Consumer {
       break;
     }
     invariant($type !== null, 'expected a type at line %d', $this->tq->getLine());
-    return new ScannedTypehint($type, $generics);
+    return new ScannedTypehint($type, $generics, $nullable);
   }
 }

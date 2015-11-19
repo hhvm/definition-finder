@@ -16,6 +16,7 @@ class ScannedTypehint {
   public function __construct(
     private string $typeName,
     private \ConstVector<ScannedTypehint> $generics,
+    private bool $nullable,
   ) {
   }
 
@@ -25,6 +26,10 @@ class ScannedTypehint {
 
   public function isGeneric(): bool {
     return (bool) $this->generics;
+  }
+
+  public function isNullable(): bool {
+    return $this->nullable;
   }
 
   public function getGenericTypes(): \ConstVector<ScannedTypehint> {
