@@ -45,4 +45,20 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       ->map($x ==> $x->getName())
     );
   }
+
+  public function testClassMagicConstant(): void {
+      $data = "<?hh Foo::class;\nclass Foo{}";
+
+      // Make sure that Foo::class tokenizes as T_STRING, T_DOUBLE_COLON, T_CLASS
+      $tokens = token_get_all($data);
+      $this->assertContains([T_CLASS, 'class', 1], $tokens);
+
+      // This could throw because the ; comes after the keyword class
+      $this->assertEquals(
+          'Foo',
+          FileParser::FromData($data)
+          ->getClass('Foo')
+          ->getName()
+      );
+  }
 }
