@@ -83,7 +83,7 @@ class ScopeConsumer extends Consumer {
         continue;
       }
 
-      if($ttype === T_DOUBLE_COLON) {
+      if ($ttype === T_DOUBLE_COLON) {
         $static_access = true;
         continue;
       }
@@ -169,7 +169,7 @@ class ScopeConsumer extends Consumer {
         $builder->addNamespace((new NamespaceConsumer($this->tq))->getBuilder());
         return;
       case DefinitionType::CLASS_DEF:
-        if($static_access) {
+        if ($static_access) {
           // Foo::class is not a class definition
           return;
         }
