@@ -28,6 +28,33 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
+  public function testNamespaceName(): void {
+    $this->assertEquals(
+      'Facebook\DefinitionFinder\Test',
+      $this->class?->getNamespaceName(),
+    );
+    $this->assertEquals(
+      Vector {'', '', '', ''},
+      $this->class?->getMethods()?->map($x ==> $x->getNamespaceName()),
+    );
+  }
+
+  public function testShortName(): void {
+    $this->assertEquals(
+      'ClassWithContents',
+      $this->class?->getShortName(),
+    );
+    $this->assertEquals(
+      Vector {
+        'publicMethod',
+        'protectedMethod',
+        'privateMethod',
+        'PublicStaticMethod',
+      },
+      $this->class?->getMethods()?->map($x ==> $x->getShortName()),
+    );
+  }
+
   public function testMethodNames(): void {
     $this->assertEquals(
       Vector {
@@ -111,7 +138,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       $funcs->map($x ==> $x->isPublic()),
     );
   }
-  
+
   public function testMethodsAreStatic(): void {
     $this->assertEquals(
       Vector { false, false, false, true },
@@ -195,7 +222,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       $props->map($x ==> $x->getTypehint()?->getTypeName()),
     );
 
-  
+
     $this->assertEquals(
       Vector { true },
       $props->map($x ==> $x->isStatic()),
