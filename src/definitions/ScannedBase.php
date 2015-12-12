@@ -49,7 +49,7 @@ abstract class ScannedBase {
     return $this->attributes;
   }
 
-  public function getNamespaceName(): ?string {
+  public function getNamespaceName(): string {
     return $this->namespace;
   }
 
