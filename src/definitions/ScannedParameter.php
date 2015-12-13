@@ -24,9 +24,6 @@ class ScannedParameter extends ScannedBase {
     private ?VisibilityToken $visibility,
   ) {
     parent::__construct($position, $name, $attributes, $docComment);
-    if ($variadic) {
-      invariant($type === null, 'variadics must be untyped');
-    }
   }
 
   public static function getType(): ?DefinitionType {

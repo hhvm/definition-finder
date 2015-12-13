@@ -221,7 +221,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
-  public function testWithVariadicParam(): void {
+  public function testWithUntypedVariadicParam(): void {
     $data = '<?hh function foo(string $bar, ...$baz) {}';
 
     $parser = FileParser::FromData($data);
@@ -242,6 +242,40 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       Vector {
         new ScannedTypehint('string', Vector { }, false),
         null,
+      },
+      $params->map($x ==> $x->getTypehint()),
+    );
+  }
+
+  public function testWithTypedVariadicParam(): void {
+    /* HH_FIXME[4106] HHVM_VERSION not defined */
+    /* HH_FIXME[2049] HHVM_VERSION not defined */
+    if (!version_compare(HHVM_VERSION, '3.11.0', '>=')) {
+      $this->markTestSkipped('Typed variadics only supported in 3.11+');
+    }
+    $data = '<?hh function foo(array<mixed> ...$bar) {}';
+
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+    $params = $function->getParameters();
+
+    $this->assertEquals(
+      Vector { 'bar' },
+      $params->map($x ==> $x->getName()),
+    );
+
+    $this->assertEquals(
+      Vector { true },
+      $params->map($x ==> $x->isVariadic()),
+    );
+
+    $this->assertEquals(
+      Vector {
+        new ScannedTypehint(
+          'array',
+          Vector { new ScannedTypehint('mixed', Vector { }, false) },
+          false
+        ),
       },
       $params->map($x ==> $x->getTypehint()),
     );
