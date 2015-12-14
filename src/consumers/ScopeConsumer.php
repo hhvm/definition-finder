@@ -79,7 +79,12 @@ class ScopeConsumer extends Consumer {
 
       // I hate you, PHP.
       if ($ttype === T_STRING && strtolower($token) === 'define') {
-        $builder->addConstant((new DefineConsumer($tq))->getBuilder());
+        $sub_builder = (new DefineConsumer($tq))->getBuilder();
+        // I hate you more, PHP. $sub_builder is null in case we've not
+        // actually got a constant: define($variable, ...);
+        if ($sub_builder ) {
+          $builder->addConstant($sub_builder);
+        }
         continue;
       }
 

@@ -20,7 +20,7 @@ namespace Facebook\DefinitionFinder;
  * See ConstantConsumer for new-style constants.
  */
 final class DefineConsumer extends Consumer {
-  public function getBuilder(): ScannedConstantBuilder {
+  public function getBuilder(): ?ScannedConstantBuilder {
     $tq = $this->tq;
     $value = null;
 
@@ -32,12 +32,15 @@ final class DefineConsumer extends Consumer {
     );
     $this->consumeWhitespace();
     list ($next, $next_type) = $tq->shift();
-    invariant(
-      $next_type === T_CONSTANT_ENCAPSED_STRING || $next_type === T_STRING,
-      'Expected arg to define() to be a T_CONSTANT_ENCAPSED_STRING or '.
-      'T_STRING, got %s',
-      token_name($next_type),
-    );
+    if (!(
+      $next_type === T_CONSTANT_ENCAPSED_STRING
+      || $next_type === T_STRING
+    )) {
+      // Not considering define($foo, ...) to be a constant D:
+      $this->consumeStatement();
+      return null;
+    }
+
     $name = $next;
     if ($next_type !== T_STRING) {
       // 'CONST_NAME' or "CONST_NAME"
