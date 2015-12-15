@@ -34,6 +34,11 @@ The API is stable, and this is used in production to generate [the Hack referenc
 
 It has been used extensively on modern Hack and PHP code, including all of the Hack typechecker definitions and extensions inside HHVM; it has not yet been extensively used on older code bases - please file an issue if you find PHP code that it can not handle.
 
+Implementation
+--------------
+
+This is a recursive parser built on the token stream exposed by `token_get_all()`.
+
 License
 -------
 
