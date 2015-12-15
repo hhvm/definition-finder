@@ -1,24 +1,36 @@
 Definition Finder
 ==================
 
-This library lists all the definitions in a file that HHVM understands. It is
-useful for building autoloaders. HH\autoload_set_paths() is also usually faster than an autoloader function.
+This library finds all the definitions in a file or tree that HHVM understands. It is used to generate [the Hack reference documentation](http://docs.hhvm.com/hack/reference/), and be used for other purposes such as [generating autoload maps](https://github.com/fredemmott/hhvm-autoload-map-generator/)
 
-As of 2015-02-20, the main advantage of building your own autoloader instead of
-using composer is that HHVM supported autoloading more than just classes.
+Usage
+-----
+
+There are three main entrypoints:
+
+ - [`FileParser::FromFile(string $filename)`](src/FileParser.php)
+ - [`FileParser::FromData(string $data, ?string $filename = null)`](src/FileParser.php)
+ - [`TreeParser::FromPath(string $path)`](src/TreeParser.php)
+
+`FileParser` returns definitions from a single file, whereas `TreeParser` recurses over an entire directory tree. All 3 of these functions return an implementation of [`BaseParser`](src/BaseParser.php). There are three forms of accessors:
+
+ - `getClasses(): \ConstVector<ScannedBasicClass>` - returns a `ConstVector` of [`ScannedBasicClass`](src/definitions/ScannedBasicClass.php], which has a similar interface to `ReflectionClass`
+ - `getClassNames(): \ConstVector<string>` - returns a `ConstVector` of class names
+ - `getClass(string $name): ScannedBasicClass` - returns a `ScannedBasicClass` for the specified class, or throws an exception if it was not found
+
+Similar functions exist for interfaces, traits, constants, enums, and typedefs.
 
 Installation
 ------------
 
-Add `fredemmott/definition-finder` to your Composer `requires` section
-
+```
+hhvm composer require fredemmott/definition-finder
+```
 
 Status
 ------
 
-Work in progress.
-
-**API IS NOT YET STABLE**
+The API is stable, and this is used in production to generate [the Hack reference documentation](http://docs.hhvm.com/hack/reference/].
 
 License
 -------
