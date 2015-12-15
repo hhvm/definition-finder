@@ -30,7 +30,7 @@ hhvm composer require fredemmott/definition-finder
 Status
 ------
 
-The API is stable, and this is used in production to generate [the Hack reference documentation](http://docs.hhvm.com/hack/reference/].
+The API is stable, and this is used in production to generate [the Hack reference documentation](http://docs.hhvm.com/hack/reference/).
 
 License
 -------
