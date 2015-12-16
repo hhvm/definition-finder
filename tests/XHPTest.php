@@ -50,4 +50,21 @@ class XHPTest extends \PHPUnit_Framework_TestCase {
       $parser->getClassNames(),
     );
   }
+
+  public function testXHPEnumAttributesParse(): void {
+    // StatementConsumer was getting confused by the brace
+    $data = <<<EOF
+<?hh class :example {
+  attribute
+    enum { "foo", "bar" } myattr @required,
+    enum { "herp", "derp" } myattr2 @required;
+}
+EOF;
+
+    $parser = FileParser::FromData($data);
+    $this->assertContains(
+      'xhp_example',
+      $parser->getClassNames(),
+    );
+  }
 }

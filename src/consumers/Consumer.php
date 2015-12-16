@@ -29,14 +29,20 @@ abstract class Consumer {
   }
 
   protected function consumeStatement(): void {
+    $first = null;
     while ($this->tq->haveTokens()) {
       list($tv, $ttype) = $this->tq->shift();
+      if ($first === null) {
+        $first = $tv;
+      }
       if ($tv === ';') {
         return;
       }
       if ($tv === '{') {
         $this->consumeBlock();
-        return;
+        if ($first === '{') {
+          return;
+        }
       }
     }
   }
