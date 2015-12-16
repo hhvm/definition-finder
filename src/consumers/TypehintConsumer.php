@@ -98,12 +98,17 @@ final class TypehintConsumer extends Consumer {
         && $ttype !== T_NS_SEPARATOR
         && $ttype !== T_CALLABLE
         && $ttype !== T_ARRAY
+        && $ttype !== T_XHP_LABEL
       ) {
         continue;
       }
 
       if ($nesting !== 0) {
         continue;
+      }
+
+      if ($ttype === T_XHP_LABEL) {
+        $t = 'xhp_'.str_replace(':', '__', substr($t, 1));
       }
 
       $type = $t;
