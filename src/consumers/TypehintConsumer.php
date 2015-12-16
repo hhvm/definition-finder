@@ -141,15 +141,14 @@ final class TypehintConsumer extends Consumer {
           }
           invariant(
             $t === ',',
-            'expected > or , after generic type at line %d',
-            $this->tq->getLine(),
+            'expected > or , after generic type',
           );
         }
         break;
       }
       break;
     }
-    invariant($type !== null, 'expected a type at line %d', $this->tq->getLine());
+    invariant($type !== null, 'expected a type');
     return new ScannedTypehint($type, $generics, $nullable);
   }
 }
