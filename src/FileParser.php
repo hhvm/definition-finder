@@ -16,10 +16,17 @@ class FileParser extends BaseParser {
     private string $file,
     TokenQueue $tq,
   ) {
-    $this->defs = (new ScopeConsumer($tq, ScopeType::FILE_SCOPE))
-      ->getBuilder()
-      ->setPosition(shape('filename' => $file))
-      ->build();
+    try {
+      $this->defs = (new ScopeConsumer($tq, ScopeType::FILE_SCOPE))
+        ->getBuilder()
+        ->setPosition(shape('filename' => $file))
+        ->build();
+    } catch (/* HH_FIXME[2049] */ \HH\InvariantException $e) {
+      throw new ParseException(
+        shape('filename' => $file, 'line' => $tq->getLine()),
+        $e
+      );
+    }
   }
 
   ///// Constructors /////
