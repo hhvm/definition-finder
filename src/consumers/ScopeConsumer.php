@@ -77,6 +77,11 @@ class ScopeConsumer extends Consumer {
         $static = true;
       }
 
+      if ($ttype === T_XHP_ATTRIBUTE) {
+        $this->consumeStatement();
+        continue;
+      }
+
       // I hate you, PHP.
       if ($ttype === T_STRING && strtolower($token) === 'define') {
         $sub_builder = (new DefineConsumer($tq))->getBuilder();
