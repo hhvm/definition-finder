@@ -42,7 +42,7 @@ final class ClassConsumer extends Consumer {
         token_name($this->type),
       );
       // 'class :foo:bar' is really 'class xhp_foo__bar'
-      $name = 'xhp_'.str_replace(':', '__', substr($v, 1));
+      $name = normalize_xhp_class($v);
     }
 
     $builder = (new ScannedClassBuilder($this->type, $name));

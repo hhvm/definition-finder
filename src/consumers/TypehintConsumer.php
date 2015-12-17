@@ -108,7 +108,7 @@ final class TypehintConsumer extends Consumer {
       }
 
       if ($ttype === T_XHP_LABEL) {
-        $t = 'xhp_'.str_replace(':', '__', substr($t, 1));
+        $t = normalize_xhp_class($t);
       }
 
       $type = $t;

@@ -25,7 +25,7 @@ class XHPTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
-  public function testXHPClasssWithParent(): void {
+  public function testXHPClassWithParent(): void {
     $data = '<?hh class :foo:bar extends :herp:derp {}';
 
     $parser = FileParser::FromData($data);
@@ -65,6 +65,15 @@ EOF;
     $this->assertContains(
       'xhp_example',
       $parser->getClassNames(),
+    );
+  }
+
+  public function testXHPClassNamesAreCorrect(): void {
+    $parser = FileParser::FromData('<?hh class :foo:bar:baz:herp-derp {}');
+
+    $this->assertContains(
+      /* UNSAFE_EXPR */ :foo:bar:baz:herp-derp::class,
+      $parser->getClassNames()->get(0)
     );
   }
 }
