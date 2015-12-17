@@ -35,7 +35,6 @@ class ScopeConsumer extends Consumer {
     $scope_depth = 1;
     $visibility = null;
     $static = false;
-    $static_access = false;
     $property_type = null;
     while ($tq->haveTokens() && $scope_depth > 0) {
       list ($token, $ttype) = $tq->shift();
@@ -94,7 +93,9 @@ class ScopeConsumer extends Consumer {
       }
 
       if ($ttype === T_DOUBLE_COLON) {
-        $static_access = true;
+        // Whatever's next it can't be the start of a definition. This stops
+        // '::class' being considered the start of a class definition.
+        $this->tq->shift();
         continue;
       }
 
@@ -148,13 +149,11 @@ class ScopeConsumer extends Consumer {
           $docblock,
           $visibility,
           $static,
-          $static_access,
         );
         $attrs = Map { };
         $docblock = null;
         $visibility = null;
         $static = false;
-        $static_access = false;
         $property_type = null;
         continue;
       }
@@ -170,7 +169,6 @@ class ScopeConsumer extends Consumer {
     ?string $docblock,
     ?VisibilityToken $visibility,
     bool $static,
-    bool $static_access,
    ): void {
     $this->consumeWhitespace();
 
@@ -179,11 +177,6 @@ class ScopeConsumer extends Consumer {
         $builder->addNamespace((new NamespaceConsumer($this->tq))->getBuilder());
         return;
       case DefinitionType::CLASS_DEF:
-        if ($static_access) {
-          // Foo::class is not a class definition
-          return;
-        }
-        // FALLTHROUGH
       case DefinitionType::INTERFACE_DEF:
       case DefinitionType::TRAIT_DEF:
         $builder->addClass(
