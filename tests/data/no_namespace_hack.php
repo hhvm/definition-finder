@@ -9,13 +9,25 @@
  *
  */
 
+use Foo as Aliased;
+use SingleNamespace\Foo as AliasedWithNamespace;
+use Namespaces\AreNested\Now\Foo as AliasedWithNestedNamespace;
+use Namespaces\AreNested\Now\Bar;
+use Namespaces\AreNested\Now as AliasedNamespace;
+
 class SimpleClass {
   public function iAmNotAGlobalFunction(): void { }
+  public function aliasInClassScope(Bar $bar): Bar {
+    return $bar;
+  }
 }
 
 class GenericClass<Tk, Tv> {
   const NOT_A_GLOBAL_CONSTANT = 42;
   const int ALSO_NOT_A_GLOBAL_CONSTANT = 42;
+}
+
+class GenericAliasedConstraintClass<T as Aliased> {
 }
 
 abstract final class AbstractFinalClass {
@@ -48,6 +60,32 @@ function returns_generic(): Vector<int> { return Vector { 123 }; }
 
 function returns_nested_generic(): Vector<Vector<int>> {
   return Vector { Vector { 123 } };
+}
+
+function aliased(Aliased $aliased): Aliased {
+  return $aliased;
+}
+
+function aliased_with_namespace(
+    AliasedWithNamespace $aliased,
+): AliasedWithNamespace {
+  return $aliased;
+}
+
+function aliased_with_nested_namespace(
+    AliasedWithNestedNamespace $aliased,
+): AliasedWithNestedNamespace {
+  return $aliased;
+}
+
+function aliased_namespace(
+    AliasedNamespace\Foo $aliased,
+): AliasedNamespace\Foo {
+  return $aliased;
+}
+
+function aliased_no_as(Bar $aliased): Bar {
+   return $aliased;
 }
 
 const MY_CONST = 456;

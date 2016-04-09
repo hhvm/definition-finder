@@ -21,8 +21,9 @@ final class ClassConsumer extends Consumer {
   public function __construct(
     private ClassDefinitionType $type,
     TokenQueue $tq,
+    \ConstMap<string, string> $aliases,
   ) {
-    parent::__construct($tq);
+    parent::__construct($tq, $aliases);
   }
 
   public function getBuilder(): ScannedClassBuilder {
@@ -50,7 +51,7 @@ final class ClassConsumer extends Consumer {
     list($_, $ttype) = $this->tq->peek();
     if ($ttype == T_TYPELIST_LT) {
       $builder->setGenericTypes(
-        (new GenericsConsumer($this->tq))->getGenerics(),
+        (new GenericsConsumer($this->tq, $this->aliases))->getGenerics(),
       );
     }
 
@@ -77,9 +78,9 @@ final class ClassConsumer extends Consumer {
 
       if ($ttype === T_IMPLEMENTS) {
         invariant(
-           $this->type !== ClassDefinitionType::INTERFACE_DEF,
-           'interfaces can not implement interfaces at line %d',
-           $this->tq->getLine(),
+          $this->type !== ClassDefinitionType::INTERFACE_DEF,
+          'interfaces can not implement interfaces at line %d',
+          $this->tq->getLine(),
         );
         $builder->setInterfaces($this->consumeClassList());
       }
@@ -87,7 +88,7 @@ final class ClassConsumer extends Consumer {
 
     return $builder
       ->setContents(
-        (new ScopeConsumer($this->tq, ScopeType::CLASS_SCOPE))
+        (new ScopeConsumer($this->tq, ScopeType::CLASS_SCOPE, $this->aliases))
         ->getBuilder()
       );
   }
@@ -106,7 +107,8 @@ final class ClassConsumer extends Consumer {
         break;
       }
 
-      $classes[] = (new TypehintConsumer($this->tq))->getTypehint();
+      $classes[] = (new TypehintConsumer($this->tq, $this->aliases))
+        ->getTypehint();
     }
     return $classes;
   }

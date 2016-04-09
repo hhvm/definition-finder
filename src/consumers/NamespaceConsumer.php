@@ -36,7 +36,7 @@ class NamespaceConsumer extends Consumer {
 
     $builder = (new ScannedNamespaceBuilder($ns))
       ->setContents(
-        (new ScopeConsumer($this->tq, ScopeType::NAMESPACE_SCOPE))
+        (new ScopeConsumer($this->tq, ScopeType::NAMESPACE_SCOPE, Map{}))
           ->getBuilder()
     );
     return $builder;

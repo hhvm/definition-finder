@@ -153,6 +153,7 @@ final class TypehintConsumer extends Consumer {
       }
       break;
     }
+    $type = $this->unaliasName($type);
     invariant($type !== null, 'expected a type');
     return new ScannedTypehint($type, $generics, $nullable);
   }

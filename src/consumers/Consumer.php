@@ -14,6 +14,7 @@ namespace Facebook\DefinitionFinder;
 abstract class Consumer {
   public function __construct(
     protected TokenQueue $tq,
+    protected \ConstMap<string, string> $aliases
   ) {
   }
 
@@ -70,5 +71,23 @@ abstract class Consumer {
         }
       }
     }
+  }
+
+  protected function unaliasName(?string $name): ?string {
+
+    if ($name === null) {
+      return $name;
+    }
+
+    $parts = explode('\\', $name);
+    $base = $parts[0];
+    $realBase = $this->aliases->get($base);
+
+    if ($realBase === null) {
+      return $name;
+    }
+
+    $parts[0] = $realBase;
+    return implode('\\', $parts);
   }
 }
