@@ -38,6 +38,13 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
+  public function testClassCalledDict(): void {
+    // Separate token in HHVM > 3.13
+    $data = '<?hh class dict {}';
+    $parser = FileParser::FromData($data);
+    $this->assertNotNull($parser->getClass('dict'));
+  }
+
   public function testConstantCalledOn(): void {
     $data = '<?hh class Foo { const ON = 0; }';
 

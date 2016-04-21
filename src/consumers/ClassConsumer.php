@@ -29,7 +29,7 @@ final class ClassConsumer extends Consumer {
   public function getBuilder(): ScannedClassBuilder {
     list($v, $t) = $this->tq->shift();
 
-    if ($t === T_STRING) {
+    if ($t === T_STRING || StringishTokens::isValid($t)) {
       $name = $v;
     } else {
       invariant(
