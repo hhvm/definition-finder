@@ -15,17 +15,20 @@ final class UserAttributesConsumer extends Consumer {
   public function getUserAttributes(): AttributeMap {
     $attrs = Map { };
     while (true) {
+      $this->consumeWhitespace();
+
       list($name, $_) = $this->tq->shift();
       if (!$attrs->containsKey($name)) {
         $attrs[$name] = Vector { };
       }
+
+      $this->consumeWhitespace();
 
       list($t, $ttype) = $this->tq->shift();
       if ($ttype === T_SR) { // this was the last attribute
         return $attrs;
       }
       if ($t === ',') { // there's another
-        $this->consumeWhitespace();
         continue;
       }
 
@@ -43,6 +46,9 @@ final class UserAttributesConsumer extends Consumer {
       // Possibly multiple values
       $attr_value = null;
       while ($this->tq->haveTokens()) {
+
+        $this->consumeWhitespace();
+
         list($value, $ttype) = $this->tq->shift();
         switch ((int) $ttype) {
           case T_CONSTANT_ENCAPSED_STRING:
@@ -84,6 +90,7 @@ final class UserAttributesConsumer extends Consumer {
         $this->consumeWhitespace();
       }
 
+      $this->consumeWhitespace();
       list($t, $ttype) = $this->tq->shift();
       if ($ttype === T_SR) {
         return $attrs;
