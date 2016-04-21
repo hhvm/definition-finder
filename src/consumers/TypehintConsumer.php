@@ -11,8 +11,6 @@
 
 namespace Facebook\DefinitionFinder;
 
-const int T_SHAPE = 402;
-
 final class TypehintConsumer extends Consumer {
   public function getTypehint(): ScannedTypehint {
     return $this->consumeType();
@@ -99,6 +97,7 @@ final class TypehintConsumer extends Consumer {
         && $ttype !== T_CALLABLE
         && $ttype !== T_ARRAY
         && $ttype !== T_XHP_LABEL
+        && $ttype !== T_DICT
       ) {
         continue;
       }

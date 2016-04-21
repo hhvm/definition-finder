@@ -27,6 +27,17 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $this->assertNotNull($parser->getFunction('select'));
   }
 
+  public function testReturnTypeCalledDict(): void {
+    // Separate token in HHVM > 3.13
+    $data = '<?hh function foo(): dict {}';
+    $parser = FileParser::FromData($data);
+    $func = $parser->getFunction('foo');
+    $this->assertSame(
+      'dict',
+      $func->getReturnType()?->getTypeName(),
+    );
+  }
+
   public function testConstantCalledOn(): void {
     $data = '<?hh class Foo { const ON = 0; }';
 
