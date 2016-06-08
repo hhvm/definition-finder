@@ -95,4 +95,22 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
       $generics->map($x ==> $x->isCovariant()),
     );
   }
+
+  public function testVectorLikeArrayParam(): void {
+    $data = '<?hh function foo(array<SomeClass> $param): void {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+  }
+
+  public function testVectorLikeArrayOfPrimitivesParam(): void {
+    $data = '<?hh function foo(array<string> $param): void {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+  }
+
+  public function testMapLikeArrayParam(): void {
+    $data = '<?hh function foo(array<string, PharFileInfo> $list): void {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+  }
 }
