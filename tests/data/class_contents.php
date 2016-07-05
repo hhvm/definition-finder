@@ -17,6 +17,8 @@ class ClassWithContents {
 
   /** FooDoc */
   const string FOO = 'bar';
+  /** BarDoc */
+  const int BAR = 60 * 60 * 24;
 
   public function publicMethod(): void {}
   protected function protectedMethod(): void {}

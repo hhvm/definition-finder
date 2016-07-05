@@ -50,6 +50,21 @@ final class DefineConsumer extends Consumer {
       );
       $name = substr($name, 1, strlen($name) - 2);
     }
+    $this->consumeWhitespace();
+    list($next, $_) = $tq->shift();
+    invariant(
+      $next === ',',
+      'Expected first define argument to be followed by a comma',
+    );
+    $this->consumeWhitespace();
+    while ($this->tq->haveTokens()) {
+      list($nnv, $nnt) = $this->tq->shift();
+      if ($nnv === ')') {
+        $this->tq->unshift($nnv, $nnt);
+        break;
+      }
+      $value .= $nnv;
+    }
     $this->consumeStatement();
     return new ScannedConstantBuilder(
       $name,

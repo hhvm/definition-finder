@@ -44,6 +44,15 @@ final class ConstantConsumer extends Consumer {
         }
       }
       if ($next === '=') {
+        $this->consumeWhitespace();
+        while ($this->tq->haveTokens()) {
+          list($nnv, $nnt) = $this->tq->shift();
+          if ($nnv === ';') {
+            $this->tq->unshift($nnv, $nnt);
+            break;
+          }
+          $value .= $nnv;
+        }
         $builder = new ScannedConstantBuilder(
           nullthrows($name),
           $value,

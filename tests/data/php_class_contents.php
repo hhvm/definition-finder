@@ -16,6 +16,8 @@ class Foo {
 
   /** FooDoc */
   const FOO = 'bar';
+  /** BarDoc */
+  const BAR = 60 * 60 * 24;
 
   private $untypedProperty;
 }

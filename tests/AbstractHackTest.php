@@ -105,6 +105,10 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
       },
       $this->parser?->getConstantNames(),
     );
+    $this->assertEquals(
+      Vector { '456', '123', '789', "'herp'", "'derp'" },
+      $this->parser?->getConstants()?->map($x ==> $x->getValue()),
+    );
   }
 
   public function testClassGenerics(): void {

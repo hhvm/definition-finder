@@ -88,15 +88,19 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
   public function testHackConstants(): void {
     $constants = $this->class?->getConstants();
     $this->assertEquals(
-      Vector { 'FOO' },
+      Vector { 'FOO', 'BAR' },
       $constants?->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { 'string' },
+      Vector { 'string', 'int' },
       $constants?->map($x ==> $x->getTypehint()?->getTypeName()),
     );
     $this->assertEquals(
-      Vector { '/** FooDoc */' },
+      Vector { "'bar'", '60 * 60 * 24' },
+      $constants?->map($x ==> $x->getValue()),
+    );
+    $this->assertEquals(
+      Vector { '/** FooDoc */', '/** BarDoc */' },
       $constants?->map($x ==> $x->getDocComment()),
     );
   }
@@ -107,15 +111,19 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $constants = $class->getConstants();
 
     $this->assertEquals(
-      Vector { 'FOO' },
+      Vector { 'FOO', 'BAR' },
       $constants->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { null },
+      Vector { null, null },
       $constants->map($x ==> $x->getTypehint()),
     );
     $this->assertEquals(
-      Vector { '/** FooDoc */' },
+      Vector { "'bar'", '60 * 60 * 24' },
+      $constants->map($x ==> $x->getValue()),
+    );
+    $this->assertEquals(
+      Vector { '/** FooDoc */', '/** BarDoc */' },
       $constants->map($x ==> $x->getDocComment()),
     );
   }
