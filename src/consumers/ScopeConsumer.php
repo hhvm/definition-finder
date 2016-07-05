@@ -130,7 +130,8 @@ class ScopeConsumer extends Consumer {
         continue;
       }
 
-      if ($ttype === T_VARIABLE) {
+      // make sure we're not inside a method body
+      if ($ttype === T_VARIABLE && $scope_depth === 1) {
         $name = substr($token, 1); // remove prefixed '$'
         if ($visibility === null) {
           $visibility = VisibilityToken::T_PUBLIC;
