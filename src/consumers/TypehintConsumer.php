@@ -97,7 +97,7 @@ final class TypehintConsumer extends Consumer {
         && $ttype !== T_CALLABLE
         && $ttype !== T_ARRAY
         && $ttype !== T_XHP_LABEL
-        && $ttype !== T_DICT
+        && !StringishTokens::isValid($ttype)
       ) {
         continue;
       }

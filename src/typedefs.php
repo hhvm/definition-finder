@@ -42,10 +42,12 @@ const int T_SELECT = 422;
 const int T_SHAPE = 402;
 const int T_ON = 415;
 const int T_DICT = 442;
+const int T_VEC = 443;
 
 enum StringishTokens: int {
   T_STRING = T_STRING;
   T_SELECT = T_SELECT;
   T_ON = T_ON;
   T_DICT = T_DICT;
+  T_VEC = T_VEC;
 }
