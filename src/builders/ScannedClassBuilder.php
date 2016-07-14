@@ -106,6 +106,7 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
       $methods,
       $properties,
       $scope->getConstants(),
+      $scope->getTypeConstants(),
       $this->generics,
       $this->parent,
       $this->interfaces,

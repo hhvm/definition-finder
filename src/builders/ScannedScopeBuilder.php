@@ -22,6 +22,7 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
   private Vector<ScannedTypehint> $usedTraits = Vector { };
   private Vector<ScannedPropertyBuilder> $propertyBuilders = Vector { };
   private Vector<ScannedConstantBuilder> $constantBuilders = Vector { };
+  private Vector<ScannedTypeConstantBuilder> $typeConstantBuilders = Vector { };
   private Vector<ScannedEnumBuilder> $enumBuilders = Vector { };
   private Vector<ScannedTypeBuilder> $typeBuilders = Vector { };
   private Vector<ScannedNewtypeBuilder> $newtypeBuilders = Vector { };
@@ -51,6 +52,10 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
 
   public function addConstant(ScannedConstantBuilder $b): void {
     $this->constantBuilders[] = $b;
+  }
+
+  public function addTypeConstant(ScannedTypeConstantBuilder $b): void {
+    $this->typeConstantBuilders[] = $b;
   }
 
   public function addEnum(ScannedEnumBuilder $b): void {
@@ -98,6 +103,7 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
     $methods = $this->buildAll($this->methodBuilders);
     $properties = $this->buildAll($this->propertyBuilders);
     $constants = $this->buildAll($this->constantBuilders);
+    $typeConstants = $this->buildAll($this->typeConstantBuilders);
     $enums = $this->buildAll($this->enumBuilders);
     $types = $this->buildAll($this->typeBuilders);
     $newtypes = $this->buildAll($this->newtypeBuilders);
@@ -113,6 +119,7 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
       $methods->addAll($scope->getMethods());
       $properties->addAll($scope->getProperties());
       $constants->addAll($scope->getConstants());
+      $typeConstants->addAll($scope->getTypeConstants());
       $enums->addAll($scope->getEnums());
       $types->addAll($scope->getTypes());
       $newtypes->addAll($scope->getNewtypes());
@@ -128,6 +135,7 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
       $this->usedTraits,
       $properties,
       $constants,
+      $typeConstants,
       $enums,
       $types,
       $newtypes,

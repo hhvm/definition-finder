@@ -120,6 +120,15 @@ final class TypehintConsumer extends Consumer {
       // Handle \foo\bar and foo\bar
       while ($this->tq->haveTokens()) {
         list($_, $ttype) = $this->tq->peek();
+        
+        // Handle \foo\bar::TYPE
+        if ($ttype === T_DOUBLE_COLON) {
+          list($tDoubleColon, $_) = $this->tq->shift();
+          list($tConstant, $_) = $this->tq->shift();
+          $type = $type . $tDoubleColon . $tConstant;
+          break;
+        }
+
         if ($ttype !== T_NS_SEPARATOR) {
           break;
         }
