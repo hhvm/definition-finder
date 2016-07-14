@@ -24,6 +24,7 @@ abstract class ScannedClass
     private \ConstVector<ScannedMethod> $methods,
     private \ConstVector<ScannedProperty> $properties,
     private \ConstVector<ScannedConstant> $constants,
+    private \ConstVector<ScannedTypeConstant> $typeConstants,
     private \ConstVector<ScannedGeneric> $generics,
     private ?ScannedTypehint $parent,
     private \ConstVector<ScannedTypehint> $interfaces,
@@ -51,6 +52,10 @@ abstract class ScannedClass
 
   public function getConstants(): \ConstVector<ScannedConstant> {
     return $this->constants;
+  }
+
+  public function getTypeConstants(): \ConstVector<ScannedTypeConstant> {
+    return $this->typeConstants;
   }
 
   public function getGenericTypes(): \ConstVector<ScannedGeneric> {
