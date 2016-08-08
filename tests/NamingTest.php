@@ -27,22 +27,45 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $this->assertNotNull($parser->getFunction('select'));
   }
 
-  public function testReturnTypeCalledDict(): void {
-    // Separate token in HHVM > 3.13
-    $data = '<?hh function foo(): dict {}';
+  public function specialTypeProvider(): array<array<string>> {
+    return [
+      [ 'dict' ], // HHVM >= 3.13
+      [ 'vec' ], // HHVM >= 3.14
+    ];
+  }
+
+  /** @dataProvider specialTypeProvider */
+  public function testSpecialReturnType(string $type): void {
+    $data = '<?hh function foo(): '.$type.' {}';
     $parser = FileParser::FromData($data);
     $func = $parser->getFunction('foo');
     $this->assertSame(
-      'dict',
+      $type,
       $func->getReturnType()?->getTypeName(),
     );
   }
 
-  public function testClassCalledDict(): void {
-    // Separate token in HHVM > 3.13
-    $data = '<?hh class dict {}';
+  /** @dataProvider specialTypeProvider */
+  public function testSpecialTypeAsFuncName(string $type): void {
+    $data = '<?hh function '.$type.'(): void {}';
     $parser = FileParser::FromData($data);
-    $this->assertNotNull($parser->getClass('dict'));
+    $func = $parser->getFunction($type);
+    $this->assertSame(
+      'void',
+      $func->getReturnType()?->getTypeName(),
+    );
+    $this->assertSame(
+      $type,
+      $func->getName(),
+    );
+  }
+
+  /** @dataProvider specialTypeProvider */
+  public function testSpecialTypeAsClassName(string $type): void {
+    $data = '<?hh class '.$type.' { }';
+    $parser = FileParser::FromData($data);
+    $class = $parser->getClass($type);
+    $this->assertNotNull($class);
   }
 
   public function testConstantCalledOn(): void {
