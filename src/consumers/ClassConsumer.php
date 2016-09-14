@@ -38,7 +38,7 @@ final class ClassConsumer extends Consumer {
         token_name($t),
       );
       invariant(
-        $this->type === DefinitionType::CLASS_DEF,
+        DefinitionType::coerce($this->type) === DefinitionType::CLASS_DEF,
         'Seeing an XHP class name for a %s',
         token_name($this->type),
       );
