@@ -38,6 +38,21 @@ enum RelationshipToken: string {
   SUPERTYPE = 'super';
 }
 
+enum StaticityToken: string {
+  IS_STATIC = 'static';
+  NOT_STATIC = '';
+}
+
+enum AbstractnessToken: string {
+  IS_ABSTRACT = 'abstract';
+  NOT_ABSTRACT = '';
+}
+
+enum FinalityToken: string {
+  IS_FINAL = 'final';
+  NOT_FINAL = '';
+}
+
 const int T_SELECT = 422;
 const int T_SHAPE = 402;
 const int T_ON = 415;

@@ -27,6 +27,8 @@ abstract class ScannedClass
     private \ConstVector<ScannedGeneric> $generics,
     private ?ScannedTypehint $parent,
     private \ConstVector<ScannedTypehint> $interfaces,
+    private AbstractnessToken $abstractness = AbstractnessToken::NOT_ABSTRACT,
+    private FinalityToken $finality = FinalityToken::NOT_FINAL,
   ) {
     parent::__construct($position, $name, $attributes, $docblock);
   }
@@ -69,5 +71,13 @@ abstract class ScannedClass
 
   public function getInterfaceInfo(): \ConstVector<ScannedTypehint> {
     return $this->interfaces;
+  }
+
+  public function isAbstract(): bool {
+    return $this->abstractness === AbstractnessToken::IS_ABSTRACT;
+  }
+
+  public function isFinal(): bool {
+    return $this->finality === FinalityToken::IS_FINAL;
   }
 }

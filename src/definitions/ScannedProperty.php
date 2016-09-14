@@ -21,7 +21,7 @@ class ScannedProperty
     ?string $docComment,
     private ?ScannedTypehint $typehint,
     private VisibilityToken $visibility,
-    private bool $isStatic,
+    private StaticityToken $staticity = StaticityToken::NOT_STATIC,
   ) {
     parent::__construct(
       $position,
@@ -30,7 +30,7 @@ class ScannedProperty
       $docComment,
     );
   }
-  
+
   public static function getType(): ?DefinitionType {
     return null;
   }
@@ -52,6 +52,6 @@ class ScannedProperty
   }
 
   public function isStatic(): bool {
-    return $this->isStatic;
+    return $this->staticity === StaticityToken::IS_STATIC;
   }
 }

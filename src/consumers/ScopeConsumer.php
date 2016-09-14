@@ -39,7 +39,9 @@ class ScopeConsumer extends Consumer {
     $parens_depth = 0;
     $scope_depth = 1;
     $visibility = null;
-    $static = false;
+    $staticity = null;
+    $abstractness = null;
+    $finality = null;
     $property_type = null;
     while ($tq->haveTokens() && $scope_depth > 0) {
       list ($token, $ttype) = $tq->shift();
@@ -79,7 +81,15 @@ class ScopeConsumer extends Consumer {
       }
 
       if ($ttype === T_STATIC) {
-        $static = true;
+        $staticity = StaticityToken::IS_STATIC;
+      }
+
+      if ($ttype === T_ABSTRACT) {
+        $abstractness = AbstractnessToken::IS_ABSTRACT;
+      }
+
+      if ($ttype === T_FINAL) {
+        $finality = FinalityToken::IS_FINAL;
       }
 
       if ($ttype === T_XHP_ATTRIBUTE) {
@@ -136,19 +146,22 @@ class ScopeConsumer extends Consumer {
         if ($visibility === null) {
           $visibility = VisibilityToken::T_PUBLIC;
         }
+        if ($staticity === null) {
+          $staticity = StaticityToken::NOT_STATIC;
+        }
         $builder->addProperty(
           (new ScannedPropertyBuilder($name))
           ->setAttributes($attrs)
           ->setDocComment($docblock)
           ->setVisibility($visibility)
           ->setTypehint($property_type)
-          ->setIsStatic($static)
+          ->setStaticity($staticity)
         );
 
         $attrs = Map { };
         $docblock = null;
         $visibility = null;
-        $static = false;
+        $staticity = null;
         $property_type = null;
 
         $this->consumeStatement();
@@ -162,13 +175,17 @@ class ScopeConsumer extends Consumer {
           $attrs,
           $docblock,
           $visibility,
-          $static,
+          $staticity,
+          $abstractness,
+          $finality,
         );
         $attrs = Map { };
         $docblock = null;
         $visibility = null;
-        $static = false;
+        $staticity = null;
         $property_type = null;
+        $abstractness = null;
+        $finality = null;
         continue;
       }
     }
@@ -182,7 +199,9 @@ class ScopeConsumer extends Consumer {
     AttributeMap $attrs,
     ?string $docblock,
     ?VisibilityToken $visibility,
-    bool $static,
+    ?StaticityToken $staticity,
+    ?AbstractnessToken $abstractness,
+    ?FinalityToken $finality,
    ): void {
     $this->consumeWhitespace();
 
@@ -195,6 +214,12 @@ class ScopeConsumer extends Consumer {
       case DefinitionType::CLASS_DEF:
       case DefinitionType::INTERFACE_DEF:
       case DefinitionType::TRAIT_DEF:
+        if ($abstractness === null) {
+          $abstractness = AbstractnessToken::NOT_ABSTRACT;
+        }
+        if ($finality === null) {
+          $finality = FinalityToken::NOT_FINAL;
+        }
         $builder->addClass(
           (new ClassConsumer(
             ClassDefinitionType::assert($def_type),
@@ -204,6 +229,8 @@ class ScopeConsumer extends Consumer {
             ->getBuilder()
             ->setAttributes($attrs)
             ->setDocComment($docblock)
+            ->setAbstractness($abstractness)
+            ->setFinality($finality)
         );
         return;
       case DefinitionType::FUNCTION_DEF:
@@ -230,13 +257,24 @@ class ScopeConsumer extends Consumer {
             'unknown function builder type: %s',
             get_class($fb),
           );
+          if ($staticity === null) {
+            $staticity = StaticityToken::NOT_STATIC;
+          }
           if ($visibility === null) {
             $visibility = VisibilityToken::T_PUBLIC;
+          }
+          if ($abstractness === null) {
+            $abstractness = AbstractnessToken::NOT_ABSTRACT;
+          }
+          if ($finality === null) {
+            $finality = FinalityToken::NOT_FINAL;
           }
           $builder->addMethod(
             $fb
             ->setVisibility($visibility)
-            ->setStatic($static)
+            ->setStaticity($staticity)
+            ->setAbstractness($abstractness)
+            ->setFinality($finality)
           );
         }
         return;
