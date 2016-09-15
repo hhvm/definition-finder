@@ -25,6 +25,17 @@ class XHPTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
+  public function testNullableXHPReturn(): void {
+    $data = '<?hh function foo(): ?:foo:bar {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+    $ret = $function->getReturnType();
+    $this->assertNotNull($ret);
+    assert($ret !== null); // typechecker
+    $this->assertSame('xhp_foo__bar', $ret->getTypeName());
+    $this->assertTrue($ret->isNullable());
+  }
+
   public function testXHPClassWithParent(): void {
     $data = '<?hh class :foo:bar extends :herp:derp {}';
 
