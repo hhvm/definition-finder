@@ -113,4 +113,15 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
   }
+
+  public function testInlineShapeConstraint(): void {
+    $data = '<?hh function foo<T as shape()>(): void {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+    $generics = $function->getGenericTypes();
+    $this->assertSame(
+      'shape()',
+      $generics[0]->getConstraintTypeName(),
+    );
+  }
 }

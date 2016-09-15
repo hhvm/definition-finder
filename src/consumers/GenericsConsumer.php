@@ -42,7 +42,7 @@ class GenericsConsumer extends Consumer {
         if ($name !== null) {
           $ret[] = new ScannedGeneric(
             $name,
-            $this->unaliasName($constraint),
+            $constraint,
             $variance,
             $relationship,
           );
@@ -81,28 +81,22 @@ class GenericsConsumer extends Consumer {
 
       if ($ttype === T_AS) {
         $relationship = RelationshipToken::SUBTYPE;
+        $this->consumeWhitespace();
+        $constraint = (new TypehintConsumer(
+          $tq,
+          $this->aliases,
+        ))->getTypehint()->getTypeText();
         continue;
       }
 
       if ($ttype === T_SUPER) {
         $relationship = RelationshipToken::SUPERTYPE;
+        $this->consumeWhitespace();
+        $constraint = (new TypehintConsumer(
+          $tq,
+          $this->aliases,
+        ))->getTypehint()->getTypeText();
         continue;
-      }
-
-      $constraint = null;
-
-      invariant(
-        $ttype === T_STRING || $ttype === T_NS_SEPARATOR,
-        'expected type constraint at line %d',
-        $tq->getLine(),
-      );
-      $constraint = $t;
-
-      list($t, $ttype) = $tq->peek();
-      while ($ttype === T_STRING || $ttype === T_NS_SEPARATOR) {
-        $tq->shift();
-        $constraint .= $t;
-        list($t, $ttype) = $tq->peek();
       }
     }
     invariant_violation('never reached end of generics definition');
