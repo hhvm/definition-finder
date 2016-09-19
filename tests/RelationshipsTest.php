@@ -86,4 +86,13 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
       $def->getInterfaceInfo()->map($x ==> $x->getTypeText()),
     );
   }
+
+  public function testTraitImplements(): void {
+    $data = '<?hh interface IFoo {}; trait TFoo implements IFoo {}';
+    $def = FileParser::FromData($data)->getTrait('TFoo');
+    $this->assertEquals(
+      Vector { 'IFoo' },
+      $def->getInterfaceNames(),
+    );
+  }
 }
