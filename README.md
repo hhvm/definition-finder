@@ -1,6 +1,8 @@
 Definition Finder
 ==================
 
+![build status](https://api.travis-ci.org/fredemmott/definition-finder.svg)
+
 This library finds all the definitions in a file or tree that HHVM understands. It is used to generate [the Hack reference documentation](http://docs.hhvm.com/hack/reference/), and be used for other purposes such as [generating autoload maps](https://github.com/fredemmott/hhvm-autoload-map-generator/)
 
 Usage
