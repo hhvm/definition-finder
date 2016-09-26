@@ -20,5 +20,10 @@
       "src/typedefs.php",
       "src/utils.php"
     ]
+  },
+  "autoload-dev": {
+    "classmap": [
+      "tests/"
+    ]
   }
 }
