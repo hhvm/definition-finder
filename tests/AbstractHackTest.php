@@ -52,6 +52,16 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
     );
   }
 
+  public function testInterface(): void {
+    $class = $this->parser?->getClass(
+      $this->getPrefix().'SimpleChildClass'
+    );
+    $this->assertEquals(
+      Vector { $this->getPrefix().'SimpleInterface' },
+      $class?->getInterfaceNames(),
+    );
+  }
+
   public function testTypes(): void {
     $this->assertEquals(
       Vector {

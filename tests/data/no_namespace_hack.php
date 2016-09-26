@@ -22,7 +22,9 @@ class SimpleClass {
   }
 }
 
-class SimpleChildClass extends SimpleClass {
+interface SimpleInterface {}
+
+class SimpleChildClass extends SimpleClass implements SimpleInterface {
 }
 
 class GenericClass<Tk, Tv> {
