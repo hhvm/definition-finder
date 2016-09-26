@@ -21,9 +21,10 @@ final class ClassConsumer extends Consumer {
   public function __construct(
     private ClassDefinitionType $type,
     TokenQueue $tq,
+    ?string $namespace,
     \ConstMap<string, string> $aliases,
   ) {
-    parent::__construct($tq, $aliases);
+    parent::__construct($tq, $namespace, $aliases);
   }
 
   public function getBuilder(): ScannedClassBuilder {
@@ -51,7 +52,8 @@ final class ClassConsumer extends Consumer {
     list($_, $ttype) = $this->tq->peek();
     if ($ttype == T_TYPELIST_LT) {
       $builder->setGenericTypes(
-        (new GenericsConsumer($this->tq, $this->aliases))->getGenerics(),
+        (new GenericsConsumer($this->tq, $this->namespace, $this->aliases))
+          ->getGenerics(),
       );
     }
 
@@ -88,7 +90,12 @@ final class ClassConsumer extends Consumer {
 
     return $builder
       ->setContents(
-        (new ScopeConsumer($this->tq, ScopeType::CLASS_SCOPE, $this->aliases))
+        (new ScopeConsumer(
+          $this->tq,
+          ScopeType::CLASS_SCOPE,
+          $this->namespace,
+          $this->aliases,
+        ))
         ->getBuilder()
       );
   }
@@ -107,7 +114,11 @@ final class ClassConsumer extends Consumer {
         break;
       }
 
-      $classes[] = (new TypehintConsumer($this->tq, $this->aliases))
+      $classes[] = (new TypehintConsumer(
+        $this->tq,
+        $this->namespace,
+        $this->aliases,
+      ))
         ->getTypehint();
     }
     return $classes;

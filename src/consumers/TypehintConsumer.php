@@ -152,7 +152,7 @@ final class TypehintConsumer extends Consumer {
       }
       break;
     }
-    $orig = var_export($type, true);
+    $orig = $type;
     $type = $this->unaliasName($type);
     invariant($type !== null, 'expected a type, got %s from %s', var_export($type, true), $orig);
     return new ScannedTypehint($type, $generics, $nullable);
