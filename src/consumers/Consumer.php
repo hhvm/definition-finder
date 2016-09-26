@@ -74,7 +74,7 @@ abstract class Consumer {
     }
   }
 
-  protected function unaliasName(?string $name): ?string {
+  protected function normalizeName(?string $name): ?string {
 
     if ($name === null) {
       return $name;
