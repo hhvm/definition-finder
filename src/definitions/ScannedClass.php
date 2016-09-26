@@ -27,6 +27,7 @@ abstract class ScannedClass
     private \ConstVector<ScannedGeneric> $generics,
     private ?ScannedTypehint $parent,
     private \ConstVector<ScannedTypehint> $interfaces,
+    private \ConstVector<ScannedTypehint> $traits,
     private AbstractnessToken $abstractness = AbstractnessToken::NOT_ABSTRACT,
     private FinalityToken $finality = FinalityToken::NOT_FINAL,
   ) {
@@ -59,6 +60,10 @@ abstract class ScannedClass
 
   public function getInterfaceNames(): \ConstVector<string> {
     return $this->interfaces->map($x ==> $x->getTypeName());
+  }
+
+  public function getTraitNames(): \ConstVector<string> {
+    return $this->traits->map($x ==> $x->getTypeName());
   }
 
   public function getParentClassName(): ?string {

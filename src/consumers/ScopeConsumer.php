@@ -106,6 +106,16 @@ class ScopeConsumer extends Consumer {
         continue;
       }
 
+      if ($ttype === T_USE && $this->scopeType === ScopeType::CLASS_SCOPE) {
+        $this->consumeWhitespace();
+        $builder->addUsedTrait((new TypehintConsumer(
+          $tq,
+          $this->namespace,
+          $this->scopeAliases,
+        ))->getTypehint());
+        $this->consumeStatement();
+      }
+
       // I hate you, PHP.
       if ($ttype === T_STRING && strtolower($token) === 'define') {
         $sub_builder = (new DefineConsumer(

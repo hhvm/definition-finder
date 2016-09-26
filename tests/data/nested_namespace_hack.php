@@ -24,10 +24,13 @@ class SimpleClass {
   }
 }
 
-interface SimpleInterface {
-}
+interface SimpleInterface {}
+trait SimpleTrait {}
 
-class SimpleChildClass extends SimpleClass implements SimpleInterface {
+class SimpleChildClass
+extends SimpleClass
+implements SimpleInterface {
+  use SimpleTrait;
 }
 
 class GenericClass<Tk, Tv> {

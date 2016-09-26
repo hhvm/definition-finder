@@ -95,4 +95,39 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
       $def->getInterfaceNames(),
     );
   }
+
+  public function testUsesTraits(): void {
+    $data = '<?hh class Foo { use Herp; use Derp; }';
+    $def = FileParser::FromData($data)->getClass('Foo');
+    $this->assertEquals(
+      Vector { 'Herp', 'Derp' },
+      $def->getTraitNames(),
+    );
+  }
+
+  public function testUsesMultipleTraitsInSingleStatement(): void {
+    $this->markTestSkipped('not yet implemented');
+    $data = '<?hh class Foo { use Herp, Derp; }';
+    $def = FileParser::FromData($data)->getClass('Foo');
+    $this->assertEquals(
+      Vector { 'Herp', 'Derp' },
+      $def->getTraitNames(),
+    );
+  }
+
+  public function testUseTraitAs(): void {
+    $this->markTestIncomplete();
+  }
+
+  public function testUsesTraitsInNamespace(): void {
+    $data =
+      "<?hh\n".
+      "namespace MyNamespace;".
+      'class Foo { use Herp; use Derp; }';
+    $def = FileParser::FromData($data)->getClass('MyNamespace\\Foo');
+    $this->assertEquals(
+      Vector { 'MyNamespace\\Herp', 'MyNamespace\\Derp' },
+      $def->getTraitNames(),
+    );
+  }
 }
