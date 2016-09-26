@@ -30,6 +30,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(
       Vector {
         $this->getPrefix().'SimpleClass',
+        $this->getPrefix().'SimpleChildClass',
         $this->getPrefix().'GenericClass',
         $this->getPrefix().'GenericAliasedConstraintClass',
         $this->getPrefix().'AbstractFinalClass',
@@ -38,6 +39,16 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
         $this->getPrefix().'xhp_foo__bar',
       },
       $this->parser?->getClassNames(),
+    );
+  }
+
+  public function testSuperClass(): void {
+    $class = $this->parser?->getClass(
+      $this->getPrefix().'SimpleChildClass'
+    );
+    $this->assertSame(
+      $this->getPrefix().'SimpleClass',
+      $class?->getParentClassName(),
     );
   }
 
@@ -99,9 +110,10 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
       Vector {
         $this->getPrefix().'MY_CONST',
         $this->getPrefix().'MY_TYPED_CONST',
-        $this->getPrefix().'MY_OLD_STYLE_CONST',
-        $this->getPrefix().'MY_OTHER_OLD_STYLE_CONST',
-        $this->getPrefix().'NOW_IM_JUST_FUCKING_WITH_YOU',
+        // define() puts constants into the root namespace
+        'MY_OLD_STYLE_CONST',
+        'MY_OTHER_OLD_STYLE_CONST',
+        'NOW_IM_JUST_FUCKING_WITH_YOU',
       },
       $this->parser?->getConstantNames(),
     );

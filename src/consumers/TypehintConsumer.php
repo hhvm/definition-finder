@@ -152,9 +152,8 @@ final class TypehintConsumer extends Consumer {
       }
       break;
     }
-    $orig = $type;
+    invariant($type !== null, "Didn't see anything that looked like a type");
     $type = $this->normalizeName($type);
-    invariant($type !== null, 'expected a type, got %s from %s', var_export($type, true), $orig);
     return new ScannedTypehint($type, $generics, $nullable);
   }
 }

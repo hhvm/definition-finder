@@ -22,7 +22,7 @@ final class ScannedMethodBuilder
   public function build(): ScannedMethod{
     return new ScannedMethod(
       nullthrows($this->position),
-      nullthrows($this->namespace).$this->name,
+      $this->name,
       nullthrows($this->attributes),
       $this->docblock,
       nullthrows($this->generics),

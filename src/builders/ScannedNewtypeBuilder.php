@@ -15,7 +15,7 @@ class ScannedNewtypeBuilder extends ScannedSingleTypeBuilder<ScannedNewtype> {
   public function build(): ScannedNewtype {
     return new ScannedNewtype(
       nullthrows($this->position),
-      nullthrows($this->namespace).$this->name,
+      $this->name,
       /* attributes = */ Map { },
       $this->docblock,
     );

@@ -67,7 +67,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $class = $parser->getClass('Foo');
 
     $this->assertEquals(
-      Vector { '\Bar\Baz' },
+      Vector { 'Bar\Baz' },
       $class->getGenericTypes()->map($x ==> $x->getConstraintTypeName()),
     );
   }

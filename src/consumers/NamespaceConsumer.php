@@ -32,7 +32,7 @@ class NamespaceConsumer extends Consumer {
       );
     } while ($this->tq->haveTokens());
 
-    $ns = $parts ? (implode('\\', $parts).'\\') : '';
+    $ns = $parts ? implode('\\', $parts) : '';
 
     $builder = (new ScannedNamespaceBuilder($ns))
       ->setContents(

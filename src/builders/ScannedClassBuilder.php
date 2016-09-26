@@ -72,7 +72,6 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
 
     $scope = nullthrows($this->scopeBuilder)
       ->setPosition(nullthrows($this->position))
-      ->setNamespace('')
       ->build();
 
     $methods = $scope->getMethods();
@@ -101,7 +100,7 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
 
     return new $what(
       nullthrows($this->position),
-      nullthrows($this->namespace).$this->name,
+      $this->name,
       nullthrows($this->attributes),
       $this->docblock,
       $methods,

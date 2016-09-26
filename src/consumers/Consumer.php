@@ -12,11 +12,107 @@
 namespace Facebook\DefinitionFinder;
 
 abstract class Consumer {
+  private static ?ImmSet<string> $autoImportTypes;
+  final private static function getAutoImportTypes(): ImmSet<string> {
+    $types = self::$autoImportTypes;
+    if ($types !== null) {
+      return $types;
+    }
+
+    $scalars = ImmSet {
+      'mixed',
+      'void',
+      'bool',
+      'int',
+      'string',
+      'float',
+      'double',
+      'callable',
+      'resource',
+      'num',
+      'arraykey',
+      'array',
+    };
+
+    /* class and typedef list taken from typechecker source:
+     *   hhvm/hphp/hack/src/parsing/namespaces.ml
+     * Last updated:
+     *   2016-09-20
+     *   3a26de9eb51f041f1cf2df34c06d47e7c0c27015
+     */
+    $classes = ImmSet {
+      'Traversable',
+      'KeyedTraversable',
+      'Container',
+      'KeyedContainer',
+      'Iterator',
+      'KeyedIterator',
+      'Iterable',
+      'KeyedIterable',
+      'Collection',
+      'Vector',
+      'ImmVector',
+      'vec',
+      'dict',
+      'keyset',
+      'Map',
+      'ImmMap',
+      'StableMap',
+      'Set',
+      'ImmSet',
+      'Pair',
+      'Awaitable',
+      'AsyncIterator',
+      'IMemoizeParam',
+      'AsyncKeyedIterator',
+      'InvariantException',
+      'AsyncGenerator',
+      'WaitHandle',
+      'StaticWaitHandle',
+      'WaitableWaitHandle',
+      'ResumableWaitHandle',
+      'AsyncFunctionWaitHandle',
+      'AsyncGeneratorWaitHandle',
+      'AwaitAllWaitHandle',
+      'ConditionWaitHandle',
+      'RescheduleWaitHandle',
+      'SleepWaitHandle',
+      'ExternalThreadEventWaitHandle',
+      'Shapes',
+      'TypeStructureKind',
+    };
+
+    $typedefs = ImmSet {
+      'typename',
+      'classname',
+      'TypeStructure',
+    };
+
+    $types = $scalars
+      ->concat($classes)
+      ->concat($typedefs)
+      ->toImmSet();
+
+    self::$autoImportTypes = $types;
+    return $types;
+  }
+
+  <<__Deprecated('Please send a pull request adding the missing types')>>
+  final public static function setAutoImportTypes(
+    ImmSet<string> $types,
+  ): void {
+    self::$autoImportTypes = $types;
+  }
+
   public function __construct(
     protected TokenQueue $tq,
     protected ?string $namespace,
     protected \ConstMap<string, string> $aliases,
   ) {
+    invariant(
+      $namespace === null || substr($namespace, -1) !== '\\',
+      "Namespaces don't end with slashes",
+    );
   }
 
   protected function consumeWhitespace(): void {
@@ -74,9 +170,28 @@ abstract class Consumer {
     }
   }
 
-  protected function normalizeName(?string $name): ?string {
-
+  protected function normalizeNullableName(
+    ?string $name,
+  ): ?string {
     if ($name === null) {
+      return null;
+    }
+    return $this->normalizeName($name);
+  }
+
+  protected function normalizeName(
+    string $name,
+  ): string {
+    $name = $this->fullyQualifyName($name);
+    if (substr($name, 0, 1) === '\\') {
+      return substr($name, 1);
+    }
+    return $name;
+  }
+
+  private function fullyQualifyName(string $name): string {
+    $autoimport = self::getAutoImportTypes();
+    if ($autoimport->contains($name)) {
       return $name;
     }
 
@@ -85,7 +200,9 @@ abstract class Consumer {
     $realBase = $this->aliases->get($base);
 
     if ($realBase === null) {
-      return $name;
+      if (substr($name, 0, 1) !== '\\') {
+        return $this->namespace.'\\'.$name;
+      }
     }
 
     $parts[0] = $realBase;

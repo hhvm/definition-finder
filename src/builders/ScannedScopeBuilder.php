@@ -69,14 +69,13 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
   }
 
   public function build(): ScannedScope {
-    $ns = nullthrows($this->namespace);
     $pos = nullthrows($this->position);
 
     $classes = Vector { };
     $interfaces= Vector { };
     $traits = Vector { };
     foreach ($this->classBuilders as $b) {
-      $b->setPosition($pos)->setNamespace($ns);
+      $b->setPosition($pos);
       switch ($b->getType()) {
         case ClassDefinitionType::CLASS_DEF:
           $classes[] = $b->build(ScannedBasicClass::class);
@@ -134,12 +133,7 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
   ): Vector<T> {
     return $v->map($b ==> $b
       ->setPosition(nullthrows($this->position))
-      ->setNamespace(nullthrows($this->namespace))
       ->build()
     )->toVector();
-  }
-
-  public function getNamespace(): string {
-    return nullthrows($this->namespace);
   }
 }

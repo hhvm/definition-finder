@@ -17,7 +17,7 @@ final class ScannedFunctionBuilder
   public function build(): ScannedFunction {
     return new ScannedFunction(
       nullthrows($this->position),
-      nullthrows($this->namespace).$this->name,
+      $this->name,
       nullthrows($this->attributes),
       $this->docblock,
       nullthrows($this->generics),

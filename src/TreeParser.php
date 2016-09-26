@@ -37,7 +37,6 @@ class TreeParser extends BaseParser {
     }
     $this->defs = $builder
       ->setPosition(shape('filename' => $path))
-      ->setNamespace('')
       ->build();
   }
 

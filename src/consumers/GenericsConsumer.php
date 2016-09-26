@@ -58,7 +58,7 @@ class GenericsConsumer extends Consumer {
       if ($t === ',') {
         $ret[] = new ScannedGeneric(
           nullthrows($name),
-          $this->normalizeName($constraint),
+          $this->normalizeNullableName($constraint),
           $variance,
           $relationship,
         );

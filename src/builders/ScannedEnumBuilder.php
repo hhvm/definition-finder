@@ -15,7 +15,7 @@ class ScannedEnumBuilder extends ScannedSingleTypeBuilder<ScannedEnum> {
   public function build(): ScannedEnum {
     return new ScannedEnum(
       nullthrows($this->position),
-      nullthrows($this->namespace).$this->name,
+      $this->name,
       /* attributes = */ Map { },
       $this->docblock,
     );

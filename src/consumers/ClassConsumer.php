@@ -47,7 +47,10 @@ final class ClassConsumer extends Consumer {
       $name = normalize_xhp_class($v);
     }
 
-    $builder = (new ScannedClassBuilder($this->type, $name));
+    $builder = new ScannedClassBuilder(
+      $this->type,
+      $this->normalizeName($name),
+    );
 
     list($_, $ttype) = $this->tq->peek();
     if ($ttype == T_TYPELIST_LT) {

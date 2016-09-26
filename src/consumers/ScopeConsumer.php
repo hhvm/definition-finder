@@ -32,7 +32,7 @@ class ScopeConsumer extends Consumer {
   }
 
   public function getBuilder(): ScannedScopeBuilder {
-    $builder = (new ScannedScopeBuilder())->setNamespace('');
+    $builder = (new ScannedScopeBuilder());
     $attrs = Map { };
     $docblock = null;
 
@@ -300,10 +300,13 @@ class ScopeConsumer extends Consumer {
         }
         return;
       case DefinitionType::CONST_DEF:
+        $namespace = $this->scopeType === ScopeType::CLASS_SCOPE
+          ? null
+          : $this->namespace;
         $builder->addConstant(
           (new ConstantConsumer(
             $this->tq,
-            $this->namespace,
+            $namespace,
             $this->scopeAliases,
           ))
           ->getBuilder()
@@ -325,11 +328,13 @@ class ScopeConsumer extends Consumer {
   ): void {
     list($name, $ttype) = $this->tq->shift();
     invariant(
-      $ttype=== T_STRING,
+      $ttype === T_STRING,
       'Expected a string for %s, got %d',
       token_name($def_type),
       $ttype,
     );
+    $name = $this->normalizeName($name);
+
     switch ($def_type) {
       case DefinitionType::TYPE_DEF:
         $builder->addType(
@@ -430,7 +435,14 @@ class ScopeConsumer extends Consumer {
          );
        }
     }
-
     return $name;
+  }
+
+  <<__Override>>
+  protected function normalizeName(string $name): string {
+    if ($this->scopeType === ScopeType::CLASS_SCOPE) {
+      return $name;
+    }
+    return parent::normalizeName($name);
   }
 }

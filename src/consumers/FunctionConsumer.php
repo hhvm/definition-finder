@@ -12,9 +12,10 @@
 namespace Facebook\DefinitionFinder;
 
 class FunctionConsumer extends FunctionAbstractConsumer<ScannedFunction> {
-  protected static function ConstructBuilder(
+  <<__Override>>
+  protected function constructBuilder(
     string $name,
   ): ScannedFunctionBuilder {
-    return new ScannedFunctionBuilder($name);
+    return new ScannedFunctionBuilder($this->normalizeName($name));
   }
 }

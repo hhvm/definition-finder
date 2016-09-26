@@ -24,7 +24,6 @@ extends ScannedSingleTypeBuilder<ScannedNamespace> {
   public function build(): ScannedNamespace {
     $scope = nullthrows($this->scopeBuilder)
       ->setPosition(nullthrows($this->position))
-      ->setNamespace($this->name)
       ->build();
     return new ScannedNamespace(
       nullthrows($this->position),
