@@ -107,13 +107,24 @@ class ScopeConsumer extends Consumer {
       }
 
       if ($ttype === T_USE && $this->scopeType === ScopeType::CLASS_SCOPE) {
-        $this->consumeWhitespace();
-        $builder->addUsedTrait((new TypehintConsumer(
-          $tq,
-          $this->namespace,
-          $this->scopeAliases,
-        ))->getTypehint());
+        do {
+          $this->consumeWhitespace();
+          $builder->addUsedTrait((new TypehintConsumer(
+            $tq,
+            $this->namespace,
+            $this->scopeAliases,
+          ))->getTypehint());
+          $this->consumeWhitespace();
+
+          list($peeked, $_) = $tq->peek();
+          if ($peeked === ',') {
+            $tq->shift();
+            continue;
+          }
+          break;
+        } while (true);
         $this->consumeStatement();
+        continue;
       }
 
       // I hate you, PHP.

@@ -106,7 +106,6 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testUsesMultipleTraitsInSingleStatement(): void {
-    $this->markTestSkipped('not yet implemented');
     $data = '<?hh class Foo { use Herp, Derp; }';
     $def = FileParser::FromData($data)->getClass('Foo');
     $this->assertEquals(
@@ -115,8 +114,19 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
-  public function testUseTraitAs(): void {
-    $this->markTestIncomplete();
+  public function testUseTraitWithConflictResolution(): void {
+    $data =
+      "<?php\n".
+      "class MyClass {\n".
+      "  use Foo, Bar {\n".
+      "    Foo::herp insteadof Bar;\n".
+      "    Bar::herp as derp;\n".
+      "}";
+    $def = FileParser::FromData($data)->getClass('MyClass');
+    $this->assertEquals(
+      Vector { 'Foo', 'Bar' },
+      $def->getTraitNames(),
+    );
   }
 
   public function testUsesTraitsInNamespace(): void {
