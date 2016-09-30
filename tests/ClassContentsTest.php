@@ -365,8 +365,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       $namespace === '' ? '' : "namespace $namespace;",
       $returnText
     );
-    $className = $namespace . '\Foo'
-      |> ltrim($$, '\\');
+    $className = ltrim($namespace.'\Foo', "\\");
     $parser = FileParser::FromData($data);
     $methods = $parser->getClass($className)->getMethods();
     $this->assertSame(1, $methods->count());
