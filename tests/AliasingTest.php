@@ -57,11 +57,11 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
     $code =
       "<?hh\n".
       "namespace MyNamespace;\n".
-      "use MyOtherNamespace\\{Foo, Bar};\\n".
+      "use MyOtherNamespace\\{Foo, Bar};\n".
       "class MyClass implements Foo, Bar{}";
     $def = FileParser::FromData($code)->getClass('MyNamespace\\MyClass');
-    $this->assertSame(
-      ImmVector { 'MyOtherNamespace\\Foo', 'MyOtherNamespace\\Bar' },
+    $this->assertEquals(
+      Vector { 'MyOtherNamespace\\Foo', 'MyOtherNamespace\\Bar' },
       $def->getInterfaceNames(),
     );
   }

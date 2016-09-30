@@ -102,7 +102,7 @@ class ScopeConsumer extends Consumer {
       }
 
       if ($ttype === T_USE && $this->scopeType !== ScopeType::CLASS_SCOPE) {
-        $this->scopeAliases->add($this->consumeUseStatement());
+        $this->scopeAliases->setAll($this->consumeUseStatement());
         continue;
       }
 
@@ -390,32 +390,31 @@ class ScopeConsumer extends Consumer {
     } while ($this->tq->haveTokens() && $ttype !== T_OPEN_TAG);
   }
 
-  private function consumeUseStatement(): Pair<string, string> {
+  private function consumeUseStatement(): ImmMap<string, string> {
     $parts = [];
     $alias = '';
 
     do {
       $this->consumeWhitespace();
-      list($name, $type) = $this->tq->shift();
+      list($token, $type) = $this->tq->shift();
 
       if ($type === T_STRING) {
-        $parts[] = $name;
+        $parts[] = $token;
         continue;
-
       } else if ($type === T_NS_SEPARATOR) {
         continue;
-
       } else if ($type === T_AS) {
         $alias = $this->consumeAlias();
         break;
-
-      } else if ($name === ';') {
+      } else if ($token === '{') {
+        return $this->consumeGroupUseStatement(new ImmVector($parts));
+      } else if ($token === ';') {
         break;
       }
 
       invariant_violation(
         'Unexpected token %s',
-        var_export($name, true),
+        var_export($token, true),
       );
 
     } while ($this->tq->haveTokens());
@@ -426,7 +425,62 @@ class ScopeConsumer extends Consumer {
 
     $namespace = implode('\\', $parts);
 
-    return Pair{$alias, $namespace};
+    return ImmMap { $alias => $namespace };
+  }
+
+  private function consumeGroupUseStatement(
+    ImmVector<string> $prefix,
+  ): ImmMap<string, string> {
+    $this->consumeWhitespace();
+    $aliases = Map { };
+    $tq = $this->tq;
+    do {
+      list($t, $ttype) = $tq->shift();
+      invariant($ttype === T_STRING, 'expected definition name');
+      $name = $t;
+
+      $this->consumeWhitespace();
+      list($t, $ttype) = $tq->shift();
+      if ($t === '}') {
+        $aliases[$name] = $name;
+        break;
+      }
+      if ($t === ',') {
+        $aliases[$name] = $name;
+        $this->consumeWhitespace();
+        continue;
+      }
+
+      invariant(
+        $ttype === T_AS,
+        "Unexpected token %s",
+        var_export($t, true),
+      );
+      $this->consumeWhitespace();
+
+      list($t, $ttype) = $tq->shift();
+      invariant(
+        $ttype === T_STRING,
+        'Expected alias (T_STRING), got %s',
+        var_export($t, true),
+      );
+      $aliases[$name] = $t;
+      $this->consumeWhitespace();
+      list($t, $ttype) = $tq->shift();
+      if ($t === '}') {
+        break;
+      }
+      if ($t === ',') {
+        continue;
+      }
+      invariant_violation(
+        "Expected '}' or ',', got %s",
+        var_export($t, true),
+      );
+    } while (!$tq->isEmpty());
+
+    $prefix = implode("\\", $prefix)."\\";
+    return $aliases->map($value ==> $prefix.$value)->immutable();
   }
 
   private function consumeAlias(): string {
