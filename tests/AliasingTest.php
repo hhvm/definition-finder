@@ -65,4 +65,17 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       $def->getInterfaceNames(),
     );
   }
+
+  public function testGroupUseWithAlias(): void {
+    $code =
+      "<?hh\n".
+      "namespace MyNamespace;\n".
+      "use MyOtherNamespace\\{Foo as Herp, Bar as Derp};\n".
+      "class MyClass implements Herp, Derp {}";
+    $def = FileParser::FromData($code)->getClass('MyNamespace\\MyClass');
+    $this->assertEquals(
+      Vector { 'MyOtherNamespace\\Foo', 'MyOtherNamespace\\Bar' },
+      $def->getInterfaceNames(),
+    );
+  }
 }

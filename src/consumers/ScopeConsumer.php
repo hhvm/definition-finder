@@ -431,10 +431,10 @@ class ScopeConsumer extends Consumer {
   private function consumeGroupUseStatement(
     ImmVector<string> $prefix,
   ): ImmMap<string, string> {
-    $this->consumeWhitespace();
     $aliases = Map { };
     $tq = $this->tq;
     do {
+      $this->consumeWhitespace();
       list($t, $ttype) = $tq->shift();
       invariant($ttype === T_STRING, 'expected definition name');
       $name = $t;
@@ -464,7 +464,7 @@ class ScopeConsumer extends Consumer {
         'Expected alias (T_STRING), got %s',
         var_export($t, true),
       );
-      $aliases[$name] = $t;
+      $aliases[$t] = $name;
       $this->consumeWhitespace();
       list($t, $ttype) = $tq->shift();
       if ($t === '}') {
