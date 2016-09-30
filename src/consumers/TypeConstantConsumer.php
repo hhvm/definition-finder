@@ -22,17 +22,18 @@ final class TypeConstantConsumer extends Consumer {
 
   public function __construct(
     TokenQueue $tq,
+    ?string $namespace,
     \ConstMap<string, string> $aliases,
     private AbstractnessToken $abstractness,
   ) {
-    parent::__construct($tq, $aliases);
+    parent::__construct($tq, $namespace, $aliases);
   }
 
   public function getBuilder(): ScannedTypeConstantBuilder {
     $this->checkForTypeToken();
     return new ScannedTypeConstantBuilder(
-      $this->extractName(),
-      $this->extractValue(),
+      $this->consumeName(),
+      $this->consumeValue(),
       $this->abstractness,
     );
   }
@@ -46,7 +47,7 @@ final class TypeConstantConsumer extends Consumer {
    );
   }
 
-  private function extractName(): string {
+  private function consumeName(): string {
     $this->consumeWhitespace();
     list($next, $next_type) = $this->tq->shift();
     invariant(
@@ -57,7 +58,7 @@ final class TypeConstantConsumer extends Consumer {
     return $next;
   }
 
-  private function extractValue(): ?ScannedTypehint {
+  private function consumeValue(): ?ScannedTypehint {
     $this->consumeWhitespace();
 
     $expectValue = false;
@@ -70,7 +71,11 @@ final class TypeConstantConsumer extends Consumer {
       );
       $this->tq->shift();
       $this->consumeWhitespace();
-      return (new TypehintConsumer($this->tq, $this->aliases))->getTypehint();
+      return (new TypehintConsumer(
+        $this->tq,
+        $this->namespace,
+        $this->aliases,
+      ))->getTypehint();
     }
 
     if($next === '=') {
@@ -80,7 +85,11 @@ final class TypeConstantConsumer extends Consumer {
       );
       $this->tq->shift();
       $this->consumeWhitespace();
-      return (new TypehintConsumer($this->tq, $this->aliases))->getTypehint();
+      return (new TypehintConsumer(
+        $this->tq,
+        $this->namespace,
+        $this->aliases,
+      ))->getTypehint();
     }
 
       $this->consumeStatement();

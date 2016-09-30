@@ -23,7 +23,7 @@ class ScannedTypeConstantBuilder extends ScannedSingleTypeBuilder<ScannedTypeCon
   public function build(): ScannedTypeConstant {
     return new ScannedTypeConstant(
       nullthrows($this->position),
-      nullthrows($this->namespace).$this->name,
+      $this->name,
       $this->docblock,
       $this->value,
       $this->abstractness,

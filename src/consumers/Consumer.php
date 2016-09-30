@@ -195,6 +195,10 @@ abstract class Consumer {
       return $name;
     }
 
+    if (preg_match('/^(this|self|static)::/', $name)) {
+      return $name;
+    }
+
     $parts = explode('\\', $name);
     $base = $parts[0];
     $realBase = $this->aliases->get($base);

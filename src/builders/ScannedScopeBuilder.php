@@ -116,10 +116,7 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
       $interfaces->addAll($scope->getInterfaces());
       $traits->addAll($scope->getTraits());
       $functions->addAll($scope->getFunctions());
-      $methods->addAll($scope->getMethods());
-      $properties->addAll($scope->getProperties());
       $constants->addAll($scope->getConstants());
-      $typeConstants->addAll($scope->getTypeConstants());
       $enums->addAll($scope->getEnums());
       $types->addAll($scope->getTypes());
       $newtypes->addAll($scope->getNewtypes());
