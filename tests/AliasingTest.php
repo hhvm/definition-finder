@@ -52,4 +52,17 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       $def->getParentClassName(),
     );
   }
+
+  public function testSimpleGroupUse(): void {
+    $code =
+      "<?hh\n".
+      "namespace MyNamespace;\n".
+      "use MyOtherNamespace\\{Foo, Bar};\\n".
+      "class MyClass implements Foo, Bar{}";
+    $def = FileParser::FromData($code)->getClass('MyNamespace\\MyClass');
+    $this->assertSame(
+      ImmVector { 'MyOtherNamespace\\Foo', 'MyOtherNamespace\\Bar' },
+      $def->getInterfaceNames(),
+    );
+  }
 }
