@@ -126,6 +126,11 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testGenericWithTrailingComma(): void {
+    /* HH_FIXME[4106] HHVM_VERSION not defined */
+    /* HH_FIXME[2049] HHVM_VERSION not defined */
+    if (!version_compare(HHVM_VERSION, '3.12.0', '>=')) {
+      $this->markTestSkipped('only supported on 3.12+');
+    }
     $data = '<?hh function foo(ImmMap<string,string,> $bar): void {}';
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
