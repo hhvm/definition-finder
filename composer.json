@@ -1,0 +1,29 @@
+{
+  "name": "fredemmott/definition-finder",
+  "description": "Find definitions in PHP or Hack files. Useful for autoloaders.",
+  "keywords": ["hack", "definitions", "hhvm", "autoload"],
+  "homepage": "https://github.com/fredemmott/definitions-finder",
+  "license": ["BSD-3-Clause"],
+  "require": {
+    "hhvm": "~3.9"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~5.1",
+    "hhvm/systemlib-extractor": "^0.1.0",
+    "91carriage/phpunit-hhi": "~5.1"
+  },
+  "autoload": {
+    "classmap": [
+      "src/"
+    ],
+    "files": [
+      "src/typedefs.php",
+      "src/utils.php"
+    ]
+  },
+  "autoload-dev": {
+    "classmap": [
+      "tests/"
+    ]
+  }
+}
