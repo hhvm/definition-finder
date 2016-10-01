@@ -19,9 +19,11 @@ class FileParser extends BaseParser {
     try {
       $this->defs = (new ScopeConsumer(
         $tq,
+        shape(
+          'namespace' => null,
+          'aliases' => ImmMap { },
+        ),
         ScopeType::FILE_SCOPE,
-        /* ns = */ null,
-        /* aliases = */ Map {},
       ))
         ->getBuilder()
         ->setPosition(shape('filename' => $file))

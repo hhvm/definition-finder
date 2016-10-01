@@ -19,12 +19,11 @@ enum ClassDefinitionType: DefinitionType {
 
 final class ClassConsumer extends Consumer {
   public function __construct(
-    private ClassDefinitionType $type,
     TokenQueue $tq,
-    ?string $namespace,
-    \ConstMap<string, string> $aliases,
+    self::TContext $context,
+    private ClassDefinitionType $type,
   ) {
-    parent::__construct($tq, $namespace, $aliases);
+    parent::__construct($tq, $context);
   }
 
   public function getBuilder(): ScannedClassBuilder {
@@ -55,7 +54,7 @@ final class ClassConsumer extends Consumer {
     list($_, $ttype) = $this->tq->peek();
     if ($ttype == T_TYPELIST_LT) {
       $builder->setGenericTypes(
-        (new GenericsConsumer($this->tq, $this->namespace, $this->aliases))
+        (new GenericsConsumer($this->tq, $this->context))
           ->getGenerics(),
       );
     }
@@ -95,9 +94,8 @@ final class ClassConsumer extends Consumer {
       ->setContents(
         (new ScopeConsumer(
           $this->tq,
+          $this->context,
           ScopeType::CLASS_SCOPE,
-          $this->namespace,
-          $this->aliases,
         ))
         ->getBuilder()
       );
@@ -117,11 +115,7 @@ final class ClassConsumer extends Consumer {
         break;
       }
 
-      $classes[] = (new TypehintConsumer(
-        $this->tq,
-        $this->namespace,
-        $this->aliases,
-      ))
+      $classes[] = (new TypehintConsumer($this->tq, $this->context))
         ->getTypehint();
     }
     return $classes;

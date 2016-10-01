@@ -23,12 +23,11 @@ class ScopeConsumer extends Consumer {
 
   public function __construct(
     TokenQueue $tq,
+    self::TContext $context,
     private ScopeType $scopeType,
-    ?string $namespace,
-    \ConstMap<string, string> $aliases,
   ) {
-    $this->scopeAliases = new Map($aliases);
-    parent::__construct($tq, $namespace, $aliases);
+    $this->scopeAliases = $context['aliases']->toMap();
+    parent::__construct($tq, $context);
   }
 
   public function getBuilder(): ScannedScopeBuilder {
@@ -74,8 +73,7 @@ class ScopeConsumer extends Consumer {
       if ($ttype === T_SL && $scope_depth === 1 && $parens_depth === 0) {
         $attrs = (new UserAttributesConsumer(
           $tq,
-          $this->namespace,
-          $this->scopeAliases,
+          $this->getSubContext(),
         ))->getUserAttributes();
         continue;
       }
@@ -116,8 +114,7 @@ class ScopeConsumer extends Consumer {
           $this->consumeWhitespace();
           $builder->addUsedTrait((new TypehintConsumer(
             $tq,
-            $this->namespace,
-            $this->scopeAliases,
+            $this->getSubContext(),
           ))->getTypehint());
           $this->consumeWhitespace();
 
@@ -136,8 +133,7 @@ class ScopeConsumer extends Consumer {
       if ($ttype === T_STRING && strtolower($token) === 'define') {
         $sub_builder = (new DefineConsumer(
           $tq,
-          $this->namespace,
-          $this->scopeAliases,
+          $this->getSubContext(),
         ))->getBuilder();
         // I hate you more, PHP. $sub_builder is null in case we've not
         // actually got a constant: define($variable, ...);
@@ -170,8 +166,7 @@ class ScopeConsumer extends Consumer {
         $tq->unshift($token, $ttype);
         $property_type = (new TypehintConsumer(
           $tq,
-          $this->namespace,
-          $this->scopeAliases,
+          $this->getSubContext(),
         ))->getTypehint();
         continue;
       }
@@ -247,8 +242,7 @@ class ScopeConsumer extends Consumer {
         $builder->addNamespace(
           (new NamespaceConsumer(
             $this->tq,
-            /* ns = */ null,
-            $this->scopeAliases,
+            $this->getSubContext(),
           ))->getBuilder()
         );
         return;
@@ -263,10 +257,9 @@ class ScopeConsumer extends Consumer {
         }
         $builder->addClass(
           (new ClassConsumer(
-            ClassDefinitionType::assert($def_type),
             $this->tq,
-            $this->namespace,
-            $this->scopeAliases
+            $this->getSubContext(),
+            ClassDefinitionType::assert($def_type),
           ))
             ->getBuilder()
             ->setAttributes($attrs)
@@ -279,14 +272,12 @@ class ScopeConsumer extends Consumer {
         if ($this->scopeType === ScopeType::CLASS_SCOPE) {
           $fb = (new MethodConsumer(
             $this->tq,
-            $this->namespace,
-            $this->scopeAliases,
+            $this->getSubContext(),
           ))->getBuilder();
         } else {
           $fb = (new FunctionConsumer(
             $this->tq,
-            $this->namespace,
-            $this->scopeAliases,
+            $this->getSubContext(),
           ))->getBuilder();
         }
 
@@ -335,8 +326,7 @@ class ScopeConsumer extends Consumer {
           $builder->addTypeConstant(
             (new TypeConstantConsumer(
               $this->tq,
-              $this->namespace,
-              $this->scopeAliases,
+              $this->getSubContext(),
               $abstractness,
             ))
             ->getBuilder()
@@ -345,15 +335,15 @@ class ScopeConsumer extends Consumer {
           return;
         }
 
-        $namespace = $this->scopeType === ScopeType::CLASS_SCOPE
-          ? null
-          : $this->namespace;
+        $sub_context = $this->getSubContext();
+        if ($this->scopeType === ScopeType::CLASS_SCOPE) {
+          $sub_context['namespace'] = null;
+        }
 
         $builder->addConstant(
           (new ConstantConsumer(
             $this->tq,
-            $namespace,
-            $this->scopeAliases,
+            $sub_context,
           ))
           ->getBuilder()
           ->setDocComment($docblock)
@@ -550,5 +540,11 @@ class ScopeConsumer extends Consumer {
       return $name;
     }
     return parent::normalizeName($name);
+  }
+
+  private function getSubContext(): self::TContext {
+    $context = $this->context;
+    $context['aliases'] = $this->scopeAliases->toImmMap();
+    return $context;
   }
 }

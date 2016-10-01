@@ -12,6 +12,11 @@
 namespace Facebook\DefinitionFinder;
 
 abstract class Consumer {
+  const type TContext = shape(
+    'namespace' => ?string,
+    'aliases' => ImmMap<string, string>,
+  );
+
   private static ?ImmSet<string> $autoImportTypes;
   final private static function getAutoImportTypes(): ImmSet<string> {
     $types = self::$autoImportTypes;
@@ -106,9 +111,9 @@ abstract class Consumer {
 
   public function __construct(
     protected TokenQueue $tq,
-    protected ?string $namespace,
-    protected \ConstMap<string, string> $aliases,
+    protected self::TContext $context,
   ) {
+    $namespace = $context['namespace'];
     invariant(
       $namespace === null || substr($namespace, -1) !== '\\',
       "Namespaces don't end with slashes",
@@ -207,11 +212,11 @@ abstract class Consumer {
 
     $parts = explode('\\', $name);
     $base = $parts[0];
-    $realBase = $this->aliases->get($base);
+    $realBase = $this->context['aliases']->get($base);
 
     if ($realBase === null) {
       if (substr($name, 0, 1) !== '\\') {
-        return $this->namespace.'\\'.$name;
+        return $this->context['namespace'].'\\'.$name;
       }
     }
 
