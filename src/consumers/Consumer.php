@@ -181,18 +181,24 @@ abstract class Consumer {
 
   protected function normalizeName(
     string $name,
+    NameNormalizationMode $mode = NameNormalizationMode::REFERENCE,
   ): string {
-    $name = $this->fullyQualifyName($name);
+    $name = $this->fullyQualifyName($name, $mode);
     if (substr($name, 0, 1) === '\\') {
       return substr($name, 1);
     }
     return $name;
   }
 
-  private function fullyQualifyName(string $name): string {
-    $autoimport = self::getAutoImportTypes();
-    if ($autoimport->contains($name)) {
-      return $name;
+  private function fullyQualifyName(
+    string $name,
+    NameNormalizationMode $mode,
+  ): string {
+    if ($mode === NameNormalizationMode::REFERENCE) {
+      $autoimport = self::getAutoImportTypes();
+      if ($autoimport->contains($name)) {
+        return $name;
+      }
     }
 
     if (preg_match('/^(this|self|static)::/', $name)) {

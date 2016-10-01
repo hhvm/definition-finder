@@ -53,6 +53,11 @@ enum FinalityToken: string {
   NOT_FINAL = '';
 }
 
+enum NameNormalizationMode: string {
+  REFERENCE = 'ref';
+  DEFINITION = 'def';
+}
+
 const int T_SELECT = 422;
 const int T_SHAPE = 402;
 const int T_ON = 415;

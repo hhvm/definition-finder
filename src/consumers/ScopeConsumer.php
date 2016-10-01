@@ -344,7 +344,7 @@ class ScopeConsumer extends Consumer {
           );
           return;
         }
-        
+
         $namespace = $this->scopeType === ScopeType::CLASS_SCOPE
           ? null
           : $this->namespace;
@@ -539,8 +539,14 @@ class ScopeConsumer extends Consumer {
   }
 
   <<__Override>>
-  protected function normalizeName(string $name): string {
-    if ($this->scopeType === ScopeType::CLASS_SCOPE) {
+  protected function normalizeName(
+    string $name,
+    NameNormalizationMode $mode = NameNormalizationMode::REFERENCE,
+  ): string {
+    if (
+      $this->scopeType === ScopeType::CLASS_SCOPE &&
+      $mode === NameNormalizationMode::REFERENCE
+    ) {
       return $name;
     }
     return parent::normalizeName($name);

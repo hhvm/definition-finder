@@ -103,4 +103,14 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       ->getName()
     );
   }
+
+  /** The noramlization blacklist shouldn't apply to things we define */
+  public function testNamespacedClassCalledCollection(): void {
+    $data = '<?php namespace Foo\Bar; class Collection {}';
+
+    $this->assertEquals(
+      Vector { 'Foo\Bar\Collection' },
+      FileParser::FromData($data)->getClassNames(),
+    );
+  }
 }

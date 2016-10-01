@@ -49,7 +49,7 @@ final class ClassConsumer extends Consumer {
 
     $builder = new ScannedClassBuilder(
       $this->type,
-      $this->normalizeName($name),
+      $this->normalizeName($name, NameNormalizationMode::DEFINITION),
     );
 
     list($_, $ttype) = $this->tq->peek();
