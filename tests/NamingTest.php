@@ -113,4 +113,40 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       FileParser::FromData($data)->getClassNames(),
     );
   }
+
+  public function testNamespaceResolutionDependingOnSourceType(): void {
+    $php = "<?php namespace Foo; class MyClass extends Collection {}";
+    $hack = "<?hh namespace Foo; class MyClass extends Collection {}";
+
+    $php_class = FileParser::FromData($php)->getClass("Foo\\MyClass");
+    $hack_class = FileParser::FromData($hack)->getClass("Foo\\MyClass");
+
+    $this->assertSame(
+      "Foo\\Collection",
+      $php_class->getParentClassName(),
+    );
+    $this->assertSame(
+      'Collection',
+      $hack_class->getParentClassName(),
+    );
+  }
+
+  public function testScalarParameterInNamespace(): void {
+    // This is correct for PHP7, not for PHP5 though. If you're using Hack,
+    // you're more likely to be using scalar typehints than not.
+    $php = '<?php namespace Foo; function myfunc(): string {}';
+    $hack = '<?hh namespace Foo; function myfunc(): string {}';
+
+    $php_func = FileParser::FromData($php)->getFunction("Foo\\myfunc");
+    $hack_func = FileParser::FromData($hack)->getFunction("Foo\\myfunc");
+
+    $this->assertEquals(
+      'string',
+      $php_func->getReturnType()?->getTypeName(),
+    );
+    $this->assertEquals(
+      'string',
+      $hack_func->getReturnType()?->getTypeName(),
+    );
+  }
 }
