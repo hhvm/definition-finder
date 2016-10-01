@@ -55,6 +55,7 @@ final class ConstantConsumer extends Consumer {
         }
         $builder = new ScannedConstantBuilder(
           $this->normalizeName(nullthrows($name)),
+          $this->getBuilderContext(),
           $value,
           $typehint,
         );

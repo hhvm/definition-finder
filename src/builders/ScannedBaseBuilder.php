@@ -12,16 +12,16 @@
 namespace Facebook\DefinitionFinder;
 
 abstract class ScannedBaseBuilder {
-  protected ?SourcePosition $position;
+  const type TContext = ScannedBase::TContext;
+
   protected ?Map<string, Vector<mixed>> $attributes;
   protected ?string $docblock;
 
-  public function __construct(protected string $name) {
-  }
 
-  public function setPosition(SourcePosition $pos): this {
-    $this->position = $pos;
-    return $this;
+  public function __construct(
+    protected string $name,
+    protected self::TContext $context,
+  ) {
   }
 
   public function setDocComment(?string $docblock): this {
@@ -34,5 +34,11 @@ abstract class ScannedBaseBuilder {
   ): this {
     $this->attributes = $v;
     return $this;
+  }
+
+  protected function getDefinitionContext(): ScannedBase::TContext {
+    $context = $this->context;
+    $context['sourceType'] = nullthrows(Shapes::idx($context, 'sourceType'));
+    return $context;
   }
 }

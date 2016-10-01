@@ -21,8 +21,8 @@ final class ScannedMethodBuilder
 
   public function build(): ScannedMethod{
     return new ScannedMethod(
-      nullthrows($this->position),
       $this->name,
+      $this->getDefinitionContext(),
       nullthrows($this->attributes),
       $this->docblock,
       nullthrows($this->generics),

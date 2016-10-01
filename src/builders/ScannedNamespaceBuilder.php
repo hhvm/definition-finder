@@ -22,12 +22,10 @@ extends ScannedSingleTypeBuilder<ScannedNamespace> {
   }
 
   public function build(): ScannedNamespace {
-    $scope = nullthrows($this->scopeBuilder)
-      ->setPosition(nullthrows($this->position))
-      ->build();
+    $scope = nullthrows($this->scopeBuilder)->build();
     return new ScannedNamespace(
-      nullthrows($this->position),
       nullthrows($this->name),
+      $this->getDefinitionContext(),
       $scope,
     );
   }

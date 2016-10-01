@@ -20,14 +20,13 @@ class FileParser extends BaseParser {
       $this->defs = (new ScopeConsumer(
         $tq,
         shape(
+          'filename' => $file,
           'namespace' => null,
           'aliases' => ImmMap { },
+          'sourceType' => SourceType::NOT_YET_DETERMINED,
         ),
         ScopeType::FILE_SCOPE,
-      ))
-        ->getBuilder()
-        ->setPosition(shape('filename' => $file))
-        ->build();
+      ))->getBuilder()->build();
     } catch (/* HH_FIXME[2049] */ \HH\InvariantException $e) {
       throw new ParseException(
         shape('filename' => $file, 'line' => $tq->getLine()),

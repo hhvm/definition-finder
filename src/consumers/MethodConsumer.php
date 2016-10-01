@@ -16,6 +16,6 @@ class MethodConsumer extends FunctionAbstractConsumer<ScannedMethod> {
   protected function constructBuilder(
     string $name,
   ): ScannedMethodBuilder {
-    return new ScannedMethodBuilder($name);
+    return new ScannedMethodBuilder($name, $this->getBuilderContext());
   }
 }

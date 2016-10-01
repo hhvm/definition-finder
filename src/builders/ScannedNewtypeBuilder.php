@@ -14,8 +14,8 @@ namespace Facebook\DefinitionFinder;
 class ScannedNewtypeBuilder extends ScannedSingleTypeBuilder<ScannedNewtype> {
   public function build(): ScannedNewtype {
     return new ScannedNewtype(
-      nullthrows($this->position),
       $this->name,
+      $this->getDefinitionContext(),
       /* attributes = */ Map { },
       $this->docblock,
     );

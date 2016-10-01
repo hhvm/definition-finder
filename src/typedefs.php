@@ -58,6 +58,15 @@ enum NameNormalizationMode: string {
   DEFINITION = 'def';
 }
 
+enum SourceType: string {
+  PHP = '<?php';
+  HACK_STRICT = '<?hh // strict';
+  HACK_PARTIAL = '<?hh';
+  HACK_DECL = '<?hh // decl';
+  MULTIPLE_FILES = '__multiple__';
+  NOT_YET_DETERMINED = '__pending__';
+}
+
 const int T_SELECT = 422;
 const int T_SHAPE = 402;
 const int T_ON = 415;

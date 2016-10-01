@@ -14,15 +14,20 @@ abstract class ScannedFunctionAbstract
   extends ScannedBase
   implements HasScannedGenerics {
   public function __construct(
-    SourcePosition $position,
     string $name,
+    self::TContext $context,
     Map<string, Vector<mixed>> $attributes,
     ?string $docComment,
     private \ConstVector<ScannedGeneric> $generics,
     private ?ScannedTypehint $returnType,
     private \ConstVector<ScannedParameter> $parameters,
   ) {
-    parent::__construct($position, $name, $attributes, $docComment);
+    parent::__construct(
+      $name,
+      $context,
+      $attributes,
+      $docComment,
+    );
   }
 
   public static function getType(): DefinitionType {

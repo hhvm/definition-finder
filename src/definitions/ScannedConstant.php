@@ -13,15 +13,15 @@ namespace Facebook\DefinitionFinder;
 
 class ScannedConstant extends ScannedBase {
   public function __construct(
-    SourcePosition $position,
     string $name,
+    self::TContext $context,
     ?string $docblock,
     private mixed $value,
     private ?ScannedTypehint $typehint,
   ) {
     parent::__construct(
-      $position,
       $name,
+      $context,
       /* attributes = */ Map { },
       $docblock,
     );

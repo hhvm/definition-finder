@@ -14,7 +14,7 @@ namespace Facebook\DefinitionFinder;
 class ScannedScope extends ScannedBase {
 
   public function __construct(
-    private SourcePosition $position,
+    self::TContext $context,
     private \ConstVector<ScannedBasicClass> $classes,
     private \ConstVector<ScannedInterface> $interfaces,
     private \ConstVector<ScannedTrait> $traits,
@@ -29,8 +29,8 @@ class ScannedScope extends ScannedBase {
     private \ConstVector<ScannedNewtype> $newtypes,
   ) {
     parent::__construct(
-      $position,
       '__SCOPE__',
+      $context,
       /* attributes = */ Map { },
       /* docblock = */ null,
     );

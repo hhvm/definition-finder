@@ -46,8 +46,8 @@ class ScannedParameterBuilder
 
   public function build(): ScannedParameter {
     return new ScannedParameter(
-      nullthrows($this->position),
       $this->name,
+      $this->getDefinitionContext(),
       nullthrows($this->attributes),
       $this->docblock,
       $this->typehint,

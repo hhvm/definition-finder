@@ -13,8 +13,8 @@ namespace Facebook\DefinitionFinder;
 
 class ScannedParameter extends ScannedBase {
   public function __construct(
-    SourcePosition $position,
     string $name,
+    self::TContext $context,
     Map<string, Vector<mixed>> $attributes,
     ?string $docComment,
     private ?ScannedTypehint $type,
@@ -23,7 +23,12 @@ class ScannedParameter extends ScannedBase {
     private ?string $defaultString,
     private ?VisibilityToken $visibility,
   ) {
-    parent::__construct($position, $name, $attributes, $docComment);
+    parent::__construct(
+      $name,
+      $context,
+      $attributes,
+      $docComment
+    );
   }
 
   public static function getType(): ?DefinitionType {

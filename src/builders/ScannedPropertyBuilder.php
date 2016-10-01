@@ -33,8 +33,8 @@ class ScannedPropertyBuilder extends ScannedSingleTypeBuilder<ScannedProperty> {
 
   public function build(): ScannedProperty {
     return new ScannedProperty(
-      nullthrows($this->position),
       $this->name,
+      $this->getDefinitionContext(),
       nullthrows($this->attributes),
       $this->docblock,
       $this->typehint,

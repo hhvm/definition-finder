@@ -13,9 +13,36 @@ namespace Facebook\DefinitionFinder;
 
 abstract class Consumer {
   const type TContext = shape(
+    'filename' => string,
+    'sourceType' => SourceType,
     'namespace' => ?string,
     'aliases' => ImmMap<string, string>,
   );
+
+  protected function getBuilderContext(): ScannedBaseBuilder::TContext {
+    return shape(
+      'position' => shape(
+        'filename' => $this->context['filename'],
+        'line' => $this->tq->getLine(),
+      ),
+      'sourceType' => nullthrows(Shapes::idx($this->context, 'sourceType')),
+    );
+  }
+
+  protected function assertValidSourceType(): void {
+    $type = $this->context['sourceType'];
+    invariant(
+      $type !== SourceType::NOT_YET_DETERMINED,
+      "Can't consume without a source type (Hack vs PHP affects namespace ".
+      "resolution - eg classes called 'string' or 'Collection'"
+    );
+
+    invariant(
+      $type !== SourceType::MULTIPLE_FILES,
+      'Token streams come from a single file, so MULTIPLE_FILES is not a '.
+      'valid source type.',
+    );
+  }
 
   private static ?ImmSet<string> $autoImportTypes;
   final private static function getAutoImportTypes(): ImmSet<string> {
@@ -118,6 +145,7 @@ abstract class Consumer {
       $namespace === null || substr($namespace, -1) !== '\\',
       "Namespaces don't end with slashes",
     );
+    $this->assertValidSourceType();
   }
 
   protected function consumeWhitespace(): void {

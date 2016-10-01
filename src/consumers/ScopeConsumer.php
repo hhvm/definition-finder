@@ -17,9 +17,10 @@ enum ScopeType: string {
   CLASS_SCOPE = 'class';
 }
 
-class ScopeConsumer extends Consumer {
+final class ScopeConsumer extends Consumer {
 
   private Map<string, string> $scopeAliases;
+  private ?SourceType $sourceType;
 
   public function __construct(
     TokenQueue $tq,
@@ -30,8 +31,70 @@ class ScopeConsumer extends Consumer {
     parent::__construct($tq, $context);
   }
 
+  <<__Override>>
+  protected function assertValidSourceType(): void {
+    if ($this->scopeType === ScopeType::FILE_SCOPE) {
+      invariant(
+        $this->context['sourceType'] === SourceType::NOT_YET_DETERMINED,
+        'SourceType for files is determined by their contents',
+      );
+      return;
+    }
+    parent::assertValidSourceType();
+    $this->sourceType = $this->context['sourceType'];
+  }
+
+  private function consumeOpenTag(): void {
+    $tq = $this->tq;
+    while ($this->tq->haveTokens()) {
+      list($token, $ttype) = $tq->shift();
+
+      if ($ttype !== T_OPEN_TAG ) {
+        continue;
+      }
+
+      if (trim($token) !== '<?hh') {
+        $this->sourceType = SourceType::PHP;
+        return;
+      }
+
+      // '<?hh\n// strict' is still not strict
+      if (substr($token, -1) === "\n") {
+        $this->sourceType = SourceType::HACK_PARTIAL;
+        return;
+      }
+
+      list($next, $ntype) = $this->tq->peek();
+      if ($ntype === T_COMMENT && substr($next, 0, 2) === '//') {
+        $mode = trim(substr($next, 2));
+        if ($mode === 'strict') {
+          $this->sourceType = SourceType::HACK_STRICT;
+          return;
+        }
+        if ($mode === 'decl') {
+          $this->sourceType = SourceType::HACK_DECL;
+          return;
+        }
+      }
+      $this->sourceType = SourceType::HACK_PARTIAL;
+      return;
+    }
+
+    invariant_violation(
+      'Did not find a T_OPEN_TAG',
+    );
+  }
+
   public function getBuilder(): ScannedScopeBuilder {
-    $builder = (new ScannedScopeBuilder());
+    if ($this->scopeType === ScopeType::FILE_SCOPE) {
+      $this->consumeOpenTag();
+    }
+    invariant(
+      $this->sourceType !== null,
+      'No source type for scope of type %s',
+      $this->scopeType,
+    );
+    $builder = (new ScannedScopeBuilder($this->getBuilderContext()));
     $attrs = Map { };
     $docblock = null;
 
@@ -45,12 +108,15 @@ class ScopeConsumer extends Consumer {
     $property_type = null;
 
     while ($tq->haveTokens() && $scope_depth > 0) {
-      list ($token, $ttype) = $tq->shift();
+      list($token, $ttype) = $tq->shift();
+
       if ($token === '(') {
         ++$parens_depth;
+        continue;
       }
       if ($token === ')') {
         --$parens_depth;
+        continue;
       }
 
       if ($token === '{' || $ttype == T_CURLY_OPEN) {
@@ -68,6 +134,7 @@ class ScopeConsumer extends Consumer {
 
       if ($ttype === T_CLOSE_TAG) { /* ?> ... <?php */
         $this->consumeNonCode();
+        continue;
       }
 
       if ($ttype === T_SL && $scope_depth === 1 && $parens_depth === 0) {
@@ -85,18 +152,22 @@ class ScopeConsumer extends Consumer {
 
       if ($ttype === T_STATIC) {
         $staticity = StaticityToken::IS_STATIC;
+        continue;
       }
 
       if ($ttype === T_ABSTRACT) {
         $abstractness = AbstractnessToken::IS_ABSTRACT;
+        continue;
       }
 
       if ($ttype === T_FINAL) {
         $finality = FinalityToken::IS_FINAL;
+        continue;
       }
 
       if ($ttype === T_ABSTRACT) {
         $abstract = true;
+        continue;
       }
 
       if ($ttype === T_XHP_ATTRIBUTE) {
@@ -181,7 +252,7 @@ class ScopeConsumer extends Consumer {
           $staticity = StaticityToken::NOT_STATIC;
         }
         $builder->addProperty(
-          (new ScannedPropertyBuilder($name))
+          (new ScannedPropertyBuilder($name, $this->getBuilderContext()))
           ->setAttributes($attrs)
           ->setDocComment($docblock)
           ->setVisibility($visibility)
@@ -370,21 +441,22 @@ class ScopeConsumer extends Consumer {
       $ttype,
     );
     $name = $this->normalizeName($name);
+    $ctx = $this->getBuilderContext();
 
     switch ($def_type) {
       case DefinitionType::TYPE_DEF:
         $builder->addType(
-          (new ScannedTypeBuilder($name))->setDocComment($docblock)
+          (new ScannedTypeBuilder($name, $ctx))->setDocComment($docblock)
         );
         break;
       case DefinitionType::NEWTYPE_DEF:
         $builder->addNewtype(
-          (new ScannedNewtypeBuilder($name))->setDocComment($docblock)
+          (new ScannedNewtypeBuilder($name, $ctx))->setDocComment($docblock)
         );
         break;
       case DefinitionType::ENUM_DEF:
         $builder->addEnum(
-          (new ScannedEnumBuilder($name))->setDocComment($docblock)
+          (new ScannedEnumBuilder($name, $ctx))->setDocComment($docblock)
         );
         $this->skipToBlock();
         $this->consumeBlock();
@@ -545,6 +617,18 @@ class ScopeConsumer extends Consumer {
   private function getSubContext(): self::TContext {
     $context = $this->context;
     $context['aliases'] = $this->scopeAliases->toImmMap();
+    $context['sourceType'] = nullthrows($this->sourceType);
     return $context;
+  }
+
+  <<__Override>>
+  protected function getBuilderContext(): ScannedBaseBuilder::TContext {
+    return shape(
+      'position' => shape(
+        'filename' => $this->context['filename'],
+        'line' => $this->tq->getLine(),
+      ),
+      'sourceType' => nullthrows($this->sourceType),
+    );
   }
 }

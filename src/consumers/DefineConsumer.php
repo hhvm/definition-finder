@@ -68,6 +68,7 @@ final class DefineConsumer extends Consumer {
     $this->consumeStatement();
     return new ScannedConstantBuilder(
       $name,
+      $this->getBuilderContext(),
       $value,
       /* typehint = */ null,
     );

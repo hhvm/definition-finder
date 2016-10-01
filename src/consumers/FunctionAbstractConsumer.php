@@ -129,7 +129,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
           $tq->getLine(),
         );
         $builder->addParameter(
-          (new ScannedParameterBuilder($name))
+          (new ScannedParameterBuilder($name, $this->getBuilderContext()))
           ->setTypehint($param_type)
           ->setIsPassedByReference($byref)
           ->setIsVariadic($variadic)

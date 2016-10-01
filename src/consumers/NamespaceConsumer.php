@@ -39,7 +39,7 @@ final class NamespaceConsumer extends Consumer {
     $context = $this->context;
     $context['namespace'] = $ns;
 
-    $builder = (new ScannedNamespaceBuilder($ns))
+    $builder = (new ScannedNamespaceBuilder($ns, $this->getBuilderContext()))
       ->setContents(
         (new ScopeConsumer(
           $this->tq,

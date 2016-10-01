@@ -15,8 +15,8 @@ final class ScannedMethod
   extends ScannedFunctionAbstract
   implements HasScannedVisibility {
   public function __construct(
-    SourcePosition $position,
     string $name,
+    self::TContext $context,
     Map<string, Vector<mixed>> $attributes,
     ?string $docComment,
     \ConstVector<ScannedGeneric> $generics,
@@ -28,8 +28,8 @@ final class ScannedMethod
     private FinalityToken $finality = FinalityToken::NOT_FINAL,
   ) {
     parent::__construct(
-      $position,
       $name,
+      $context,
       $attributes,
       $docComment,
       $generics,

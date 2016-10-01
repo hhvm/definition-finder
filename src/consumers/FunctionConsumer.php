@@ -16,6 +16,9 @@ class FunctionConsumer extends FunctionAbstractConsumer<ScannedFunction> {
   protected function constructBuilder(
     string $name,
   ): ScannedFunctionBuilder {
-    return new ScannedFunctionBuilder($this->normalizeName($name));
+    return new ScannedFunctionBuilder(
+      $this->normalizeName($name),
+      $this->getBuilderContext(),
+    );
   }
 }

@@ -17,8 +17,8 @@ abstract class ScannedClass
   implements HasScannedGenerics {
 
   public function __construct(
-    SourcePosition $position,
     string $name,
+    self::TContext $context,
     Map<string, Vector<mixed>> $attributes,
     ?string $docblock,
     private \ConstVector<ScannedMethod> $methods,
@@ -32,7 +32,7 @@ abstract class ScannedClass
     private AbstractnessToken $abstractness = AbstractnessToken::NOT_ABSTRACT,
     private FinalityToken $finality = FinalityToken::NOT_FINAL,
   ) {
-    parent::__construct($position, $name, $attributes, $docblock);
+    parent::__construct($name, $context, $attributes, $docblock);
   }
 
   public function isInterface(): bool {

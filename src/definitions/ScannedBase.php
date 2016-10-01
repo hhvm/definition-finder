@@ -12,6 +12,10 @@
 namespace Facebook\DefinitionFinder;
 
 abstract class ScannedBase {
+  const type TContext = shape(
+    'position' => SourcePosition,
+    'sourceType' => SourceType,
+  );
   // Namespace (e.g., of a class) if it exists
   private string $namespace;
   // Short name of the name without the namespace.
@@ -19,8 +23,8 @@ abstract class ScannedBase {
   private string $shortName;
 
   public function __construct(
-    private SourcePosition $position,
     private string $name,
+    private self::TContext $context,
     private Map<string, Vector<mixed>> $attributes,
     private ?string $docComment,
   ) {
@@ -30,15 +34,23 @@ abstract class ScannedBase {
   abstract public static function getType(): ?DefinitionType;
 
   public function getPosition(): SourcePosition {
-    return $this->position;
+    return $this->context['position'];
   }
 
   public function getDocComment(): ?string {
     return $this->docComment;
   }
 
+  public function getContext(): self::TContext {
+    return $this->context;
+  }
+
   public function getFileName(): string {
-    return $this->position['filename'];
+    return $this->context['position']['filename'];
+  }
+
+  public function getSourceType(): SourceType {
+    return $this->context['sourceType'];
   }
 
   public function getName(): string {

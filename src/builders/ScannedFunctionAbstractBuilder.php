@@ -40,9 +40,7 @@ abstract class ScannedFunctionAbstractBuilder<T as ScannedFunctionAbstract>
 
   protected function buildParameters(): \ConstVector<ScannedParameter> {
     return $this->parameters->map(
-      $builder ==> $builder
-      ->setPosition(nullthrows($this->position))
-      ->build()
+      $builder ==> $builder->build()
     );
   }
 }

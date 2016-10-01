@@ -15,8 +15,8 @@ class ScannedProperty
   extends ScannedBase
   implements HasScannedVisibility {
   public function __construct(
-    SourcePosition $position,
     string $name,
+    self::TContext $context,
     Map<string, Vector<mixed>> $attributes,
     ?string $docComment,
     private ?ScannedTypehint $typehint,
@@ -24,8 +24,8 @@ class ScannedProperty
     private StaticityToken $staticity = StaticityToken::NOT_STATIC,
   ) {
     parent::__construct(
-      $position,
       $name,
+      $context,
       $attributes,
       $docComment,
     );
