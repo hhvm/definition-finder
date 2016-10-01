@@ -120,7 +120,7 @@ final class TypehintConsumer extends Consumer {
       // Handle \foo\bar and foo\bar
       while ($this->tq->haveTokens()) {
         list($_, $ttype) = $this->tq->peek();
-        
+
         // Handle \foo\bar::TYPE
         if ($ttype === T_DOUBLE_COLON) {
           list($tDoubleColon, $_) = $this->tq->shift();
@@ -143,8 +143,8 @@ final class TypehintConsumer extends Consumer {
       list($t, $ttype) = $this->tq->peek();
       if ($ttype === T_TYPELIST_LT) {
         $this->tq->shift();
+        $this->consumeWhitespace();
         while ($this->tq->haveTokens()) {
-          $this->consumeWhitespace();
           $generics[] = $this->consumeType();
           $this->consumeWhitespace();
 
@@ -156,6 +156,13 @@ final class TypehintConsumer extends Consumer {
             $t === ',',
             'expected > or , after generic type',
           );
+          $this->consumeWhitespace();
+          // Trailing comma
+          list($_, $ttype) = $this->tq->peek();
+          if ($ttype === T_TYPELIST_GT) {
+            $this->tq->shift();
+            break;
+          }
         }
         break;
       }

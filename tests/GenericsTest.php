@@ -124,4 +124,17 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
       $generics[0]->getConstraintTypeName(),
     );
   }
+
+  public function testGenericWithTrailingComma(): void {
+    $data = '<?hh function foo(ImmMap<string,string,> $bar): void {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+    $param_types = $function->getParameters()->map(
+      $param ==> $param->getTypehint()?->getTypeText(),
+    );
+    $this->assertEquals(
+      Vector { 'ImmMap<string,string>' },
+      $param_types,
+    );
+  }
 }
