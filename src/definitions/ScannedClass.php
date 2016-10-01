@@ -83,6 +83,14 @@ abstract class ScannedClass
     return $this->interfaces;
   }
 
+  public function getTraitGenerics(): \ConstMap<string,\ConstVector<ScannedTypehint>> {
+    $traits = Map{};
+    foreach ($this->traits as $trait) {
+      $traits[$trait->getTypeName()] = $trait->getGenericTypes();
+    }
+    return $traits;
+  }
+
   public function isAbstract(): bool {
     return $this->abstractness === AbstractnessToken::IS_ABSTRACT;
   }
