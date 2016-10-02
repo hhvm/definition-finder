@@ -24,6 +24,7 @@ class FileParser extends BaseParser {
           'namespace' => null,
           'aliases' => ImmMap { },
           'sourceType' => SourceType::NOT_YET_DETERMINED,
+          'genericTypeNames' => ImmSet { },
         ),
         ScopeType::FILE_SCOPE,
       ))->getBuilder()->build();

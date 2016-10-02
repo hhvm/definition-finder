@@ -17,6 +17,7 @@ abstract class Consumer {
     'sourceType' => SourceType,
     'namespace' => ?string,
     'aliases' => ImmMap<string, string>,
+    'genericTypeNames' => ImmSet<string>,
   );
 
   protected function getBuilderContext(): ScannedBaseBuilder::TContext {
@@ -237,8 +238,12 @@ abstract class Consumer {
     if (preg_match('/^(this|self|static)(::|$)/', $name)) {
       return $name;
     }
-    
+
     if (substr($name, 0, 6) === 'shape(') {
+      return $name;
+    }
+
+    if ($this->context['genericTypeNames']->contains($name)) {
       return $name;
     }
 
@@ -254,5 +259,16 @@ abstract class Consumer {
 
     $parts[0] = $realBase;
     return implode('\\', $parts);
+  }
+
+  final protected function getContextWithGenerics(
+    \ConstVector<ScannedGeneric> $generics,
+  ): self::TContext {
+    $context = $this->context;
+    $context['genericTypeNames'] = $context['genericTypeNames']
+      ->concat($generics->map(
+        $generic ==> $generic->getName(),
+      ))->toImmSet();
+    return $context;
   }
 }

@@ -178,4 +178,96 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       $func->getParameters()->at(0)->getTypehint()?->getTypeName(),
     );
   }
+
+  public function testReturnsClassGenericInNamespace(): void {
+    $code =
+      "<?hh\n".
+      "namespace Foo;\n".
+      "class MyClass<T> {\n".
+      "  function foo(): T { }\n".
+      "}";
+    $parser = FileParser::FromData($code);
+    $class = $parser->getClass("Foo\\MyClass");
+    $method = $class->getMethods()->at(0);
+    $this->assertSame(
+      'T',
+      $method->getReturnType()?->getTypeName(),
+    );
+  }
+
+  public function testReturnsNullableClassGenericInNamespace(): void {
+    $code =
+      "<?hh\n".
+      "namespace Foo;\n".
+      "class MyClass<T> {\n".
+      "  function foo(): ?T { }\n".
+      "}";
+    $parser = FileParser::FromData($code);
+    $class = $parser->getClass("Foo\\MyClass");
+    $method = $class->getMethods()->at(0);
+    $this->assertSame(
+      'T',
+      $method->getReturnType()?->getTypeName(),
+    );
+    $this->assertTrue(
+      $method->getReturnType()?->isNullable(),
+    );
+  }
+
+  public function testReturnsMethodGenericInNamespace(): void {
+    $code =
+      "<?hh\n".
+      "namespace Foo;\n".
+      "class MyClass {\n".
+      "  function foo<T>(): T { }\n".
+      "}";
+    $parser = FileParser::FromData($code);
+    $class = $parser->getClass("Foo\\MyClass");
+    $method = $class->getMethods()->at(0);
+    $this->assertSame(
+      'T',
+      $method->getReturnType()?->getTypeName(),
+    );
+  }
+
+  /**
+   * Make sure that method generics are added to class generics, instead of
+   * replacing them.
+   */
+  public function testClassGenericsInMethodWithGenerics(): void {
+    $code =
+      "<?hh\n".
+      "namespace Foo;\n".
+      "class MyClass<TClassGeneric> {\n".
+      "  function foo<TFunctionGeneric>(\n".
+      "    TFunctionGeneric \$p,\n".
+      "  ): TClassGeneric {}";
+    $parser = FileParser::FromData($code);
+    $class = $parser->getClass("Foo\\MyClass");
+    $method = $class->getMethods()->at(0);
+    $this->assertSame(
+      'TClassGeneric',
+      $method->getReturnType()?->getTypeName(),
+    );
+    $this->assertSame(
+      'TFunctionGeneric',
+      $method->getParameters()->at(0)->getTypehint()?->getTypeName(),
+    );
+  }
+
+  public function testTakesMethodGenericInNamespace(): void {
+    $code =
+      "<?hh\n".
+      "namespace Foo;\n".
+      "class MyClass {\n".
+      "  function foo<T>(T \$bar): void { }\n".
+      "}";
+    $parser = FileParser::FromData($code);
+    $class = $parser->getClass("Foo\\MyClass");
+    $method = $class->getMethods()->at(0);
+    $this->assertSame(
+      'T',
+      $method->getParameters()->at(0)->getTypehint()?->getTypeName(),
+    );
+  }
 }
