@@ -234,7 +234,11 @@ abstract class Consumer {
       }
     }
 
-    if (preg_match('/^(this|self|static)::/', $name)) {
+    if (preg_match('/^(this|self|static)(::|$)/', $name)) {
+      return $name;
+    }
+    
+    if (substr($name, 0, 6) === 'shape(') {
       return $name;
     }
 

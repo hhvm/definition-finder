@@ -149,4 +149,33 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       $hack_func->getReturnType()?->getTypeName(),
     );
   }
+
+  public function testReturnsThisInNamespace(): void {
+    $code =
+      "<?hh\n".
+      "namespace Foo;\n".
+      "class MyClass {\n".
+      "  function foo(): this { }\n".
+      "}";
+    $parser = FileParser::FromData($code);
+    $class = $parser->getClass("Foo\\MyClass");
+    $method = $class->getMethods()->at(0);
+    $this->assertSame(
+      'this',
+      $method->getReturnType()?->getTypeName(),
+    );
+  }
+
+  public function testTakesShapeInNamespace(): void {
+    $code =
+      "<?hh\n".
+      "namespace Foo;\n".
+      "function my_func(shape('foo' => string) \$value): void {}";
+    $parser = FileParser::FromData($code);
+    $func = $parser->getFunction("Foo\\my_func");
+    $this->assertSame(
+      "shape('foo'=>string)",
+      $func->getParameters()->at(0)->getTypehint()?->getTypeName(),
+    );
+  }
 }
