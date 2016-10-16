@@ -78,4 +78,30 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       $def->getInterfaceNames(),
     );
   }
+
+  public function testFunctionReturnsAlias(): void {
+    $code =
+      "<?hh\n".
+      "namespace MyNamespace;\n".
+      "use MyOtherNamespace\\Foo;\n".
+      "function my_func(): Foo {}";
+    $def = FileParser::FromData($code)->getFunction('MyNamespace\\my_func');
+    $this->assertSame(
+      "MyOtherNamespace\\Foo",
+      $def->getReturnType()?->getTypeName(),
+    );
+  }
+
+  public function testFunctionUseIsNotTypeAlias(): void {
+    $code =
+      "<?hh\n".
+      "namespace MyNamespace;\n".
+      "use function MyOtherNamespace\\Foo;\n".
+      "function my_func(): Foo {}";
+    $def = FileParser::FromData($code)->getFunction('MyNamespace\\my_func');
+    $this->assertSame(
+      "MyNamespace\\Foo",
+      $def->getReturnType()?->getTypeName(),
+    );
+  }
 }

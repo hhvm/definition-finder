@@ -497,6 +497,10 @@ final class ScopeConsumer extends Consumer {
         return $this->consumeGroupUseStatement(new ImmVector($parts));
       } else if ($token === ';') {
         break;
+      } else if ($type = T_FUNCTION) {
+        // 'use function' does not create any type aliases
+        $this->consumeStatement();
+        return ImmMap {};
       }
 
       invariant_violation(
