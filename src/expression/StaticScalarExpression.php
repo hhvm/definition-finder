@@ -20,9 +20,8 @@ final class StaticScalarExpression extends Expression {
       CommonScalarExpression::class,
       StaticStringExpression::class,
       StaticClassClassConstantExpression::class,
+      PlusMinusStaticNumericScalarExpression::class,
       /*
-  | '+' static_numeric_scalar_ae       { UEXP($$,$2,'+',1);}
-  | '-' static_numeric_scalar_ae       { UEXP($$,$2,'-',1);}
   | T_ARRAY '('
     static_array_pair_list_ae ')'      { _p->onArray($$,$3,T_ARRAY);}
   | '[' static_array_pair_list_ae ']'  { _p->onArray($$,$2,T_ARRAY);}
