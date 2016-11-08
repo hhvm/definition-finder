@@ -35,6 +35,25 @@ function foo(): (string, string);
     $this->assertSame('(string,string)', $type->getTypeText());
   }
 
+  public function testTupleWithTrailingComma(): void {
+    $data = '<?hh
+
+<<__Native>>
+function foo(): (string, string,);
+';
+
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+
+    $type = $function->getReturnType();
+    $this->assertNotNull($type);
+    assert($type !== null);
+
+    $this->assertSame('tuple', $type->getTypeName());
+    $this->assertSame('(string,string)', $type->getTypeText());
+  }
+
+
   public function testContainerOfTuples(): void {
     $data = '<?hh
 

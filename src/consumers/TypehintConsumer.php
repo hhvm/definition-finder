@@ -63,6 +63,13 @@ final class TypehintConsumer extends Consumer {
         $type = 'tuple';
         while ($this->tq->haveTokens()) {
           $this->consumeWhitespace();
+
+          // Handle trailing commas
+          list($t, $_) = $this->tq->peek();
+          if ($t === ')') {
+            break;
+          }
+
           $generics[] = $this->consumeType();
           $this->consumeWhitespace();
 
