@@ -11,13 +11,12 @@
 
 namespace Facebook\DefinitionFinder\Expression;
 
-use Facebook\DefinitionFinder\T_SHAPE;
 use Facebook\DefinitionFinder\TokenQueue;
 
 final class StaticShapeExpression extends Expression {
   protected static function matchImpl(TokenQueue $tq): ?Expression {
     list($t, $ttype) = $tq->shift();
-    if ($ttype !== T_SHAPE) {
+    if ($ttype !== \Facebook\DefinitionFinder\T_SHAPE) {
       return null;
     }
     list ($t, $ttype) = $tq->shift();
