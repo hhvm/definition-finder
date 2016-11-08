@@ -118,6 +118,8 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
       tuple("Foo\\Bar::class", "Foo\\Bar"),
       tuple("+123", 123),
       tuple("-123", -123),
+      tuple('array()', []),
+      tuple('[]', []),
       tuple('array(123)', [123]),
       tuple('array(123,)', [123]),
       tuple('array(123,456)', [123,456]),

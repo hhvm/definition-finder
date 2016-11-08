@@ -33,14 +33,12 @@ final class StaticArrayExpression extends Expression {
     if ($values === null) {
       $values = StaticArrayListExpression::match($tq);
     }
-    if ($values === null) {
-      return null;
-    }
+    $values = $values?->getValue() ?? [];
 
     list($t, $_) = $tq->shift();
     if ($t !== $end) {
       return null;
     }
-    return new self($values->getValue());
+    return new self($values);
   }
 }
