@@ -472,9 +472,10 @@ final class ScopeConsumer extends Consumer {
 
   /** ?> ... <?php */
   private function consumeNonCode(): void {
-    do {
+    $ttype = T_CLOSE_TAG;
+    while ($this->tq->haveTokens() && $ttype !== T_OPEN_TAG) {
       list ($_, $ttype) = $this->tq->shift();
-    } while ($this->tq->haveTokens() && $ttype !== T_OPEN_TAG);
+    }
   }
 
   private function consumeUseStatement(): ImmMap<string, string> {
