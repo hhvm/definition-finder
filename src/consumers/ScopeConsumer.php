@@ -389,11 +389,11 @@ final class ScopeConsumer extends Consumer {
         }
         return;
       case DefinitionType::CONST_DEF:
+        if ($abstractness === null) {
+          $abstractness = AbstractnessToken::NOT_ABSTRACT;
+        }
         list($next, $next_token) = $this->tq->peek();
         if ($next_token === DefinitionType::TYPE_DEF) {
-          if ($abstractness === null) {
-            $abstractness = AbstractnessToken::NOT_ABSTRACT;
-          }
           $builder->addTypeConstant(
             (new TypeConstantConsumer(
               $this->tq,
@@ -415,7 +415,7 @@ final class ScopeConsumer extends Consumer {
           (new ConstantConsumer(
             $this->tq,
             $sub_context,
-            $abstractness ?? AbstractnessToken::NOT_ABSTRACT,
+            $abstractness,
           ))
           ->getBuilder()
           ->setDocComment($docblock)
