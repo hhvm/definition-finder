@@ -96,6 +96,10 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       $constants?->map($x ==> $x->getTypehint()?->getTypeName()),
     );
     $this->assertEquals(
+      Vector { false, false },
+      $constants?->map($x ==> $x->isAbstract()),
+    );
+    $this->assertEquals(
       Vector { "'bar'", '60 * 60 * 24' },
       $constants?->map($x ==> $x->getValue()),
     );
@@ -248,6 +252,19 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $this->assertFalse($constant->isAbstract());
     $this->assertSame('int', $constant->getValue()?->getTypeText());
   }
+
+  public function testAbstractConstant(): void {
+    $data = '<?hh abstract class Foo { abstract const string BAR; }';
+    $parser = FileParser::FromData($data);
+    $constants = $parser->getClass('Foo')->getConstants();
+    $this->assertSame(1, $constants->count());
+    $constant = $constants->at(0);
+
+    $this->assertSame('BAR', $constant->getName());
+    $this->assertTrue($constant->isAbstract());
+    $this->assertNull($constant->getValue());
+  }
+
 
   public function testAbstractTypeConstant(): void {
     $data = '<?hh abstract class Foo { abstract const type BAR; }';

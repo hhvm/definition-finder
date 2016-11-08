@@ -17,6 +17,7 @@ class ScannedConstantBuilder extends ScannedSingleTypeBuilder<ScannedConstant> {
     self::TContext $context,
     private mixed $value,
     private ?ScannedTypehint $typehint,
+    private AbstractnessToken $abstractness,
   ) {
     parent::__construct($name, $context);
   }
@@ -28,6 +29,7 @@ class ScannedConstantBuilder extends ScannedSingleTypeBuilder<ScannedConstant> {
       $this->docblock,
       $this->value,
       $this->typehint,
+      $this->abstractness,
     );
   }
 }

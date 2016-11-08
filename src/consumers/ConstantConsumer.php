@@ -19,6 +19,14 @@ namespace Facebook\DefinitionFinder;
  * See DefineConsumer for old-style constants.
  */
 final class ConstantConsumer extends Consumer {
+  public function __construct(
+    TokenQueue $tq,
+    self::TContext $context,
+    private AbstractnessToken $abstractness,
+  ) {
+    parent::__construct($tq, $context);
+  }
+
   public function getBuilder(): ScannedConstantBuilder {
     $name = null;
     $value = null;
@@ -53,11 +61,16 @@ final class ConstantConsumer extends Consumer {
           }
           $value .= $nnv;
         }
+      }
+
+      if ($next === ';') {
+        $this->tq->unshift($next, $next_type);
         $builder = new ScannedConstantBuilder(
           $this->normalizeName(nullthrows($name)),
           $this->getBuilderContext(),
           $value,
           $typehint,
+          $this->abstractness,
         );
         $name = null;
         $value = null;

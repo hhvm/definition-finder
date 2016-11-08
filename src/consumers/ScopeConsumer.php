@@ -415,6 +415,7 @@ final class ScopeConsumer extends Consumer {
           (new ConstantConsumer(
             $this->tq,
             $sub_context,
+            $abstractness ?? AbstractnessToken::NOT_ABSTRACT,
           ))
           ->getBuilder()
           ->setDocComment($docblock)
