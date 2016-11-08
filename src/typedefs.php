@@ -81,4 +81,7 @@ enum StringishTokens: int {
   T_DICT = T_DICT;
   T_VEC = T_VEC;
   T_KEYSET = T_KEYSET;
+  T_XHP_CATEGORY = T_XHP_CATEGORY;
+  T_XHP_ATTRIBUTE = T_XHP_ATTRIBUTE;
+  T_SUPER = T_SUPER;
 }

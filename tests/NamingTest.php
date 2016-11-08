@@ -27,15 +27,19 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $this->assertNotNull($parser->getFunction('select'));
   }
 
-  public function specialTypeProvider(): array<array<string>> {
+  /** Things that are valid names, but have a weird token type */
+  public function specialNameProvider(): array<array<string>> {
     return [
       [ 'dict' ], // HHVM >= 3.13
       [ 'vec' ], // HHVM >= 3.14
       [ 'keyset' ], // HHVM >= 3.15
+      [ 'Category' ],
+      [ 'Super' ],
+      [ 'Attribute' ],
     ];
   }
 
-  /** @dataProvider specialTypeProvider */
+  /** @dataProvider specialNameProvider */
   public function testSpecialReturnType(string $type): void {
     $data = '<?hh function foo(): '.$type.' {}';
     $parser = FileParser::FromData($data);
@@ -46,8 +50,8 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
-  /** @dataProvider specialTypeProvider */
-  public function testSpecialTypeAsFuncName(string $type): void {
+  /** @dataProvider specialNameProvider */
+  public function testSpecialNameAsFuncName(string $type): void {
     $data = '<?hh function '.$type.'(): void {}';
     $parser = FileParser::FromData($data);
     $func = $parser->getFunction($type);
@@ -61,8 +65,8 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
-  /** @dataProvider specialTypeProvider */
-  public function testSpecialTypeAsClassName(string $type): void {
+  /** @dataProvider specialNameProvider */
+  public function testSpecialNameAsClassName(string $type): void {
     $data = '<?hh class '.$type.' { }';
     $parser = FileParser::FromData($data);
     $class = $parser->getClass($type);
