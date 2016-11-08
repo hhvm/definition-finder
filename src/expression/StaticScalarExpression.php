@@ -19,14 +19,8 @@ final class StaticScalarExpression extends Expression {
     $subtypes = ImmVector {
       CommonScalarExpression::class,
       StaticStringExpression::class,
+      StaticClassClassConstantExpression::class,
       /*
-  | static_class_class_constant        { $$ = $1;}
-  | fully_qualified_class_name
-    T_DOUBLE_COLON
-    T_STRING                           { HPHP_PARSER_ERROR("User-defined "
-                                        "constants are not allowed in "
-                                        "user attribute expressions", _p);}
-  | ident_no_semireserved              { constant_ae(_p,$$,$1);}
   | '+' static_numeric_scalar_ae       { UEXP($$,$2,'+',1);}
   | '-' static_numeric_scalar_ae       { UEXP($$,$2,'-',1);}
   | T_ARRAY '('

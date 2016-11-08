@@ -112,12 +112,25 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
-  public function testConcatenatedValues(): void {
-    $data = "<?hh <<__Deprecated('herp'.'derp')>> function foo(){}";
+  public function attributeExpressions(): array<(string,string)> {
+    return array(
+      tuple("'herp'.'derp'", 'herpderp'),
+      tuple("Foo\\Bar::class", "Foo\\Bar"),
+    );
+  }
+
+  /**
+   * @dataProvider attributeExpressions
+   */
+  public function testAttributeExpression(
+    string $source,
+    string $expected,
+  ): void {
+    $data = '<?hh <<MyAttr('.$source.')>> function foo(){}';
     $parser = FileParser::FromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
-      Map { '__Deprecated' => Vector { 'herpderp' } },
+      Map { 'MyAttr' => Vector { $expected } },
       $fun->getAttributes(),
     );
   }
