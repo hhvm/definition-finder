@@ -21,6 +21,23 @@ class TokenQueue {
   private Vector<TokenWithLine> $tokens = Vector {};
   private int $line = 0;
 
+  const type TSavedState = shape(
+    'tokens' => ImmVector<TokenWithLine>,
+    'line' => int,
+  );
+
+  public function getState(): self::TSavedState {
+    return shape(
+      'tokens' => $this->tokens->immutable(),
+      'line' => $this->line,
+    );
+  }
+
+  public function restoreState(self::TSavedState $state): void {
+    $this->tokens = new Vector($state['tokens']);
+    $this->line = $state['line'];
+  }
+
   public function __construct(string $data) {
     $line = 0;
     foreach (token_get_all($data) as $token) {
