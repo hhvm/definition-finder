@@ -1,3 +1,5 @@
 vendor/
 *.swp
 *.swo
+*.orig
+*.rej
