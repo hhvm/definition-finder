@@ -11,7 +11,6 @@
 
 namespace Facebook\DefinitionFinder\Expression;
 
-use Facebook\DefinitionFinder\ClassConsumer;
 use Facebook\DefinitionFinder\TokenQueue;
 
 final class StaticShapeExpression extends Expression {
