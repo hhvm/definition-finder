@@ -20,12 +20,11 @@ final class StaticScalarExpression extends Expression {
       CommonScalarExpression::class,
       StaticStringExpression::class,
       StaticClassClassConstantExpression::class,
+      AttributeConstantExpression::class,
       PlusMinusStaticNumericScalarExpression::class,
       StaticArrayExpression::class,
       StaticShapeExpression::class,
       /*
-  | T_SHAPE '('
-    static_shape_pair_list_ae ')'      { _p->onArray($$,$3,T_ARRAY); }
   | static_dict_literal_ae             { $$ = $1;}
   | static_vec_literal_ae              { $$ = $1;}
   | static_keyset_literal_ae           { $$ = $1;}
