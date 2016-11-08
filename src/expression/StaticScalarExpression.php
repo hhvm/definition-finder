@@ -22,6 +22,7 @@ final class StaticScalarExpression extends Expression {
       StaticClassClassConstantExpression::class,
       PlusMinusStaticNumericScalarExpression::class,
       StaticArrayExpression::class,
+      StaticShapeExpression::class,
       /*
   | T_SHAPE '('
     static_shape_pair_list_ae ')'      { _p->onArray($$,$3,T_ARRAY); }

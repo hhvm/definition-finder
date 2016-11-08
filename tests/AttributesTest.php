@@ -125,6 +125,11 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
       tuple('[123,456]', [123,456]),
       tuple('[123 , 456]', [123,456]),
       tuple('[123 => 456]', [123 => 456]),
+      tuple('shape()', []),
+      tuple(
+        'shape("foo" => "bar", "herp" => 123)',
+        shape('foo' => 'bar', 'herp' => 123),
+      ),
     );
   }
 
