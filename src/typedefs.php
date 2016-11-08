@@ -73,15 +73,21 @@ const int T_ON = 415;
 const int T_DICT = 442;
 const int T_VEC = 443;
 const int T_KEYSET = 444;
+const int T_WHERE = 445;
 
+// See ident_no_semireserved in hphp.y
 enum StringishTokens: int {
-  T_STRING = T_STRING;
   T_SELECT = T_SELECT;
   T_ON = T_ON;
+  T_STRING = T_STRING;
+  T_SUPER = T_SUPER;
+  T_WHERE = T_WHERE;
+  T_XHP_CATEGORY = T_XHP_CATEGORY;
+  T_XHP_ATTRIBUTE = T_XHP_ATTRIBUTE;
+  T_XHP_CHILDREN = T_XHP_CHILDREN;
+  T_XHP_REQUIRED = T_XHP_REQUIRED;
+  T_ENUM = T_ENUM;
   T_DICT = T_DICT;
   T_VEC = T_VEC;
   T_KEYSET = T_KEYSET;
-  T_XHP_CATEGORY = T_XHP_CATEGORY;
-  T_XHP_ATTRIBUTE = T_XHP_ATTRIBUTE;
-  T_SUPER = T_SUPER;
 }
