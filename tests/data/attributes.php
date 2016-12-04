@@ -41,3 +41,10 @@ Bar
 )
 >>
 class ClassWithFormattedAttributes {}
+
+<<
+Bar(
+  ['herp']
+)
+>>
+class ClassWithFormattedArrayAttribute {}

@@ -38,6 +38,7 @@ final class StaticArrayExpression extends Expression {
     if ($t !== $end) {
       return null;
     }
+    self::consumeWhitespace($tq);
     return new self($values);
   }
 }

@@ -60,6 +60,14 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
+  public function testWithFormattedArrayAttribute(): void {
+    $class = $this->findClass('ClassWithFormattedArrayAttribute');
+    $this->assertEquals(
+      Map { 'Bar' => Vector {['herp']} },
+      $class->getAttributes(),
+    );
+  }
+
   public function testWithSingleIntAttribute(): void {
     $class = $this->findClass('ClassWithIntAttribute');
     $this->assertEquals(
