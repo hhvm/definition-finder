@@ -37,7 +37,7 @@ Foo,
 Bar
 (
     'herp',
-    'derp'
+    'derp',
 )
 >>
 class ClassWithFormattedAttributes {}
