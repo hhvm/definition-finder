@@ -67,6 +67,7 @@ final class TypehintConsumer extends Consumer {
           // Handle trailing commas
           list($t, $_) = $this->tq->peek();
           if ($t === ')') {
+            $this->tq->shift();
             break;
           }
 

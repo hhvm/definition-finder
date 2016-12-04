@@ -74,4 +74,10 @@ class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
       $fun->getAttributes(),
     );
   }
+
+  public function testTrailingCommaInAsyncReturnTuple(): void {
+    $data = '<?hh async function herp(): Awaitable<(string, string, )> {}';
+    $parser = FileParser::FromData($data);
+    $this->assertContains('herp', $parser->getFunctionNames());
+  }
 }
