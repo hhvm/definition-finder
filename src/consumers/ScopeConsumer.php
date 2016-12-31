@@ -119,7 +119,9 @@ final class ScopeConsumer extends Consumer {
         continue;
       }
 
-      if ($token === '{' || $ttype == T_CURLY_OPEN) {
+      if ($token === '{' ||
+          $ttype === T_CURLY_OPEN ||
+          $ttype === T_DOLLAR_OPEN_CURLY_BRACES) {
         ++$scope_depth;
         continue;
       }

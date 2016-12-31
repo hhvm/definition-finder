@@ -11,7 +11,7 @@
 
 class Foo {
   public function herp() {
-    throw new Exception("Foo {$bar}");
+    throw new Exception("Foo ${bar} {$bar}");
   }
 
   public function derp() {

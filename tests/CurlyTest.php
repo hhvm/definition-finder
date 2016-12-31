@@ -12,10 +12,11 @@
 use \Facebook\DefinitionFinder\FileParser;
 
 // Usually, '{' becomes '{' - however, when used for
-// string interpolation, you get a T_CURLY_OPEN.
+// string interpolation, you get a T_CURLY_OPEN for "{$foo}" or
+// T_DOLLAR_OPEN_CURLY_BRACES for "${foo}".
 //
 // Interestingly enough, the matching '}' is still just '}' -
-// there is no such thing as T_CURLY_CLOSE.
+// there is no such thing as T_CURLY_CLOSE or T_DOLLAR_CLOSE_CURLY_BRACES.
 //
 // This test makes sure that this doesn't get confused.
 final class CurlyTest extends PHPUnit_Framework_TestCase {
@@ -38,6 +39,19 @@ final class CurlyTest extends PHPUnit_Framework_TestCase {
       }
     }
     $this->assertTrue($matched, 'no T_CURLY_OPEN in data file');
+  }
+
+  // Actually testing the tokenizer hasn't changed
+  public function testContainsTDollarOpenCurlyBraces(): void {
+    $matched = false;
+    $tokens = token_get_all(file_get_contents(self::DATA_FILE));
+    foreach ($tokens as $token) {
+      if (is_array($token) && $token[0] === T_DOLLAR_OPEN_CURLY_BRACES) {
+        $matched = true;
+        break;
+      }
+    }
+    $this->assertTrue($matched, 'no T_DOLLAR_OPEN_CURLY_BRACES in data file');
   }
 
   // Actually testing the tokenizer hasn't changed

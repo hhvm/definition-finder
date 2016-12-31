@@ -182,7 +182,9 @@ abstract class Consumer {
   protected function skipToBlock(): void {
     while ($this->tq->haveTokens()) {
       list($next, $next_type) = $this->tq->shift();
-      if ($next === '{' || $next_type === T_CURLY_OPEN) {
+      if ($next === '{' ||
+          $next_type === T_CURLY_OPEN ||
+          $next_type === T_DOLLAR_OPEN_CURLY_BRACES) {
         return;
       }
     }
@@ -193,7 +195,9 @@ abstract class Consumer {
     $nesting = 1;
     while ($this->tq->haveTokens()) {
       list($next, $next_type) = $this->tq->shift();
-      if ($next === '{' || $next_type === T_CURLY_OPEN) {
+      if ($next === '{' ||
+          $next_type === T_CURLY_OPEN ||
+          $next_type === T_DOLLAR_OPEN_CURLY_BRACES) {
         ++$nesting;
       } else if ($next === '}') { // no such thing as T_CURLY_CLOSE
         --$nesting;
