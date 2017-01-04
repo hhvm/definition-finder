@@ -15,14 +15,13 @@ namespace Facebook\DefinitionFinder;
 type TokenValue = string;
 type TokenType = ?int;
 type Token = (TokenValue, TokenType);
-type TokenWithLine = (Token, int);
 
 class TokenQueue {
-  private Vector<TokenWithLine> $tokens = Vector {};
+  private Vector<NGToken> $tokens = Vector {};
   private int $line = 0;
 
   const type TSavedState = shape(
-    'tokens' => ImmVector<TokenWithLine>,
+    'tokens' => ImmVector<NGToken>,
     'line' => int,
   );
 
@@ -43,9 +42,17 @@ class TokenQueue {
     foreach (token_get_all($data) as $token) {
       if (is_array($token)) {
         $line = $token[2];
-        $this->tokens[] = tuple(tuple($token[1], $token[0]), $line);
+        $this->tokens[] = new NGToken(
+          $token[1],
+          $token[0],
+          shape('firstLine' => $line),
+        );
       } else {
-        $this->tokens[] = tuple(tuple($token, null), $line);
+        $this->tokens[] = new NGToken(
+          $token,
+          null,
+          shape('firstLine' => $line),
+        );
       }
     }
   }
@@ -59,22 +66,24 @@ class TokenQueue {
   }
 
   public function shift(): Token {
-    invariant($this->haveTokens(), 'tried to shift without tokens');
-    list($token, $line) = array_shift($this->tokens);
-    $this->line = $line;
-    return $token;
+    $token = $this->shiftNG();
+    $this->line = $token->getPosition()['firstLine'];
+    return $token->asLegacyToken();
   }
 
-  public function unshift(TokenValue $v, TokenType $t): void {
-    $token = tuple($v, $t);
-    array_unshift($this->tokens, tuple($token, $this->line));
+  public function shiftNG(): NGToken {
+    invariant($this->haveTokens(), 'tried to shift without tokens');
+    return array_shift($this->tokens);
+  }
+
+  public function unshiftNG(NGToken $token): void {
+    array_unshift($this->tokens, $token);
   }
 
   public function peek(): Token {
-    $t = $this->shift();
-    list($s, $ttype) = $t;
-    $this->unshift($s, $ttype);
-    return $t;
+    $t = $this->shiftNG();
+    $this->unshiftNG($t);
+    return $t->asLegacyToken();
   }
 
   public function getLine(): int {

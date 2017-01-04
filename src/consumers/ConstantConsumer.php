@@ -34,7 +34,8 @@ final class ConstantConsumer extends Consumer {
     $typehint = null;
 
     while ($this->tq->haveTokens()) {
-      list ($next, $next_type) = $this->tq->shift();
+      $next_token = $this->tq->shiftNG();
+      list ($next, $next_type) = $next_token->asLegacyToken();
       if ($next_type === T_WHITESPACE) {
         continue;
       }
@@ -42,7 +43,7 @@ final class ConstantConsumer extends Consumer {
         $this->consumeWhitespace();
         list($_, $nnt) = $this->tq->peek();
         if ($nnt === T_STRING) {
-          $this->tq->unshift($next, $next_type);
+          $this->tq->unshiftNG($next_token);
           $typehint = (new TypehintConsumer($this->tq, $this->context))
             ->getTypehint();
           continue;
@@ -54,17 +55,17 @@ final class ConstantConsumer extends Consumer {
       if ($next === '=') {
         $this->consumeWhitespace();
         while ($this->tq->haveTokens()) {
-          list($nnv, $nnt) = $this->tq->shift();
+          list($nnv, $nnt) = $this->tq->peek();
           if ($nnv === ';') {
-            $this->tq->unshift($nnv, $nnt);
             break;
           }
+          $this->tq->shift();
           $value .= $nnv;
         }
       }
 
       if ($next === ';') {
-        $this->tq->unshift($next, $next_type);
+        $this->tq->unshiftNG($next_token);
         $builder = new ScannedConstantBuilder(
           $this->normalizeName(nullthrows($name)),
           $this->getBuilderContext(),

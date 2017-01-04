@@ -108,7 +108,8 @@ final class ScopeConsumer extends Consumer {
     $property_type = null;
 
     while ($tq->haveTokens() && $scope_depth > 0) {
-      list($token, $ttype) = $tq->shift();
+      $ngtoken = $tq->shiftNG();
+      list($token, $ttype) = $ngtoken->asLegacyToken();
 
       if ($token === '(') {
         ++$parens_depth;
@@ -236,7 +237,7 @@ final class ScopeConsumer extends Consumer {
       }
 
       if ($ttype === T_STRING) {
-        $tq->unshift($token, $ttype);
+        $tq->unshiftNG($ngtoken);
         $property_type = (new TypehintConsumer(
           $tq,
           $this->getSubContext(),

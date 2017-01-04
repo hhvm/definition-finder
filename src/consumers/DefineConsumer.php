@@ -58,11 +58,11 @@ final class DefineConsumer extends Consumer {
     );
     $this->consumeWhitespace();
     while ($this->tq->haveTokens()) {
-      list($nnv, $nnt) = $this->tq->shift();
+      list($nnv, $nnt) = $this->tq->peek();
       if ($nnv === ')') {
-        $this->tq->unshift($nnv, $nnt);
         break;
       }
+      $this->tq->shift();
       $value .= $nnv;
     }
     $this->consumeStatement();

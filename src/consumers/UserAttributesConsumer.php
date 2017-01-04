@@ -73,12 +73,11 @@ final class UserAttributesConsumer extends Consumer {
         $this->consumeWhitespace();
 
         // Handle trailing commas
-        list ($t, $ttype) = $this->tq->shift();
+        list ($t, $ttype) = $this->tq->peek();
         if ($t === ')') {
+          $this->tq->shift();
           break;
         }
-
-        $this->tq->unshift($t, $ttype);
       }
 
       $this->consumeWhitespace();

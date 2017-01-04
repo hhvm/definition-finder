@@ -100,7 +100,8 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
     $attrs = Map { };
     $doc = null;
     while ($tq->haveTokens()) {
-      list($t, $ttype) = $tq->shift();
+      $ngtoken = $tq->shiftNG();
+      list($t, $ttype) = $ngtoken->asLegacyToken();
 
       if ($t === ')') {
         break;
@@ -182,7 +183,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
         'at line %d',
         $tq->getLine(),
       );
-      $tq->unshift($t, $ttype);
+      $tq->unshiftNG($ngtoken);
       $param_type = (new TypehintConsumer(
         $this->tq,
         $this->getContextWithGenerics($generics),
