@@ -65,6 +65,7 @@ enum SourceType: string {
   HACK_DECL = '<?hh // decl';
   MULTIPLE_FILES = '__multiple__';
   NOT_YET_DETERMINED = '__pending__';
+  UNKNOWN = '__unknown__'; // Not PHP or Hack, as far as we know
 }
 
 const int T_SELECT = 422;

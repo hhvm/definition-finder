@@ -79,21 +79,21 @@ final class ScopeConsumer extends Consumer {
       $this->sourceType = SourceType::HACK_PARTIAL;
       return;
     }
-
-    invariant_violation(
-      'Did not find a T_OPEN_TAG',
-    );
   }
 
   public function getBuilder(): ScannedScopeBuilder {
     if ($this->scopeType === ScopeType::FILE_SCOPE) {
       $this->consumeOpenTag();
     }
-    invariant(
-      $this->sourceType !== null,
-      'No source type for scope of type %s',
-      $this->scopeType,
-    );
+    if ($this->sourceType === null) {
+      return new ScannedScopeBuilder(shape(
+        'position' => shape(
+          'filename' => $this->context['filename'],
+          'line' => 0,
+        ),
+        'sourceType' => SourceType::UNKNOWN,
+      ));
+    }
     $builder = (new ScannedScopeBuilder($this->getBuilderContext()));
     $attrs = Map { };
     $docblock = null;

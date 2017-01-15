@@ -43,4 +43,13 @@ class SourceTypeTest extends \PHPUnit_Framework_TestCase {
       $parser->getClass('Foo')->getSourceType(),
     );
   }
+
+  public function testPlainTextFileParses(): void {
+    $parser = FileParser::FromData('foo');
+    $this->assertEmpty($parser->getClasses());
+    $this->assertEmpty($parser->getFunctions());
+    $this->assertEmpty($parser->getTypes());
+    $this->assertEmpty($parser->getNewtypes());
+    $this->assertEmpty($parser->getConstants());
+  }
 }
