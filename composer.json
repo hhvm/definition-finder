@@ -16,10 +16,7 @@
     "classmap": [
       "src/"
     ],
-    "files": [
-      "src/typedefs.php",
-      "src/utils.php"
-    ]
+    "files": [ "autoload_files.php" ]
   },
   "autoload-dev": {
     "classmap": [
