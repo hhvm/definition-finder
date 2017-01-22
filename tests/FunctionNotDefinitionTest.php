@@ -39,6 +39,25 @@ function foo(\$bar): (function():void) { return \$bar; }
 EOF
     );
     $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
+    $rt = $p->getFunction('foo')->getReturnType();
+    $this->assertSame(
+      '(function():void)',
+      $rt?->getTypeText(),
+    );
+    $this->assertSame($rt?->getTypeText(), $rt?->getTypeName());
+  }
+
+  public function testReturnsGenericCallable(): void {
+    $code = '<?hh function foo(): (function():Vector<string>) { }';
+    $p = FileParser::FromData($code);
+    $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
+
+    $rt = $p->getFunction('foo')->getReturnType();
+    $this->assertSame(
+      '(function():Vector<string>)',
+      $rt?->getTypeText(),
+    );
+    $this->assertSame($rt?->getTypeText(), $rt?->getTypeName());
   }
 
   public function testAsParameterType(): void {

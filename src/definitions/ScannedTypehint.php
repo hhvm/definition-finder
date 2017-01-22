@@ -38,7 +38,15 @@ class ScannedTypehint {
 
   public function getTypeText(): string {
     $base = $this->getTypeName();
-    invariant(strpbrk($base, '<>') === false, 'generics in type text');
+    if (strpbrk($base, '<>')) {
+      invariant(
+        $this->getGenericTypes()->isEmpty(),
+        'Typename "%s" contains <> and has generics',
+        $base,
+      );
+      // Invalid in most cases, but valid for eg `(function():Vector<string>)`
+      return $base;
+    }
     $generics = $this->getGenericTypes();
     if ($generics) {
       $sub = implode(',',$generics->map($g ==> $g->getTypeText()));
