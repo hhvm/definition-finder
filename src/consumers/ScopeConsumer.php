@@ -313,6 +313,12 @@ final class ScopeConsumer extends Consumer {
 
     switch ($def_type) {
       case DefinitionType::NAMESPACE_DEF:
+        list($_, $ttype) = $this->tq->peek();
+        if ($ttype === T_NS_SEPARATOR) {
+          // Relative namespace - eg 'namespace\foo()'
+          $this->consumeStatement();
+          return;
+        }
         $builder->addNamespace(
           (new NamespaceConsumer(
             $this->tq,
