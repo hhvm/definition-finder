@@ -28,6 +28,26 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
+  public function testAnonymousClasses(): void {
+    $parser = FileParser::FromFile(
+      __DIR__.'/data/class_contents_php.php',
+    );
+    $this->assertEmpty(
+      $parser->getFunctions(),
+      'Should be no functions - probably interpreting a method as a function',
+    );
+    $this->assertSame(
+      1,
+      $parser->getClasses()->count(),
+      'The anonymous class should not be returned',
+    );
+    $class = $parser->getClass('ClassUsingAnonymousClass');
+    $this->assertEquals(
+      ImmVector { 'methodOne', 'methodTwo' },
+      $class->getMethods()->map($it ==> $it->getName())->toImmVector(),
+    );
+  }
+
   public function testNamespaceName(): void {
     $this->assertEquals(
       'Facebook\DefinitionFinder\Test',
