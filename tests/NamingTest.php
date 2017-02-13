@@ -73,6 +73,14 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $this->assertNotNull($class);
   }
 
+  /** @dataProvider specialNameProvider */
+  public function testSpecialNameAsNamespaceName(string $type): void {
+    $data = '<?hh namespace '.$type.' { class Foo {} }';
+    $parser = FileParser::FromData($data);
+    $class = $parser->getClass($type."\\Foo");
+    $this->assertNotNull($class);
+  }
+
   public function testConstantCalledOn(): void {
     $data = '<?hh class Foo { const ON = 0; }';
 

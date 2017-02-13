@@ -18,7 +18,7 @@ final class NamespaceConsumer extends Consumer {
     do {
       $this->consumeWhitespace();
       list($next, $next_type) = $this->tq->shift();
-      if ($next_type === T_STRING) {
+      if (StringishTokens::isValid($next_type)) {
         $parts[] = $next;
         continue;
       } else if ($next_type === T_NS_SEPARATOR) {
