@@ -141,10 +141,19 @@ final class ScopeConsumer extends Consumer {
       }
 
       if ($ttype === T_SL && $scope_depth === 1 && $parens_depth === 0) {
-        $attrs = (new UserAttributesConsumer(
-          $tq,
-          $this->getSubContext(),
-        ))->getUserAttributes();
+        $state = $tq->getState();
+        try {
+          $attrs = (new UserAttributesConsumer(
+            $tq,
+            $this->getSubContext(),
+          ))->getUserAttributes();
+        } catch (\Exception $e) {
+          if ($this->scopeType === ScopeType::CLASS_SCOPE) {
+            throw $e;
+          }
+          // Bitshift in pseudomain
+          $tq->restoreState($state);
+        }
         continue;
       }
 

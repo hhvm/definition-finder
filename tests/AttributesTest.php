@@ -96,6 +96,11 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
     $this->assertEmpty($fun->getAttributes());
   }
 
+  public function testPseudmainContainingBitShift(): void {
+    $data = '<?hh print 1 << 3;';
+    $parser = FileParser::FromData($data);
+  }
+
   public function testFunctionAttrsDontPolluteClass(): void {
     $class = $this->findClass('ClassAfterFunction');
     $this->assertEquals(
