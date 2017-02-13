@@ -99,6 +99,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     return [
       tuple('true ? "herp" : "derp"', 'true?"herp":"derp"'),
       tuple('(FOO === true)? "herp" : "derp")', '(FOO===true)?"herp":"derp"'),
+      tuple('["herp", "derp"]', '["herp","derp"]'),
     ];
   }
 

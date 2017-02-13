@@ -220,12 +220,12 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
       $this->tq->shift();
 
       $default .= $t;
-      if ($t === '(') {
+      if ($t === '(' || $t === '[' || $t === '{') {
         $nesting++;
         continue;
       }
 
-      if ($t === ')') {
+      if ($t === ')' || $t === ']' || $t === '}') {
         $nesting--;
         continue;
       }
