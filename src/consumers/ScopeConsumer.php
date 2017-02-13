@@ -571,18 +571,29 @@ final class ScopeConsumer extends Consumer {
       }
       invariant($ttype === T_STRING, 'expected definition name');
       $name = $t;
+      $alias = $t;
 
       $this->consumeWhitespace();
       list($t, $ttype) = $tq->shift();
+      while ($ttype === T_NS_SEPARATOR) {
+        $name .= "\\";
+        list($t, $ttype) = $tq->shift();
+        invariant($ttype === T_STRING, 'expected definition name');
+        $name .= $t;
+        $alias = $t;
+        $this->consumeWhitespace();
+        list($t, $ttype) = $tq->shift();
+      }
+
       if ($t === '}') {
         if (!$is_func_or_const) {
-          $aliases[$name] = $name;
+          $aliases[$alias] = $name;
         }
         break;
       }
       if ($t === ',') {
         if (!$is_func_or_const) {
-          $aliases[$name] = $name;
+          $aliases[$alias] = $name;
         }
         $is_func_or_const = false;
         $this->consumeWhitespace();

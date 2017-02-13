@@ -125,6 +125,25 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
+  public function testGroupUseWithSubNamespace(): void {
+    $code =
+      "<?hh\n".
+      "namespace MyNamespace;\n".
+      "use MyOtherNamespace\\{Foo, Bar\Baz};\n".
+      "function my_func(Foo \$foo, Bar \$bar, Baz \$baz) {}";
+    $def = FileParser::FromData($code)->getFunction('MyNamespace\\my_func');
+    $this->assertEquals(
+      Vector {
+        "MyOtherNamespace\\Foo",
+        "MyNamespace\\Bar",
+        "MyOtherNamespace\\Bar\\Baz",
+      },
+      $def->getParameters()->map(
+        $p ==> $p->getTypehint()?->getTypeName(),
+      ),
+    );
+  }
+
   public function testFunctionReturnsAlias(): void {
     $code =
       "<?hh\n".
@@ -181,6 +200,5 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
         $p ==> $p->getTypehint()?->getTypeName(),
       ),
     );
-
   }
 }
