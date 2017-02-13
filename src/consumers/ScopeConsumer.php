@@ -516,8 +516,8 @@ final class ScopeConsumer extends Consumer {
         $parts = [];
         $alias = '';
         continue;
-      } else if ($type === T_FUNCTION) {
-        // 'use function' does not create any type aliases
+      } else if ($type === T_FUNCTION || $type === T_CONST) {
+        // 'use function' and 'use const' do not create any type aliases
         $this->consumeStatement();
         return ImmMap {};
       }

@@ -136,4 +136,17 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       $def->getReturnType()?->getTypeName(),
     );
   }
+
+  public function testConstUseIsNotTypeAlias(): void {
+    $code =
+      "<?hh\n".
+      "namespace MyNamespace;\n".
+      "use const MyOtherNamespace\\Foo;\n".
+      "function my_func(): Foo {}";
+    $def = FileParser::FromData($code)->getFunction('MyNamespace\\my_func');
+    $this->assertSame(
+      "MyNamespace\\Foo",
+      $def->getReturnType()?->getTypeName(),
+    );
+  }
 }
