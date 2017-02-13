@@ -273,6 +273,26 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $this->assertSame('int', $constant->getValue()?->getTypeText());
   }
 
+  public function testClassAsTypeConstant(): void {
+    $data =
+      "<?hh\n".
+      "class Foo { const type BAR = int; }\n".
+      "class Bar {\n".
+      "  const type FOO = Foo;\n".
+      "  function foo(self::FOO::BAR \$baz): void {}\n".
+      "}";
+    $parser = FileParser::FromData($data);
+    $class = $parser->getClass('Bar');
+    $this->assertEquals(
+      Vector { Vector { 'self::FOO::BAR' } },
+      $class->getMethods()->map(
+        $method ==> $method->getParameters()->map(
+          $param ==> $param->getTypehint()?->getTypeText(),
+        ),
+      ),
+    );
+  }
+
   public function testConstraintedTypeConstant(): void {
     // I'm not aware of a use for this, but HHVM allows and tests for it
     $data = '<?hh class Foo { const type BAR as int = int; }';

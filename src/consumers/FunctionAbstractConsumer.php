@@ -186,8 +186,9 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
       invariant(
         $param_type === null,
         'found two things that look like typehints for the same parameter '.
-        'at line %d',
+        'at line %d - previous is "%s"',
         $tq->getLine(),
+        $param_type->getTypeText(),
       );
       $tq->unshiftNG($ngtoken);
       $param_type = (new TypehintConsumer(
