@@ -561,6 +561,9 @@ final class ScopeConsumer extends Consumer {
     do {
       $this->consumeWhitespace();
       list($t, $ttype) = $tq->shift();
+      if ($t === '}') {
+        break;
+      }
       invariant($ttype === T_STRING, 'expected definition name');
       $name = $t;
 

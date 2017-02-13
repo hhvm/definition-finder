@@ -98,6 +98,20 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
+  public function testGroupUseWithTrailingComma(): void {
+    // Not allowed by typechecker, but allowed by HHVM
+    $code =
+      "<?hh\n".
+      "namespace MyNamespace;\n".
+      "use MyOtherNamespace\\{Foo, Bar,};\n".
+      "class MyClass implements Foo, Bar{}";
+    $def = FileParser::FromData($code)->getClass('MyNamespace\\MyClass');
+    $this->assertEquals(
+      Vector { 'MyOtherNamespace\\Foo', 'MyOtherNamespace\\Bar' },
+      $def->getInterfaceNames(),
+    );
+  }
+
   public function testGroupUseWithAlias(): void {
     $code =
       "<?hh\n".
