@@ -27,6 +27,22 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
+  public function testMultiUse(): void {
+    $code =
+      "<?hh\n".
+      "use Foo\\Bar, Herp\\Derp;\n".
+      'class MyClass extends Bar implements Derp {}';
+    $def = FileParser::FromData($code)->getClass('MyClass');
+    $this->assertSame(
+      "Foo\\Bar",
+      $def->getParentClassName()
+    );
+    $this->assertEquals(
+      Vector { "Herp\\Derp" },
+      $def->getInterfaceNames(),
+    );
+  }
+
   public function testUseWithClassAlias(): void {
     $code =
       "<?hh\n".
@@ -37,6 +53,22 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
     $this->assertSame(
       "MyOtherNamespace\\Foo",
       $def->getParentClassName(),
+    );
+  }
+
+  public function testMultiUseWithClassAlias(): void {
+    $code =
+      "<?hh\n".
+      "use Foo\\Bar as Baz, Herp\\Derp;\n".
+      'class MyClass extends Baz implements Derp {}';
+    $def = FileParser::FromData($code)->getClass('MyClass');
+    $this->assertSame(
+      "Foo\\Bar",
+      $def->getParentClassName()
+    );
+    $this->assertEquals(
+      Vector { "Herp\\Derp" },
+      $def->getInterfaceNames(),
     );
   }
 

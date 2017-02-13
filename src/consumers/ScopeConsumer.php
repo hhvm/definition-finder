@@ -492,6 +492,8 @@ final class ScopeConsumer extends Consumer {
     $parts = [];
     $alias = '';
 
+    $imports = Vector { };
+
     do {
       $this->consumeWhitespace();
       list($token, $type) = $this->tq->shift();
@@ -503,12 +505,18 @@ final class ScopeConsumer extends Consumer {
         continue;
       } else if ($type === T_AS) {
         $alias = $this->consumeAlias();
-        break;
+        continue;
       } else if ($token === '{') {
         return $this->consumeGroupUseStatement(new ImmVector($parts));
       } else if ($token === ';') {
+        $imports[] = tuple($parts, $alias);
         break;
-      } else if ($type = T_FUNCTION) {
+      } else if ($token === ',') {
+        $imports[] = tuple($parts, $alias);
+        $parts = [];
+        $alias = '';
+        continue;
+      } else if ($type === T_FUNCTION) {
         // 'use function' does not create any type aliases
         $this->consumeStatement();
         return ImmMap {};
@@ -521,13 +529,19 @@ final class ScopeConsumer extends Consumer {
 
     } while ($this->tq->haveTokens());
 
-    if($alias === '') {
-       $alias = $parts[count($parts) - 1];
+    $aliases = Map { };
+    foreach ($imports as list($parts, $alias)) {
+      if (count($parts) === 0) {
+        continue;
+      }
+      if ($alias === '') {
+        $alias = $parts[count($parts) - 1];
+      }
+      $namespace = implode('\\', $parts);
+      $aliases[$alias] = $namespace;
     }
 
-    $namespace = implode('\\', $parts);
-
-    return ImmMap { $alias => $namespace };
+    return $aliases->immutable();
   }
 
   private function consumeGroupUseStatement(
@@ -602,16 +616,6 @@ final class ScopeConsumer extends Consumer {
     }
 
     $this->consumeWhitespace();
-
-    if(!$this->tq->isEmpty()) {
-       list($next, $_) = $this->tq->shift();
-       if($next !== ';') {
-         invariant_violation(
-           'Unexpected token %s',
-           var_export($next, true),
-         );
-       }
-    }
     return $name;
   }
 
