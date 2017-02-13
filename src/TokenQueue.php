@@ -41,6 +41,9 @@ class TokenQueue {
     $line = 0;
     foreach (token_get_all($data) as $token) {
       if (is_array($token)) {
+        if ($token[0] === T_HALT_COMPILER) {
+          break;
+        }
         $line = $token[2];
         $this->tokens[] = new NGToken(
           $token[1],
