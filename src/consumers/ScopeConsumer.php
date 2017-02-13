@@ -327,12 +327,6 @@ final class ScopeConsumer extends Consumer {
         );
         return;
       case DefinitionType::CLASS_DEF:
-        if ($this->scopeType === ScopeType::CLASS_SCOPE) {
-          // Anonymous class
-          $this->consumeBlock();
-          return;
-        }
-        // FALLTHROUGH
       case DefinitionType::INTERFACE_DEF:
       case DefinitionType::TRAIT_DEF:
         if ($abstractness === null) {

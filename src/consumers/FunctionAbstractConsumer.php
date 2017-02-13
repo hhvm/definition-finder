@@ -74,6 +74,12 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
         $this->getContextWithGenerics($generics),
       ))->getTypehint());
     }
+    $this->consumeWhitespace();
+    list($t, $_) = $tq->peek();
+    if ($t === '{') {
+      $this->skipToBlock();
+      $this->consumeBlock();
+    }
     return $builder;
   }
 
