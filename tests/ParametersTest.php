@@ -95,6 +95,35 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
+  public function getUnusualDefaults(): array<(string, string)> {
+    return [
+      tuple('true ? "herp" : "derp"', 'true?"herp":"derp"'),
+      tuple('(FOO === true)? "herp" : "derp")', '(FOO===true)?"herp":"derp"'),
+    ];
+  }
+
+  /**
+   * @dataProvider getUnusualDefaults
+   */
+  public function testWithUnusualDefault(
+    string $in,
+    string $expected,
+  ): void {
+    $data = '<?hh function foo($bar, $baz = '.$in.') {}';
+    $parser = FileParser::FromData($data);
+    $function = $parser->getFunction('foo');
+    $this->assertEquals(
+      Vector { 'bar', 'baz' },
+      $function->getParameters()->map($p ==> $p->getName()),
+    );
+    $this->assertEquals(
+      Vector { null, $expected },
+      $function->getParameters()->map(
+        $p ==> $p->isOptional() ? $p->getDefaultString(): null,
+      ),
+    );
+  }
+
   public function testWithTypeAndDefault(): void {
     $data = '<?hh function foo(string $bar = "baz") {}';
     $parser = FileParser::FromData($data);

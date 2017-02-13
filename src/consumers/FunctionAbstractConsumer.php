@@ -227,9 +227,6 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
 
       if ($t === ')') {
         $nesting--;
-        if ($nesting === 0) {
-          break;
-        }
         continue;
       }
     }
