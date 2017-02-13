@@ -52,10 +52,11 @@ final class DefineConsumer extends Consumer {
     }
     $this->consumeWhitespace();
     list($next, $_) = $tq->shift();
-    invariant(
-      $next === ',',
-      'Expected first define argument to be followed by a comma',
-    );
+    if ($next !== ',') {
+      // define('foo'.$bar, $baz) is valid, but isn't really a constant.
+      $this->consumeStatement();
+      return null;
+    }
     $this->consumeWhitespace();
     while ($this->tq->haveTokens()) {
       list($nnv, $nnt) = $this->tq->peek();

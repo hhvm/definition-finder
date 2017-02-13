@@ -19,4 +19,10 @@ class VariableDefinesTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $this->assertEmpty($parser->getConstants());
   }
+
+  public function testExpressionDefine(): void {
+    $data = '<?php define("foo"."bar", $baz)';
+    $parser = FileParser::FromData($data);
+    $this->assertEmpty($parser->getConstants());
+  }
 }
