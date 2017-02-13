@@ -21,6 +21,9 @@ gfind \
   "$HHVM/hphp/test/zend" \
   "$HHVM/hphp/test/quick" \
   "$HHVM/hphp/test/slow" \
-  -name '*.php' \
+  "$HHVM/hphp/runtime/ext" \
+  "$HHVM/hphp/system/php" \
+  "$HHVM/hphp/hack/hhi" \
+  -name '*.php' -o -name '*.hhi' \
 | egrep -v 'quick/(dict|keyset|vec)/static.php|quick/init-basic.php|slow/parser/unicode-literal-error.php' \
 | xargs "$TRY_PARSE"
