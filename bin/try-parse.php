@@ -16,7 +16,24 @@ require_once(__DIR__.'/../vendor/autoload.php');
 
 function try_parse(string $path): void {
   printf('%s ... ', $path);
-  FileParser::FromFile($path);
+  try {
+    FileParser::FromFile($path);
+  } catch (\Exception $e) {
+    $ret_code = -1;
+    system(
+      sprintf(
+        '%s -l %s >/dev/null',
+        escapeshellarg(PHP_BINARY),
+        escapeshellarg($path),
+      ),
+      $ret_code,
+    );
+    if ($ret_code !== 0) {
+      print("HHVM SYNTAX ERROR\n");
+      return;
+    }
+    throw $e;
+  }
   print("OK\n");
 }
 
