@@ -62,20 +62,23 @@ final class TypeConstantConsumer extends Consumer {
     $this->consumeWhitespace();
 
     list($next, $next_type) = $this->tq->peek();
-    if($next === RelationshipToken::SUBTYPE) {
-      invariant(
-        $this->abstractness === AbstractnessToken::IS_ABSTRACT,
-        'concrete type constant may not have a type constraint',
-      );
+    if ($next === RelationshipToken::SUBTYPE) {
       $this->tq->shift();
       $this->consumeWhitespace();
-      return (new TypehintConsumer(
+
+      $constraint = (new TypehintConsumer(
         $this->tq,
         $this->context,
       ))->getTypehint();
+
+      if ($this->abstractness === AbstractnessToken::IS_ABSTRACT) {
+        return $constraint;
+      }
+      $this->consumeWhitespace();
+      list($next, $next_type) = $this->tq->peek();
     }
 
-    if($next === '=') {
+    if ($next === '=') {
       invariant(
         $this->abstractness === AbstractnessToken::NOT_ABSTRACT,
         'abstract type constants may not have concrete values',

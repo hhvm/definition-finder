@@ -273,6 +273,19 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $this->assertSame('int', $constant->getValue()?->getTypeText());
   }
 
+  public function testConstraintedTypeConstant(): void {
+    // I'm not aware of a use for this, but HHVM allows and tests for it
+    $data = '<?hh class Foo { const type BAR as int = int; }';
+    $parser = FileParser::FromData($data);
+    $constants = $parser->getClass('Foo')->getTypeConstants();
+    $this->assertSame(1, $constants->count());
+    $constant = $constants->at(0);
+
+    $this->assertSame('BAR', $constant->getName());
+    $this->assertFalse($constant->isAbstract());
+    $this->assertSame('int', $constant->getValue()?->getTypeText());
+  }
+
   public function testAbstractConstant(): void {
     $data = '<?hh abstract class Foo { abstract const string BAR; }';
     $parser = FileParser::FromData($data);
