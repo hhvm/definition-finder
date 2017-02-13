@@ -500,7 +500,6 @@ final class ScopeConsumer extends Consumer {
   private function consumeUseStatement(): ImmMap<string, string> {
     $parts = [];
     $alias = '';
-
     $imports = Vector { };
 
     do {
@@ -558,11 +557,17 @@ final class ScopeConsumer extends Consumer {
   ): ImmMap<string, string> {
     $aliases = Map { };
     $tq = $this->tq;
+    $is_func_or_const = false;
+
     do {
       $this->consumeWhitespace();
       list($t, $ttype) = $tq->shift();
       if ($t === '}') {
         break;
+      }
+      if ($ttype === T_FUNCTION || $ttype === T_CONST) {
+        $is_func_or_const = true;
+        continue;
       }
       invariant($ttype === T_STRING, 'expected definition name');
       $name = $t;
@@ -570,11 +575,16 @@ final class ScopeConsumer extends Consumer {
       $this->consumeWhitespace();
       list($t, $ttype) = $tq->shift();
       if ($t === '}') {
-        $aliases[$name] = $name;
+        if (!$is_func_or_const) {
+          $aliases[$name] = $name;
+        }
         break;
       }
       if ($t === ',') {
-        $aliases[$name] = $name;
+        if (!$is_func_or_const) {
+          $aliases[$name] = $name;
+        }
+        $is_func_or_const = false;
         $this->consumeWhitespace();
         continue;
       }
