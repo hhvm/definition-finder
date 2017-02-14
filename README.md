@@ -43,7 +43,12 @@ Implementation
 
 This is a recursive parser built on the token stream exposed by `token_get_all()`.
 
+Contributing
+============
+
+We welcome GitHub issues and pull requests - please see CONTRIBUTING.md for details.
+
 License
--------
+=======
 
 definition-finder is [BSD-licensed](LICENSE). We also provide an additional [patent grant](PATENTS).
