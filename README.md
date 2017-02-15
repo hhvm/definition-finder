@@ -1,7 +1,7 @@
-Definition Finder [![Build Status](https://travis-ci.org/facebook/definition-finder.svg?branch=master)](https://travis-ci.org/facebook/definition-finder)
+Definition Finder [![Build Status](https://travis-ci.org/hhvm/definition-finder.svg?branch=master)](https://travis-ci.org/hhvm/definition-finder)
 ==================
 
-This library finds all the definitions in a file or tree that HHVM understands. It is used to generate [the Hack reference documentation](http://docs.hhvm.com/hack/reference/), and be used for other purposes such as [generating autoload maps](https://github.com/facebook/hhvm-autoload-map-generator/)
+This library finds all the definitions in a file or tree that HHVM understands. It is used to generate [the Hack reference documentation](http://docs.hhvm.com/hack/reference/), and be used for other purposes such as [generating autoload maps](https://github.com/hhvm/hhvm-autoload/)
 
 This project requires HHVM 3.9 or later - however, if the code being scanned requires
 a later version of HHVM, definition-finder may not be able to parse it on the lower
