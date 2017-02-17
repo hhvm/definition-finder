@@ -22,9 +22,8 @@ class GenericsConsumer extends Consumer {
     $ret = Vector { };
 
     $name = null;
-    $constraint = null;
+    $constraints = Vector { };
     $variance = VarianceToken::INVARIANT;
-    $relationship = null;
 
     while ($tq->haveTokens()) {
       list($t, $ttype) = $tq->shift();
@@ -42,9 +41,8 @@ class GenericsConsumer extends Consumer {
         if ($name !== null) {
           $ret[] = new ScannedGeneric(
             $name,
-            $constraint,
             $variance,
-            $relationship,
+            $constraints->immutable(),
           );
         }
         return $ret;
@@ -58,14 +56,12 @@ class GenericsConsumer extends Consumer {
       if ($t === ',') {
         $ret[] = new ScannedGeneric(
           nullthrows($name),
-          $this->normalizeNullableName($constraint),
           $variance,
-          $relationship,
+          $constraints->immutable(),
         );
         $name = null;
-        $constraint = null;
+        $constraints = Vector {};
         $variance = VarianceToken::INVARIANT;
-        $relationship = null;
         continue;
       }
 
@@ -80,22 +76,28 @@ class GenericsConsumer extends Consumer {
       }
 
       if ($ttype === T_AS) {
-        $relationship = RelationshipToken::SUBTYPE;
         $this->consumeWhitespace();
         $constraint = (new TypehintConsumer(
           $tq,
           $this->context,
         ))->getTypehint()->getTypeText();
+        $constraints[] = shape(
+          'type' => $constraint,
+          'relationship' => RelationshipToken::SUBTYPE,
+        );
         continue;
       }
 
       if ($ttype === T_SUPER) {
-        $relationship = RelationshipToken::SUPERTYPE;
         $this->consumeWhitespace();
         $constraint = (new TypehintConsumer(
           $tq,
           $this->context,
         ))->getTypehint()->getTypeText();
+        $constraints[] = shape(
+          'type' => $constraint,
+          'relationship' => RelationshipToken::SUPERTYPE,
+        );
         continue;
       }
     }

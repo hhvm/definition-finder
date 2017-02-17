@@ -12,11 +12,15 @@
 namespace Facebook\DefinitionFinder;
 
 class ScannedGeneric {
+  const type TConstraint = shape(
+    'type' => string,
+    'relationship' => RelationshipToken,
+  );
+
   public function __construct(
     private string $name,
-    private ?string $constraint,
     private VarianceToken $variance,
-    private ?RelationshipToken $relationship,
+    private ImmVector<self::TConstraint> $constraints,
   ) {
   }
 
@@ -24,12 +28,8 @@ class ScannedGeneric {
     return $this->name;
   }
 
-  public function getConstraintTypeName(): ?string {
-    return $this->constraint;
-  }
-
-  public function getConstraintRelationship(): ?RelationshipToken {
-    return $this->relationship;
+  public function getConstraints(): ImmVector<self::TConstraint> {
+    return $this->constraints;
   }
 
   public function isContravariant(): bool {

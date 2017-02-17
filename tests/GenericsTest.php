@@ -26,8 +26,8 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     );
 
     $this->assertEquals(
-      Vector { null, null },
-      $class->getGenericTypes()->map($x ==> $x->getConstraintTypeName()),
+      Vector { 0, 0 },
+      $class->getGenericTypes()->map($x ==> $x->getConstraints()->count()),
     );
   }
 
@@ -42,8 +42,8 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     );
 
     $this->assertEquals(
-      Vector { null, null },
-      $function->getGenericTypes()->map($x ==> $x->getConstraintTypeName()),
+      Vector { 0, 0 },
+      $function->getGenericTypes()->map($x ==> $x->getConstraints()->count()),
     );
   }
 
@@ -54,13 +54,37 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       Vector { 'Bar', 'Baz' },
-      $class->getGenericTypes()->map($x ==> $x->getConstraintTypeName()),
+      $class->getGenericTypes()->map($x ==> $x->getConstraints()[0]['type']),
     );
     $this->assertEquals(
       Vector { RelationshipToken::SUBTYPE, RelationshipToken::SUPERTYPE },
-      $class->getGenericTypes()->map($x ==> $x->getConstraintRelationship()),
+      $class->getGenericTypes()->map(
+        $x ==> $x->getConstraints()[0]['relationship']
+      ),
     );
   }
+
+  public function testGenericsWithMultipleConstraints(): void {
+    $data = '<?hh class Foo<T super Herp as Derp> {}';
+    $parser = FileParser::FromData($data);
+    $constraints = $parser->getClass('Foo')
+      ->getGenericTypes()[0]
+      ->getConstraints();
+    $this->assertEquals(
+      ImmVector {
+        shape(
+          'type' => 'Herp',
+          'relationship' => RelationshipToken::SUPERTYPE,
+        ),
+        shape(
+          'type' => 'Derp',
+          'relationship' => RelationshipToken::SUBTYPE,
+        ),
+      },
+      $constraints,
+    );
+  }
+
   public function testNamespacedConstrainedGenerics(): void {
     $data = '<?hh class Foo<T as \Bar\Baz> {}';
     $parser = FileParser::FromData($data);
@@ -68,7 +92,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       Vector { 'Bar\Baz' },
-      $class->getGenericTypes()->map($x ==> $x->getConstraintTypeName()),
+      $class->getGenericTypes()->map($x ==> $x->getConstraints()[0]['type']),
     );
   }
 
@@ -121,7 +145,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $generics = $function->getGenericTypes();
     $this->assertSame(
       'shape()',
-      $generics[0]->getConstraintTypeName(),
+      $generics[0]->getConstraints()[0]['type'],
     );
   }
 
