@@ -75,6 +75,8 @@ const int T_DICT = 442;
 const int T_VEC = 443;
 const int T_KEYSET = 444;
 const int T_WHERE = 445;
+const int T_VARRAY = 446;
+const int T_DARRAY = 447;
 
 // See ident_no_semireserved in hphp.y
 enum StringishTokens: int {
@@ -91,4 +93,6 @@ enum StringishTokens: int {
   T_DICT = T_DICT;
   T_VEC = T_VEC;
   T_KEYSET = T_KEYSET;
+  T_VARRAY = T_VARRAY;
+  T_DARRAY = T_DARRAY;
 }

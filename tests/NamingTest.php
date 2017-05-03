@@ -13,10 +13,6 @@ namespace Facebook\DefinitionFinder\Test;
 
 use Facebook\DefinitionFinder\FileParser;
 
-// Hack is unaware of this
-const int T_SELECT = 422;
-const int T_ON = 415;
-
 class NamingTest extends \PHPUnit_Framework_TestCase {
   public function testFunctionCalledSelect(): void {
     // 'select' is a T_SELECT, not a T_STRING
@@ -36,6 +32,8 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       [ 'Category' ],
       [ 'Super' ],
       [ 'Attribute' ],
+      [ 'varray' ], // HHVM >= 3.19
+      [ 'darray' ], // HHVM >= 3.19
     ];
   }
 
