@@ -15,9 +15,14 @@ fi
 
 HHVM="$1"
 TRY_PARSE="$(dirname "$0")/try-parse.php"
+if $(which gfind) 2>&1 >/dev/null; then
+  FIND=gfind # MacOS
+else
+  FIND=find
+fi
 
 # blacklist egrep is for usage of dict, vec, keyset, and facebook/hhvm#7668
-gfind \
+$FIND \
   "$HHVM/hphp/test/zend" \
   "$HHVM/hphp/test/quick" \
   "$HHVM/hphp/test/slow" \
