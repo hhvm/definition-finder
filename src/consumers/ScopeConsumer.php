@@ -506,7 +506,7 @@ final class ScopeConsumer extends Consumer {
       $this->consumeWhitespace();
       list($token, $type) = $this->tq->shift();
 
-      if ($type === T_STRING) {
+      if (StringishTokens::isValid($type)) {
         $parts[] = $token;
         continue;
       } else if ($type === T_NS_SEPARATOR) {
@@ -641,7 +641,7 @@ final class ScopeConsumer extends Consumer {
     }
 
     list($name, $type) = $this->tq->shift();
-    if($type !== T_STRING) {
+    if (!StringishTokens::isValid($type)) {
       invariant_violation(
         'Unexpected token %s',
         var_export($name, true),

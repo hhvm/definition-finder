@@ -79,6 +79,22 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $this->assertNotNull($class);
   }
 
+  /** @dataProvider specialNameProvider */
+  public function testSpecialNameAsUsedName(string $type): void {
+    $data = '<?hh use Foo\\'.$type.'; class Herp extends '.$type.' { }';
+    $parser = FileParser::FromData($data);
+    $class = $parser->getClass('Herp');
+    $this->assertNotNull($class);
+  }
+
+  /** @dataProvider specialNameProvider */
+  public function testSpecialNameAsUsedAsName(string $type): void {
+    $data = '<?hh use Foo\\Bar as '.$type.'; class Herp extends '.$type.' { }';
+    $parser = FileParser::FromData($data);
+    $class = $parser->getClass('Herp');
+    $this->assertNotNull($class);
+  }
+
   public function testConstantCalledOn(): void {
     $data = '<?hh class Foo { const ON = 0; }';
 
