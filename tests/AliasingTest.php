@@ -201,4 +201,18 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       ),
     );
   }
+
+  public function testUseNamespace(): void {
+    $def = FileParser::FromFile(__DIR__.'/data/alias_use_namespace.php')
+      ->getFunction('main');
+    $this->assertEquals(
+      Vector {
+        "Bar\\Derp",
+        "Foo\\Derp",
+      },
+      $def->getParameters()->map(
+        $p ==> $p->getTypehint()?->getTypeName(),
+      ),
+    );
+  }
 }

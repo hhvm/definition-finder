@@ -19,7 +19,8 @@ enum ScopeType: string {
 
 final class ScopeConsumer extends Consumer {
 
-  private Map<string, string> $scopeAliases;
+  private Map<string, string> $usedTypes;
+  private Map<string, string> $usedNamespaces;
   private ?SourceType $sourceType;
 
   public function __construct(
@@ -27,7 +28,8 @@ final class ScopeConsumer extends Consumer {
     self::TContext $context,
     private ScopeType $scopeType,
   ) {
-    $this->scopeAliases = $context['aliases']->toMap();
+    $this->usedTypes = $context['usedTypes']->toMap();
+    $this->usedNamespaces = $context['usedNamespaces']->toMap();
     parent::__construct($tq, $context);
   }
 
@@ -188,7 +190,7 @@ final class ScopeConsumer extends Consumer {
       }
 
       if ($ttype === T_USE && $this->scopeType !== ScopeType::CLASS_SCOPE) {
-        $this->scopeAliases->setAll($this->consumeUseStatement());
+        $this->consumeUseStatement();
         continue;
       }
 
@@ -497,10 +499,11 @@ final class ScopeConsumer extends Consumer {
     }
   }
 
-  private function consumeUseStatement(): ImmMap<string, string> {
+  private function consumeUseStatement(): void {
     $parts = [];
     $alias = '';
     $imports = Vector { };
+    $import_type = UseStatementType::NAMESPACE_AND_TYPE;
 
     do {
       $this->consumeWhitespace();
@@ -515,19 +518,27 @@ final class ScopeConsumer extends Consumer {
         $alias = $this->consumeAlias();
         continue;
       } else if ($token === '{') {
-        return $this->consumeGroupUseStatement(new ImmVector($parts));
+        $prefix = implode("\\", $parts);
+        foreach ($this->consumeGroupUseStatement() as $alias => $real) {
+          $imports[] = tuple($import_type, ImmVector { $prefix, $real }, $alias);
+        }
+        break;
       } else if ($token === ';') {
-        $imports[] = tuple($parts, $alias);
+        $imports[] = tuple($import_type, $parts, $alias);
         break;
       } else if ($token === ',') {
-        $imports[] = tuple($parts, $alias);
+        $imports[] = tuple($import_type, $parts, $alias);
         $parts = [];
         $alias = '';
+        $import_type = UseStatementType::NAMESPACE_AND_TYPE;
+        continue;
+      } else if ($type === T_NAMESPACE && count($parts) === 0) {
+        $import_type = UseStatementType::NAMESPACE_ONLY;
         continue;
       } else if ($type === T_FUNCTION || $type === T_CONST) {
         // 'use function' and 'use const' do not create any type aliases
         $this->consumeStatement();
-        return ImmMap {};
+        break;
       }
 
       invariant_violation(
@@ -537,23 +548,34 @@ final class ScopeConsumer extends Consumer {
 
     } while ($this->tq->haveTokens());
 
-    $aliases = Map { };
-    foreach ($imports as list($parts, $alias)) {
+    $type_imports = Map { };
+    $namespace_imports = Map { };
+
+    foreach ($imports as list($import_type, $parts, $alias)) {
       if (count($parts) === 0) {
         continue;
       }
       if ($alias === '') {
         $alias = $parts[count($parts) - 1];
       }
-      $namespace = implode('\\', $parts);
-      $aliases[$alias] = $namespace;
-    }
+      $qualified = implode('\\', $parts);
 
-    return $aliases->immutable();
+      switch ($import_type) {
+        case UseStatementType::NAMESPACE_ONLY:
+          $this->usedNamespaces[$alias] = $qualified;
+          break;
+        case UseStatementType::NAMESPACE_AND_TYPE:
+          // `use namespace` takes precedence
+          if (!$this->usedNamespaces->containsKey($alias)) {
+            $this->usedNamespaces[$alias] = $qualified;
+          }
+          $this->usedTypes[$alias] = $qualified;
+          break;
+      }
+    }
   }
 
   private function consumeGroupUseStatement(
-    ImmVector<string> $prefix,
   ): ImmMap<string, string> {
     $aliases = Map { };
     $tq = $this->tq;
@@ -628,8 +650,7 @@ final class ScopeConsumer extends Consumer {
       );
     } while (!$tq->isEmpty());
 
-    $prefix = implode("\\", $prefix)."\\";
-    return $aliases->map($value ==> $prefix.$value)->immutable();
+    return $aliases->immutable();
   }
 
   private function consumeAlias(): string {
@@ -668,7 +689,8 @@ final class ScopeConsumer extends Consumer {
 
   private function getSubContext(): self::TContext {
     $context = $this->context;
-    $context['aliases'] = $this->scopeAliases->toImmMap();
+    $context['usedTypes'] = $this->usedTypes->toImmMap();
+    $context['usedNamespaces'] = $this->usedNamespaces->toImmMap();
     $context['sourceType'] = nullthrows($this->sourceType);
     return $context;
   }

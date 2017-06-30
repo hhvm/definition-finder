@@ -16,7 +16,8 @@ abstract class Consumer {
     'filename' => string,
     'sourceType' => SourceType,
     'namespace' => ?string,
-    'aliases' => ImmMap<string, string>,
+    'usedTypes' => ImmMap<string, string>,
+    'usedNamespaces' => ImmMap<string, string>,
     'genericTypeNames' => ImmSet<string>,
   );
 
@@ -232,6 +233,10 @@ abstract class Consumer {
     string $name,
     NameNormalizationMode $mode,
   ): string {
+    if (substr($name, 0, 1) === "\\") {
+      return $name;
+    }
+
     if ($mode === NameNormalizationMode::REFERENCE) {
       $autoimport = $this->getAutoImportTypes();
       if ($autoimport->contains($name)) {
@@ -253,16 +258,19 @@ abstract class Consumer {
 
     $parts = explode('\\', $name);
     $base = $parts[0];
-    $realBase = $this->context['aliases']->get($base);
-
-    if ($realBase === null) {
-      if (substr($name, 0, 1) !== '\\') {
-        return $this->context['namespace'].'\\'.$name;
-      }
+    $real_base = null;
+    if (count($parts) === 1) {
+      $real_base = $this->context['usedTypes']->get($base);
+    } else {
+      $real_base = $this->context['usedNamespaces']->get($base);
     }
 
-    $parts[0] = $realBase;
-    return implode('\\', $parts);
+    if ($real_base === null) {
+      return $this->context['namespace'].'\\'.$name;
+    }
+
+    $parts[0] = $real_base;
+    return '\\'.implode('\\', $parts);
   }
 
   final protected function getContextWithGenerics(

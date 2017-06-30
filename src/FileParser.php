@@ -22,7 +22,8 @@ class FileParser extends BaseParser {
         shape(
           'filename' => $file,
           'namespace' => null,
-          'aliases' => ImmMap { },
+          'usedNamespaces' => ImmMap { },
+          'usedTypes' => ImmMap { },
           'sourceType' => SourceType::NOT_YET_DETERMINED,
           'genericTypeNames' => ImmSet { },
         ),

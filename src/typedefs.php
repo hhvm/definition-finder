@@ -96,3 +96,8 @@ enum StringishTokens: int {
   T_VARRAY = T_VARRAY;
   T_DARRAY = T_DARRAY;
 }
+
+enum UseStatementType: string {
+  NAMESPACE_ONLY = 'use namespace';
+  NAMESPACE_AND_TYPE = 'use';
+}
