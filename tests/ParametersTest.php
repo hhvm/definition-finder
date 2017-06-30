@@ -47,28 +47,6 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $this->assertEmpty($typehint?->getGenericTypes());
   }
 
-  public function testWithGenericType(): void {
-    $data = '<?hh function foo(Vector<string> $bar) {}';
-
-    $parser = FileParser::FromData($data);
-    $function = $parser->getFunction('foo');
-
-    $params = $function->getParameters();
-    $this->assertSame(1, count($params));
-    $param = $params[0];
-    $this->assertSame('bar', $param->getName());
-    $typehint = $param->getTypehint();
-    $this->assertSame('Vector', $typehint?->getTypeName());
-    $this->assertEquals(
-      Vector { 'string' },
-      $typehint?->getGenericTypes()?->map($x ==> $x->getTypeName()),
-    );
-    $this->assertEquals(
-      Vector { Vector { } },
-      $typehint?->getGenericTypes()?->map($x ==> $x->getGenericTypes()),
-    );
-  }
-
   public function testWithDefault(): void {
     $data = '<?hh function foo($bar, $baz = "herp") {}';
     $parser = FileParser::FromData($data);
@@ -155,9 +133,9 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       Vector { 'bar' },
       $function->getParameters()->map($x ==> $x->getName()),
     );
-    $this->assertEquals(
-      Vector { new ScannedTypehint('Iterator', 'Iterator', Vector { }, false) },
-      $function->getParameters()->map($x ==> $x->getTypehint()),
+    $this->assertSame(
+      'Iterator',
+      $function->getParameters()->at(0)->getTypehint()?->getTypeName(),
     );
   }
 
@@ -171,9 +149,9 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       Vector { 'bar' },
       $function->getParameters()->map($x ==> $x->getName()),
     );
-    $this->assertEquals(
-      Vector { new ScannedTypehint('Foo\Bar', 'Foo\Bar', Vector { }, false) },
-      $function->getParameters()->map($x ==> $x->getTypehint()),
+    $this->assertSame(
+      'Foo\\Bar',
+      $function->getParameters()->at(0)->getTypehint()?->getTypeName(),
     );
   }
 
@@ -187,9 +165,9 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       Vector { 'bar' },
       $function->getParameters()->map($x ==> $x->getName()),
     );
-    $this->assertEquals(
-      Vector { new ScannedTypehint('callable', 'callable', Vector { }, false) },
-      $function->getParameters()->map($x ==> $x->getTypehint()),
+    $this->assertSame(
+      'callable',
+      $function->getParameters()->at(0)->getTypehint()?->getTypeName(),
     );
   }
 
@@ -220,8 +198,8 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       $params->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { new ScannedTypehint('string', 'string', Vector { }, false) },
-      $params->map($x ==> $x->getTypehint()),
+      'string',
+      $params->at(0)->getTypehint()?->getTypeText(),
     );
     $this->assertEquals(
       Vector { true },
@@ -235,8 +213,8 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $function = $parser->getFunction('foo');
 
     $this->assertEquals(
-      Vector { new ScannedTypehint('array', 'array', Vector { }, false) },
-      $function->getParameters()->map($x ==> $x->getTypehint()),
+      Vector { 'array' },
+      $function->getParameters()->map($x ==> $x->getTypehint()?->getTypeName()),
     );
   }
 
@@ -248,6 +226,9 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(
       Vector { 'bar' },
       $function->getParameters()->map($x ==> $x->getName()),
+    );
+    $this->assertNull(
+      $function->getParameters()->at(0)->getTypehint(),
     );
   }
 

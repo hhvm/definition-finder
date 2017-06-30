@@ -14,28 +14,37 @@ namespace Facebook\DefinitionFinder\Tests;
 use Facebook\DefinitionFinder\FileParser;
 
 final class TypeTextTest extends \PHPUnit_Framework_TestCase {
-  public function provideSpecialTypes(): array<(string, string, string)> {
+  public function provideTypesInNamespace(): array<(string, string, string)> {
     return [
+      // Unusual syntax
       tuple('shape("foo" => string)', 'shape', 'shape("foo"=>string)'),
       tuple('(string, string)', 'tuple', '(string,string)'),
       tuple('(string, string,)', 'tuple', '(string,string)'),
       tuple('(function(){})', 'callable', '(function(){})'),
+
+      // Autoimports
       tuple('void', 'void', 'void'),
       tuple('dict<int, string>', 'dict', 'dict<int,string>'),
+      tuple('Vector<string>', 'Vector', 'Vector<string>'),
+      tuple('callable', 'callable', 'callable'),
+
+      // Namespacing
+      tuple('\\Foo', 'Foo', 'Foo'),
+      tuple('Foo', 'MyNamespace\\Foo', 'MyNamespace\\Foo'),
     ];
   }
 
-  /** @dataProvider provideSpecialTypes */ 
-  public function testSpecialTypeInNamespace(
+  /** @dataProvider provideTypesInNamespace*/ 
+  public function testNamespacedType(
     string $input,
     string $name,
     string $text,
   ): void {
     $code =
       "<?hh \n".
-      "namespace Foo;\n".
+      "namespace MyNamespace;\n".
       "function main(".$input." \$_): void {}\n";
-    $def = FileParser::FromData($code)->getFunction('Foo\\main');
+    $def = FileParser::FromData($code)->getFunction('MyNamespace\\main');
     $type = $def->getParameters()->at(0)->getTypehint();
     $this->assertNotNull($type);
     $this->assertSame($name, $type?->getTypeName(), 'type name differs');
