@@ -252,6 +252,11 @@ abstract class Consumer {
       return $name;
     }
 
+    if (substr($name, 0, 1) === '(') {
+      // Callable or tuple
+      return $name;
+    }
+
     if ($this->context['genericTypeNames']->contains($name)) {
       return $name;
     }

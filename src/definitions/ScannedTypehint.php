@@ -15,6 +15,7 @@ namespace Facebook\DefinitionFinder;
 class ScannedTypehint {
   public function __construct(
     private string $typeName,
+    private string $typeTextBase,
     private \ConstVector<ScannedTypehint> $generics,
     private bool $nullable,
   ) {
@@ -37,7 +38,7 @@ class ScannedTypehint {
   }
 
   public function getTypeText(): string {
-    $base = $this->getTypeName();
+    $base = $this->typeTextBase;
     if (strpbrk($base, '<>')) {
       invariant(
         $this->getGenericTypes()->isEmpty(),

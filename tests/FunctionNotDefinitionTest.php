@@ -40,11 +40,9 @@ EOF
     );
     $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
     $rt = $p->getFunction('foo')->getReturnType();
-    $this->assertSame(
-      '(function():void)',
-      $rt?->getTypeText(),
-    );
-    $this->assertSame($rt?->getTypeText(), $rt?->getTypeName());
+
+    $this->assertSame('callable', $rt?->getTypeName());
+    $this->assertSame('(function():void)', $rt?->getTypeText());
   }
 
   public function testReturnsGenericCallable(): void {
@@ -53,11 +51,8 @@ EOF
     $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
 
     $rt = $p->getFunction('foo')->getReturnType();
-    $this->assertSame(
-      '(function():Vector<string>)',
-      $rt?->getTypeText(),
-    );
-    $this->assertSame($rt?->getTypeText(), $rt?->getTypeName());
+    $this->assertSame('callable', $rt?->getTypeName());
+    $this->assertSame('(function():Vector<string>)', $rt?->getTypeText());
   }
 
   public function testAsParameterType(): void {

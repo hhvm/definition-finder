@@ -192,19 +192,6 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
-  public function testTakesShapeInNamespace(): void {
-    $code =
-      "<?hh\n".
-      "namespace Foo;\n".
-      "function my_func(shape('foo' => string) \$value): void {}";
-    $parser = FileParser::FromData($code);
-    $func = $parser->getFunction("Foo\\my_func");
-    $this->assertSame(
-      "shape('foo'=>string)",
-      $func->getParameters()->at(0)->getTypehint()?->getTypeName(),
-    );
-  }
-
   public function testReturnsClassGenericInNamespace(): void {
     $code =
       "<?hh\n".

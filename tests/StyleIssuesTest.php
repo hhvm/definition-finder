@@ -30,7 +30,7 @@ class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
-      new ScannedTypehint('void', Vector { }, false),
+      new ScannedTypehint('void', 'void', Vector { }, false),
       $fun->getReturnType(),
     );
   }

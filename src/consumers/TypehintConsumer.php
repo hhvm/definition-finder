@@ -18,7 +18,8 @@ final class TypehintConsumer extends Consumer {
 
   private function consumeType(): ScannedTypehint {
     $nullable = false;
-    $type = null;
+    $type_text = null;
+    $type_name  = null;
     $generics = Vector { };
 
     $nesting = 0;
@@ -32,62 +33,28 @@ final class TypehintConsumer extends Consumer {
         continue;
       }
 
-      if ($nesting !== 0) {
-        $type .= $t;
-        if ($t === '(') {
-          ++$nesting;
+      if ($type_text === null) {
+        if ($ttype === T_SHAPE) {
+          $type_name = 'shape';
+        } else if ($t === '(') {
+          list ($_, $pttype) = $this->tq->peek();
+          if ($pttype === T_FUNCTION) {
+            $type_name = 'callable';
+          } else {
+            $type_name = 'tuple';
+          }
         }
       }
 
-      if ($ttype === T_SHAPE) {
-        $type = $t;
+      $type_text .= $t;
+
+      if ($t === '(') {
+        ++$nesting;
         continue;
-      }
-
-      // Handle functions
-      if ($t === '(' && $nesting === 0) {
-        $this->consumeWhitespace();
-        list($t, $ttype) = $this->tq->peek();
-        if ($ttype === T_FUNCTION) {
-          $type = '(';
-          ++$nesting;
-          continue;
+      } else if ($t === ')') {
+        if (substr($type_text, -2) === ',)') {
+          $type_text = substr($type_text, 0, -2).')';
         }
-
-        if ($type !== null) {
-          $type .= '(';
-          ++$nesting;
-          continue;
-        }
-
-        $type = 'tuple';
-        while ($this->tq->haveTokens()) {
-          $this->consumeWhitespace();
-
-          // Handle trailing commas
-          list($t, $_) = $this->tq->peek();
-          if ($t === ')') {
-            $this->tq->shift();
-            break;
-          }
-
-          $generics[] = $this->consumeType();
-          $this->consumeWhitespace();
-
-          list($t, $_) = $this->tq->shift();
-          if ($t === ')') {
-            break;
-          }
-          invariant(
-            $t === ',',
-            'expected ) or , after tuple member at line %d',
-            $this->tq->getLine(),
-          );
-        }
-        break;
-      }
-
-      if ($t === ')') {
         --$nesting;
         if ($nesting === 0) {
           break;
@@ -118,11 +85,11 @@ final class TypehintConsumer extends Consumer {
         $t = normalize_xhp_class($t);
       }
 
-      $type = $t;
+      $type_text = $t;
       // Handle \foo
       if ($ttype === T_NS_SEPARATOR) {
         list($t, $_) = $this->tq->shift();
-        $type .= $t;
+        $type_text .= $t;
       }
 
       // Handle \foo\bar and foo\bar
@@ -133,7 +100,7 @@ final class TypehintConsumer extends Consumer {
         if ($ttype === T_DOUBLE_COLON) {
           list($tDoubleColon, $_) = $this->tq->shift();
           list($tConstant, $_) = $this->tq->shift();
-          $type = $type . $tDoubleColon . $tConstant;
+          $type_text = $type_text . $tDoubleColon . $tConstant;
           continue;
         }
 
@@ -141,9 +108,9 @@ final class TypehintConsumer extends Consumer {
           break;
         }
         $this->tq->shift();
-        $type .= "\\";
+        $type_text .= "\\";
         list($t, $_) = $this->tq->shift();
-        $type .= $t;
+        $type_text .= $t;
       }
 
       // consume generics and recurse
@@ -176,8 +143,13 @@ final class TypehintConsumer extends Consumer {
       }
       break;
     }
-    invariant($type !== null, "Didn't see anything that looked like a type");
-    $type = $this->normalizeName($type);
-    return new ScannedTypehint($type, $generics, $nullable);
+    invariant($type_text !== null, "Didn't see anything that looked like a type");
+    $type_text = $this->normalizeName($type_text);
+    return new ScannedTypehint(
+      $type_name ?? $type_text,
+      $type_text,
+      $generics,
+      $nullable,
+    );
   }
 }
