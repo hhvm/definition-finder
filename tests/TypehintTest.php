@@ -13,7 +13,7 @@ namespace Facebook\DefinitionFinder\Tests;
 
 use Facebook\DefinitionFinder\FileParser;
 
-final class TypeTextTest extends \PHPUnit_Framework_TestCase {
+final class TypeHintTest extends \PHPUnit_Framework_TestCase {
   public function provideTypesInNamespace(): array<(string, string, string)> {
     return [
       // Unusual syntax
@@ -31,6 +31,13 @@ final class TypeTextTest extends \PHPUnit_Framework_TestCase {
       // Namespacing
       tuple('\\Foo', 'Foo', 'Foo'),
       tuple('Foo', 'MyNamespace\\Foo', 'MyNamespace\\Foo'),
+
+      // Nullables
+      tuple('?Foo', 'MyNamespace\\Foo', '?MyNamespace\\Foo'),
+      tuple('?dict<int, string>', 'dict', '?dict<int,string>'),
+      tuple('?shape("foo" => string)', 'shape', '?shape("foo"=>string)'),
+      tuple('?(string, string)', 'tuple', '?(string,string)'),
+      tuple('?(function(){})', 'callable', '?(function(){})'),
     ];
   }
 
@@ -47,6 +54,38 @@ final class TypeTextTest extends \PHPUnit_Framework_TestCase {
     $def = FileParser::FromData($code)->getFunction('MyNamespace\\main');
     $type = $def->getParameters()->at(0)->getTypehint();
     $this->assertNotNull($type);
+    $this->assertSame($name, $type?->getTypeName(), 'type name differs');
+    $this->assertSame($text, $type?->getTypeText(), 'type text differs');
+  }
+
+  public function provideNullableExamples(
+  ): array<(string, bool, string, string)> {
+    return [
+      tuple('Foo', false, 'Foo', 'Foo'),
+      tuple('?Foo', true, 'Foo', '?Foo'),
+      tuple('(function():?string)', false, 'callable', '(function():?string)'),
+      tuple('?(function():?string)', true, 'callable', '?(function():?string)'),
+      tuple('shape("foo" => ?string)', false, 'shape', 'shape("foo"=>?string)'),
+      tuple('?shape("foo" => ?string)', true, 'shape', '?shape("foo"=>?string)'),
+      tuple('(?string, string)', false, 'tuple', '(?string,string)'),
+      tuple('?(?string, string)', true, 'tuple', '?(?string,string)'),
+    ];
+  }
+
+  /** @dataProvider provideNullableExamples */
+  public function testNullables(
+    string $input,
+    bool $nullable,
+    string $name,
+    string $text,
+  ): void {
+    $code =
+      "<?hh \n".
+      "function main(".$input." \$_): void {}\n";
+    $def = FileParser::FromData($code)->getFunction('main');
+    $type = $def->getParameters()->at(0)->getTypehint();
+    $this->assertNotNull($type);
+    $this->assertSame($nullable, $type?->isNullable(), 'nullability differs');
     $this->assertSame($name, $type?->getTypeName(), 'type name differs');
     $this->assertSame($text, $type?->getTypeText(), 'type text differs');
   }

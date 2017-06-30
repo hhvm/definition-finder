@@ -43,6 +43,9 @@ final class TypehintConsumer extends Consumer {
           } else {
             $type_name = 'tuple';
           }
+        } else if ($t === '?') {
+          $nullable = true;
+          continue;
         }
       }
 
@@ -60,10 +63,6 @@ final class TypehintConsumer extends Consumer {
           break;
         }
         continue;
-      }
-
-      if ($ttype === null && $t === '?') {
-        $nullable = true;
       }
 
       if (

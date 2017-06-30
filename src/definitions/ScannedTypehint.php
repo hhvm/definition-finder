@@ -38,7 +38,9 @@ class ScannedTypehint {
   }
 
   public function getTypeText(): string {
-    $base = $this->typeTextBase;
+    $base = $this->isNullable() ? '?' : '';
+    $base .= $this->typeTextBase;
+
     if (strpbrk($base, '<>')) {
       invariant(
         $this->getGenericTypes()->isEmpty(),
