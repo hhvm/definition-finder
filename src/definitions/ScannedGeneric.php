@@ -12,10 +12,8 @@
 namespace Facebook\DefinitionFinder;
 
 class ScannedGeneric {
-  const type TConstraint = shape(
-    'type' => string,
-    'relationship' => RelationshipToken,
-  );
+  const type TConstraint =
+    shape('type' => string, 'relationship' => RelationshipToken);
 
   public function __construct(
     private string $name,

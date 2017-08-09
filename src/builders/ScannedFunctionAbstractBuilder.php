@@ -17,7 +17,7 @@ abstract class ScannedFunctionAbstractBuilder<T as ScannedFunctionAbstract>
   protected ?bool $byRefReturn;
   protected ?\ConstVector<ScannedGeneric> $generics = null;
   protected ?ScannedTypehint $returnType;
-  protected Vector<ScannedParameterBuilder> $parameters = Vector { };
+  protected Vector<ScannedParameterBuilder> $parameters = Vector {};
 
   public function setByRefReturn(bool $v): this {
     $this->byRefReturn = $v;
@@ -39,8 +39,6 @@ abstract class ScannedFunctionAbstractBuilder<T as ScannedFunctionAbstract>
   }
 
   protected function buildParameters(): \ConstVector<ScannedParameter> {
-    return $this->parameters->map(
-      $builder ==> $builder->build()
-    );
+    return $this->parameters->map($builder ==> $builder->build());
   }
 }

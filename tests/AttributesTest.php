@@ -21,25 +21,20 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
   private \ConstVector<ScannedFunction> $functions = Vector {};
 
   protected function setUp(): void {
-    $parser = FileParser::FromFile(
-      __DIR__.'/data/attributes.php'
-    );
+    $parser = FileParser::FromFile(__DIR__.'/data/attributes.php');
     $this->classes = $parser->getClasses();
     $this->functions = $parser->getFunctions();
   }
 
   public function testSingleSimpleAttribute(): void {
     $class = $this->findClass('ClassWithSimpleAttribute');
-    $this->assertEquals(
-      Map { "Foo" => Vector { } },
-      $class->getAttributes(),
-    );
+    $this->assertEquals(Map { "Foo" => Vector {} }, $class->getAttributes());
   }
 
   public function testMultipleSimpleAttributes(): void {
     $class = $this->findClass('ClassWithSimpleAttributes');
     $this->assertEquals(
-      Map { "Foo" => Vector { }, "Bar" => Vector { } },
+      Map { "Foo" => Vector {}, "Bar" => Vector {} },
       $class->getAttributes(),
     );
   }
@@ -47,7 +42,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
   public function testWithSingleStringAttribute(): void {
     $class = $this->findClass('ClassWithStringAttribute');
     $this->assertEquals(
-      Map { 'Herp' => Vector {'derp'} },
+      Map { 'Herp' => Vector { 'derp' } },
       $class->getAttributes(),
     );
   }
@@ -55,7 +50,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
   public function testWithFormattedAttributes(): void {
     $class = $this->findClass('ClassWithFormattedAttributes');
     $this->assertEquals(
-      Map { 'Foo' => Vector { }, 'Bar' => Vector {'herp', 'derp'} },
+      Map { 'Foo' => Vector {}, 'Bar' => Vector { 'herp', 'derp' } },
       $class->getAttributes(),
     );
   }
@@ -63,7 +58,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
   public function testWithFormattedArrayAttribute(): void {
     $class = $this->findClass('ClassWithFormattedArrayAttribute');
     $this->assertEquals(
-      Map { 'Bar' => Vector {['herp']} },
+      Map { 'Bar' => Vector { ['herp'] } },
       $class->getAttributes(),
     );
   }
@@ -71,20 +66,17 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
   public function testWithSingleIntAttribute(): void {
     $class = $this->findClass('ClassWithIntAttribute');
     $this->assertEquals(
-      Map { 'Herp' => Vector {123} },
+      Map { 'Herp' => Vector { 123 } },
       $class->getAttributes(),
     );
     // Check it's an int, not a string
-    $this->assertSame(
-      123,
-      $class->getAttributes()['Herp'][0],
-    );
+    $this->assertSame(123, $class->getAttributes()['Herp'][0]);
   }
 
   public function testFunctionHasAttributes(): void {
     $func = $this->findScanned($this->functions, 'function_after_classes');
     $this->assertEquals(
-      Map { 'FunctionFoo' => Vector { } },
+      Map { 'FunctionFoo' => Vector {} },
       $func->getAttributes(),
     );
   }
@@ -114,18 +106,15 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $fun = $parser->getFunction('foo');
     $params = $fun->getParameters();
-    $this->assertEquals(
-      Vector { 'baz' },
-      $params->map($x ==> $x->getName()),
-    );
+    $this->assertEquals(Vector { 'baz' }, $params->map($x ==> $x->getName()));
 
     $this->assertEquals(
-      Vector { Map { 'Bar' => Vector { } } },
+      Vector { Map { 'Bar' => Vector {} } },
       $params->map($x ==> $x->getAttributes()),
     );
   }
 
-  public function attributeExpressions(): array<(string,mixed)> {
+  public function attributeExpressions(): array<(string, mixed)> {
     return array(
       tuple("'herp'.'derp'", 'herpderp'),
       tuple("Foo\\Bar::class", "Foo\\Bar"),
@@ -139,10 +128,10 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
       tuple('[]', []),
       tuple('array(123)', [123]),
       tuple('array(123,)', [123]),
-      tuple('array(123,456)', [123,456]),
-      tuple('array(123,456,)', [123,456]),
-      tuple('[123,456]', [123,456]),
-      tuple('[123 , 456]', [123,456]),
+      tuple('array(123,456)', [123, 456]),
+      tuple('array(123,456,)', [123, 456]),
+      tuple('[123,456]', [123, 456]),
+      tuple('[123 , 456]', [123, 456]),
       tuple('[123 => 456]', [123 => 456]),
       tuple('shape()', []),
       tuple(

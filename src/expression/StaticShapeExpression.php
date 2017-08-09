@@ -19,7 +19,7 @@ final class StaticShapeExpression extends Expression {
     if ($ttype !== \Facebook\DefinitionFinder\T_SHAPE) {
       return null;
     }
-    list ($t, $ttype) = $tq->shift();
+    list($t, $ttype) = $tq->shift();
     if ($t !== '(') {
       return null;
     }

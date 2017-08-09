@@ -33,10 +33,7 @@ final class RelativeNamespaceTest extends PHPUnit_Framework_TestCase {
   public function testPseudomainUsesRelativeNamespace(): void {
     $code = '<?php namespace\foo(); function bar() {}';
     $fp = FileParser::FromData($code);
-    $this->assertEquals(
-      array('bar'),
-      $fp->getFunctionNames()->toArray(),
-    );
+    $this->assertEquals(array('bar'), $fp->getFunctionNames()->toArray());
 
     $this->assertEquals(
       array(''),

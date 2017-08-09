@@ -38,10 +38,7 @@ class SourceTypeTest extends \PHPUnit_Framework_TestCase {
   ): void {
     $code = $prefix."\nclass Foo {}";
     $parser = FileParser::FromData($code);
-    $this->assertSame(
-      $expected,
-      $parser->getClass('Foo')->getSourceType(),
-    );
+    $this->assertSame($expected, $parser->getClass('Foo')->getSourceType());
   }
 
   public function testPlainTextFileParses(): void {

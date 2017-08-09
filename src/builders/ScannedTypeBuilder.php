@@ -16,7 +16,7 @@ class ScannedTypeBuilder extends ScannedSingleTypeBuilder<ScannedType> {
     return new ScannedType(
       $this->name,
       $this->getDefinitionContext(),
-      /* attributes = */ Map { },
+      /* attributes = */ Map {},
       $this->docblock,
     );
   }

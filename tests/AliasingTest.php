@@ -15,79 +15,52 @@ use Facebook\DefinitionFinder\FileParser;
 
 final class AliasingTest extends \PHPUnit_Framework_TestCase {
   public function testSimpleUse(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\Foo;\n".
       'class Bar extends Foo {}';
     $def = FileParser::FromData($code)->getClass('MyNamespace\\Bar');
-    $this->assertSame(
-      "MyOtherNamespace\\Foo",
-      $def->getParentClassName(),
-    );
+    $this->assertSame("MyOtherNamespace\\Foo", $def->getParentClassName());
   }
 
   public function testMultiUse(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "use Foo\\Bar, Herp\\Derp;\n".
       'class MyClass extends Bar implements Derp {}';
     $def = FileParser::FromData($code)->getClass('MyClass');
-    $this->assertSame(
-      "Foo\\Bar",
-      $def->getParentClassName()
-    );
-    $this->assertEquals(
-      Vector { "Herp\\Derp" },
-      $def->getInterfaceNames(),
-    );
+    $this->assertSame("Foo\\Bar", $def->getParentClassName());
+    $this->assertEquals(Vector { "Herp\\Derp" }, $def->getInterfaceNames());
   }
 
   public function testUseWithClassAlias(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\Foo as SuperClass;\n".
       'class Bar extends SuperClass {}';
     $def = FileParser::FromData($code)->getClass('MyNamespace\\Bar');
-    $this->assertSame(
-      "MyOtherNamespace\\Foo",
-      $def->getParentClassName(),
-    );
+    $this->assertSame("MyOtherNamespace\\Foo", $def->getParentClassName());
   }
 
   public function testMultiUseWithClassAlias(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "use Foo\\Bar as Baz, Herp\\Derp;\n".
       'class MyClass extends Baz implements Derp {}';
     $def = FileParser::FromData($code)->getClass('MyClass');
-    $this->assertSame(
-      "Foo\\Bar",
-      $def->getParentClassName()
-    );
-    $this->assertEquals(
-      Vector { "Herp\\Derp" },
-      $def->getInterfaceNames(),
-    );
+    $this->assertSame("Foo\\Bar", $def->getParentClassName());
+    $this->assertEquals(Vector { "Herp\\Derp" }, $def->getInterfaceNames());
   }
 
   public function testUseWithNSAlias(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace as OtherNS;\n".
       "class Bar extends OtherNS\\Foo{}";
     $def = FileParser::FromData($code)->getClass('MyNamespace\\Bar');
-    $this->assertSame(
-      "MyOtherNamespace\\Foo",
-      $def->getParentClassName(),
-    );
+    $this->assertSame("MyOtherNamespace\\Foo", $def->getParentClassName());
   }
 
   public function testSimpleGroupUse(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\{Foo, Bar};\n".
       "class MyClass implements Foo, Bar{}";
@@ -100,8 +73,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
 
   public function testGroupUseWithTrailingComma(): void {
     // Not allowed by typechecker, but allowed by HHVM
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\{Foo, Bar,};\n".
       "class MyClass implements Foo, Bar{}";
@@ -113,8 +85,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testGroupUseWithAlias(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\{Foo as Herp, Bar as Derp};\n".
       "class MyClass implements Herp, Derp {}";
@@ -126,8 +97,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testGroupUseWithSubNamespace(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\{Foo, Bar\Baz};\n".
       "function my_func(Foo \$foo, Bar \$bar, Baz \$baz) {}";
@@ -138,15 +108,12 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
         "MyNamespace\\Bar",
         "MyOtherNamespace\\Bar\\Baz",
       },
-      $def->getParameters()->map(
-        $p ==> $p->getTypehint()?->getTypeName(),
-      ),
+      $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
     );
   }
 
   public function testFunctionReturnsAlias(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\Foo;\n".
       "function my_func(): Foo {}";
@@ -158,8 +125,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testFunctionUseIsNotTypeAlias(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use function MyOtherNamespace\\Foo;\n".
       "function my_func(): Foo {}";
@@ -171,8 +137,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testConstUseIsNotTypeAlias(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use const MyOtherNamespace\\Foo;\n".
       "function my_func(): Foo {}";
@@ -184,8 +149,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testFunctionAndConstGroupUseIsNotTypeAlias(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\{function Foo, const Bar, Baz};\n".
       "function my_func(Foo \$foo, Bar \$bar, Baz \$baz) {}";
@@ -196,9 +160,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
         "MyNamespace\\Bar",
         "MyOtherNamespace\\Baz",
       },
-      $def->getParameters()->map(
-        $p ==> $p->getTypehint()?->getTypeName(),
-      ),
+      $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
     );
   }
 
@@ -206,13 +168,8 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
     $def = FileParser::FromFile(__DIR__.'/data/alias_use_namespace.php')
       ->getFunction('main');
     $this->assertEquals(
-      Vector {
-        "Bar\\Derp",
-        "Foo\\Derp",
-      },
-      $def->getParameters()->map(
-        $p ==> $p->getTypehint()?->getTypeName(),
-      ),
+      Vector { "Bar\\Derp", "Foo\\Derp" },
+      $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
     );
   }
 }

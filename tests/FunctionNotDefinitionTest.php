@@ -23,12 +23,12 @@ final class FunctionNotDefinitionTest extends PHPUnit_Framework_TestCase {
 
   public function testFunctionTypeAlias(): void {
     $p = FileParser::FromData('<?hh newtype Foo = function(int): void;');
-    $this->assertEquals(Vector { }, $p->getFunctionNames());
+    $this->assertEquals(Vector {}, $p->getFunctionNames());
     $this->assertEquals(Vector { 'Foo' }, $p->getNewtypeNames());
 
     // Add extra whitespace
     $p = FileParser::FromData('<?hh newtype Foo = function (int): void;');
-    $this->assertEquals(Vector { }, $p->getFunctionNames());
+    $this->assertEquals(Vector {}, $p->getFunctionNames());
     $this->assertEquals(Vector { 'Foo' }, $p->getNewtypeNames());
   }
 
@@ -56,7 +56,9 @@ EOF
   }
 
   public function testAsParameterType(): void {
-    $p = FileParser::FromData('<?hh function foo((function():void) $callback) { }');
+    $p = FileParser::FromData(
+      '<?hh function foo((function():void) $callback) { }',
+    );
     $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
   }
 

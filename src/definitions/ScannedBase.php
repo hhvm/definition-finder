@@ -12,10 +12,8 @@
 namespace Facebook\DefinitionFinder;
 
 abstract class ScannedBase {
-  const type TContext = shape(
-    'position' => SourcePosition,
-    'sourceType' => SourceType,
-  );
+  const type TContext =
+    shape('position' => SourcePosition, 'sourceType' => SourceType);
   // Namespace (e.g., of a class) if it exists
   private string $namespace;
   // Short name of the name without the namespace.

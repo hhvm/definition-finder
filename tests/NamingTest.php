@@ -26,14 +26,14 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   /** Things that are valid names, but have a weird token type */
   public function specialNameProvider(): array<array<string>> {
     return [
-      [ 'dict' ], // HHVM >= 3.13
-      [ 'vec' ], // HHVM >= 3.14
-      [ 'keyset' ], // HHVM >= 3.15
-      [ 'Category' ],
-      [ 'Super' ],
-      [ 'Attribute' ],
-      [ 'varray' ], // HHVM >= 3.19
-      [ 'darray' ], // HHVM >= 3.19
+      ['dict'], // HHVM >= 3.13
+      ['vec'], // HHVM >= 3.14
+      ['keyset'], // HHVM >= 3.15
+      ['Category'],
+      ['Super'],
+      ['Attribute'],
+      ['varray'], // HHVM >= 3.19
+      ['darray'], // HHVM >= 3.19
     ];
   }
 
@@ -42,10 +42,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh function foo(): '.$type.' {}';
     $parser = FileParser::FromData($data);
     $func = $parser->getFunction('foo');
-    $this->assertSame(
-      $type,
-      $func->getReturnType()?->getTypeName(),
-    );
+    $this->assertSame($type, $func->getReturnType()?->getTypeName());
   }
 
   /** @dataProvider specialNameProvider */
@@ -53,14 +50,8 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh function '.$type.'(): void {}';
     $parser = FileParser::FromData($data);
     $func = $parser->getFunction($type);
-    $this->assertSame(
-      'void',
-      $func->getReturnType()?->getTypeName(),
-    );
-    $this->assertSame(
-      $type,
-      $func->getName(),
-    );
+    $this->assertSame('void', $func->getReturnType()?->getTypeName());
+    $this->assertSame($type, $func->getName());
   }
 
   /** @dataProvider specialNameProvider */
@@ -101,9 +92,9 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(
       Vector { 'ON' },
       FileParser::FromData($data)
-      ->getClass('Foo')
-      ->getConstants()
-      ->map($x ==> $x->getName())
+        ->getClass('Foo')
+        ->getConstants()
+        ->map($x ==> $x->getName()),
     );
   }
 
@@ -113,9 +104,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     // This could throw because the ; comes after the keyword class
     $this->assertEquals(
       'Foo',
-      FileParser::FromData($data)
-      ->getClass('Foo')
-      ->getName()
+      FileParser::FromData($data)->getClass('Foo')->getName(),
     );
   }
 
@@ -124,9 +113,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       'Foo',
-      FileParser::FromData($data)
-      ->getClass('Foo')
-      ->getName()
+      FileParser::FromData($data)->getClass('Foo')->getName(),
     );
   }
 
@@ -147,14 +134,8 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $php_class = FileParser::FromData($php)->getClass("Foo\\MyClass");
     $hack_class = FileParser::FromData($hack)->getClass("Foo\\MyClass");
 
-    $this->assertSame(
-      "Foo\\Collection",
-      $php_class->getParentClassName(),
-    );
-    $this->assertSame(
-      'Collection',
-      $hack_class->getParentClassName(),
-    );
+    $this->assertSame("Foo\\Collection", $php_class->getParentClassName());
+    $this->assertSame('Collection', $hack_class->getParentClassName());
   }
 
   public function testScalarParameterInNamespace(): void {
@@ -166,19 +147,12 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $php_func = FileParser::FromData($php)->getFunction("Foo\\myfunc");
     $hack_func = FileParser::FromData($hack)->getFunction("Foo\\myfunc");
 
-    $this->assertEquals(
-      'string',
-      $php_func->getReturnType()?->getTypeName(),
-    );
-    $this->assertEquals(
-      'string',
-      $hack_func->getReturnType()?->getTypeName(),
-    );
+    $this->assertEquals('string', $php_func->getReturnType()?->getTypeName());
+    $this->assertEquals('string', $hack_func->getReturnType()?->getTypeName());
   }
 
   public function testReturnsThisInNamespace(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace Foo;\n".
       "class MyClass {\n".
       "  function foo(): this { }\n".
@@ -186,15 +160,11 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()->at(0);
-    $this->assertSame(
-      'this',
-      $method->getReturnType()?->getTypeName(),
-    );
+    $this->assertSame('this', $method->getReturnType()?->getTypeName());
   }
 
   public function testReturnsClassGenericInNamespace(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace Foo;\n".
       "class MyClass<T> {\n".
       "  function foo(): T { }\n".
@@ -202,15 +172,11 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()->at(0);
-    $this->assertSame(
-      'T',
-      $method->getReturnType()?->getTypeName(),
-    );
+    $this->assertSame('T', $method->getReturnType()?->getTypeName());
   }
 
   public function testReturnsNullableClassGenericInNamespace(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace Foo;\n".
       "class MyClass<T> {\n".
       "  function foo(): ?T { }\n".
@@ -218,18 +184,12 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()->at(0);
-    $this->assertSame(
-      'T',
-      $method->getReturnType()?->getTypeName(),
-    );
-    $this->assertTrue(
-      $method->getReturnType()?->isNullable(),
-    );
+    $this->assertSame('T', $method->getReturnType()?->getTypeName());
+    $this->assertTrue($method->getReturnType()?->isNullable());
   }
 
   public function testReturnsMethodGenericInNamespace(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace Foo;\n".
       "class MyClass {\n".
       "  function foo<T>(): T { }\n".
@@ -237,10 +197,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()->at(0);
-    $this->assertSame(
-      'T',
-      $method->getReturnType()?->getTypeName(),
-    );
+    $this->assertSame('T', $method->getReturnType()?->getTypeName());
   }
 
   /**
@@ -248,8 +205,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
    * replacing them.
    */
   public function testClassGenericsInMethodWithGenerics(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace Foo;\n".
       "class MyClass<TClassGeneric> {\n".
       "  function foo<TFunctionGeneric>(\n".
@@ -269,8 +225,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testTakesMethodGenericInNamespace(): void {
-    $code =
-      "<?hh\n".
+    $code = "<?hh\n".
       "namespace Foo;\n".
       "class MyClass {\n".
       "  function foo<T>(T \$bar): void { }\n".

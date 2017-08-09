@@ -16,7 +16,7 @@ class ScannedEnumBuilder extends ScannedSingleTypeBuilder<ScannedEnum> {
     return new ScannedEnum(
       $this->name,
       $this->getDefinitionContext(),
-      /* attributes = */ Map { },
+      /* attributes = */ Map {},
       $this->docblock,
     );
   }

@@ -51,7 +51,7 @@ final class ScopeConsumer extends Consumer {
     while ($this->tq->haveTokens()) {
       list($token, $ttype) = $tq->shift();
 
-      if ($ttype !== T_OPEN_TAG ) {
+      if ($ttype !== T_OPEN_TAG) {
         continue;
       }
 
@@ -89,15 +89,13 @@ final class ScopeConsumer extends Consumer {
     }
     if ($this->sourceType === null) {
       return new ScannedScopeBuilder(shape(
-        'position' => shape(
-          'filename' => $this->context['filename'],
-          'line' => 0,
-        ),
+        'position' =>
+          shape('filename' => $this->context['filename'], 'line' => 0),
         'sourceType' => SourceType::UNKNOWN,
       ));
     }
     $builder = (new ScannedScopeBuilder($this->getBuilderContext()));
-    $attrs = Map { };
+    $attrs = Map {};
     $docblock = null;
 
     $tq = $this->tq;
@@ -122,9 +120,11 @@ final class ScopeConsumer extends Consumer {
         continue;
       }
 
-      if ($token === '{' ||
-          $ttype === T_CURLY_OPEN ||
-          $ttype === T_DOLLAR_OPEN_CURLY_BRACES) {
+      if (
+        $token === '{' ||
+        $ttype === T_CURLY_OPEN ||
+        $ttype === T_DOLLAR_OPEN_CURLY_BRACES
+      ) {
         ++$scope_depth;
         continue;
       }
@@ -145,10 +145,8 @@ final class ScopeConsumer extends Consumer {
       if ($ttype === T_SL && $scope_depth === 1 && $parens_depth === 0) {
         $state = $tq->getState();
         try {
-          $attrs = (new UserAttributesConsumer(
-            $tq,
-            $this->getSubContext(),
-          ))->getUserAttributes();
+          $attrs = (new UserAttributesConsumer($tq, $this->getSubContext()))
+            ->getUserAttributes();
         } catch (\Exception $e) {
           if ($this->scopeType === ScopeType::CLASS_SCOPE) {
             throw $e;
@@ -197,10 +195,9 @@ final class ScopeConsumer extends Consumer {
       if ($ttype === T_USE && $this->scopeType === ScopeType::CLASS_SCOPE) {
         do {
           $this->consumeWhitespace();
-          $builder->addUsedTrait((new TypehintConsumer(
-            $tq,
-            $this->getSubContext(),
-          ))->getTypehint());
+          $builder->addUsedTrait(
+            (new TypehintConsumer($tq, $this->getSubContext()))->getTypehint(),
+          );
           $this->consumeWhitespace();
 
           list($peeked, $_) = $tq->peek();
@@ -216,10 +213,8 @@ final class ScopeConsumer extends Consumer {
 
       // I hate you, PHP.
       if ($ttype === T_STRING && strtolower($token) === 'define') {
-        $sub_builder = (new DefineConsumer(
-          $tq,
-          $this->getSubContext(),
-        ))->getBuilder();
+        $sub_builder =
+          (new DefineConsumer($tq, $this->getSubContext()))->getBuilder();
         // I hate you more, PHP. $sub_builder is null in case we've not
         // actually got a constant: define($variable, ...);
         if ($sub_builder) {
@@ -249,10 +244,8 @@ final class ScopeConsumer extends Consumer {
 
       if ($ttype === T_STRING) {
         $tq->unshiftNG($ngtoken);
-        $property_type = (new TypehintConsumer(
-          $tq,
-          $this->getSubContext(),
-        ))->getTypehint();
+        $property_type =
+          (new TypehintConsumer($tq, $this->getSubContext()))->getTypehint();
         continue;
       }
 
@@ -267,14 +260,14 @@ final class ScopeConsumer extends Consumer {
         }
         $builder->addProperty(
           (new ScannedPropertyBuilder($name, $this->getBuilderContext()))
-          ->setAttributes($attrs)
-          ->setDocComment($docblock)
-          ->setVisibility($visibility)
-          ->setTypehint($property_type)
-          ->setStaticity($staticity)
+            ->setAttributes($attrs)
+            ->setDocComment($docblock)
+            ->setVisibility($visibility)
+            ->setTypehint($property_type)
+            ->setStaticity($staticity),
         );
 
-        $attrs = Map { };
+        $attrs = Map {};
         $docblock = null;
         $visibility = null;
         $staticity = null;
@@ -296,7 +289,7 @@ final class ScopeConsumer extends Consumer {
           $finality,
         );
 
-        $attrs = Map { };
+        $attrs = Map {};
         $docblock = null;
         $visibility = null;
         $staticity = null;
@@ -319,7 +312,7 @@ final class ScopeConsumer extends Consumer {
     ?StaticityToken $staticity,
     ?AbstractnessToken $abstractness,
     ?FinalityToken $finality,
-   ): void {
+  ): void {
     $this->consumeWhitespace();
 
     switch ($def_type) {
@@ -331,10 +324,8 @@ final class ScopeConsumer extends Consumer {
           return;
         }
         $builder->addNamespace(
-          (new NamespaceConsumer(
-            $this->tq,
-            $this->getSubContext(),
-          ))->getBuilder()
+          (new NamespaceConsumer($this->tq, $this->getSubContext()))
+            ->getBuilder(),
         );
         return;
       case DefinitionType::CLASS_DEF:
@@ -347,41 +338,37 @@ final class ScopeConsumer extends Consumer {
           $finality = FinalityToken::NOT_FINAL;
         }
         $builder->addClass(
-          (new ClassConsumer(
-            $this->tq,
-            $this->getSubContext(),
-            ClassDefinitionType::assert($def_type),
-          ))
+          (
+            new ClassConsumer(
+              $this->tq,
+              $this->getSubContext(),
+              ClassDefinitionType::assert($def_type),
+            )
+          )
             ->getBuilder()
             ->setAttributes($attrs)
             ->setDocComment($docblock)
             ->setAbstractness($abstractness)
-            ->setFinality($finality)
+            ->setFinality($finality),
         );
         return;
       case DefinitionType::FUNCTION_DEF:
         if ($this->scopeType === ScopeType::CLASS_SCOPE) {
-          $fb = (new MethodConsumer(
-            $this->tq,
-            $this->getSubContext(),
-          ))->getBuilder();
+          $fb = (new MethodConsumer($this->tq, $this->getSubContext()))
+            ->getBuilder();
         } else {
-          $fb = (new FunctionConsumer(
-            $this->tq,
-            $this->getSubContext(),
-          ))->getBuilder();
+          $fb = (new FunctionConsumer($this->tq, $this->getSubContext()))
+            ->getBuilder();
         }
 
         if (!$fb) {
           return;
         }
 
-        $fb
-          ->setAttributes($attrs)
-          ->setDocComment($docblock);
-         if ($fb instanceof ScannedFunctionBuilder) {
-           $builder->addFunction($fb);
-         } else {
+        $fb->setAttributes($attrs)->setDocComment($docblock);
+        if ($fb instanceof ScannedFunctionBuilder) {
+          $builder->addFunction($fb);
+        } else {
           invariant(
             $fb instanceof ScannedMethodBuilder,
             'unknown function builder type: %s',
@@ -401,10 +388,10 @@ final class ScopeConsumer extends Consumer {
           }
           $builder->addMethod(
             $fb
-            ->setVisibility($visibility)
-            ->setStaticity($staticity)
-            ->setAbstractness($abstractness)
-            ->setFinality($finality)
+              ->setVisibility($visibility)
+              ->setStaticity($staticity)
+              ->setAbstractness($abstractness)
+              ->setFinality($finality),
           );
         }
         return;
@@ -415,13 +402,15 @@ final class ScopeConsumer extends Consumer {
         list($next, $next_token) = $this->tq->peek();
         if ($next_token === DefinitionType::TYPE_DEF) {
           $builder->addTypeConstant(
-            (new TypeConstantConsumer(
-              $this->tq,
-              $this->getSubContext(),
-              $abstractness,
-            ))
-            ->getBuilder()
-            ->setDocComment($docblock)
+            (
+              new TypeConstantConsumer(
+                $this->tq,
+                $this->getSubContext(),
+                $abstractness,
+              )
+            )
+              ->getBuilder()
+              ->setDocComment($docblock),
           );
           return;
         }
@@ -432,13 +421,9 @@ final class ScopeConsumer extends Consumer {
         }
 
         $builder->addConstant(
-          (new ConstantConsumer(
-            $this->tq,
-            $sub_context,
-            $abstractness,
-          ))
-          ->getBuilder()
-          ->setDocComment($docblock)
+          (new ConstantConsumer($this->tq, $sub_context, $abstractness))
+            ->getBuilder()
+            ->setDocComment($docblock),
         );
         return;
       case DefinitionType::TYPE_DEF:
@@ -467,26 +452,23 @@ final class ScopeConsumer extends Consumer {
     switch ($def_type) {
       case DefinitionType::TYPE_DEF:
         $builder->addType(
-          (new ScannedTypeBuilder($name, $ctx))->setDocComment($docblock)
+          (new ScannedTypeBuilder($name, $ctx))->setDocComment($docblock),
         );
         break;
       case DefinitionType::NEWTYPE_DEF:
         $builder->addNewtype(
-          (new ScannedNewtypeBuilder($name, $ctx))->setDocComment($docblock)
+          (new ScannedNewtypeBuilder($name, $ctx))->setDocComment($docblock),
         );
         break;
       case DefinitionType::ENUM_DEF:
         $builder->addEnum(
-          (new ScannedEnumBuilder($name, $ctx))->setDocComment($docblock)
+          (new ScannedEnumBuilder($name, $ctx))->setDocComment($docblock),
         );
         $this->skipToBlock();
         $this->consumeBlock();
         return;
       default:
-        invariant_violation(
-          '%d is not a simple definition',
-          $def_type,
-        );
+        invariant_violation('%d is not a simple definition', $def_type);
     }
     $this->consumeStatement();
   }
@@ -495,14 +477,14 @@ final class ScopeConsumer extends Consumer {
   private function consumeNonCode(): void {
     $ttype = T_CLOSE_TAG;
     while ($this->tq->haveTokens() && $ttype !== T_OPEN_TAG) {
-      list ($_, $ttype) = $this->tq->shift();
+      list($_, $ttype) = $this->tq->shift();
     }
   }
 
   private function consumeUseStatement(): void {
     $parts = [];
     $alias = '';
-    $imports = Vector { };
+    $imports = Vector {};
     $import_type = UseStatementType::NAMESPACE_AND_TYPE;
 
     do {
@@ -520,7 +502,8 @@ final class ScopeConsumer extends Consumer {
       } else if ($token === '{') {
         $prefix = implode("\\", $parts);
         foreach ($this->consumeGroupUseStatement() as $alias => $real) {
-          $imports[] = tuple($import_type, ImmVector { $prefix, $real }, $alias);
+          $imports[] =
+            tuple($import_type, ImmVector { $prefix, $real }, $alias);
         }
         break;
       } else if ($token === ';') {
@@ -541,15 +524,12 @@ final class ScopeConsumer extends Consumer {
         break;
       }
 
-      invariant_violation(
-        'Unexpected token %s',
-        var_export($token, true),
-      );
+      invariant_violation('Unexpected token %s', var_export($token, true));
 
     } while ($this->tq->haveTokens());
 
-    $type_imports = Map { };
-    $namespace_imports = Map { };
+    $type_imports = Map {};
+    $namespace_imports = Map {};
 
     foreach ($imports as list($import_type, $parts, $alias)) {
       if (count($parts) === 0) {
@@ -575,9 +555,8 @@ final class ScopeConsumer extends Consumer {
     }
   }
 
-  private function consumeGroupUseStatement(
-  ): ImmMap<string, string> {
-    $aliases = Map { };
+  private function consumeGroupUseStatement(): ImmMap<string, string> {
+    $aliases = Map {};
     $tq = $this->tq;
     $is_func_or_const = false;
 
@@ -622,11 +601,7 @@ final class ScopeConsumer extends Consumer {
         continue;
       }
 
-      invariant(
-        $ttype === T_AS,
-        "Unexpected token %s",
-        var_export($t, true),
-      );
+      invariant($ttype === T_AS, "Unexpected token %s", var_export($t, true));
       $this->consumeWhitespace();
 
       list($t, $ttype) = $tq->shift();
@@ -644,10 +619,7 @@ final class ScopeConsumer extends Consumer {
       if ($t === ',') {
         continue;
       }
-      invariant_violation(
-        "Expected '}' or ',', got %s",
-        var_export($t, true),
-      );
+      invariant_violation("Expected '}' or ',', got %s", var_export($t, true));
     } while (!$tq->isEmpty());
 
     return $aliases->immutable();
@@ -657,16 +629,13 @@ final class ScopeConsumer extends Consumer {
 
     $this->consumeWhitespace();
 
-    if($this->tq->isEmpty()) {
+    if ($this->tq->isEmpty()) {
       invariant_violation('Expected alias name after AS statement.');
     }
 
     list($name, $type) = $this->tq->shift();
     if (!StringishTokens::isValid($type)) {
-      invariant_violation(
-        'Unexpected token %s',
-        var_export($name, true),
-      );
+      invariant_violation('Unexpected token %s', var_export($name, true));
     }
 
     $this->consumeWhitespace();

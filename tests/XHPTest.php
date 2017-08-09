@@ -19,10 +19,7 @@ class XHPTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh class :foo:bar {}';
 
     $parser = FileParser::FromData($data);
-    $this->assertContains(
-      'xhp_foo__bar',
-      $parser->getClassNames(),
-    );
+    $this->assertContains('xhp_foo__bar', $parser->getClassNames());
   }
 
   public function testNullableXHPReturn(): void {
@@ -40,10 +37,7 @@ class XHPTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh class :foo:bar extends :herp:derp {}';
 
     $parser = FileParser::FromData($data);
-    $this->assertContains(
-      'xhp_foo__bar',
-      $parser->getClassNames(),
-    );
+    $this->assertContains('xhp_foo__bar', $parser->getClassNames());
 
     $this->assertSame(
       'xhp_herp__derp',
@@ -53,13 +47,11 @@ class XHPTest extends \PHPUnit_Framework_TestCase {
 
   public function testXHPEnumAttributeParses(): void {
     // XHP Attributes are not reported, but shouldn't cause parse errors
-    $data = '<?hh class :foo:bar { attribute enum { "herp", "derp" } myattr @required; }';
+    $data =
+      '<?hh class :foo:bar { attribute enum { "herp", "derp" } myattr @required; }';
 
     $parser = FileParser::FromData($data);
-    $this->assertContains(
-      'xhp_foo__bar',
-      $parser->getClassNames(),
-    );
+    $this->assertContains('xhp_foo__bar', $parser->getClassNames());
   }
 
   public function testXHPEnumAttributesParse(): void {
@@ -73,10 +65,7 @@ class XHPTest extends \PHPUnit_Framework_TestCase {
 EOF;
 
     $parser = FileParser::FromData($data);
-    $this->assertContains(
-      'xhp_example',
-      $parser->getClassNames(),
-    );
+    $this->assertContains('xhp_example', $parser->getClassNames());
   }
 
   public function testXHPClassNamesAreCorrect(): void {
@@ -84,7 +73,7 @@ EOF;
 
     $this->assertContains(
       /* UNSAFE_EXPR */ :foo:bar:baz:herp-derp::class,
-      $parser->getClassNames()->get(0)
+      $parser->getClassNames()->get(0),
     );
   }
 }

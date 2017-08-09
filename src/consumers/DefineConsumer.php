@@ -26,16 +26,12 @@ final class DefineConsumer extends Consumer {
 
     $this->consumeWhitespace();
     list($next, $_) = $tq->shift();
-    invariant(
-      $next === '(',
-      'Expected define to be followed by a paren',
-    );
+    invariant($next === '(', 'Expected define to be followed by a paren');
     $this->consumeWhitespace();
-    list ($next, $next_type) = $tq->shift();
-    if (!(
-      $next_type === T_CONSTANT_ENCAPSED_STRING
-      || $next_type === T_STRING
-    )) {
+    list($next, $next_type) = $tq->shift();
+    if (
+      !($next_type === T_CONSTANT_ENCAPSED_STRING || $next_type === T_STRING)
+    ) {
       // Not considering define($foo, ...) to be a constant D:
       $this->consumeStatement();
       return null;
@@ -44,10 +40,7 @@ final class DefineConsumer extends Consumer {
     $name = $next;
     if ($next_type !== T_STRING) {
       // 'CONST_NAME' or "CONST_NAME"
-      invariant(
-        $name[0] === $name[strlen($name) - 1],
-        'Mismatched quotes',
-      );
+      invariant($name[0] === $name[strlen($name) - 1], 'Mismatched quotes');
       $name = substr($name, 1, strlen($name) - 2);
     }
     $this->consumeWhitespace();

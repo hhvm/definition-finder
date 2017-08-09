@@ -15,13 +15,13 @@ use Facebook\DefinitionFinder\Expression\StaticScalarExpression;
 
 final class UserAttributesConsumer extends Consumer {
   public function getUserAttributes(): AttributeMap {
-    $attrs = Map { };
+    $attrs = Map {};
     while (true) {
       $this->consumeWhitespace();
 
       list($name, $_) = $this->tq->shift();
       if (!$attrs->containsKey($name)) {
-        $attrs[$name] = Vector { };
+        $attrs[$name] = Vector {};
       }
 
       $this->consumeWhitespace();
@@ -55,7 +55,7 @@ final class UserAttributesConsumer extends Consumer {
           $expr !== null,
           "Invalid attribute value token type at line %d: %d",
           $this->tq->getLine(),
-          $ttype
+          $ttype,
         );
 
         $attrs[$name][] = $expr->getValue();
@@ -73,7 +73,7 @@ final class UserAttributesConsumer extends Consumer {
         $this->consumeWhitespace();
 
         // Handle trailing commas
-        list ($t, $ttype) = $this->tq->peek();
+        list($t, $ttype) = $this->tq->peek();
         if ($t === ')') {
           $this->tq->shift();
           break;

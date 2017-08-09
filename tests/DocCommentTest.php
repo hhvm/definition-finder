@@ -16,12 +16,10 @@ use Facebook\DefinitionFinder\ScannedBase;
 use Facebook\DefinitionFinder\ScannedFunction;
 
 class DocCommentTest extends \PHPUnit_Framework_TestCase {
-  private Map<string, ScannedBase> $defs = Map { };
+  private Map<string, ScannedBase> $defs = Map {};
 
   protected function setUp(): void {
-    $parser = FileParser::FromFile(
-      __DIR__.'/data/doc_comments.php'
-    );
+    $parser = FileParser::FromFile(__DIR__.'/data/doc_comments.php');
     $this->addDefs($parser->getClasses());
     $this->addDefs($parser->getFunctions());
     $this->addDefs($parser->getEnums());
@@ -37,10 +35,7 @@ class DocCommentTest extends \PHPUnit_Framework_TestCase {
 
   public function testClassWithDoc(): void {
     $def = $this->getDef('ClassWithDocComment');
-    $this->assertSame(
-      '/** class doc */',
-      $def->getDocComment(),
-    );
+    $this->assertSame('/** class doc */', $def->getDocComment());
   }
 
   public function testClassWithoutDoc(): void {
@@ -50,10 +45,7 @@ class DocCommentTest extends \PHPUnit_Framework_TestCase {
 
   public function testFunctionWithDoc(): void {
     $def = $this->getDef('function_with_doc_comment');
-    $this->assertSame(
-      '/** function doc */',
-      $def->getDocComment(),
-    );
+    $this->assertSame('/** function doc */', $def->getDocComment());
   }
 
   public function testFunctionWithoutDoc(): void {
@@ -63,26 +55,17 @@ class DocCommentTest extends \PHPUnit_Framework_TestCase {
 
   public function testTypeWithDoc(): void {
     $def = $this->getDef('TypeWithDocComment');
-    $this->assertSame(
-      '/** type doc */',
-      $def->getDocComment(),
-    );
+    $this->assertSame('/** type doc */', $def->getDocComment());
   }
 
   public function testNewtypeWithDoc(): void {
     $def = $this->getDef('NewtypeWithDocComment');
-    $this->assertSame(
-      '/** newtype doc */',
-      $def->getDocComment(),
-    );
+    $this->assertSame('/** newtype doc */', $def->getDocComment());
   }
 
   public function testEnumWithDoc(): void {
     $def = $this->getDef('EnumWithDocComment');
-    $this->assertSame(
-      '/** enum doc */',
-      $def->getDocComment(),
-    );
+    $this->assertSame('/** enum doc */', $def->getDocComment());
   }
 
   public function testParameterWithDoc(): void {
@@ -95,13 +78,11 @@ class DocCommentTest extends \PHPUnit_Framework_TestCase {
     );
     $this->assertEquals(
       Vector { '/** param doc */', null },
-      $params->map($x ==> $x->getDocComment())
+      $params->map($x ==> $x->getDocComment()),
     );
   }
 
   private function getDef(string $name): ScannedBase {
-    return $this->defs[
-      'Facebook\\DefinitionFinder\\DocCommentTest\\'.$name
-    ];
+    return $this->defs['Facebook\\DefinitionFinder\\DocCommentTest\\'.$name];
   }
 }

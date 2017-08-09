@@ -23,12 +23,7 @@ class ScannedParameter extends ScannedBase {
     private ?string $defaultString,
     private ?VisibilityToken $visibility,
   ) {
-    parent::__construct(
-      $name,
-      $context,
-      $attributes,
-      $docComment
-    );
+    parent::__construct($name, $context, $attributes, $docComment);
   }
 
   public static function getType(): ?DefinitionType {

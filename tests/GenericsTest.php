@@ -58,28 +58,21 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     );
     $this->assertEquals(
       Vector { RelationshipToken::SUBTYPE, RelationshipToken::SUPERTYPE },
-      $class->getGenericTypes()->map(
-        $x ==> $x->getConstraints()[0]['relationship']
-      ),
+      $class
+        ->getGenericTypes()
+        ->map($x ==> $x->getConstraints()[0]['relationship']),
     );
   }
 
   public function testGenericsWithMultipleConstraints(): void {
     $data = '<?hh class Foo<T super Herp as Derp> {}';
     $parser = FileParser::FromData($data);
-    $constraints = $parser->getClass('Foo')
-      ->getGenericTypes()[0]
-      ->getConstraints();
+    $constraints =
+      $parser->getClass('Foo')->getGenericTypes()[0]->getConstraints();
     $this->assertEquals(
       ImmVector {
-        shape(
-          'type' => 'Herp',
-          'relationship' => RelationshipToken::SUPERTYPE,
-        ),
-        shape(
-          'type' => 'Derp',
-          'relationship' => RelationshipToken::SUBTYPE,
-        ),
+        shape('type' => 'Herp', 'relationship' => RelationshipToken::SUPERTYPE),
+        shape('type' => 'Derp', 'relationship' => RelationshipToken::SUBTYPE),
       },
       $constraints,
     );
@@ -115,7 +108,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
       $generics->map($x ==> $x->isInvariant()),
     );
     $this->assertEquals(
-      Vector { false, false, true},
+      Vector { false, false, true },
       $generics->map($x ==> $x->isCovariant()),
     );
   }
@@ -143,10 +136,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
     $generics = $function->getGenericTypes();
-    $this->assertSame(
-      'shape()',
-      $generics[0]->getConstraints()[0]['type'],
-    );
+    $this->assertSame('shape()', $generics[0]->getConstraints()[0]['type']);
   }
 
   public function testGenericWithTrailingComma(): void {
@@ -158,12 +148,9 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh function foo(ImmMap<string,string,> $bar): void {}';
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
-    $param_types = $function->getParameters()->map(
-      $param ==> $param->getTypehint()?->getTypeText(),
-    );
-    $this->assertEquals(
-      Vector { 'ImmMap<string,string>' },
-      $param_types,
-    );
+    $param_types = $function
+      ->getParameters()
+      ->map($param ==> $param->getTypehint()?->getTypeText());
+    $this->assertEquals(Vector { 'ImmMap<string,string>' }, $param_types);
   }
 }

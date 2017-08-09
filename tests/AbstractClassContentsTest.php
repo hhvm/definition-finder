@@ -19,9 +19,7 @@ class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
   private ?\ConstVector<ScannedClass> $classes;
 
   protected function setUp(): void {
-    $parser = FileParser::FromFile(
-      __DIR__.'/data/abstract_class_contents.php'
-    );
+    $parser = FileParser::FromFile(__DIR__.'/data/abstract_class_contents.php');
     $this->classes = $parser->getClasses();
   }
 

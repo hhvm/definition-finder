@@ -19,7 +19,7 @@ final class ScannedMethodBuilder
   private ?AbstractnessToken $abstractness;
   private ?FinalityToken $finality;
 
-  public function build(): ScannedMethod{
+  public function build(): ScannedMethod {
     return new ScannedMethod(
       $this->name,
       $this->getDefinitionContext(),

@@ -24,7 +24,7 @@ class ParseException extends \Exception {
         $previous->getMessage(),
       ),
       /* code = */ 0,
-      $previous
+      $previous,
     );
   }
 

@@ -78,11 +78,7 @@ class Foo {
     );
 
     $this->assertEquals(
-      Vector {
-        Map {},
-        Map { 'HerpDerp' => Vector {} },
-        Map {},
-      },
+      Vector { Map {}, Map { 'HerpDerp' => Vector {} }, Map {} },
       $props?->map($x ==> $x->getAttributes()),
     );
 

@@ -19,19 +19,16 @@ class GenericsConsumer extends Consumer {
     list($t, $ttype) = $tq->shift();
     invariant($ttype = T_TYPELIST_LT, 'Consuming generics, but not a typelist');
 
-    $ret = Vector { };
+    $ret = Vector {};
 
     $name = null;
-    $constraints = Vector { };
+    $constraints = Vector {};
     $variance = VarianceToken::INVARIANT;
 
     while ($tq->haveTokens()) {
       list($t, $ttype) = $tq->shift();
 
-      invariant(
-        $ttype !== T_TYPELIST_LT,
-        "nested generic type",
-      );
+      invariant($ttype !== T_TYPELIST_LT, "nested generic type");
 
       if ($ttype === T_WHITESPACE) {
         continue;
@@ -39,11 +36,8 @@ class GenericsConsumer extends Consumer {
 
       if ($ttype === T_TYPELIST_GT) {
         if ($name !== null) {
-          $ret[] = new ScannedGeneric(
-            $name,
-            $variance,
-            $constraints->immutable(),
-          );
+          $ret[] =
+            new ScannedGeneric($name, $variance, $constraints->immutable());
         }
         return $ret;
       }
@@ -77,10 +71,9 @@ class GenericsConsumer extends Consumer {
 
       if ($ttype === T_AS) {
         $this->consumeWhitespace();
-        $constraint = (new TypehintConsumer(
-          $tq,
-          $this->context,
-        ))->getTypehint()->getTypeText();
+        $constraint = (new TypehintConsumer($tq, $this->context))
+          ->getTypehint()
+          ->getTypeText();
         $constraints[] = shape(
           'type' => $constraint,
           'relationship' => RelationshipToken::SUBTYPE,
@@ -90,10 +83,9 @@ class GenericsConsumer extends Consumer {
 
       if ($ttype === T_SUPER) {
         $this->consumeWhitespace();
-        $constraint = (new TypehintConsumer(
-          $tq,
-          $this->context,
-        ))->getTypehint()->getTypeText();
+        $constraint = (new TypehintConsumer($tq, $this->context))
+          ->getTypehint()
+          ->getTypeText();
         $constraints[] = shape(
           'type' => $constraint,
           'relationship' => RelationshipToken::SUPERTYPE,

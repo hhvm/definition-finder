@@ -19,8 +19,8 @@ final class TypehintConsumer extends Consumer {
   private function consumeType(): ScannedTypehint {
     $nullable = false;
     $type_text = null;
-    $type_name  = null;
-    $generics = Vector { };
+    $type_name = null;
+    $generics = Vector {};
 
     $nesting = 0;
     while ($this->tq->haveTokens()) {
@@ -37,7 +37,7 @@ final class TypehintConsumer extends Consumer {
         if ($ttype === T_SHAPE) {
           $type_name = 'shape';
         } else if ($t === '(') {
-          list ($_, $pttype) = $this->tq->peek();
+          list($_, $pttype) = $this->tq->peek();
           if ($pttype === T_FUNCTION) {
             $type_name = 'callable';
           } else {
@@ -66,12 +66,12 @@ final class TypehintConsumer extends Consumer {
       }
 
       if (
-        $ttype !== T_STRING
-        && $ttype !== T_NS_SEPARATOR
-        && $ttype !== T_CALLABLE
-        && $ttype !== T_ARRAY
-        && $ttype !== T_XHP_LABEL
-        && !StringishTokens::isValid($ttype)
+        $ttype !== T_STRING &&
+        $ttype !== T_NS_SEPARATOR &&
+        $ttype !== T_CALLABLE &&
+        $ttype !== T_ARRAY &&
+        $ttype !== T_XHP_LABEL &&
+        !StringishTokens::isValid($ttype)
       ) {
         continue;
       }
@@ -99,7 +99,7 @@ final class TypehintConsumer extends Consumer {
         if ($ttype === T_DOUBLE_COLON) {
           list($tDoubleColon, $_) = $this->tq->shift();
           list($tConstant, $_) = $this->tq->shift();
-          $type_text = $type_text . $tDoubleColon . $tConstant;
+          $type_text = $type_text.$tDoubleColon.$tConstant;
           continue;
         }
 
@@ -126,10 +126,7 @@ final class TypehintConsumer extends Consumer {
           if ($ttype === T_TYPELIST_GT) {
             break;
           }
-          invariant(
-            $t === ',',
-            'expected > or , after generic type',
-          );
+          invariant($t === ',', 'expected > or , after generic type');
           $this->consumeWhitespace();
           // Trailing comma
           list($_, $ttype) = $this->tq->peek();
@@ -142,7 +139,10 @@ final class TypehintConsumer extends Consumer {
       }
       break;
     }
-    invariant($type_text !== null, "Didn't see anything that looked like a type");
+    invariant(
+      $type_text !== null,
+      "Didn't see anything that looked like a type",
+    );
     $type_text = $this->normalizeName($type_text);
     return new ScannedTypehint(
       $type_name ?? $type_text,

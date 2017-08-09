@@ -15,17 +15,13 @@ use Facebook\DefinitionFinder\FileParser;
 
 final class AnonymousClassesTest extends \PHPUnit_Framework_TestCase {
   public function testParsesInFunction(): void {
-    $parser = FileParser::FromData(
-      '<?php function foo() { return new class {}; }',
-    );
-    $this->assertEquals(
-      Vector { 'foo' },
-      $parser->getFunctionNames(),
-    );
+    $parser =
+      FileParser::FromData('<?php function foo() { return new class {}; }');
+    $this->assertEquals(Vector { 'foo' }, $parser->getFunctionNames());
   }
 
   public function testParsesInMethod(): void {
-    $parser  = FileParser::FromData(
+    $parser = FileParser::FromData(
       '<?php class Foo { function bar() { return new class {}; } }',
     );
     $class = $parser->getClass('Foo');

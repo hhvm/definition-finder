@@ -18,9 +18,7 @@ class FinalTest extends \PHPUnit_Framework_TestCase {
   private ?\ConstVector<ScannedClass> $classes;
 
   protected function setUp(): void {
-    $parser = FileParser::FromFile(
-      __DIR__.'/data/finals.php'
-    );
+    $parser = FileParser::FromFile(__DIR__.'/data/finals.php');
     $this->classes = $parser->getClasses();
   }
 

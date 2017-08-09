@@ -26,7 +26,7 @@ class ScannedTypehint {
   }
 
   public function isGeneric(): bool {
-    return (bool) $this->generics;
+    return (bool)$this->generics;
   }
 
   public function isNullable(): bool {
@@ -52,7 +52,7 @@ class ScannedTypehint {
     }
     $generics = $this->getGenericTypes();
     if ($generics) {
-      $sub = implode(',',$generics->map($g ==> $g->getTypeText()));
+      $sub = implode(',', $generics->map($g ==> $g->getTypeText()));
       if ($base === 'tuple') {
         return '('.$sub.')';
       } else {

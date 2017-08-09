@@ -26,10 +26,7 @@ final class NamespaceConsumer extends Consumer {
       } else if ($next === '{' || $next === ';') {
         break;
       }
-      invariant_violation(
-        'Unexpected token %s',
-        var_export($next, true),
-      );
+      invariant_violation('Unexpected token %s', var_export($next, true));
     } while ($this->tq->haveTokens());
 
     // empty $parts is valid inside HHVM's systemlib: namespace { } is used
@@ -41,12 +38,9 @@ final class NamespaceConsumer extends Consumer {
 
     $builder = (new ScannedNamespaceBuilder($ns, $this->getBuilderContext()))
       ->setContents(
-        (new ScopeConsumer(
-          $this->tq,
-          $context,
-          ScopeType::NAMESPACE_SCOPE,
-        ))->getBuilder()
-    );
+        (new ScopeConsumer($this->tq, $context, ScopeType::NAMESPACE_SCOPE))
+          ->getBuilder(),
+      );
     return $builder;
   }
 }

@@ -20,16 +20,10 @@ class TokenQueue {
   private Vector<NGToken> $tokens = Vector {};
   private int $line = 0;
 
-  const type TSavedState = shape(
-    'tokens' => ImmVector<NGToken>,
-    'line' => int,
-  );
+  const type TSavedState = shape('tokens' => ImmVector<NGToken>, 'line' => int);
 
   public function getState(): self::TSavedState {
-    return shape(
-      'tokens' => $this->tokens->immutable(),
-      'line' => $this->line,
-    );
+    return shape('tokens' => $this->tokens->immutable(), 'line' => $this->line);
   }
 
   public function restoreState(self::TSavedState $state): void {
@@ -45,23 +39,17 @@ class TokenQueue {
           break;
         }
         $line = $token[2];
-        $this->tokens[] = new NGToken(
-          $token[1],
-          $token[0],
-          shape('firstLine' => $line),
-        );
+        $this->tokens[] =
+          new NGToken($token[1], $token[0], shape('firstLine' => $line));
       } else {
-        $this->tokens[] = new NGToken(
-          $token,
-          null,
-          shape('firstLine' => $line),
-        );
+        $this->tokens[] =
+          new NGToken($token, null, shape('firstLine' => $line));
       }
     }
   }
 
   public function haveTokens(): bool {
-    return (bool) $this->tokens;
+    return (bool)$this->tokens;
   }
 
   public function isEmpty(): bool {

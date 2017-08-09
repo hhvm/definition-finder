@@ -11,7 +11,8 @@
 
 namespace Facebook\DefinitionFinder;
 
-class ScannedTypeConstantBuilder extends ScannedSingleTypeBuilder<ScannedTypeConstant> {
+class ScannedTypeConstantBuilder
+  extends ScannedSingleTypeBuilder<ScannedTypeConstant> {
   public function __construct(
     string $name,
     self::TContext $context,

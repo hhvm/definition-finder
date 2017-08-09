@@ -14,9 +14,7 @@ namespace Facebook\DefinitionFinder;
 class TreeParser extends BaseParser {
   protected ScannedScope $defs;
 
-  private function __construct(
-    string $path,
-  ) {
+  private function __construct(string $path) {
     $builder = new ScannedScopeBuilder(shape(
       'position' => shape('filename' => '__TREE__'),
       'sourceType' => SourceType::MULTIPLE_FILES,

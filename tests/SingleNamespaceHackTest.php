@@ -23,8 +23,7 @@ final class SingleNamespaceHackTest extends \AbstractHackTest {
   }
 
   public function testConsistentNames(): void {
-    $data =
-      "<?hh\n".
+    $data = "<?hh\n".
       "class Herp extends Foo\Bar {}\n".
       "class Derp extends \Foo\Bar {}\n";
 
@@ -32,14 +31,8 @@ final class SingleNamespaceHackTest extends \AbstractHackTest {
     $herp = $parser->getClass('Herp');
     $derp = $parser->getClass('Derp');
 
-    $this->assertSame(
-      'Foo\Bar',
-      $herp->getParentClassName(),
-    );
-    $this->assertSame(
-      $herp->getParentClassName(),
-      $derp->getParentClassName(),
-    );
+    $this->assertSame('Foo\Bar', $herp->getParentClassName());
+    $this->assertSame($herp->getParentClassName(), $derp->getParentClassName());
   }
 
   protected function getSuffixForRootDefinitions(): string {

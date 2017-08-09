@@ -19,11 +19,11 @@ final class StaticClassClassConstantExpression extends Expression {
     if ($class === null) {
       return null;
     }
-    list ($t, $ttype) = $tq->shift();
+    list($t, $ttype) = $tq->shift();
     if ($ttype !== T_DOUBLE_COLON) {
       return null;
     }
-    list ($t, $ttype) = $tq->shift();
+    list($t, $ttype) = $tq->shift();
     if ($ttype !== T_CLASS) {
       return null;
     }

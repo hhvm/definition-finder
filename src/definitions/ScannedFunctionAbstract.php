@@ -11,8 +11,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-abstract class ScannedFunctionAbstract
-  extends ScannedBase
+abstract class ScannedFunctionAbstract extends ScannedBase
   implements HasScannedGenerics {
   public function __construct(
     string $name,
@@ -23,12 +22,7 @@ abstract class ScannedFunctionAbstract
     private ?ScannedTypehint $returnType,
     private \ConstVector<ScannedParameter> $parameters,
   ) {
-    parent::__construct(
-      $name,
-      $context,
-      $attributes,
-      $docComment,
-    );
+    parent::__construct($name, $context, $attributes, $docComment);
   }
 
   public static function getType(): DefinitionType {

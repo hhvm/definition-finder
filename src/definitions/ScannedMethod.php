@@ -11,8 +11,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-final class ScannedMethod
-  extends ScannedFunctionAbstract
+final class ScannedMethod extends ScannedFunctionAbstract
   implements HasScannedVisibility {
   public function __construct(
     string $name,

@@ -44,9 +44,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testSuperClass(): void {
-    $class = $this->parser?->getClass(
-      $this->getPrefix().'SimpleChildClass'
-    );
+    $class = $this->parser?->getClass($this->getPrefix().'SimpleChildClass');
     $this->assertSame(
       $this->getPrefix().'SimpleClass',
       $class?->getParentClassName(),
@@ -54,9 +52,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testInterface(): void {
-    $class = $this->parser?->getClass(
-      $this->getPrefix().'SimpleChildClass'
-    );
+    $class = $this->parser?->getClass($this->getPrefix().'SimpleChildClass');
     $this->assertEquals(
       Vector { $this->getPrefix().'SimpleInterface' },
       $class?->getInterfaceNames(),
@@ -64,9 +60,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testUsedTraits(): void {
-    $class = $this->parser?->getClass(
-      $this->getPrefix().'SimpleChildClass',
-    );
+    $class = $this->parser?->getClass($this->getPrefix().'SimpleChildClass');
     $this->assertEquals(
       Vector { $this->getPrefix().'SimpleTrait' },
       $class?->getTraitNames(),
@@ -95,9 +89,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
   public function testEnums(): void {
     $this->assertEquals(
-      Vector {
-        $this->getPrefix().'MyEnum',
-      },
+      Vector { $this->getPrefix().'MyEnum' },
       $this->parser?->getEnumNames(),
     );
   }
@@ -149,30 +141,28 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
     assert($class !== null);
 
     $this->assertEquals(
-      Vector {'Tk', 'Tv'},
+      Vector { 'Tk', 'Tv' },
       $class->getGenericTypes()->map($x ==> $x->getName()),
     );
 
     $this->assertEquals(
-      Vector { 0,  0 },
+      Vector { 0, 0 },
       $class->getGenericTypes()->map($x ==> $x->getConstraints()->count()),
     );
 
-    $class = $this->parser?->getClass(
-      $this->getPrefix().'GenericAliasedConstraintClass'
-    );
+    $class = $this
+      ->parser
+      ?->getClass($this->getPrefix().'GenericAliasedConstraintClass');
     assert($class !== null);
 
     $this->assertEquals(
-      Vector {'T'},
+      Vector { 'T' },
       $class->getGenericTypes()->map($x ==> $x->getName()),
     );
 
     $this->assertEquals(
-      Vector {'Foo'},
-      $class->getGenericTypes()->map(
-        $x ==> $x->getConstraints()[0]['type']
-      ),
+      Vector { 'Foo' },
+      $class->getGenericTypes()->map($x ==> $x->getConstraints()[0]['type']),
     );
   }
 
@@ -180,28 +170,30 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
     $func = $this->getFunction('generic_function');
 
     $this->assertEquals(
-      Vector {'Tk', 'Tv'},
+      Vector { 'Tk', 'Tv' },
       $func->getGenericTypes()->map($x ==> $x->getName()),
     );
 
     $this->assertEquals(
-      Vector {0, 0},
+      Vector { 0, 0 },
       $func->getGenericTypes()->map($x ==> $x->getConstraints()->count()),
     );
 
     $func = $this->getFunction('constrained_generic_function');
 
     $this->assertEquals(
-      Vector {'Tk', 'Tv'},
+      Vector { 'Tk', 'Tv' },
       $func->getGenericTypes()->map($x ==> $x->getName()),
     );
 
     $this->assertEquals(
-      Vector {'arraykey', null},
-      $func->getGenericTypes()->map($x ==> {
-        $constraints = $x->getConstraints();
-        return $constraints->isEmpty() ? null : $constraints[0]['type'];
-      }),
+      Vector { 'arraykey', null },
+      $func
+        ->getGenericTypes()
+        ->map($x ==> {
+          $constraints = $x->getConstraints();
+          return $constraints->isEmpty() ? null : $constraints[0]['type'];
+        }),
     );
   }
 
@@ -234,24 +226,15 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
   public function testAliasedTypehints(): void {
     $data = Map {
       'Foo' => $this->getFunction('aliased'),
-        'SingleNamespace\Foo' => $this->getFunction(
-          'aliased_with_namespace'
-        ),
-      'Namespaces\AreNested\Now\Foo' => $this->getFunction(
-        'aliased_with_nested_namespace'
-      ),
-      'Namespaces\AreNested\Now\Foo' => $this->getFunction(
-        'aliased_namespace'
-      ),
-      'Namespaces\AreNested\Now\Bar' => $this->getFunction(
-        'aliased_no_as'
-      ),
-      'Namespaces\AreNested\Now\Bar' => $this->getClassMethod(
-        'SimpleClass',
-        'aliasInClassScope'
-      ),
+      'SingleNamespace\Foo' => $this->getFunction('aliased_with_namespace'),
+      'Namespaces\AreNested\Now\Foo' =>
+        $this->getFunction('aliased_with_nested_namespace'),
+      'Namespaces\AreNested\Now\Foo' => $this->getFunction('aliased_namespace'),
+      'Namespaces\AreNested\Now\Bar' => $this->getFunction('aliased_no_as'),
+      'Namespaces\AreNested\Now\Bar' =>
+        $this->getClassMethod('SimpleClass', 'aliasInClassScope'),
     };
-    foreach($data as $typeName => $fun) {
+    foreach ($data as $typeName => $fun) {
       $returnType = $fun->getReturnType();
       $paramType = $fun->getParameters()->get(0)?->getTypehint();
       $this->assertSame($typeName, $returnType?->getTypeName());
@@ -273,7 +256,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
   private function getClassMethod(
     string $className,
-    string $methodName
+    string $methodName,
   ): ScannedMethod {
     $method = $this
       ->getClass($className)
@@ -284,7 +267,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
       $method !== null,
       'Could not find method %s in class %s',
       $methodName,
-      $className
+      $className,
     );
     return $method;
   }

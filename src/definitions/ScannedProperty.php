@@ -11,9 +11,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-class ScannedProperty
-  extends ScannedBase
-  implements HasScannedVisibility {
+class ScannedProperty extends ScannedBase implements HasScannedVisibility {
   public function __construct(
     string $name,
     self::TContext $context,
@@ -23,12 +21,7 @@ class ScannedProperty
     private VisibilityToken $visibility,
     private StaticityToken $staticity = StaticityToken::NOT_STATIC,
   ) {
-    parent::__construct(
-      $name,
-      $context,
-      $attributes,
-      $docComment,
-    );
+    parent::__construct($name, $context, $attributes, $docComment);
   }
 
   public static function getType(): ?DefinitionType {

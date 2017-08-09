@@ -44,7 +44,7 @@ final class TypeConstantConsumer extends Consumer {
     invariant(
       $next_token === DefinitionType::TYPE_DEF,
       'misidentified type constant.',
-   );
+    );
   }
 
   private function consumeName(): string {
@@ -66,10 +66,8 @@ final class TypeConstantConsumer extends Consumer {
       $this->tq->shift();
       $this->consumeWhitespace();
 
-      $constraint = (new TypehintConsumer(
-        $this->tq,
-        $this->context,
-      ))->getTypehint();
+      $constraint =
+        (new TypehintConsumer($this->tq, $this->context))->getTypehint();
 
       if ($this->abstractness === AbstractnessToken::IS_ABSTRACT) {
         return $constraint;
@@ -85,10 +83,7 @@ final class TypeConstantConsumer extends Consumer {
       );
       $this->tq->shift();
       $this->consumeWhitespace();
-      return (new TypehintConsumer(
-        $this->tq,
-        $this->context,
-      ))->getTypehint();
+      return (new TypehintConsumer($this->tq, $this->context))->getTypehint();
     }
 
     $this->consumeStatement();

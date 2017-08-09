@@ -13,9 +13,7 @@ namespace Facebook\DefinitionFinder;
 
 class MethodConsumer extends FunctionAbstractConsumer<ScannedMethod> {
   <<__Override>>
-  protected function constructBuilder(
-    string $name,
-  ): ScannedMethodBuilder {
+  protected function constructBuilder(string $name): ScannedMethodBuilder {
     return new ScannedMethodBuilder($name, $this->getBuilderContext());
   }
 }

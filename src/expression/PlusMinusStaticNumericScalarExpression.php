@@ -23,6 +23,6 @@ final class PlusMinusStaticNumericScalarExpression extends Expression {
     if (!$match) {
       return null;
     }
-    return new self((int) ($t.(string)$match->getValue()));
+    return new self((int)($t.(string)$match->getValue()));
   }
 }

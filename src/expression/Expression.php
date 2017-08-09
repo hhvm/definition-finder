@@ -14,7 +14,8 @@ namespace Facebook\DefinitionFinder\Expression;
 use Facebook\DefinitionFinder\TokenQueue;
 
 abstract class Expression {
-  final protected function __construct(private mixed $value) {}
+  final protected function __construct(private mixed $value) {
+  }
 
   final public static function match(TokenQueue $tq): ?Expression {
     $state = $tq->getState();

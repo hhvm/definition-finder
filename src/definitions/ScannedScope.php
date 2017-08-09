@@ -31,7 +31,7 @@ class ScannedScope extends ScannedBase {
     parent::__construct(
       '__SCOPE__',
       $context,
-      /* attributes = */ Map { },
+      /* attributes = */ Map {},
       /* docblock = */ null,
     );
   }

@@ -12,7 +12,7 @@
 namespace Facebook\DefinitionFinder;
 
 final class ScannedNamespaceBuilder
-extends ScannedSingleTypeBuilder<ScannedNamespace> {
+  extends ScannedSingleTypeBuilder<ScannedNamespace> {
   private ?ScannedScopeBuilder $scopeBuilder;
 
   public function setContents(ScannedScopeBuilder $scope): this {

@@ -18,9 +18,7 @@ class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {
   private ?\ConstVector<ScannedClass> $classes;
 
   protected function setUp(): void {
-    $parser = FileParser::FromFile(
-      __DIR__.'/data/class_properties.php'
-    );
+    $parser = FileParser::FromFile(__DIR__.'/data/class_properties.php');
     $this->classes = $parser->getClasses();
   }
 
@@ -37,7 +35,7 @@ class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {
     $class = $this->classes ? $this->classes[1] : null;
     $this->assertSame(
       'Facebook\\DefinitionFinder\\Test2\\ClassWithProperties',
-      $class?->getName()
+      $class?->getName(),
     );
     $this->assertEquals(
       Vector { 'foobar' },
@@ -54,27 +52,27 @@ class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(
       Vector { false, false, true },
       $class?->getProperties()?->map($x ==> $x->isPublic()),
-      'isPublic'
+      'isPublic',
     );
     $this->assertEquals(
       Vector { false, true, false },
       $class?->getProperties()?->map($x ==> $x->isProtected()),
-      'isProtected'
+      'isProtected',
     );
     $this->assertEquals(
       Vector { true, false, false },
       $class?->getProperties()?->map($x ==> $x->isPrivate()),
-      'isPrivate'
+      'isPrivate',
     );
     $class = $this->classes ? $this->classes[1] : null;
     $this->assertSame(
       'Facebook\\DefinitionFinder\\Test2\\ClassWithProperties',
-      $class?->getName()
+      $class?->getName(),
     );
     $this->assertEquals(
       Vector { true },
       $class?->getProperties()?->map($x ==> $x->isPublic()),
-      'isPublic'
+      'isPublic',
     );
   }
 
@@ -86,14 +84,12 @@ class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {
     );
     $this->assertEquals(
       Vector { 'bool', 'int', 'string' },
-      $class?->getProperties()?->map(
-        $x ==> $x->getTypehint()?->getTypeName()
-      ),
+      $class?->getProperties()?->map($x ==> $x->getTypehint()?->getTypeName()),
     );
     $class = $this->classes ? $this->classes[1] : null;
     $this->assertSame(
       'Facebook\\DefinitionFinder\\Test2\\ClassWithProperties',
-      $class?->getName()
+      $class?->getName(),
     );
     $this->assertEquals(
       Vector { 'bool' },

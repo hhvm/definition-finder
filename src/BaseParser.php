@@ -44,7 +44,7 @@ abstract class BaseParser {
   public function getClassNames(): \ConstVector<string> {
     return $this->getClasses()->map($class ==> $class->getName());
   }
-  
+
   public function getInterfaceNames(): \ConstVector<string> {
     return $this->getInterfaces()->map($x ==> $x->getName());
   }
@@ -85,7 +85,7 @@ abstract class BaseParser {
     return self::GetX($name, $this->getTraits());
   }
 
-  public function getFunction(string $name): ScannedFunction{
+  public function getFunction(string $name): ScannedFunction {
     return self::GetX($name, $this->getFunctions());
   }
 

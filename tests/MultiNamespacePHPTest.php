@@ -20,11 +20,7 @@ final class MultiNamespacePHPTest extends PHPUnit_Framework_TestCase {
 
   public function testClasses(): void {
     $this->assertEquals(
-      Vector {
-        'Foo\\Bar',
-        'Herp\\Derp',
-        'EmptyNamespace',
-      },
+      Vector { 'Foo\\Bar', 'Herp\\Derp', 'EmptyNamespace' },
       $this->parser?->getClassNames(),
     );
   }

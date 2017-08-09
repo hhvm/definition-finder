@@ -12,36 +12,35 @@
 namespace Facebook\DefinitionFinder;
 
 class FileParser extends BaseParser {
-  private function __construct(
-    private string $file,
-    TokenQueue $tq,
-  ) {
+  private function __construct(private string $file, TokenQueue $tq) {
     try {
-      $this->defs = (new ScopeConsumer(
-        $tq,
-        shape(
-          'filename' => $file,
-          'namespace' => null,
-          'usedNamespaces' => ImmMap { },
-          'usedTypes' => ImmMap { },
-          'sourceType' => SourceType::NOT_YET_DETERMINED,
-          'genericTypeNames' => ImmSet { },
-        ),
-        ScopeType::FILE_SCOPE,
-      ))->getBuilder()->build();
+      $this->defs = (
+        new ScopeConsumer(
+          $tq,
+          shape(
+            'filename' => $file,
+            'namespace' => null,
+            'usedNamespaces' => ImmMap {},
+            'usedTypes' => ImmMap {},
+            'sourceType' => SourceType::NOT_YET_DETERMINED,
+            'genericTypeNames' => ImmSet {},
+          ),
+          ScopeType::FILE_SCOPE,
+        )
+      )
+        ->getBuilder()
+        ->build();
     } catch (/* HH_FIXME[2049] */ \HH\InvariantException $e) {
       throw new ParseException(
         shape('filename' => $file, 'line' => $tq->getLine()),
-        $e
+        $e,
       );
     }
   }
 
   ///// Constructors /////
 
-  public static function FromFile(
-    string $filename,
-  ): FileParser {
+  public static function FromFile(string $filename): FileParser {
     return self::FromData(file_get_contents($filename), $filename);
   }
 
@@ -57,5 +56,7 @@ class FileParser extends BaseParser {
 
   ///// Accessors /////
 
-  public function getFilename(): string { return $this->file; }
+  public function getFilename(): string {
+    return $this->file;
+  }
 }

@@ -35,7 +35,7 @@ final class ConstantConsumer extends Consumer {
 
     while ($this->tq->haveTokens()) {
       $next_token = $this->tq->shiftNG();
-      list ($next, $next_type) = $next_token->asLegacyToken();
+      list($next, $next_type) = $next_token->asLegacyToken();
       if ($next_type === T_WHITESPACE) {
         continue;
       }
@@ -44,8 +44,8 @@ final class ConstantConsumer extends Consumer {
         list($_, $nnt) = $this->tq->peek();
         if ($nnt === T_STRING) {
           $this->tq->unshiftNG($next_token);
-          $typehint = (new TypehintConsumer($this->tq, $this->context))
-            ->getTypehint();
+          $typehint =
+            (new TypehintConsumer($this->tq, $this->context))->getTypehint();
           continue;
         } else {
           $name = $next;

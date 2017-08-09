@@ -12,25 +12,23 @@
 namespace Facebook\DefinitionFinder;
 
 class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
-  public function __construct(
-    self::TContext $context,
-  ) {
+  public function __construct(self::TContext $context) {
     parent::__construct('__SCOPE__', $context);
   }
 
-  private Vector<ScannedClassBuilder> $classBuilders = Vector { };
-  private Vector<ScannedFunctionBuilder> $functionBuilders = Vector { };
-  private Vector<ScannedMethodBuilder> $methodBuilders = Vector { };
-  private Vector<ScannedTypehint> $usedTraits = Vector { };
-  private Vector<ScannedPropertyBuilder> $propertyBuilders = Vector { };
-  private Vector<ScannedConstantBuilder> $constantBuilders = Vector { };
-  private Vector<ScannedTypeConstantBuilder> $typeConstantBuilders = Vector { };
-  private Vector<ScannedEnumBuilder> $enumBuilders = Vector { };
-  private Vector<ScannedTypeBuilder> $typeBuilders = Vector { };
-  private Vector<ScannedNewtypeBuilder> $newtypeBuilders = Vector { };
+  private Vector<ScannedClassBuilder> $classBuilders = Vector {};
+  private Vector<ScannedFunctionBuilder> $functionBuilders = Vector {};
+  private Vector<ScannedMethodBuilder> $methodBuilders = Vector {};
+  private Vector<ScannedTypehint> $usedTraits = Vector {};
+  private Vector<ScannedPropertyBuilder> $propertyBuilders = Vector {};
+  private Vector<ScannedConstantBuilder> $constantBuilders = Vector {};
+  private Vector<ScannedTypeConstantBuilder> $typeConstantBuilders = Vector {};
+  private Vector<ScannedEnumBuilder> $enumBuilders = Vector {};
+  private Vector<ScannedTypeBuilder> $typeBuilders = Vector {};
+  private Vector<ScannedNewtypeBuilder> $newtypeBuilders = Vector {};
 
-  private Vector<ScannedNamespaceBuilder> $namespaceBuilders = Vector { };
-  private Vector<ScannedScope> $subscopes = Vector { };
+  private Vector<ScannedNamespaceBuilder> $namespaceBuilders = Vector {};
+  private Vector<ScannedScope> $subscopes = Vector {};
 
   public function addProperty(ScannedPropertyBuilder $b): void {
     $this->propertyBuilders[] = $b;
@@ -81,9 +79,9 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
   }
 
   public function build(): ScannedScope {
-    $classes = Vector { };
-    $interfaces= Vector { };
-    $traits = Vector { };
+    $classes = Vector {};
+    $interfaces = Vector {};
+    $traits = Vector {};
     foreach ($this->classBuilders as $b) {
       switch ($b->getType()) {
         case ClassDefinitionType::CLASS_DEF:

@@ -36,7 +36,7 @@ abstract class Consumer {
     invariant(
       $type !== SourceType::NOT_YET_DETERMINED,
       "Can't consume without a source type (Hack vs PHP affects namespace ".
-      "resolution - eg classes called 'string' or 'Collection'"
+      "resolution - eg classes called 'string' or 'Collection'",
     );
 
     invariant(
@@ -116,25 +116,16 @@ abstract class Consumer {
       'TypeStructureKind',
     };
 
-    $typedefs = ImmSet {
-      'typename',
-      'classname',
-      'TypeStructure',
-    };
+    $typedefs = ImmSet { 'typename', 'classname', 'TypeStructure' };
 
-    $types = $scalars
-      ->concat($classes)
-      ->concat($typedefs)
-      ->toImmSet();
+    $types = $scalars->concat($classes)->concat($typedefs)->toImmSet();
 
     self::$autoImportTypes = $types;
     return $types;
   }
 
   <<__Deprecated('Please send a pull request adding the missing types')>>
-  final public static function setAutoImportTypes(
-    ImmSet<string> $types,
-  ): void {
+  final public static function setAutoImportTypes(ImmSet<string> $types): void {
     self::$autoImportTypes = $types;
   }
 
@@ -183,9 +174,11 @@ abstract class Consumer {
   protected function skipToBlock(): void {
     while ($this->tq->haveTokens()) {
       list($next, $next_type) = $this->tq->shift();
-      if ($next === '{' ||
-          $next_type === T_CURLY_OPEN ||
-          $next_type === T_DOLLAR_OPEN_CURLY_BRACES) {
+      if (
+        $next === '{' ||
+        $next_type === T_CURLY_OPEN ||
+        $next_type === T_DOLLAR_OPEN_CURLY_BRACES
+      ) {
         return;
       }
     }
@@ -196,9 +189,11 @@ abstract class Consumer {
     $nesting = 1;
     while ($this->tq->haveTokens()) {
       list($next, $next_type) = $this->tq->shift();
-      if ($next === '{' ||
-          $next_type === T_CURLY_OPEN ||
-          $next_type === T_DOLLAR_OPEN_CURLY_BRACES) {
+      if (
+        $next === '{' ||
+        $next_type === T_CURLY_OPEN ||
+        $next_type === T_DOLLAR_OPEN_CURLY_BRACES
+      ) {
         ++$nesting;
       } else if ($next === '}') { // no such thing as T_CURLY_CLOSE
         --$nesting;
@@ -209,9 +204,7 @@ abstract class Consumer {
     }
   }
 
-  protected function normalizeNullableName(
-    ?string $name,
-  ): ?string {
+  protected function normalizeNullableName(?string $name): ?string {
     if ($name === null) {
       return null;
     }
@@ -283,9 +276,8 @@ abstract class Consumer {
   ): self::TContext {
     $context = $this->context;
     $context['genericTypeNames'] = $context['genericTypeNames']
-      ->concat($generics->map(
-        $generic ==> $generic->getName(),
-      ))->toImmSet();
+      ->concat($generics->map($generic ==> $generic->getName()))
+      ->toImmSet();
     return $context;
   }
 }

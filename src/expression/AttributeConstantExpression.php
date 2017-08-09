@@ -16,7 +16,7 @@ use Facebook\DefinitionFinder\TokenQueue;
 final class AttributeConstantExpression extends Expression {
   protected static function matchImpl(TokenQueue $tq): ?Expression {
     list($t, $_) = $tq->shift();
-    switch(strtolower($t)) {
+    switch (strtolower($t)) {
       case 'true':
         return new self(true);
       case 'false':

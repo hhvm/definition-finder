@@ -23,7 +23,7 @@ class ScannedConstant extends ScannedBase {
     parent::__construct(
       $name,
       $context,
-      /* attributes = */ Map { },
+      /* attributes = */ Map {},
       $docblock,
     );
   }

@@ -12,9 +12,7 @@
 namespace Facebook\DefinitionFinder;
 
 <<__ConsistentConstruct>>
-abstract class ScannedClass
-  extends ScannedBase
-  implements HasScannedGenerics {
+abstract class ScannedClass extends ScannedBase implements HasScannedGenerics {
 
   public function __construct(
     string $name,
@@ -83,8 +81,9 @@ abstract class ScannedClass
     return $this->interfaces;
   }
 
-  public function getTraitGenerics(): \ConstMap<string,\ConstVector<ScannedTypehint>> {
-    $traits = Map{};
+  public function getTraitGenerics(
+  ): \ConstMap<string, \ConstVector<ScannedTypehint>> {
+    $traits = Map {};
     foreach ($this->traits as $trait) {
       $traits[$trait->getTypeName()] = $trait->getGenericTypes();
     }

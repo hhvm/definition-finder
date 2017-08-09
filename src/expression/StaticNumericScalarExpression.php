@@ -24,7 +24,7 @@ final class StaticNumericScalarExpression extends Expression {
       case T_LNUMBER:
       case T_DNUMBER:
       case T_ONUMBER:
-        return new self((int) $t);
+        return new self((int)$t);
     }
     return null;
   }

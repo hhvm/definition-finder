@@ -27,17 +27,13 @@ final class ClassConsumer extends Consumer {
   }
 
   public function getBuilder(): ScannedClassBuilder {
-    $generics = Vector { };
+    $generics = Vector {};
     list($v, $t) = $this->tq->shift();
 
     if ($t === T_STRING || StringishTokens::isValid($t)) {
       $name = $v;
     } else {
-      invariant(
-        $t === T_XHP_LABEL,
-        'Unknown class token %d',
-        token_name($t),
-      );
+      invariant($t === T_XHP_LABEL, 'Unknown class token %d', token_name($t));
       invariant(
         DefinitionType::coerce($this->type) === DefinitionType::CLASS_DEF,
         'Seeing an XHP class name for a %s',
@@ -55,8 +51,8 @@ final class ClassConsumer extends Consumer {
 
     list($_, $ttype) = $this->tq->peek();
     if ($ttype == T_TYPELIST_LT) {
-      $generics = (new GenericsConsumer($this->tq, $this->context))
-        ->getGenerics();
+      $generics =
+        (new GenericsConsumer($this->tq, $this->context))->getGenerics();
       $builder->setGenericTypes($generics);
     }
 
@@ -91,22 +87,22 @@ final class ClassConsumer extends Consumer {
       }
     }
 
-    return $builder
-      ->setContents(
-        (new ScopeConsumer(
+    return $builder->setContents(
+      (
+        new ScopeConsumer(
           $this->tq,
           $this->getContextWithGenerics($generics),
           ScopeType::CLASS_SCOPE,
-        ))
-        ->getBuilder()
-      );
+        )
+      )->getBuilder(),
+    );
   }
 
   private function consumeClassList(): \ConstVector<ScannedTypehint> {
-    $classes = Vector { };
+    $classes = Vector {};
     while ($this->tq->haveTokens()) {
       $this->consumeWhitespace();
-      list ($t, $ttype) = $this->tq->peek();
+      list($t, $ttype) = $this->tq->peek();
       if ($t === ',') {
         $this->tq->shift();
         continue;
@@ -116,8 +112,8 @@ final class ClassConsumer extends Consumer {
         break;
       }
 
-      $classes[] = (new TypehintConsumer($this->tq, $this->context))
-        ->getTypehint();
+      $classes[] =
+        (new TypehintConsumer($this->tq, $this->context))->getTypehint();
     }
     return $classes;
   }

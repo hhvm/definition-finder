@@ -41,16 +41,16 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
     ];
   }
 
-  /** @dataProvider provideTypesInNamespace*/ 
-  public function testNamespacedType(
+  /** @dataProvider provideTypesInNamespace*/ public function testNamespacedType(
     string $input,
     string $name,
     string $text,
   ): void {
-    $code =
-      "<?hh \n".
+    $code = "<?hh \n".
       "namespace MyNamespace;\n".
-      "function main(".$input." \$_): void {}\n";
+      "function main(".
+      $input.
+      " \$_): void {}\n";
     $def = FileParser::FromData($code)->getFunction('MyNamespace\\main');
     $type = $def->getParameters()->at(0)->getTypehint();
     $this->assertNotNull($type);
@@ -66,7 +66,12 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
       tuple('(function():?string)', false, 'callable', '(function():?string)'),
       tuple('?(function():?string)', true, 'callable', '?(function():?string)'),
       tuple('shape("foo" => ?string)', false, 'shape', 'shape("foo"=>?string)'),
-      tuple('?shape("foo" => ?string)', true, 'shape', '?shape("foo"=>?string)'),
+      tuple(
+        '?shape("foo" => ?string)',
+        true,
+        'shape',
+        '?shape("foo"=>?string)',
+      ),
       tuple('(?string, string)', false, 'tuple', '(?string,string)'),
       tuple('?(?string, string)', true, 'tuple', '?(?string,string)'),
     ];
@@ -79,9 +84,7 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
     string $name,
     string $text,
   ): void {
-    $code =
-      "<?hh \n".
-      "function main(".$input." \$_): void {}\n";
+    $code = "<?hh \n"."function main(".$input." \$_): void {}\n";
     $def = FileParser::FromData($code)->getFunction('main');
     $type = $def->getParameters()->at(0)->getTypehint();
     $this->assertNotNull($type);

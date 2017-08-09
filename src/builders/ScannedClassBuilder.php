@@ -13,8 +13,8 @@ namespace Facebook\DefinitionFinder;
 
 final class ScannedClassBuilder extends ScannedBaseBuilder {
   private ?ScannedScopeBuilder $scopeBuilder;
-  protected \ConstVector<ScannedGeneric> $generics = Vector { };
-  private \ConstVector<ScannedTypehint> $interfaces = Vector { };
+  protected \ConstVector<ScannedGeneric> $generics = Vector {};
+  private \ConstVector<ScannedTypehint> $interfaces = Vector {};
   private ?ScannedTypehint $parent = null;
   private ?AbstractnessToken $abstractness;
   private ?FinalityToken $finality;
@@ -71,8 +71,7 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
       token_name($this->type),
     );
 
-    $scope = nullthrows($this->scopeBuilder)
-      ->build();
+    $scope = nullthrows($this->scopeBuilder)->build();
 
     $methods = $scope->getMethods();
     $properties = new Vector($scope->getProperties());

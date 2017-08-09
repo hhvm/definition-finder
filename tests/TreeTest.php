@@ -18,13 +18,7 @@ class TreeTest extends \PHPUnit_Framework_TestCase {
     $parser = TreeParser::FromPath(__DIR__.'/data/');
     // From multiple files
     $classes = $parser->getClassNames();
-    $this->assertContains(
-      "SingleNamespace\\SimpleClass",
-      $classes,
-    );
-    $this->assertContains(
-      "Namespaces\\AreNestedNow\\SimpleClass",
-      $classes,
-    );
+    $this->assertContains("SingleNamespace\\SimpleClass", $classes);
+    $this->assertContains("Namespaces\\AreNestedNow\\SimpleClass", $classes);
   }
 }

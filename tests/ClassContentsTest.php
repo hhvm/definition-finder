@@ -18,9 +18,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
   private ?ScannedClass $class;
 
   protected function setUp(): void {
-    $parser = FileParser::FromFile(
-      __DIR__.'/data/class_contents.php'
-    );
+    $parser = FileParser::FromFile(__DIR__.'/data/class_contents.php');
     $this->class = $parser->getClasses()[0];
     $this->assertSame(
       'Facebook\\DefinitionFinder\\Test\\ClassWithContents',
@@ -29,9 +27,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testAnonymousClasses(): void {
-    $parser = FileParser::FromFile(
-      __DIR__.'/data/class_contents_php.php',
-    );
+    $parser = FileParser::FromFile(__DIR__.'/data/class_contents_php.php');
     $this->assertEmpty(
       $parser->getFunctions(),
       'Should be no functions - probably interpreting a method as a function',
@@ -54,16 +50,13 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       $this->class?->getNamespaceName(),
     );
     $this->assertEquals(
-      Vector {'', '', '', ''},
+      Vector { '', '', '', '' },
       $this->class?->getMethods()?->map($x ==> $x->getNamespaceName()),
     );
   }
 
   public function testShortName(): void {
-    $this->assertEquals(
-      'ClassWithContents',
-      $this->class?->getShortName(),
-    );
+    $this->assertEquals('ClassWithContents', $this->class?->getShortName());
     $this->assertEquals(
       Vector {
         'publicMethod',
@@ -89,17 +82,17 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   public function testMethodVisibility(): void {
     $this->assertEquals(
-      Vector {true, false, false, true},
+      Vector { true, false, false, true },
       $this->class?->getMethods()?->map($x ==> $x->isPublic()),
       'isPublic',
     );
     $this->assertEquals(
-      Vector {false, true, false, false},
+      Vector { false, true, false, false },
       $this->class?->getMethods()?->map($x ==> $x->isProtected()),
       'isProtected',
     );
     $this->assertEquals(
-      Vector {false, false, true, false},
+      Vector { false, false, true, false },
       $this->class?->getMethods()?->map($x ==> $x->isPrivate()),
       'isPrivate',
     );
@@ -196,9 +189,10 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
   public function testPropertyTypes(): void {
     $this->assertEquals(
       Vector { 'bool', 'string' },
-      $this->class?->getProperties()?->map(
-        $x ==> $x->getTypehint()?->getTypeName()
-      ),
+      $this
+        ->class
+        ?->getProperties()
+        ?->map($x ==> $x->getTypehint()?->getTypeName()),
     );
   }
 
@@ -210,10 +204,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       Vector { 'untypedProperty' },
       $props->map($x ==> $x->getName()),
     );
-    $this->assertEquals(
-      Vector { null },
-      $props->map($x ==> $x->getTypehint()),
-    );
+    $this->assertEquals(Vector { null }, $props->map($x ==> $x->getTypehint()));
   }
 
   public function staticPropertyProvider(): array<array<mixed>> {
@@ -244,10 +235,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $class = $parser->getClass('Foo');
     $props = $class->getProperties();
 
-    $this->assertEquals(
-      Vector { 'bar' },
-      $props->map($x ==> $x->getName()),
-    );
+    $this->assertEquals(Vector { 'bar' }, $props->map($x ==> $x->getName()));
 
     $this->assertEquals(
       Vector { $type },
@@ -255,10 +243,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     );
 
 
-    $this->assertEquals(
-      Vector { true },
-      $props->map($x ==> $x->isStatic()),
-    );
+    $this->assertEquals(Vector { true }, $props->map($x ==> $x->isStatic()));
   }
 
   public function testTypeConstant(): void {
@@ -274,8 +259,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testClassAsTypeConstant(): void {
-    $data =
-      "<?hh\n".
+    $data = "<?hh\n".
       "class Foo { const type BAR = int; }\n".
       "class Bar {\n".
       "  const type FOO = Foo;\n".
@@ -285,11 +269,13 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $class = $parser->getClass('Bar');
     $this->assertEquals(
       Vector { Vector { 'self::FOO::BAR' } },
-      $class->getMethods()->map(
-        $method ==> $method->getParameters()->map(
-          $param ==> $param->getTypehint()?->getTypeText(),
+      $class
+        ->getMethods()
+        ->map(
+          $method ==> $method
+            ->getParameters()
+            ->map($param ==> $param->getTypehint()?->getTypeText()),
         ),
-      ),
     );
   }
 
@@ -378,11 +364,14 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $this->assertSame('foo', $param->getName());
   }
 
-  public static function namespacedReturns(): array<shape(
-    'namespace' => string,
-    'return type text' => string,
-    'expected return type text' => string,
-  )> {
+  public static function namespacedReturns(
+  ): array<
+    shape(
+      'namespace' => string,
+      'return type text' => string,
+      'expected return type text' => string,
+    )
+  > {
     return [
       shape(
         'namespace' => '',
@@ -431,9 +420,9 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     string $expectedTypehintText,
   ): void {
     $data = sprintf(
-    '<?hh %s class Foo { public function bar(): %s {} }',
+      '<?hh %s class Foo { public function bar(): %s {} }',
       $namespace === '' ? '' : "namespace $namespace;",
-      $returnText
+      $returnText,
     );
     $className = ltrim($namespace.'\Foo', "\\");
     $parser = FileParser::FromData($data);
@@ -443,7 +432,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertSame(
       $expectedTypehintText,
-      $method->getReturnType()?->getTypeText()
+      $method->getReturnType()?->getTypeText(),
     );
   }
 }

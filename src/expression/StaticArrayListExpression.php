@@ -28,7 +28,7 @@ final class StaticArrayListExpression extends Expression {
       }
       $values[] = $expr->getValue();
       self::consumeWhitespace($tq);
-      list ($t, $_) = $tq->peek();
+      list($t, $_) = $tq->peek();
       if ($t !== ',') {
         return new self($values);
       }

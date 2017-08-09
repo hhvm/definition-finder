@@ -25,9 +25,9 @@ final class StaticScalarExpression extends Expression {
       StaticArrayExpression::class,
       StaticShapeExpression::class,
       /*
-  | static_dict_literal_ae             { $$ = $1;}
-  | static_vec_literal_ae              { $$ = $1;}
-  | static_keyset_literal_ae           { $$ = $1;}
+      | static_dict_literal_ae             { $$ = $1;}
+      | static_vec_literal_ae              { $$ = $1;}
+      | static_keyset_literal_ae           { $$ = $1;}
       */
     };
     foreach ($subtypes as $subtype) {

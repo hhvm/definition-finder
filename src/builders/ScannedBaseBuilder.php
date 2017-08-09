@@ -29,9 +29,7 @@ abstract class ScannedBaseBuilder {
     return $this;
   }
 
-  public function setAttributes(
-    Map<string, Vector<mixed>> $v
-  ): this {
+  public function setAttributes(Map<string, Vector<mixed>> $v): this {
     $this->attributes = $v;
     return $this;
   }

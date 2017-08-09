@@ -51,15 +51,13 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
     $this->name = $t;
     $name = $t;
 
-    $builder = $this
-      ->constructBuilder($name)
-      ->setByRefReturn($by_ref_return);
+    $builder = $this->constructBuilder($name)->setByRefReturn($by_ref_return);
 
     list($_, $ttype) = $tq->peek();
-    $generics = Vector { };
+    $generics = Vector {};
     if ($ttype === T_TYPELIST_LT) {
-      $generics = (new GenericsConsumer($this->tq, $this->context))
-        ->getGenerics();
+      $generics =
+        (new GenericsConsumer($this->tq, $this->context))->getGenerics();
     }
     $builder->setGenerics($generics);
     $this->consumeParameterList($builder, $generics);
@@ -69,10 +67,12 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
     if ($t === ':') {
       $tq->shift();
       $this->consumeWhitespace();
-      $builder->setReturnType((new TypehintConsumer(
-        $this->tq,
-        $this->getContextWithGenerics($generics),
-      ))->getTypehint());
+      $builder->setReturnType((
+        new TypehintConsumer(
+          $this->tq,
+          $this->getContextWithGenerics($generics),
+        )
+      )->getTypehint());
     }
     $this->consumeWhitespace();
     list($t, $_) = $tq->peek();
@@ -103,7 +103,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
     $param_type = null;
     $byref = false;
     $variadic = false;
-    $attrs = Map { };
+    $attrs = Map {};
     $doc = null;
     while ($tq->haveTokens()) {
       $ngtoken = $tq->shiftNG();
@@ -138,19 +138,19 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
         );
         $builder->addParameter(
           (new ScannedParameterBuilder($name, $this->getBuilderContext()))
-          ->setTypehint($param_type)
-          ->setIsPassedByReference($byref)
-          ->setIsVariadic($variadic)
-          ->setDefaultString($default)
-          ->setVisibility($visibility)
-          ->setAttributes($attrs)
-          ->setDocComment($doc)
+            ->setTypehint($param_type)
+            ->setIsPassedByReference($byref)
+            ->setIsVariadic($variadic)
+            ->setDefaultString($default)
+            ->setVisibility($visibility)
+            ->setAttributes($attrs)
+            ->setDocComment($doc),
         );
         $param_type = null;
         $visibility = null;
         $byref = false;
         $variadic = false;
-        $attrs = Map { };
+        $attrs = Map {};
         $doc = null;
         continue;
       }
@@ -171,10 +171,8 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
       }
 
       if ($ttype === T_SL) {
-        $attrs = (new UserAttributesConsumer(
-          $this->tq,
-          $this->context,
-        ))->getUserAttributes();
+        $attrs = (new UserAttributesConsumer($this->tq, $this->context))
+          ->getUserAttributes();
         continue;
       }
 
@@ -191,10 +189,12 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
         $param_type->getTypeText(),
       );
       $tq->unshiftNG($ngtoken);
-      $param_type = (new TypehintConsumer(
-        $this->tq,
-        $this->getContextWithGenerics($generics),
-      ))->getTypehint();
+      $param_type = (
+        new TypehintConsumer(
+          $this->tq,
+          $this->getContextWithGenerics($generics),
+        )
+      )->getTypehint();
     }
   }
 
@@ -208,7 +208,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
     $this->tq->shift();
     $nesting = 0;
     $default = '';
-    while($this->tq->haveTokens()) {
+    while ($this->tq->haveTokens()) {
       $this->consumeWhitespace();
       list($t, $_) = $this->tq->peek();
 

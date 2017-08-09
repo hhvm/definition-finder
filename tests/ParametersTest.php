@@ -84,10 +84,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
   /**
    * @dataProvider getUnusualDefaults
    */
-  public function testWithUnusualDefault(
-    string $in,
-    string $expected,
-  ): void {
+  public function testWithUnusualDefault(string $in, string $expected): void {
     $data = '<?hh function foo($bar, $baz = '.$in.') {}';
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
@@ -97,9 +94,9 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     );
     $this->assertEquals(
       Vector { null, $expected },
-      $function->getParameters()->map(
-        $p ==> $p->isOptional() ? $p->getDefaultString(): null,
-      ),
+      $function
+        ->getParameters()
+        ->map($p ==> $p->isOptional() ? $p->getDefaultString() : null),
     );
   }
 
@@ -114,7 +111,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       $function->getParameters()->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { new ScannedTypehint('string', 'string', Vector { }, false) },
+      Vector { new ScannedTypehint('string', 'string', Vector {}, false) },
       $function->getParameters()->map($x ==> $x->getTypehint()),
     );
     $this->assertEquals(
@@ -193,10 +190,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
-    $this->assertEquals(
-      Vector { 'bar' },
-      $params->map($x ==> $x->getName()),
-    );
+    $this->assertEquals(Vector { 'bar' }, $params->map($x ==> $x->getName()));
     $this->assertEquals(
       'string',
       $params->at(0)->getTypehint()?->getTypeText(),
@@ -227,9 +221,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       Vector { 'bar' },
       $function->getParameters()->map($x ==> $x->getName()),
     );
-    $this->assertNull(
-      $function->getParameters()->at(0)->getTypehint(),
-    );
+    $this->assertNull($function->getParameters()->at(0)->getTypehint());
   }
 
   public function testWithUntypedVariadicParam(): void {
@@ -251,7 +243,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       Vector {
-        new ScannedTypehint('string', 'string', Vector { }, false),
+        new ScannedTypehint('string', 'string', Vector {}, false),
         null,
       },
       $params->map($x ==> $x->getTypehint()),
@@ -270,23 +262,17 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $function = $parser->getFunction('foo');
     $params = $function->getParameters();
 
-    $this->assertEquals(
-      Vector { 'bar' },
-      $params->map($x ==> $x->getName()),
-    );
+    $this->assertEquals(Vector { 'bar' }, $params->map($x ==> $x->getName()));
 
-    $this->assertEquals(
-      Vector { true },
-      $params->map($x ==> $x->isVariadic()),
-    );
+    $this->assertEquals(Vector { true }, $params->map($x ==> $x->isVariadic()));
 
     $this->assertEquals(
       Vector {
         new ScannedTypehint(
           'array',
           'array',
-          Vector { new ScannedTypehint('mixed', 'mixed', Vector { }, false) },
-          false
+          Vector { new ScannedTypehint('mixed', 'mixed', Vector {}, false) },
+          false,
         ),
       },
       $params->map($x ==> $x->getTypehint()),
