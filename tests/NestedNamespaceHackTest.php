@@ -17,4 +17,8 @@ class NestedNamespaceHackTest extends AbstractHackTest {
   protected function getPrefix(): string {
     return 'Namespaces\\AreNestedNow\\';
   }
+
+  protected function getSuffixForRootDefinitions(): string {
+    return '_FROM_NESTED_NS';
+  }
 }

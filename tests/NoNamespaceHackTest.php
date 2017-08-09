@@ -17,4 +17,8 @@ class NoNamespaceHackTest extends AbstractHackTest {
   protected function getPrefix(): string {
     return '';
   }
+
+  protected function getSuffixForRootDefinitions(): string {
+    return '';
+  }
 }

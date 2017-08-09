@@ -19,6 +19,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
   abstract protected function getFilename(): string;
   abstract protected function getPrefix(): string;
+  abstract protected function getSuffixForRootDefinitions(): string;
 
   protected function setUp(): void {
     $this->parser = \Facebook\DefinitionFinder\FileParser::FromFile(
@@ -131,9 +132,9 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
         $this->getPrefix().'MY_CONST',
         $this->getPrefix().'MY_TYPED_CONST',
         // define() puts constants into the root namespace
-        'MY_OLD_STYLE_CONST',
-        'MY_OTHER_OLD_STYLE_CONST',
-        'NOW_IM_JUST_FUCKING_WITH_YOU',
+        'MY_OLD_STYLE_CONST'.$this->getSuffixForRootDefinitions(),
+        'MY_OTHER_OLD_STYLE_CONST'.$this->getSuffixForRootDefinitions(),
+        'NOW_IM_JUST_MESSING_WITH_YOU'.$this->getSuffixForRootDefinitions(),
       },
       $this->parser?->getConstantNames(),
     );

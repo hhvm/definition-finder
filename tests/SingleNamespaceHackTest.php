@@ -41,4 +41,8 @@ final class SingleNamespaceHackTest extends \AbstractHackTest {
       $derp->getParentClassName(),
     );
   }
+
+  protected function getSuffixForRootDefinitions(): string {
+    return '_FROM_SINGLE_NS';
+  }
 }
