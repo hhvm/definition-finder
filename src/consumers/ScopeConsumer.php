@@ -570,7 +570,7 @@ final class ScopeConsumer extends Consumer {
         $is_func_or_const = true;
         continue;
       }
-      invariant($ttype === T_STRING, 'expected definition name');
+      invariant(StringishTokens::isValid($ttype), 'expected definition name');
       $name = $t;
       $alias = $t;
 

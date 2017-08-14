@@ -183,4 +183,19 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
     );
   }
+
+  public function testUseConflictingHSLNamespace(): void {
+    $code = "<?hh\n".
+      "use namespace HH\Lib\{Dict, Keyset, Vec};".
+      "function my_func(Dict\A \$_, Keyset\A \$_, Vec\A \$_): void {}";
+    $def = FileParser::FromData($code)->getFunction('my_func');
+    $this->assertEquals(
+      Vector {
+        "HH\\Lib\\Dict\\A",
+        "HH\\Lib\\Keyset\\A",
+        "HH\\Lib\\Vec\\A",
+      },
+      $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+    );
+  }
 }
