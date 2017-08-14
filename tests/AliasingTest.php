@@ -172,4 +172,15 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
     );
   }
+
+  public function testGroupUseNamespace(): void {
+    $code = "<?hh\n".
+      "use namespace Prefixes\{Foo, Herp};\n".
+      "function my_func(Foo\Bar \$_, Herp\Derp \$_): void {}";
+    $def = FileParser::FromData($code)->getFunction('my_func');
+    $this->assertEquals(
+      Vector { "Prefixes\\Foo\\Bar", "Prefixes\\Herp\\Derp" },
+      $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+    );
+  }
 }
