@@ -97,4 +97,5 @@ enum StringishTokens: int {
 enum UseStatementType: string {
   NAMESPACE_ONLY = 'use namespace';
   NAMESPACE_AND_TYPE = 'use';
+  TYPE_ONLY = 'use type';
 }

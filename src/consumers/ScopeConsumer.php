@@ -518,6 +518,9 @@ final class ScopeConsumer extends Consumer {
       } else if ($type === T_NAMESPACE && count($parts) === 0) {
         $import_type = UseStatementType::NAMESPACE_ONLY;
         continue;
+      } else if ($type === T_TYPE && count($parts) === 0) {
+        $import_type = UseStatementType::TYPE_ONLY;
+        continue;
       } else if ($type === T_FUNCTION || $type === T_CONST) {
         // 'use function' and 'use const' do not create any type aliases
         $this->consumeStatement();
@@ -549,6 +552,12 @@ final class ScopeConsumer extends Consumer {
           if (!$this->usedNamespaces->containsKey($alias)) {
             $this->usedNamespaces[$alias] = $qualified;
           }
+          // `use type` takes precedenced
+          if (!$this->usedTypes->containsKey($alias)) {
+            $this->usedTypes[$alias] = $qualified;
+          }
+          break;
+        case UseStatementType::TYPE_ONLY:
           $this->usedTypes[$alias] = $qualified;
           break;
       }

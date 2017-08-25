@@ -198,4 +198,26 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
     );
   }
+
+  public function testUseType(): void {
+    $code = "<?hh\n".
+      "use type Foo\\Bar;\n".
+      "function my_func(Bar \$_): void {}";
+    $def = FileParser::FromData($code)->getFunction('my_func');
+    $this->assertEquals(
+      Vector { "Foo\\Bar" },
+      $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+    );
+  }
+
+  public function testGroupUseType(): void {
+    $code = "<?hh\n".
+      "use type Foo\\{Bar, Baz};\n".
+      "function my_func(Bar \$_, Baz \$_): void {}";
+    $def = FileParser::FromData($code)->getFunction('my_func');
+    $this->assertEquals(
+      Vector { "Foo\\Bar", "Foo\\Baz" },
+      $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+    );
+  }
 }
