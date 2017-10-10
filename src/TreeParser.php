@@ -16,7 +16,7 @@ class TreeParser extends BaseParser {
 
   private function __construct(string $path) {
     $builder = new ScannedScopeBuilder(shape(
-      'position' => shape('filename' => '__TREE__'),
+      'position' => shape('filename' => '__TREE__', 'line' => null),
       'sourceType' => SourceType::MULTIPLE_FILES,
     ));
 

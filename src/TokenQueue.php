@@ -39,11 +39,27 @@ class TokenQueue {
           break;
         }
         $line = $token[2];
-        $this->tokens[] =
-          new NGToken($token[1], $token[0], shape('firstLine' => $line));
+        $this->tokens[] = new NGToken(
+          $token[1],
+          $token[0],
+          shape(
+            'firstLine' => $line,
+            'firstChar' => null,
+            'lastChar' => null,
+            'lastLine' => null,
+          ),
+        );
       } else {
-        $this->tokens[] =
-          new NGToken($token, null, shape('firstLine' => $line));
+        $this->tokens[] = new NGToken(
+          $token,
+          null,
+          shape(
+            'firstLine' => $line,
+            'firstChar' => null,
+            'lastChar' => null,
+            'lastLine' => null,
+          ),
+        );
       }
     }
   }
