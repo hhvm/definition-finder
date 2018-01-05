@@ -1,6 +1,8 @@
 #!/bin/sh
 set -ex
 hhvm --version
+apt-get update -y
+apt-get install -y binutils
 echo hhvm.jit=0 >> /etc/hhvm/php.ini
 curl https://getcomposer.org/installer | hhvm --php -- /dev/stdin --install-dir=/usr/local/bin --filename=composer
 
