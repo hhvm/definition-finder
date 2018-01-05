@@ -26,7 +26,7 @@ function try_parse(string $path): void {
         escapeshellarg(PHP_BINARY),
         escapeshellarg($path),
       ),
-      $ret_code,
+      &$ret_code,
     );
     if ($ret_code !== 0) {
       print ("HHVM SYNTAX ERROR\n");
