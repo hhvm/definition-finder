@@ -11,14 +11,15 @@
 
 namespace Facebook\DefinitionFinder\Tests;
 
-use Facebook\DefinitionFinder\TreeParser;
+use type Facebook\DefinitionFinder\TreeParser;
+use function Facebook\FBExpect\expect;
 
-class TreeTest extends \PHPUnit_Framework_TestCase {
+final class TreeTest extends \PHPUnit_Framework_TestCase {
   public function testTreeDefs(): void {
     $parser = TreeParser::FromPath(__DIR__.'/data/');
     // From multiple files
     $classes = $parser->getClassNames();
-    $this->assertContains("SingleNamespace\\SimpleClass", $classes);
-    $this->assertContains("Namespaces\\AreNestedNow\\SimpleClass", $classes);
+    expect($classes)->toContain("SingleNamespace\\SimpleClass");
+    expect($classes)->toContain("Namespaces\\AreNestedNow\\SimpleClass");
   }
 }

@@ -15,6 +15,8 @@ use Facebook\DefinitionFinder\FileParser;
 use Facebook\DefinitionFinder\ScannedBase;
 use Facebook\DefinitionFinder\ScannedFunction;
 
+use namespace HH\Lib\Vec;
+
 class DocCommentTest extends \PHPUnit_Framework_TestCase {
   private Map<string, ScannedBase> $defs = Map {};
 
@@ -74,11 +76,11 @@ class DocCommentTest extends \PHPUnit_Framework_TestCase {
     $params = $fun->getParameters();
     $this->assertEquals(
       vec['commented', 'uncommented'],
-      $params->map($x ==> $x->getName()),
+      Vec\map($params, $x ==> $x->getName()),
     );
     $this->assertEquals(
       vec['/** param doc */', null],
-      $params->map($x ==> $x->getDocComment()),
+      Vec\map($params, $x ==> $x->getDocComment()),
     );
   }
 

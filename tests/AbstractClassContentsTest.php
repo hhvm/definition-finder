@@ -11,8 +11,11 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\FileParser;
-use Facebook\DefinitionFinder\ScannedClass;
+use type Facebook\DefinitionFinder\{
+  FileParser,
+  ScannedClass,
+};
+use namespace HH\Lib\Vec;
 
 class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
   private ?ScannedClass $class;
@@ -26,7 +29,7 @@ class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
   public function testClassIsAbstract(): void {
     $this->assertEquals(
       vec[true, false],
-      $this->classes?->map($x ==> $x->isAbstract()),
+      Vec\map($this->classes ?? vec[], $x ==> $x->isAbstract()),
       'isAbstract',
     );
   }
@@ -39,7 +42,7 @@ class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
     );
     $this->assertEquals(
       vec[false, true],
-      $class?->getMethods()?->map($x ==> $x->isAbstract()),
+      Vec\map($class?->getMethods() ?? vec[], $x ==> $x->isAbstract()),
       'isAbstract',
     );
   }

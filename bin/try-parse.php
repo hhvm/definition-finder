@@ -12,7 +12,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-require_once (__DIR__.'/../vendor/autoload.php');
+require_once (__DIR__.'/../vendor/hh_autoload.php');
 
 function try_parse(string $path): void {
   printf('%s ... ', $path);

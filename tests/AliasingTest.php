@@ -11,7 +11,8 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\FileParser;
+use type Facebook\DefinitionFinder\FileParser;
+use namespace HH\Lib\Vec;
 
 final class AliasingTest extends \PHPUnit_Framework_TestCase {
   public function testSimpleUse(): void {
@@ -103,12 +104,12 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "function my_func(Foo \$foo, Bar \$bar, Baz \$baz) {}";
     $def = FileParser::FromData($code)->getFunction('MyNamespace\\my_func');
     $this->assertEquals(
-      Vector {
+      vec[
         "MyOtherNamespace\\Foo",
         "MyNamespace\\Bar",
         "MyOtherNamespace\\Bar\\Baz",
-      },
-      $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+      ],
+      Vec\map($def->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     );
   }
 
@@ -155,12 +156,12 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "function my_func(Foo \$foo, Bar \$bar, Baz \$baz) {}";
     $def = FileParser::FromData($code)->getFunction('MyNamespace\\my_func');
     $this->assertEquals(
-      Vector {
+      vec[
         "MyNamespace\\Foo",
         "MyNamespace\\Bar",
         "MyOtherNamespace\\Baz",
-      },
-      $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+      ],
+      Vec\map($def->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     );
   }
 
@@ -169,7 +170,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       ->getFunction('main');
     $this->assertEquals(
       vec["Bar\\Derp", "Foo\\Derp"],
-      $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+      Vec\map($def->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     );
   }
 
@@ -180,7 +181,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
     $def = FileParser::FromData($code)->getFunction('my_func');
     $this->assertEquals(
       vec["Prefixes\\Foo\\Bar", "Prefixes\\Herp\\Derp"],
-      $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+      Vec\map($def->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     );
   }
 
@@ -190,12 +191,12 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "function my_func(Dict\A \$_, Keyset\A \$_, Vec\A \$_): void {}";
     $def = FileParser::FromData($code)->getFunction('my_func');
     $this->assertEquals(
-      Vector {
+      vec[
         "HH\\Lib\\Dict\\A",
         "HH\\Lib\\Keyset\\A",
         "HH\\Lib\\Vec\\A",
-      },
-      $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+      ],
+      Vec\map($def->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     );
   }
 
@@ -206,7 +207,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
     $def = FileParser::FromData($code)->getFunction('my_func');
     $this->assertEquals(
       vec["Foo\\Bar"],
-      $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+      Vec\map($def->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     );
   }
 
@@ -217,7 +218,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
     $def = FileParser::FromData($code)->getFunction('my_func');
     $this->assertEquals(
       vec["Foo\\Bar", "Foo\\Baz"],
-      $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+      Vec\map($def->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     );
   }
 }

@@ -23,11 +23,11 @@ abstract class AbstractPHPTest extends PHPUnit_Framework_TestCase {
 
   public function testClasses(): void {
     $this->assertEquals(
-      Vector {
+      vec[
         $this->getPrefix().'SimpleClass',
         $this->getPrefix().'SimpleAbstractClass',
         $this->getPrefix().'SimpleFinalClass',
-      },
+      ],
       $this->parser?->getClassNames(),
     );
   }

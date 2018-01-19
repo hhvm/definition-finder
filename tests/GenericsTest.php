@@ -11,8 +11,11 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\FileParser;
-use Facebook\DefinitionFinder\RelationshipToken;
+use type Facebook\DefinitionFinder\{
+  FileParser,
+  RelationshipToken,
+};
+use namespace HH\Lib\{C, Vec};
 
 class GenericsTest extends \PHPUnit_Framework_TestCase {
   public function testClassHasGenerics(): void {
@@ -22,12 +25,12 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       vec['Tk', 'Tv'],
-      $class->getGenericTypes()->map($x ==> $x->getName()),
+      Vec\map($class->getGenericTypes(), $x ==> $x->getName()),
     );
 
     $this->assertEquals(
       vec[0, 0],
-      $class->getGenericTypes()->map($x ==> $x->getConstraints()->count()),
+      Vec\map($class->getGenericTypes(), $x ==> C\count($x->getConstraints())),
     );
   }
 
@@ -38,12 +41,15 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       vec['Tk', 'Tv'],
-      $function->getGenericTypes()->map($x ==> $x->getName()),
+      Vec\map($function->getGenericTypes(), $x ==> $x->getName()),
     );
 
     $this->assertEquals(
       vec[0, 0],
-      $function->getGenericTypes()->map($x ==> $x->getConstraints()->count()),
+      Vec\map(
+        $function->getGenericTypes(),
+        $x ==> C\count($x->getConstraints()),
+      ),
     );
   }
 
@@ -54,13 +60,14 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       vec['Bar', 'Baz'],
-      $class->getGenericTypes()->map($x ==> $x->getConstraints()[0]['type']),
+      Vec\map($class->getGenericTypes(), $x ==> $x->getConstraints()[0]['type']),
     );
     $this->assertEquals(
       vec[RelationshipToken::SUBTYPE, RelationshipToken::SUPERTYPE],
-      $class
-        ->getGenericTypes()
-        ->map($x ==> $x->getConstraints()[0]['relationship']),
+      Vec\map(
+        $class->getGenericTypes(),
+        $x ==> $x->getConstraints()[0]['relationship'],
+      ),
     );
   }
 
@@ -70,10 +77,10 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $constraints =
       $parser->getClass('Foo')->getGenericTypes()[0]->getConstraints();
     $this->assertEquals(
-      ImmVector {
+      vec[
         shape('type' => 'Herp', 'relationship' => RelationshipToken::SUPERTYPE),
         shape('type' => 'Derp', 'relationship' => RelationshipToken::SUBTYPE),
-      },
+      ],
       $constraints,
     );
   }
@@ -85,7 +92,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       vec['Bar\Baz'],
-      $class->getGenericTypes()->map($x ==> $x->getConstraints()[0]['type']),
+      Vec\map($class->getGenericTypes(), $x ==> $x->getConstraints()[0]['type']),
     );
   }
 
@@ -97,19 +104,19 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       vec['Ta', 'Tb', 'Tc'],
-      $generics->map($x ==> $x->getName()),
+      Vec\map($generics, $x ==> $x->getName()),
     );
     $this->assertEquals(
       vec[true, false, false],
-      $generics->map($x ==> $x->isContravariant()),
+      Vec\map($generics, $x ==> $x->isContravariant()),
     );
     $this->assertEquals(
       vec[false, true, false],
-      $generics->map($x ==> $x->isInvariant()),
+      Vec\map($generics, $x ==> $x->isInvariant()),
     );
     $this->assertEquals(
       vec[false, false, true],
-      $generics->map($x ==> $x->isCovariant()),
+      Vec\map($generics, $x ==> $x->isCovariant()),
     );
   }
 
@@ -148,9 +155,10 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh function foo(ImmMap<string,string,> $bar): void {}';
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
-    $param_types = $function
-      ->getParameters()
-      ->map($param ==> $param->getTypehint()?->getTypeText());
+    $param_types = Vec\map(
+      $function->getParameters(),
+      $param ==> $param->getTypehint()?->getTypeText(),
+    );
     $this->assertEquals(vec['ImmMap<string,string>'], $param_types);
   }
 }

@@ -13,6 +13,7 @@ namespace Facebook\DefinitionFinder\Test;
 
 use Facebook\DefinitionFinder\FileParser;
 use Facebook\DefinitionFinder\ScannedClass;
+use namespace HH\Lib\Vec;
 
 class FinalTest extends \PHPUnit_Framework_TestCase {
   private ?vec<ScannedClass> $classes;
@@ -25,7 +26,7 @@ class FinalTest extends \PHPUnit_Framework_TestCase {
   public function testClassIsFinal(): void {
     $this->assertEquals(
       vec[true, false],
-      $this->classes?->map($x ==> $x->isFinal()),
+      Vec\map($this->classes?? vec[], $x ==> $x->isFinal()),
       'isFinal',
     );
   }
@@ -34,7 +35,7 @@ class FinalTest extends \PHPUnit_Framework_TestCase {
     $class = $this->classes ? $this->classes[1] : null;
     $this->assertEquals(
       vec[true, false],
-      $class?->getMethods()?->map($x ==> $x->isFinal()),
+      Vec\map($class?->getMethods()?? vec[], $x ==> $x->isFinal()),
       'isFinal',
     );
   }

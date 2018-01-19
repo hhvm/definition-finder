@@ -11,17 +11,21 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\FileParser;
-use Facebook\DefinitionFinder\ScannedTypehint;
+use type Facebook\DefinitionFinder\{
+  FileParser,
+  ScannedTypehint,
+};
+use namespace HH\Lib\Vec;
+use function Facebook\FBExpect\expect;
 
-class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
+final class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
   public function testFunctionWithWhitespaceBeforeParamsList(): void {
     $data = '<?hh function foo ($bar) {};';
     $parser = FileParser::FromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
       vec['bar'],
-      $fun->getParameters()->map($x ==> $x->getName()),
+      Vec\map($fun->getParameters(), $x ==> $x->getName()),
     );
   }
 
@@ -41,7 +45,7 @@ class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
       vec['Herp', 'Derp'],
-      $fun->getAttributes()->keys(),
+      Vec\keys($fun->getAttributes()),
     );
   }
 
@@ -78,6 +82,6 @@ class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
   public function testTrailingCommaInAsyncReturnTuple(): void {
     $data = '<?hh async function herp(): Awaitable<(string, string, )> {}';
     $parser = FileParser::FromData($data);
-    $this->assertContains('herp', $parser->getFunctionNames());
+    expect($parser->getFunctionNames())->toContain('herp');
   }
 }

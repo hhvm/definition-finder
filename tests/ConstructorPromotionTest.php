@@ -11,9 +11,12 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\FileParser;
-use Facebook\DefinitionFinder\ScannedClass;
-use Facebook\DefinitionFinder\ScannedMethod;
+use type Facebook\DefinitionFinder\{
+  FileParser,
+  ScannedClass,
+  ScannedMethod,
+};
+use namespace HH\Lib\Vec;
 
 class ConstructorPromotionTest extends \PHPUnit_Framework_TestCase {
   private ?ScannedClass $class;
@@ -41,9 +44,9 @@ class Foo {
   }
 
   public function testConstructorParameters(): void {
-    $meths = $this->class?->getMethods();
-    $constructors = $meths?->filter($x ==> $x->getName() === '__construct');
-    $constructor = $constructors?->get(0);
+    $meths = $this->class?->getMethods() ?? vec[];
+    $constructors = Vec\filter($meths, $x ==> $x->getName() === '__construct');
+    $constructor = $constructors[0] ?? null;
     $this->assertNotNull($constructor, 'did not find constructor');
     assert($constructor instanceof ScannedMethod);
 
@@ -51,11 +54,11 @@ class Foo {
     $params = $constructor->getParameters();
     $this->assertEquals(
       vec['foo', 'bar', 'baz'],
-      $params->map($x ==> $x->getName()),
+      Vec\map($params, $x ==> $x->getName()),
     );
     $this->assertEquals(
       vec['string', 'mixed', 'int'],
-      $params->map($x ==> $x->getTypehint()?->getTypeName()),
+      Vec\map($params, $x ==> $x->getTypehint()?->getTypeName()),
     );
   }
 
@@ -64,27 +67,27 @@ class Foo {
 
     $this->assertEquals(
       vec['foo', 'bar', 'baz'],
-      $props?->map($x ==> $x->getName()),
+      Vec\map($props?? vec[], $x ==> $x->getName()),
     );
 
     $this->assertEquals(
       vec[true, false, false],
-      $props?->map($x ==> $x->isPublic()),
+      Vec\map($props?? vec[], $x ==> $x->isPublic()),
     );
 
     $this->assertEquals(
       vec['string', 'mixed', 'int'],
-      $props?->map($x ==> $x->getTypehint()?->getTypeName()),
+      Vec\map($props?? vec[], $x ==> $x->getTypehint()?->getTypeName()),
     );
 
     $this->assertEquals(
       vec[Map {}, dict['HerpDerp' => vec[]], Map {} ],
-      $props?->map($x ==> $x->getAttributes()),
+      Vec\map($props?? vec[], $x ==> $x->getAttributes()),
     );
 
     $this->assertEquals(
       vec[null, null, '/** baz comment */'],
-      $props?->map($x ==> $x->getDocComment()),
+      Vec\map($props?? vec[], $x ==> $x->getDocComment()),
     );
   }
 }

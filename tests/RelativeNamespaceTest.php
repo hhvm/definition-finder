@@ -9,7 +9,8 @@
  *
  */
 
-use \Facebook\DefinitionFinder\FileParser;
+use type \Facebook\DefinitionFinder\FileParser;
+use namespace HH\Lib\Vec;
 
 /**
  * `namespace\foo` means 'foo in the current namespace - see
@@ -20,24 +21,24 @@ final class RelativeNamespaceTest extends PHPUnit_Framework_TestCase {
     $code = '<?php function foo() { namespace\bar(); } function baz() {}';
     $fp = FileParser::FromData($code);
     $this->assertEquals(
-      array('foo', 'baz'),
-      $fp->getFunctionNames()->toArray(),
+      vec['foo', 'baz'],
+      $fp->getFunctionNames(),
     );
 
     $this->assertEquals(
-      array('', ''),
-      $fp->getFunctions()->map($f ==> $f->getNamespaceName())->toArray(),
+      vec[],
+      Vec\map($fp->getFunctions(), $f ==> $f->getNamespaceName()),
     );
   }
 
   public function testPseudomainUsesRelativeNamespace(): void {
     $code = '<?php namespace\foo(); function bar() {}';
     $fp = FileParser::FromData($code);
-    $this->assertEquals(array('bar'), $fp->getFunctionNames()->toArray());
+    $this->assertEquals(vec['bar'], $fp->getFunctionNames());
 
     $this->assertEquals(
-      array(''),
-      $fp->getFunctions()->map($f ==> $f->getNamespaceName())->toArray(),
+      vec[''],
+      Vec\map($fp->getFunctions(), $f ==> $f->getNamespaceName()),
     );
   }
 }

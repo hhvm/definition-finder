@@ -25,7 +25,7 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
       // Autoimports
       tuple('void', 'void', 'void'),
       tuple('dict<int, string>', 'dict', 'dict<int,string>'),
-      tuple('vec<string>', 'Vector', 'vec<string>'),
+      tuple('Vector<string>', 'Vector', 'Vector<string>'),
       tuple('callable', 'callable', 'callable'),
 
       // Namespacing
@@ -52,7 +52,7 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
       $input.
       " \$_): void {}\n";
     $def = FileParser::FromData($code)->getFunction('MyNamespace\\main');
-    $type = $def->getParameters()->at(0)->getTypehint();
+    $type = $def->getParameters()[0]->getTypehint();
     $this->assertNotNull($type);
     $this->assertSame($name, $type?->getTypeName(), 'type name differs');
     $this->assertSame($text, $type?->getTypeText(), 'type text differs');
@@ -86,7 +86,7 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
   ): void {
     $code = "<?hh \n"."function main(".$input." \$_): void {}\n";
     $def = FileParser::FromData($code)->getFunction('main');
-    $type = $def->getParameters()->at(0)->getTypehint();
+    $type = $def->getParameters()[0]->getTypehint();
     $this->assertNotNull($type);
     $this->assertSame($nullable, $type?->isNullable(), 'nullability differs');
     $this->assertSame($name, $type?->getTypeName(), 'type name differs');

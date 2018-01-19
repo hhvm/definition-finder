@@ -1,4 +1,4 @@
-<phpunit colors="true">
+<phpunit bootstrap="vendor/hh_autoload.php" colors="true">
   <filter>
     <whitelist processUncoveredFilesFromWhitelist="true">
       <directory suffix=".php">src/</directory>

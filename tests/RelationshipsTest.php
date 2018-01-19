@@ -10,7 +10,9 @@
  */
 
 namespace Facebook\DefinitionFinder\Test;
-use Facebook\DefinitionFinder\FileParser;
+
+use type Facebook\DefinitionFinder\FileParser;
+use namespace HH\Lib\{C, Vec};
 
 class RelationshipsTest extends \PHPUnit_Framework_TestCase {
   public function testClassExtends(): void {
@@ -54,7 +56,7 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(vec['KeyedIterable'], $def->getInterfaceNames());
     $this->assertEquals(
       vec['KeyedIterable<Tk,Tv>'],
-      $def->getInterfaceInfo()->map($x ==> $x->getTypeText()),
+      Vec\map($def->getInterfaceInfo(), $x ==> $x->getTypeText()),
     );
   }
 
@@ -63,14 +65,15 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
     $def = FileParser::FromData($data)->getClass('VectorIterable');
     $this->assertEquals(vec['Iterable'], $def->getInterfaceNames());
     $this->assertEquals(
-      vec[vec['Vector'] ],
-      $def
-        ->getInterfaceInfo()
-        ->map($x ==> $x->getGenericTypes()->map($y ==> $y->getTypeName())),
+      vec[vec['Vector']],
+      Vec\map(
+        $def->getInterfaceInfo(),
+        $x ==> Vec\map($x->getGenericTypes(), $y ==> $y->getTypeName()),
+      ),
     );
     $this->assertEquals(
       vec['Iterable<vec<Tv>>'],
-      $def->getInterfaceInfo()->map($x ==> $x->getTypeText()),
+      Vec\map($def->getInterfaceInfo(), $x ==> $x->getTypeText()),
     );
   }
 
@@ -117,11 +120,11 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh class Foo { use Herp<string>; }';
     $def = FileParser::FromData($data)->getClass('Foo');
     $traits = $def->getTraitGenerics();
-    $this->assertCount(1, $traits);
-    $this->assertEquals('Herp', $traits->firstKey());
+    $this->assertEquals(1, C\count($traits));
+    $this->assertEquals('Herp', C\first_key($traits));
     $this->assertEquals(
       vec['string'],
-      $traits->firstValue()?->map($a ==> $a->getTypeText()),
+      Vec\map(C\first($traits) ?? vec[], $a ==> $a->getTypeText()),
     );
   }
 }

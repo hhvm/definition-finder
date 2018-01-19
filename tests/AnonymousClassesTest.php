@@ -11,7 +11,8 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\FileParser;
+use type Facebook\DefinitionFinder\FileParser;
+use namespace HH\Lib\Vec;
 
 final class AnonymousClassesTest extends \PHPUnit_Framework_TestCase {
   public function testParsesInFunction(): void {
@@ -27,7 +28,7 @@ final class AnonymousClassesTest extends \PHPUnit_Framework_TestCase {
     $class = $parser->getClass('Foo');
     $this->assertEquals(
       vec['bar'],
-      $class->getMethods()->map($method ==> $method->getName()),
+      Vec\map($class->getMethods(), $method ==> $method->getName()),
     );
   }
 
@@ -47,7 +48,7 @@ EOF;
     $class = $parser->getClass('Foo');
     $this->assertEquals(
       vec['bar'],
-      $class->getMethods()->map($method ==> $method->getName()),
+      Vec\map($class->getMethods(), $method ==> $method->getName()),
     );
   }
 }

@@ -9,10 +9,13 @@
  *
  */
 
-use Facebook\DefinitionFinder\ScannedClass;
-use Facebook\DefinitionFinder\ScannedFunction;
-use Facebook\DefinitionFinder\ScannedFunctionAbstract;
-use Facebook\DefinitionFinder\ScannedMethod;
+use type Facebook\DefinitionFinder\{
+  ScannedClass,
+  ScannedFunction,
+  ScannedFunctionAbstract,
+  ScannedMethod,
+};
+use namespace HH\Lib\{C, Vec};
 
 abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
   private ?Facebook\DefinitionFinder\FileParser $parser;
@@ -29,7 +32,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
   public function testClasses(): void {
     $this->assertEquals(
-      Vector {
+      vec[
         $this->getPrefix().'SimpleClass',
         $this->getPrefix().'SimpleChildClass',
         $this->getPrefix().'GenericClass',
@@ -38,7 +41,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
         $this->getPrefix().'AbstractClass',
         $this->getPrefix().'xhp_foo',
         $this->getPrefix().'xhp_foo__bar',
-      },
+      ],
       $this->parser?->getClassNames(),
     );
   }
@@ -69,20 +72,20 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
   public function testTypes(): void {
     $this->assertEquals(
-      Vector {
+      vec[
         $this->getPrefix().'MyType',
         $this->getPrefix().'MyGenericType',
-      },
+      ],
       $this->parser?->getTypeNames(),
     );
   }
 
   public function testNewtypes(): void {
     $this->assertEquals(
-      Vector {
+      vec[
         $this->getPrefix().'MyNewtype',
         $this->getPrefix().'MyGenericNewtype',
-      },
+      ],
       $this->parser?->getNewtypeNames(),
     );
   }
@@ -99,7 +102,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
     // this also checks that SimpelClass::iAmNotAGlobalFunction
     // was not listed
     $this->assertEquals(
-      Vector {
+      vec[
         $this->getPrefix().'simple_function',
         $this->getPrefix().'generic_function',
         $this->getPrefix().'constrained_generic_function',
@@ -112,7 +115,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
         $this->getPrefix().'aliased_with_nested_namespace',
         $this->getPrefix().'aliased_namespace',
         $this->getPrefix().'aliased_no_as',
-      },
+      ],
       $this->parser?->getFunctionNames(),
     );
   }
@@ -120,19 +123,19 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
   public function testConstants(): void {
     // Makes sure that GenericClass::NOT_A_GLOBAL_CONSTANT is not returned
     $this->assertEquals(
-      Vector {
+      vec[
         $this->getPrefix().'MY_CONST',
         $this->getPrefix().'MY_TYPED_CONST',
         // define() puts constants into the root namespace
         'MY_OLD_STYLE_CONST'.$this->getSuffixForRootDefinitions(),
         'MY_OTHER_OLD_STYLE_CONST'.$this->getSuffixForRootDefinitions(),
         'NOW_IM_JUST_MESSING_WITH_YOU'.$this->getSuffixForRootDefinitions(),
-      },
+      ],
       $this->parser?->getConstantNames(),
     );
     $this->assertEquals(
       vec['456', '123', '789', "'herp'", "'derp'"],
-      $this->parser?->getConstants()?->map($x ==> $x->getValue()),
+      Vec\map($this->parser?->getConstants() ?? vec[], $x ==> $x->getValue()),
     );
   }
 
@@ -142,12 +145,12 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       vec['Tk', 'Tv'],
-      $class->getGenericTypes()->map($x ==> $x->getName()),
+      Vec\map($class->getGenericTypes(), $x ==> $x->getName()),
     );
 
     $this->assertEquals(
       vec[0, 0],
-      $class->getGenericTypes()->map($x ==> $x->getConstraints()->count()),
+      Vec\map($class->getGenericTypes(), $x ==> C\count($x->getConstraints())),
     );
 
     $class = $this
@@ -157,12 +160,12 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       vec['T'],
-      $class->getGenericTypes()->map($x ==> $x->getName()),
+      Vec\map($class->getGenericTypes(), $x ==> $x->getName()),
     );
 
     $this->assertEquals(
       vec['Foo'],
-      $class->getGenericTypes()->map($x ==> $x->getConstraints()[0]['type']),
+      Vec\map($class->getGenericTypes(), $x ==> $x->getConstraints()[0]['type']),
     );
   }
 
@@ -171,29 +174,30 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       vec['Tk', 'Tv'],
-      $func->getGenericTypes()->map($x ==> $x->getName()),
+      Vec\map($func->getGenericTypes(), $x ==> $x->getName()),
     );
 
     $this->assertEquals(
       vec[0, 0],
-      $func->getGenericTypes()->map($x ==> $x->getConstraints()->count()),
+      Vec\map($func->getGenericTypes(), $x ==> C\count($x->getConstraints())),
     );
 
     $func = $this->getFunction('constrained_generic_function');
 
     $this->assertEquals(
       vec['Tk', 'Tv'],
-      $func->getGenericTypes()->map($x ==> $x->getName()),
+      Vec\map($func->getGenericTypes(), $x ==> $x->getName()),
     );
 
     $this->assertEquals(
       vec['arraykey', null],
-      $func
-        ->getGenericTypes()
-        ->map($x ==> {
+      Vec\map(
+        $func->getGenericTypes(),
+        $x ==> {
           $constraints = $x->getConstraints();
-          return $constraints->isEmpty() ? null : $constraints[0]['type'];
-        }),
+          return $constraints[0]['type'] ?? null;
+        },
+      ),
     );
   }
 
@@ -206,7 +210,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
     $this->assertSame('Vector', $type?->getTypeName());
     $generics = $type?->getGenericTypes();
     $this->assertSame(1, count($generics));
-    $sub_type = $generics?->get(0);
+    $sub_type = $generics[0] ?? null;
     $this->assertSame('int', $sub_type?->getTypeName());
     $this->assertEmpty($sub_type?->getGenericTypes());
 
@@ -214,11 +218,11 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
     $this->assertSame('Vector', $type?->getTypeName());
     $generics = $type?->getGenericTypes();
     $this->assertSame(1, count($generics));
-    $sub_type = $generics?->get(0);
+    $sub_type = $generics[0] ?? null;
     $this->assertSame('Vector', $sub_type?->getTypeName());
     $sub_generics = $sub_type?->getGenericTypes();
     $this->assertSame(1, count($sub_generics));
-    $sub_sub_type = $sub_generics?->get(0);
+    $sub_sub_type = $sub_generics[0] ?? null;
     $this->assertSame('int', $sub_sub_type?->getTypeName());
     $this->assertEmpty($sub_sub_type?->getGenericTypes());
   }
@@ -236,7 +240,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
     };
     foreach ($data as $typeName => $fun) {
       $returnType = $fun->getReturnType();
-      $paramType = $fun->getParameters()->get(0)?->getTypehint();
+      $paramType = ($fun->getParameters()[0] ?? null)?->getTypehint();
       $this->assertSame($typeName, $returnType?->getTypeName());
       $this->assertSame($typeName, $paramType?->getTypeName());
     }
@@ -261,8 +265,8 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
     $method = $this
       ->getClass($className)
       ->getMethods()
-      ->filter($m ==> $m->getName() === $methodName)
-      ->get(0);
+      |> Vec\filter($$, $m ==> $m->getName() === $methodName)
+      |> C\first($$);
     invariant(
       $method !== null,
       'Could not find method %s in class %s',

@@ -11,10 +11,13 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\FileParser;
-use Facebook\DefinitionFinder\ScannedClass;
-use Facebook\DefinitionFinder\ScannedMethod;
-use Facebook\DefinitionFinder\ScannedTypehint;
+use type Facebook\DefinitionFinder\{
+  FileParser,
+  ScannedClass,
+  ScannedMethod,
+  ScannedTypehint,
+};
+use namespace HH\Lib\Vec;
 
 class ParameterTest extends \PHPUnit_Framework_TestCase {
   public function testWithoutTypes(): void {
@@ -55,21 +58,21 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $params = $function->getParameters();
     $this->assertEquals(
       vec['bar', 'baz'],
-      $params->map($x ==> $x->getName()),
+      Vec\map($params, $x ==> $x->getName()),
     );
     $this->assertEquals(
       vec[null, null],
-      $params->map($x ==> $x->getTypehint()),
+      Vec\map($params, $x ==> $x->getTypehint()),
     );
     $this->assertEquals(
       vec[false, true],
-      $params->map($x ==> $x->isOptional()),
+      Vec\map($params, $x ==> $x->isOptional()),
     );
     $this->assertEquals(
       vec['"herp"'],
       $params
-        ->filter($x ==> $x->isOptional() && $x->getName() === 'baz')
-        ->map($x ==> $x->getDefaultString()),
+        |> Vec\filter($$, $x ==> $x->isOptional() && $x->getName() === 'baz')
+        |> Vec\map($$, $x ==> $x->getDefaultString()),
     );
   }
 
@@ -90,13 +93,14 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $function = $parser->getFunction('foo');
     $this->assertEquals(
       vec['bar', 'baz'],
-      $function->getParameters()->map($p ==> $p->getName()),
+      Vec\map($function->getParameters(), $p ==> $p->getName()),
     );
     $this->assertEquals(
       vec[null, $expected],
-      $function
-        ->getParameters()
-        ->map($p ==> $p->isOptional() ? $p->getDefaultString() : null),
+      Vec\map(
+        $function->getParameters(),
+        $p ==> $p->isOptional() ? $p->getDefaultString() : null,
+      ),
     );
   }
 
@@ -108,15 +112,15 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $params = $function->getParameters();
     $this->assertEquals(
       vec['bar'],
-      $function->getParameters()->map($x ==> $x->getName()),
+      Vec\map($function->getParameters(), $x ==> $x->getName()),
     );
     $this->assertEquals(
       vec[new ScannedTypehint('string', 'string', vec[], false)],
-      $function->getParameters()->map($x ==> $x->getTypehint()),
+      Vec\map($function->getParameters(), $x ==> $x->getTypehint()),
     );
     $this->assertEquals(
       vec['"baz"'],
-      $params->map($x ==> $x->getDefaultString()),
+      Vec\map($params, $x ==> $x->getDefaultString()),
     );
   }
 
@@ -128,11 +132,11 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $params = $function->getParameters();
     $this->assertEquals(
       vec['bar'],
-      $function->getParameters()->map($x ==> $x->getName()),
+      Vec\map($function->getParameters(), $x ==> $x->getName()),
     );
     $this->assertSame(
       'Iterator',
-      $function->getParameters()->at(0)->getTypehint()?->getTypeName(),
+      $function->getParameters()[0]->getTypehint()?->getTypeName(),
     );
   }
 
@@ -144,11 +148,11 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $params = $function->getParameters();
     $this->assertEquals(
       vec['bar'],
-      $function->getParameters()->map($x ==> $x->getName()),
+      Vec\map($function->getParameters(), $x ==> $x->getName()),
     );
     $this->assertSame(
       'Foo\\Bar',
-      $function->getParameters()->at(0)->getTypehint()?->getTypeName(),
+      $function->getParameters()[0]->getTypehint()?->getTypeName(),
     );
   }
 
@@ -160,11 +164,11 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $params = $function->getParameters();
     $this->assertEquals(
       vec['bar'],
-      $function->getParameters()->map($x ==> $x->getName()),
+      Vec\map($function->getParameters(), $x ==> $x->getName()),
     );
     $this->assertSame(
       'callable',
-      $function->getParameters()->at(0)->getTypehint()?->getTypeName(),
+      $function->getParameters()[0]->getTypehint()?->getTypeName(),
     );
   }
 
@@ -176,11 +180,11 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $params = $function->getParameters();
     $this->assertEquals(
       vec['bar', 'baz'],
-      $params->map($x ==> $x->getName()),
+      Vec\map($params, $x ==> $x->getName()),
     );
     $this->assertEquals(
       vec[true, false],
-      $params->map($x ==> $x->isPassedByReference()),
+      Vec\map($params, $x ==> $x->isPassedByReference()),
     );
   }
 
@@ -190,14 +194,14 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
-    $this->assertEquals(vec['bar'], $params->map($x ==> $x->getName()));
+    $this->assertEquals(vec['bar'], Vec\map($params, $x ==> $x->getName()));
     $this->assertEquals(
       'string',
-      $params->at(0)->getTypehint()?->getTypeText(),
+      $params[0]->getTypehint()?->getTypeText(),
     );
     $this->assertEquals(
       vec[true],
-      $params->map($x ==> $x->isPassedByReference()),
+      Vec\map($params, $x ==> $x->isPassedByReference()),
     );
   }
 
@@ -208,7 +212,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       vec['array'],
-      $function->getParameters()->map($x ==> $x->getTypehint()?->getTypeName()),
+      Vec\map($function->getParameters(), $x ==> $x->getTypehint()?->getTypeName()),
     );
   }
 
@@ -219,9 +223,9 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       vec['bar'],
-      $function->getParameters()->map($x ==> $x->getName()),
+      Vec\map($function->getParameters(), $x ==> $x->getName()),
     );
-    $this->assertNull($function->getParameters()->at(0)->getTypehint());
+    $this->assertNull($function->getParameters()[0]->getTypehint());
   }
 
   public function testWithUntypedVariadicParam(): void {
@@ -233,20 +237,20 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       vec['bar', 'baz'],
-      $params->map($x ==> $x->getName()),
+      Vec\map($params, $x ==> $x->getName()),
     );
 
     $this->assertEquals(
       vec[false, true],
-      $params->map($x ==> $x->isVariadic()),
+      Vec\map($params, $x ==> $x->isVariadic()),
     );
 
     $this->assertEquals(
-      Vector {
+      vec[
         new ScannedTypehint('string', 'string', vec[], false),
         null,
-      },
-      $params->map($x ==> $x->getTypehint()),
+      ],
+      Vec\map($params, $x ==> $x->getTypehint()),
     );
   }
 
@@ -262,27 +266,27 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $function = $parser->getFunction('foo');
     $params = $function->getParameters();
 
-    $this->assertEquals(vec['bar'], $params->map($x ==> $x->getName()));
+    $this->assertEquals(vec['bar'], Vec\map($params, $x ==> $x->getName()));
 
-    $this->assertEquals(vec[true], $params->map($x ==> $x->isVariadic()));
+    $this->assertEquals(vec[true], Vec\map($params, $x ==> $x->isVariadic()));
 
     $this->assertEquals(
-      Vector {
+      vec[
         new ScannedTypehint(
           'array',
           'array',
           vec[new ScannedTypehint('mixed', 'mixed', vec[], false)],
           false,
         ),
-      },
-      $params->map($x ==> $x->getTypehint()),
+      ],
+      Vec\map($params, $x ==> $x->getTypehint()),
     );
   }
 
   public function testWithHackCallableTypehint(): void {
     $data = '<?hh function foo((function(int): string) $bar) {}';
     $parser = FileParser::FromData($data);
-    $type = $parser->getFunction('foo')->getParameters()->at(0)->getTypehint();
+    $type = $parser->getFunction('foo')->getParameters()[0]->getTypehint();
 
     $this->assertSame('callable', $type?->getTypeName());
     $this->assertSame('(function(int):string)', $type?->getTypeText());
@@ -291,7 +295,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
   public function testEmptyShapeTypehint(): void {
     $data = '<?hh function foo(shape() $bar) {}';
     $parser = FileParser::FromData($data);
-    $type = $parser->getFunction('foo')->getParameters()->at(0)->getTypehint();
+    $type = $parser->getFunction('foo')->getParameters()[0]->getTypehint();
 
     $this->assertSame('shape', $type?->getTypeName());
     $this->assertSame('shape()', $type?->getTypeText());
@@ -303,11 +307,11 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
       vec['Herp'],
-      $fun->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+      Vec\map($fun->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     );
     $this->assertEquals(
       vec[false],
-      $fun->getParameters()->map($p ==> $p->getTypehint()?->isNullable()),
+      Vec\map($fun->getParameters(), $p ==> $p->getTypehint()?->isNullable()),
     );
   }
 
@@ -317,11 +321,11 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
       vec['Herp'],
-      $fun->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
+      Vec\map($fun->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     );
     $this->assertEquals(
       vec[true],
-      $fun->getParameters()->map($p ==> $p->getTypehint()?->isNullable()),
+      Vec\map($fun->getParameters(), $p ==> $p->getTypehint()?->isNullable()),
     );
   }
 }

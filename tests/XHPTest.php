@@ -11,15 +11,19 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\FileParser;
-use Facebook\DefinitionFinder\ScannedClass;
+use type Facebook\DefinitionFinder\{
+  FileParser,
+  ScannedClass,
+};
+use function Facebook\FBExpect\expect;
+use namespace HH\Lib\C;
 
-class XHPTest extends \PHPUnit_Framework_TestCase {
+final class XHPTest extends \PHPUnit_Framework_TestCase {
   public function testXHPRootClass(): void {
     $data = '<?hh class :foo:bar {}';
 
     $parser = FileParser::FromData($data);
-    $this->assertContains('xhp_foo__bar', $parser->getClassNames());
+    expect($parser->getClassNames())->toContain('xhp_foo__bar');
   }
 
   public function testNullableXHPReturn(): void {
@@ -27,8 +31,7 @@ class XHPTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $function = $parser->getFunction('foo');
     $ret = $function->getReturnType();
-    $this->assertNotNull($ret);
-    assert($ret !== null); // typechecker
+    $ret = expect($ret)->toNotBeNull();
     $this->assertSame('xhp_foo__bar', $ret->getTypeName());
     $this->assertTrue($ret->isNullable());
   }
@@ -37,7 +40,7 @@ class XHPTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh class :foo:bar extends :herp:derp {}';
 
     $parser = FileParser::FromData($data);
-    $this->assertContains('xhp_foo__bar', $parser->getClassNames());
+    expect($parser->getClassNames())->toContain('xhp_foo__bar');
 
     $this->assertSame(
       'xhp_herp__derp',
@@ -51,7 +54,7 @@ class XHPTest extends \PHPUnit_Framework_TestCase {
       '<?hh class :foo:bar { attribute enum { "herp", "derp" } myattr @required; }';
 
     $parser = FileParser::FromData($data);
-    $this->assertContains('xhp_foo__bar', $parser->getClassNames());
+    expect($parser->getClassNames())->toContain('xhp_foo__bar');
   }
 
   public function testXHPEnumAttributesParse(): void {
@@ -65,7 +68,7 @@ class XHPTest extends \PHPUnit_Framework_TestCase {
 EOF;
 
     $parser = FileParser::FromData($data);
-    $this->assertContains('xhp_example', $parser->getClassNames());
+    expect($parser->getClassNames())->toContain('xhp_example');
   }
 
   public function testXHPClassNamesAreCorrect(): void {
@@ -73,7 +76,7 @@ EOF;
 
     $this->assertContains(
       /* UNSAFE_EXPR */ :foo:bar:baz:herp-derp::class,
-      $parser->getClassNames()->get(0),
+      C\onlyx($parser->getClassNames()),
     );
   }
 }

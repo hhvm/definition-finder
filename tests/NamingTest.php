@@ -11,7 +11,8 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\FileParser;
+use type Facebook\DefinitionFinder\FileParser;
+use namespace HH\Lib\Vec;
 
 class NamingTest extends \PHPUnit_Framework_TestCase {
   public function testFunctionCalledSelect(): void {
@@ -94,7 +95,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       FileParser::FromData($data)
         ->getClass('Foo')
         ->getConstants()
-        ->map($x ==> $x->getName()),
+        |> Vec\map($$, $x ==> $x->getName()),
     );
   }
 
@@ -159,7 +160,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       "}";
     $parser = FileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
-    $method = $class->getMethods()->at(0);
+    $method = $class->getMethods()[0];
     $this->assertSame('this', $method->getReturnType()?->getTypeName());
   }
 
@@ -171,7 +172,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       "}";
     $parser = FileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
-    $method = $class->getMethods()->at(0);
+    $method = $class->getMethods()[0];
     $this->assertSame('T', $method->getReturnType()?->getTypeName());
   }
 
@@ -183,7 +184,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       "}";
     $parser = FileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
-    $method = $class->getMethods()->at(0);
+    $method = $class->getMethods()[0];
     $this->assertSame('T', $method->getReturnType()?->getTypeName());
     $this->assertTrue($method->getReturnType()?->isNullable());
   }
@@ -196,7 +197,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       "}";
     $parser = FileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
-    $method = $class->getMethods()->at(0);
+    $method = $class->getMethods()[0];
     $this->assertSame('T', $method->getReturnType()?->getTypeName());
   }
 
@@ -213,14 +214,14 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       "  ): TClassGeneric {}";
     $parser = FileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
-    $method = $class->getMethods()->at(0);
+    $method = $class->getMethods()[0];
     $this->assertSame(
       'TClassGeneric',
       $method->getReturnType()?->getTypeName(),
     );
     $this->assertSame(
       'TFunctionGeneric',
-      $method->getParameters()->at(0)->getTypehint()?->getTypeName(),
+      $method->getParameters()[0]->getTypehint()?->getTypeName(),
     );
   }
 
@@ -232,10 +233,10 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       "}";
     $parser = FileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
-    $method = $class->getMethods()->at(0);
+    $method = $class->getMethods()[0];
     $this->assertSame(
       'T',
-      $method->getParameters()->at(0)->getTypehint()?->getTypeName(),
+      $method->getParameters()[0]->getTypehint()?->getTypeName(),
     );
   }
 }

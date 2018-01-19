@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c20711d85a13a408c3c9aaaebd45afa",
+    "content-hash": "0cb324cb93d9381c94fff890112c4fd6",
     "packages": [
         {
             "name": "fredemmott/hack-error-suppressor",
@@ -225,6 +225,39 @@
                 "instantiate"
             ],
             "time": "2015-06-14T21:17:01+00:00"
+        },
+        {
+            "name": "facebook/fbexpect",
+            "version": "v0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hhvm/fbexpect.git",
+                "reference": "21e8ea201df6555bcf014a75560426650c7d961b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hhvm/fbexpect/zipball/21e8ea201df6555bcf014a75560426650c7d961b",
+                "reference": "21e8ea201df6555bcf014a75560426650c7d961b",
+                "shasum": ""
+            },
+            "require": {
+                "91carriage/phpunit-hhi": "^5.7",
+                "hhvm": "^3.23",
+                "phpunit/phpunit": "^5.7"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ],
+                "files": [
+                    "src/expect.php",
+                    "src/utils.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "Unit test helpers for Facebook projects",
+            "time": "2018-01-05T21:25:50+00:00"
         },
         {
             "name": "hhvm/systemlib-extractor",

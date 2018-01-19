@@ -11,10 +11,14 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\FileParser;
-use Facebook\DefinitionFinder\ScannedBase;
-use Facebook\DefinitionFinder\ScannedClass;
-use Facebook\DefinitionFinder\ScannedFunction;
+use type Facebook\DefinitionFinder\{
+  FileParser,
+  ScannedBase,
+  ScannedClass,
+  ScannedFunction,
+};
+
+use namespace HH\Lib\Vec;
 
 class AttributesTest extends \PHPUnit_Framework_TestCase {
   private vec<ScannedClass> $classes = vec[];
@@ -106,11 +110,11 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $fun = $parser->getFunction('foo');
     $params = $fun->getParameters();
-    $this->assertEquals(vec['baz'], $params->map($x ==> $x->getName()));
+    $this->assertEquals(vec['baz'], Vec\map($params, $x ==> $x->getName()));
 
     $this->assertEquals(
       vec[dict['Bar' => vec[]] ],
-      $params->map($x ==> $x->getAttributes()),
+      Vec\map($params, $x ==> $x->getAttributes()),
     );
   }
 
