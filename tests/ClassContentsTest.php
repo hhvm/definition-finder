@@ -39,7 +39,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     );
     $class = $parser->getClass('ClassUsingAnonymousClass');
     $this->assertEquals(
-      ImmVector { 'methodOne', 'methodTwo' },
+      vec['methodOne', 'methodTwo'],
       $class->getMethods()->map($it ==> $it->getName())->toImmVector(),
     );
   }
@@ -50,7 +50,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       $this->class?->getNamespaceName(),
     );
     $this->assertEquals(
-      Vector { '', '', '', '' },
+      vec['', '', '', ''],
       $this->class?->getMethods()?->map($x ==> $x->getNamespaceName()),
     );
   }
@@ -82,17 +82,17 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   public function testMethodVisibility(): void {
     $this->assertEquals(
-      Vector { true, false, false, true },
+      vec[true, false, false, true],
       $this->class?->getMethods()?->map($x ==> $x->isPublic()),
       'isPublic',
     );
     $this->assertEquals(
-      Vector { false, true, false, false },
+      vec[false, true, false, false],
       $this->class?->getMethods()?->map($x ==> $x->isProtected()),
       'isProtected',
     );
     $this->assertEquals(
-      Vector { false, false, true, false },
+      vec[false, false, true, false],
       $this->class?->getMethods()?->map($x ==> $x->isPrivate()),
       'isPrivate',
     );
@@ -101,23 +101,23 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
   public function testHackConstants(): void {
     $constants = $this->class?->getConstants();
     $this->assertEquals(
-      Vector { 'FOO', 'BAR' },
+      vec['FOO', 'BAR'],
       $constants?->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { 'string', 'int' },
+      vec['string', 'int'],
       $constants?->map($x ==> $x->getTypehint()?->getTypeName()),
     );
     $this->assertEquals(
-      Vector { false, false },
+      vec[false, false],
       $constants?->map($x ==> $x->isAbstract()),
     );
     $this->assertEquals(
-      Vector { "'bar'", '60 * 60 * 24' },
+      vec["'bar'", '60 * 60 * 24'],
       $constants?->map($x ==> $x->getValue()),
     );
     $this->assertEquals(
-      Vector { '/** FooDoc */', '/** BarDoc */' },
+      vec['/** FooDoc */', '/** BarDoc */'],
       $constants?->map($x ==> $x->getDocComment()),
     );
   }
@@ -128,19 +128,19 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $constants = $class->getConstants();
 
     $this->assertEquals(
-      Vector { 'FOO', 'BAR' },
+      vec['FOO', 'BAR'],
       $constants->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { null, null },
+      vec[null, null],
       $constants->map($x ==> $x->getTypehint()),
     );
     $this->assertEquals(
-      Vector { "'bar'", '60 * 60 * 24' },
+      vec["'bar'", '60 * 60 * 24'],
       $constants->map($x ==> $x->getValue()),
     );
     $this->assertEquals(
-      Vector { '/** FooDoc */', '/** BarDoc */' },
+      vec['/** FooDoc */', '/** BarDoc */'],
       $constants->map($x ==> $x->getDocComment()),
     );
   }
@@ -159,14 +159,14 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       $funcs->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { true, false, true },
+      vec[true, false, true],
       $funcs->map($x ==> $x->isPublic()),
     );
   }
 
   public function testMethodsAreStatic(): void {
     $this->assertEquals(
-      Vector { false, false, false, true },
+      vec[false, false, false, true],
       $this->class?->getMethods()?->map($x ==> $x->isStatic()),
       'isPublic',
     );
@@ -174,21 +174,21 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   public function testPropertyNames(): void {
     $this->assertEquals(
-      Vector { 'foo', 'herp' },
+      vec['foo', 'herp'],
       $this->class?->getProperties()?->map($x ==> $x->getName()),
     );
   }
 
   public function testPropertyVisibility(): void {
     $this->assertEquals(
-      Vector { false, true },
+      vec[false, true],
       $this->class?->getProperties()?->map($x ==> $x->isPublic()),
     );
   }
 
   public function testPropertyTypes(): void {
     $this->assertEquals(
-      Vector { 'bool', 'string' },
+      vec['bool', 'string'],
       $this
         ->class
         ?->getProperties()
@@ -201,10 +201,10 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $props = $parser->getClass('Foo')->getProperties();
 
     $this->assertEquals(
-      Vector { 'untypedProperty' },
+      vec['untypedProperty'],
       $props->map($x ==> $x->getName()),
     );
-    $this->assertEquals(Vector { null }, $props->map($x ==> $x->getTypehint()));
+    $this->assertEquals(vec[null], $props->map($x ==> $x->getTypehint()));
   }
 
   public function staticPropertyProvider(): array<array<mixed>> {
@@ -235,15 +235,15 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $class = $parser->getClass('Foo');
     $props = $class->getProperties();
 
-    $this->assertEquals(Vector { 'bar' }, $props->map($x ==> $x->getName()));
+    $this->assertEquals(vec['bar'], $props->map($x ==> $x->getName()));
 
     $this->assertEquals(
-      Vector { $type },
+      vec[$type],
       $props->map($x ==> $x->getTypehint()?->getTypeName()),
     );
 
 
-    $this->assertEquals(Vector { true }, $props->map($x ==> $x->isStatic()));
+    $this->assertEquals(vec[true], $props->map($x ==> $x->isStatic()));
   }
 
   public function testTypeConstant(): void {
@@ -268,7 +268,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $class = $parser->getClass('Bar');
     $this->assertEquals(
-      Vector { Vector { 'self::FOO::BAR' } },
+      vec[vec['self::FOO::BAR'] ],
       $class
         ->getMethods()
         ->map(

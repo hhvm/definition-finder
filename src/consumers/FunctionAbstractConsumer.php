@@ -54,7 +54,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
     $builder = $this->constructBuilder($name)->setByRefReturn($by_ref_return);
 
     list($_, $ttype) = $tq->peek();
-    $generics = Vector {};
+    $generics = vec[];
     if ($ttype === T_TYPELIST_LT) {
       $generics =
         (new GenericsConsumer($this->tq, $this->context))->getGenerics();
@@ -85,7 +85,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
 
   private function consumeParameterList(
     ScannedFunctionAbstractBuilder<T> $builder,
-    \ConstVector<ScannedGeneric> $generics,
+    vec<ScannedGeneric> $generics,
   ): void {
     $this->consumeWhitespace();
     $tq = $this->tq;
@@ -103,7 +103,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
     $param_type = null;
     $byref = false;
     $variadic = false;
-    $attrs = Map {};
+    $attrs = dict[];
     $doc = null;
     while ($tq->haveTokens()) {
       $ngtoken = $tq->shiftNG();
@@ -150,7 +150,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
         $visibility = null;
         $byref = false;
         $variadic = false;
-        $attrs = Map {};
+        $attrs = dict[];
         $doc = null;
         continue;
       }

@@ -18,7 +18,7 @@ class ScannedGeneric {
   public function __construct(
     private string $name,
     private VarianceToken $variance,
-    private ImmVector<self::TConstraint> $constraints,
+    private vec<self::TConstraint> $constraints,
   ) {
   }
 
@@ -26,7 +26,7 @@ class ScannedGeneric {
     return $this->name;
   }
 
-  public function getConstraints(): ImmVector<self::TConstraint> {
+  public function getConstraints(): vec<self::TConstraint> {
     return $this->constraints;
   }
 

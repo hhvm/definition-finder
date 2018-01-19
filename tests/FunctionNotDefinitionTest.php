@@ -18,18 +18,18 @@ use \Facebook\DefinitionFinder\FileParser;
 final class FunctionNotDefinitionTest extends PHPUnit_Framework_TestCase {
   public function testActuallyAFunction(): void {
     $p = FileParser::FromData('<?hh function foo();');
-    $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
+    $this->assertEquals(vec['foo'], $p->getFunctionNames());
   }
 
   public function testFunctionTypeAlias(): void {
     $p = FileParser::FromData('<?hh newtype Foo = function(int): void;');
-    $this->assertEquals(Vector {}, $p->getFunctionNames());
-    $this->assertEquals(Vector { 'Foo' }, $p->getNewtypeNames());
+    $this->assertEquals(vec[], $p->getFunctionNames());
+    $this->assertEquals(vec['Foo'], $p->getNewtypeNames());
 
     // Add extra whitespace
     $p = FileParser::FromData('<?hh newtype Foo = function (int): void;');
-    $this->assertEquals(Vector {}, $p->getFunctionNames());
-    $this->assertEquals(Vector { 'Foo' }, $p->getNewtypeNames());
+    $this->assertEquals(vec[], $p->getFunctionNames());
+    $this->assertEquals(vec['Foo'], $p->getNewtypeNames());
   }
 
   public function testFunctionReturnType(): void {
@@ -38,7 +38,7 @@ final class FunctionNotDefinitionTest extends PHPUnit_Framework_TestCase {
 function foo(\$bar): (function():void) { return \$bar; }
 EOF
     );
-    $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
+    $this->assertEquals(vec['foo'], $p->getFunctionNames());
     $rt = $p->getFunction('foo')->getReturnType();
 
     $this->assertSame('callable', $rt?->getTypeName());
@@ -46,20 +46,20 @@ EOF
   }
 
   public function testReturnsGenericCallable(): void {
-    $code = '<?hh function foo(): (function():Vector<string>) { }';
+    $code = '<?hh function foo(): (function():vec<string>) { }';
     $p = FileParser::FromData($code);
-    $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
+    $this->assertEquals(vec['foo'], $p->getFunctionNames());
 
     $rt = $p->getFunction('foo')->getReturnType();
     $this->assertSame('callable', $rt?->getTypeName());
-    $this->assertSame('(function():Vector<string>)', $rt?->getTypeText());
+    $this->assertSame('(function():vec<string>)', $rt?->getTypeText());
   }
 
   public function testAsParameterType(): void {
     $p = FileParser::FromData(
       '<?hh function foo((function():void) $callback) { }',
     );
-    $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
+    $this->assertEquals(vec['foo'], $p->getFunctionNames());
   }
 
   public function testUsingAnonymousFunctions(): void {
@@ -71,7 +71,7 @@ function foo() {
 }
 EOF
     );
-    $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
+    $this->assertEquals(vec['foo'], $p->getFunctionNames());
   }
 
   public function testAsParameter(): void {
@@ -81,7 +81,7 @@ spl_autoload_register(function(\$class) { });
 function foo() { }
 EOF
     );
-    $this->assertEquals(Vector { 'foo' }, $p->getFunctionNames());
+    $this->assertEquals(vec['foo'], $p->getFunctionNames());
   }
 
   public function testAsRVal(): void {

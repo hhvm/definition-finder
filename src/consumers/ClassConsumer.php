@@ -27,7 +27,7 @@ final class ClassConsumer extends Consumer {
   }
 
   public function getBuilder(): ScannedClassBuilder {
-    $generics = Vector {};
+    $generics = vec[];
     list($v, $t) = $this->tq->shift();
 
     if ($t === T_STRING || StringishTokens::isValid($t)) {
@@ -98,8 +98,8 @@ final class ClassConsumer extends Consumer {
     );
   }
 
-  private function consumeClassList(): \ConstVector<ScannedTypehint> {
-    $classes = Vector {};
+  private function consumeClassList(): vec<ScannedTypehint> {
+    $classes = vec[];
     while ($this->tq->haveTokens()) {
       $this->consumeWhitespace();
       list($t, $ttype) = $this->tq->peek();

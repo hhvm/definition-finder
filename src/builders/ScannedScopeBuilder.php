@@ -11,24 +11,26 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace HH\Lib\Vec;
+
 class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
   public function __construct(self::TContext $context) {
     parent::__construct('__SCOPE__', $context);
   }
 
-  private Vector<ScannedClassBuilder> $classBuilders = Vector {};
-  private Vector<ScannedFunctionBuilder> $functionBuilders = Vector {};
-  private Vector<ScannedMethodBuilder> $methodBuilders = Vector {};
-  private Vector<ScannedTypehint> $usedTraits = Vector {};
-  private Vector<ScannedPropertyBuilder> $propertyBuilders = Vector {};
-  private Vector<ScannedConstantBuilder> $constantBuilders = Vector {};
-  private Vector<ScannedTypeConstantBuilder> $typeConstantBuilders = Vector {};
-  private Vector<ScannedEnumBuilder> $enumBuilders = Vector {};
-  private Vector<ScannedTypeBuilder> $typeBuilders = Vector {};
-  private Vector<ScannedNewtypeBuilder> $newtypeBuilders = Vector {};
+  private vec<ScannedClassBuilder> $classBuilders = vec[];
+  private vec<ScannedFunctionBuilder> $functionBuilders = vec[];
+  private vec<ScannedMethodBuilder> $methodBuilders = vec[];
+  private vec<ScannedTypehint> $usedTraits = vec[];
+  private vec<ScannedPropertyBuilder> $propertyBuilders = vec[];
+  private vec<ScannedConstantBuilder> $constantBuilders = vec[];
+  private vec<ScannedTypeConstantBuilder> $typeConstantBuilders = vec[];
+  private vec<ScannedEnumBuilder> $enumBuilders = vec[];
+  private vec<ScannedTypeBuilder> $typeBuilders = vec[];
+  private vec<ScannedNewtypeBuilder> $newtypeBuilders = vec[];
 
-  private Vector<ScannedNamespaceBuilder> $namespaceBuilders = Vector {};
-  private Vector<ScannedScope> $subscopes = Vector {};
+  private vec<ScannedNamespaceBuilder> $namespaceBuilders = vec[];
+  private vec<ScannedScope> $subscopes = vec[];
 
   public function addProperty(ScannedPropertyBuilder $b): void {
     $this->propertyBuilders[] = $b;
@@ -79,9 +81,9 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
   }
 
   public function build(): ScannedScope {
-    $classes = Vector {};
-    $interfaces = Vector {};
-    $traits = Vector {};
+    $classes = vec[];
+    $interfaces = vec[];
+    $traits = vec[];
     foreach ($this->classBuilders as $b) {
       switch ($b->getType()) {
         case ClassDefinitionType::CLASS_DEF:
@@ -106,18 +108,19 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
     $newtypes = $this->buildAll($this->newtypeBuilders);
 
     $namespaces = $this->buildAll($this->namespaceBuilders);
-    $scopes = $namespaces->map($ns ==> $ns->getContents());
-    $scopes->addAll($this->subscopes);
-    foreach ($scopes as $scope) {
-      $classes->addAll($scope->getClasses());
-      $interfaces->addAll($scope->getInterfaces());
-      $traits->addAll($scope->getTraits());
-      $functions->addAll($scope->getFunctions());
-      $constants->addAll($scope->getConstants());
-      $enums->addAll($scope->getEnums());
-      $types->addAll($scope->getTypes());
-      $newtypes->addAll($scope->getNewtypes());
-    }
+    $scopes = Vec\concat(
+      Vec\map($namespaces, $ns ==> $ns->getContents()),
+      $this->subscopes,
+    );
+
+    $classes = self::merge($classes, $scopes, $s ==> $s->getClasses());
+    $interfaces = self::merge($interfaces, $scopes, $s ==> $s->getInterfaces());
+    $traits = self::merge($traits, $scopes, $s ==> $s->getTraits());
+    $functions = self::merge($functions, $scopes, $s ==> $s->getFunctions());
+    $constants = self::merge($constants, $scopes, $s ==> $s->getConstants());
+    $enums = self::merge($enums, $scopes, $s ==> $s->getEnums());
+    $types = self::merge($types, $scopes, $s ==> $s->getTypes());
+    $newtypes = self::merge($newtypes, $scopes, $s ==> $s->getNewtypes());
 
     return new ScannedScope(
       $this->getDefinitionContext(),
@@ -137,8 +140,18 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
   }
 
   private function buildAll<T>(
-    \ConstVector<ScannedSingleTypeBuilder<T>> $v,
-  ): Vector<T> {
-    return $v->map($b ==> $b->build())->toVector();
+    vec<ScannedSingleTypeBuilder<T>> $builders,
+  ): vec<T> {
+    return Vec\map($builders, $builder ==> $builder->build());
+  }
+
+  private static function merge<T>(
+    Traversable<T> $existing,
+    Traversable<ScannedScope> $scopes,
+    (function(ScannedScope): Traversable<T>) $selector,
+  ): vec<T> {
+    return $scopes
+      |> Vec\map($$, $selector)
+      |> Vec\concat($existing, Vec\flatten($$));
   }
 }

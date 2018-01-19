@@ -17,17 +17,17 @@ type TokenType = ?int;
 type Token = (TokenValue, TokenType);
 
 class TokenQueue {
-  private Vector<NGToken> $tokens = Vector {};
+  private vec<NGToken> $tokens = vec[];
   private int $line = 0;
 
-  const type TSavedState = shape('tokens' => ImmVector<NGToken>, 'line' => int);
+  const type TSavedState = shape('tokens' => vec<NGToken>, 'line' => int);
 
   public function getState(): self::TSavedState {
-    return shape('tokens' => $this->tokens->immutable(), 'line' => $this->line);
+    return shape('tokens' => $this->tokens, 'line' => $this->line);
   }
 
   public function restoreState(self::TSavedState $state): void {
-    $this->tokens = new Vector($state['tokens']);
+    $this->tokens = vec($state['tokens']);
     $this->line = $state['line'];
   }
 

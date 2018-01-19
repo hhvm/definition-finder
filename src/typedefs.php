@@ -16,7 +16,7 @@ namespace Facebook\DefinitionFinder;
 
 type SourcePosition = shape('filename' => string, 'line' => ?int);
 
-type AttributeMap = Map<string, Vector<mixed>>;
+type AttributeMap = dict<string, vec<mixed>>;
 
 enum VisibilityToken: int {
   T_PUBLIC = T_PUBLIC;

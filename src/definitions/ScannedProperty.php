@@ -15,7 +15,7 @@ class ScannedProperty extends ScannedBase implements HasScannedVisibility {
   public function __construct(
     string $name,
     self::TContext $context,
-    Map<string, Vector<mixed>> $attributes,
+    dict<string, vec<mixed>> $attributes,
     ?string $docComment,
     private ?ScannedTypehint $typehint,
     private VisibilityToken $visibility,

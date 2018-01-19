@@ -11,16 +11,12 @@
 
 namespace Facebook\DefinitionFinder;
 
-enum ScopeType: string {
-  FILE_SCOPE = 'file';
-  NAMESPACE_SCOPE = 'namespace';
-  CLASS_SCOPE = 'class';
-}
+use namespace HH\Lib\C;
 
 final class ScopeConsumer extends Consumer {
 
-  private Map<string, string> $usedTypes;
-  private Map<string, string> $usedNamespaces;
+  private dict<string, string> $usedTypes;
+  private dict<string, string> $usedNamespaces;
   private ?SourceType $sourceType;
 
   public function __construct(
@@ -28,8 +24,8 @@ final class ScopeConsumer extends Consumer {
     self::TContext $context,
     private ScopeType $scopeType,
   ) {
-    $this->usedTypes = $context['usedTypes']->toMap();
-    $this->usedNamespaces = $context['usedNamespaces']->toMap();
+    $this->usedTypes = $context['usedTypes'];
+    $this->usedNamespaces = $context['usedNamespaces'];
     parent::__construct($tq, $context);
   }
 
@@ -95,7 +91,7 @@ final class ScopeConsumer extends Consumer {
       ));
     }
     $builder = (new ScannedScopeBuilder($this->getBuilderContext()));
-    $attrs = Map {};
+    $attrs = dict[];
     $docblock = null;
 
     $tq = $this->tq;
@@ -267,7 +263,7 @@ final class ScopeConsumer extends Consumer {
             ->setStaticity($staticity),
         );
 
-        $attrs = Map {};
+        $attrs = dict[];
         $docblock = null;
         $visibility = null;
         $staticity = null;
@@ -289,7 +285,7 @@ final class ScopeConsumer extends Consumer {
           $finality,
         );
 
-        $attrs = Map {};
+        $attrs = dict[];
         $docblock = null;
         $visibility = null;
         $staticity = null;
@@ -484,7 +480,7 @@ final class ScopeConsumer extends Consumer {
   private function consumeUseStatement(): void {
     $parts = [];
     $alias = '';
-    $imports = Vector {};
+    $imports = vec[];
     $import_type = UseStatementType::NAMESPACE_AND_TYPE;
 
     do {
@@ -531,8 +527,8 @@ final class ScopeConsumer extends Consumer {
 
     } while ($this->tq->haveTokens());
 
-    $type_imports = Map {};
-    $namespace_imports = Map {};
+    $type_imports = dict[];
+    $namespace_imports = dict[];
 
     foreach ($imports as list($import_type, $parts, $alias)) {
       if (count($parts) === 0) {
@@ -549,11 +545,11 @@ final class ScopeConsumer extends Consumer {
           break;
         case UseStatementType::NAMESPACE_AND_TYPE:
           // `use namespace` takes precedence
-          if (!$this->usedNamespaces->containsKey($alias)) {
+          if (!C\contains_key($this->usedNamespaces, $alias)) {
             $this->usedNamespaces[$alias] = $qualified;
           }
           // `use type` takes precedenced
-          if (!$this->usedTypes->containsKey($alias)) {
+          if (!C\contains_key($this->usedTypes, $alias)) {
             $this->usedTypes[$alias] = $qualified;
           }
           break;
@@ -564,8 +560,8 @@ final class ScopeConsumer extends Consumer {
     }
   }
 
-  private function consumeGroupUseStatement(): ImmMap<string, string> {
-    $aliases = Map {};
+  private function consumeGroupUseStatement(): dict<string, string> {
+    $aliases = dict[];
     $tq = $this->tq;
     $is_func_or_const = false;
 
@@ -631,7 +627,7 @@ final class ScopeConsumer extends Consumer {
       invariant_violation("Expected '}' or ',', got %s", var_export($t, true));
     } while (!$tq->isEmpty());
 
-    return $aliases->immutable();
+    return $aliases;
   }
 
   private function consumeAlias(): string {
@@ -667,8 +663,8 @@ final class ScopeConsumer extends Consumer {
 
   private function getSubContext(): self::TContext {
     $context = $this->context;
-    $context['usedTypes'] = $this->usedTypes->toImmMap();
-    $context['usedNamespaces'] = $this->usedNamespaces->toImmMap();
+    $context['usedTypes'] = $this->usedTypes;
+    $context['usedNamespaces'] = $this->usedNamespaces;
     $context['sourceType'] = nullthrows($this->sourceType);
     return $context;
   }

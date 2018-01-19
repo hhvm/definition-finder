@@ -11,66 +11,68 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace HH\Lib\Vec;
+
 abstract class BaseParser {
   protected ScannedScope $defs;
 
-  public function getClasses(): \ConstVector<ScannedBasicClass> {
+  public function getClasses(): vec<ScannedBasicClass> {
     return $this->defs->getClasses();
   }
-  public function getInterfaces(): \ConstVector<ScannedInterface> {
+  public function getInterfaces(): vec<ScannedInterface> {
     return $this->defs->getInterfaces();
   }
-  public function getTraits(): \ConstVector<ScannedTrait> {
+  public function getTraits(): vec<ScannedTrait> {
     return $this->defs->getTraits();
   }
-  public function getFunctions(): \ConstVector<ScannedFunction> {
+  public function getFunctions(): vec<ScannedFunction> {
     return $this->defs->getFunctions();
   }
-  public function getConstants(): \ConstVector<ScannedConstant> {
+  public function getConstants(): vec<ScannedConstant> {
     return $this->defs->getConstants();
   }
-  public function getEnums(): \ConstVector<ScannedEnum> {
+  public function getEnums(): vec<ScannedEnum> {
     return $this->defs->getEnums();
   }
-  public function getTypes(): \ConstVector<ScannedType> {
+  public function getTypes(): vec<ScannedType> {
     return $this->defs->getTypes();
   }
-  public function getNewtypes(): \ConstVector<ScannedNewtype> {
+  public function getNewtypes(): vec<ScannedNewtype> {
     return $this->defs->getNewtypes();
   }
 
   ///// Convenience /////
 
-  public function getClassNames(): \ConstVector<string> {
-    return $this->getClasses()->map($class ==> $class->getName());
+  public function getClassNames(): vec<string> {
+    return Vec\map($this->getClasses(), $class ==> $class->getName());
   }
 
-  public function getInterfaceNames(): \ConstVector<string> {
-    return $this->getInterfaces()->map($x ==> $x->getName());
+  public function getInterfaceNames(): vec<string> {
+    return Vec\map($this->getInterfaces(), $x ==> $x->getName());
   }
 
-  public function getTraitNames(): \ConstVector<string> {
-    return $this->getTraits()->map($x ==> $x->getName());
+  public function getTraitNames(): vec<string> {
+    return Vec\map($this->getTraits(), $x ==> $x->getName());
   }
 
-  public function getFunctionNames(): \ConstVector<string> {
-    return $this->getFunctions()->map($class ==> $class->getName());
+  public function getFunctionNames(): vec<string> {
+    return Vec\map($this->getFunctions(), $class ==> $class->getName());
   }
 
-  public function getConstantNames(): \ConstVector<string> {
-    return $this->getConstants()->map($constant ==> $constant->getName());
+  public function getConstantNames(): vec<string> {
+    return Vec\map($this->getConstants(), $constant ==> $constant->getName());
   }
 
-  public function getEnumNames(): \ConstVector<string> {
-    return $this->getEnums()->map($x ==> $x->getName());
+  public function getEnumNames(): vec<string> {
+    return Vec\map($this->getEnums(), $x ==> $x->getName());
   }
 
-  public function getTypeNames(): \ConstVector<string> {
-    return $this->getTypes()->map($x ==> $x->getName());
+  public function getTypeNames(): vec<string> {
+    return Vec\map($this->getTypes(), $x ==> $x->getName());
   }
 
-  public function getNewtypeNames(): \ConstVector<string> {
-    return $this->getNewtypes()->map($x ==> $x->getName());
+  public function getNewtypeNames(): vec<string> {
+    return Vec\map($this->getNewtypes(), $x ==> $x->getName());
   }
 
   public function getClass(string $name): ScannedBasicClass {
@@ -91,10 +93,10 @@ abstract class BaseParser {
 
   private static function GetX<T as ScannedBase>(
     string $name,
-    \ConstVector<T> $defs,
+    vec<T> $defs,
   ): T {
-    $defs = $defs->filter($x ==> $x->getName() === $name);
+    $defs = Vec\filter($defs, $x ==> $x->getName() === $name);
     invariant(count($defs) === 1, 'not found: %s', $name);
-    return $defs->at(0);
+    return $defs[0];
   }
 }

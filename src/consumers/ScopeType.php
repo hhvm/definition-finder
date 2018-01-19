@@ -11,13 +11,8 @@
 
 namespace Facebook\DefinitionFinder;
 
-class ScannedNewtypeBuilder extends ScannedSingleTypeBuilder<ScannedNewtype> {
-  public function build(): ScannedNewtype {
-    return new ScannedNewtype(
-      $this->name,
-      $this->getDefinitionContext(),
-      /* attributes = */ dict[],
-      $this->docblock,
-    );
-  }
+enum ScopeType: string {
+  FILE_SCOPE = 'file';
+  NAMESPACE_SCOPE = 'namespace';
+  CLASS_SCOPE = 'class';
 }

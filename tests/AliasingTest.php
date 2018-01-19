@@ -29,7 +29,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       'class MyClass extends Bar implements Derp {}';
     $def = FileParser::FromData($code)->getClass('MyClass');
     $this->assertSame("Foo\\Bar", $def->getParentClassName());
-    $this->assertEquals(Vector { "Herp\\Derp" }, $def->getInterfaceNames());
+    $this->assertEquals(vec["Herp\\Derp"], $def->getInterfaceNames());
   }
 
   public function testUseWithClassAlias(): void {
@@ -47,7 +47,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       'class MyClass extends Baz implements Derp {}';
     $def = FileParser::FromData($code)->getClass('MyClass');
     $this->assertSame("Foo\\Bar", $def->getParentClassName());
-    $this->assertEquals(Vector { "Herp\\Derp" }, $def->getInterfaceNames());
+    $this->assertEquals(vec["Herp\\Derp"], $def->getInterfaceNames());
   }
 
   public function testUseWithNSAlias(): void {
@@ -66,7 +66,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "class MyClass implements Foo, Bar{}";
     $def = FileParser::FromData($code)->getClass('MyNamespace\\MyClass');
     $this->assertEquals(
-      Vector { 'MyOtherNamespace\\Foo', 'MyOtherNamespace\\Bar' },
+      vec['MyOtherNamespace\\Foo', 'MyOtherNamespace\\Bar'],
       $def->getInterfaceNames(),
     );
   }
@@ -79,7 +79,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "class MyClass implements Foo, Bar{}";
     $def = FileParser::FromData($code)->getClass('MyNamespace\\MyClass');
     $this->assertEquals(
-      Vector { 'MyOtherNamespace\\Foo', 'MyOtherNamespace\\Bar' },
+      vec['MyOtherNamespace\\Foo', 'MyOtherNamespace\\Bar'],
       $def->getInterfaceNames(),
     );
   }
@@ -91,7 +91,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "class MyClass implements Herp, Derp {}";
     $def = FileParser::FromData($code)->getClass('MyNamespace\\MyClass');
     $this->assertEquals(
-      Vector { 'MyOtherNamespace\\Foo', 'MyOtherNamespace\\Bar' },
+      vec['MyOtherNamespace\\Foo', 'MyOtherNamespace\\Bar'],
       $def->getInterfaceNames(),
     );
   }
@@ -168,7 +168,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
     $def = FileParser::FromFile(__DIR__.'/data/alias_use_namespace.php')
       ->getFunction('main');
     $this->assertEquals(
-      Vector { "Bar\\Derp", "Foo\\Derp" },
+      vec["Bar\\Derp", "Foo\\Derp"],
       $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
     );
   }
@@ -179,7 +179,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "function my_func(Foo\Bar \$_, Herp\Derp \$_): void {}";
     $def = FileParser::FromData($code)->getFunction('my_func');
     $this->assertEquals(
-      Vector { "Prefixes\\Foo\\Bar", "Prefixes\\Herp\\Derp" },
+      vec["Prefixes\\Foo\\Bar", "Prefixes\\Herp\\Derp"],
       $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
     );
   }
@@ -205,7 +205,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "function my_func(Bar \$_): void {}";
     $def = FileParser::FromData($code)->getFunction('my_func');
     $this->assertEquals(
-      Vector { "Foo\\Bar" },
+      vec["Foo\\Bar"],
       $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
     );
   }
@@ -216,7 +216,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "function my_func(Bar \$_, Baz \$_): void {}";
     $def = FileParser::FromData($code)->getFunction('my_func');
     $this->assertEquals(
-      Vector { "Foo\\Bar", "Foo\\Baz" },
+      vec["Foo\\Bar", "Foo\\Baz"],
       $def->getParameters()->map($p ==> $p->getTypehint()?->getTypeName()),
     );
   }

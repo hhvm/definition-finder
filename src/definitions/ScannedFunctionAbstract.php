@@ -16,11 +16,11 @@ abstract class ScannedFunctionAbstract extends ScannedBase
   public function __construct(
     string $name,
     self::TContext $context,
-    Map<string, Vector<mixed>> $attributes,
+    dict<string, vec<mixed>> $attributes,
     ?string $docComment,
-    private \ConstVector<ScannedGeneric> $generics,
+    private vec<ScannedGeneric> $generics,
     private ?ScannedTypehint $returnType,
-    private \ConstVector<ScannedParameter> $parameters,
+    private vec<ScannedParameter> $parameters,
   ) {
     parent::__construct($name, $context, $attributes, $docComment);
   }
@@ -29,7 +29,7 @@ abstract class ScannedFunctionAbstract extends ScannedBase
     return DefinitionType::FUNCTION_DEF;
   }
 
-  public function getGenericTypes(): \ConstVector<ScannedGeneric> {
+  public function getGenericTypes(): vec<ScannedGeneric> {
     return $this->generics;
   }
 
@@ -37,7 +37,7 @@ abstract class ScannedFunctionAbstract extends ScannedBase
     return $this->returnType;
   }
 
-  public function getParameters(): \ConstVector<ScannedParameter> {
+  public function getParameters(): vec<ScannedParameter> {
     return $this->parameters;
   }
 }

@@ -25,7 +25,7 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
       // Autoimports
       tuple('void', 'void', 'void'),
       tuple('dict<int, string>', 'dict', 'dict<int,string>'),
-      tuple('Vector<string>', 'Vector', 'Vector<string>'),
+      tuple('vec<string>', 'Vector', 'vec<string>'),
       tuple('callable', 'callable', 'callable'),
 
       // Namespacing

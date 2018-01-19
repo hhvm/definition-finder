@@ -20,7 +20,7 @@ final class TypehintConsumer extends Consumer {
     $nullable = false;
     $type_text = null;
     $type_name = null;
-    $generics = Vector {};
+    $generics = vec[];
 
     $nesting = 0;
     while ($this->tq->haveTokens()) {

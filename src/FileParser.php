@@ -20,10 +20,10 @@ class FileParser extends BaseParser {
           shape(
             'filename' => $file,
             'namespace' => null,
-            'usedNamespaces' => ImmMap {},
-            'usedTypes' => ImmMap {},
+            'usedNamespaces' => dict[],
+            'usedTypes' => dict[],
             'sourceType' => SourceType::NOT_YET_DETERMINED,
-            'genericTypeNames' => ImmSet {},
+            'genericTypeNames' => keyset[],
           ),
           ScopeType::FILE_SCOPE,
         )

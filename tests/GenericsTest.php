@@ -21,12 +21,12 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $class = $parser->getClass('Foo');
 
     $this->assertEquals(
-      Vector { 'Tk', 'Tv' },
+      vec['Tk', 'Tv'],
       $class->getGenericTypes()->map($x ==> $x->getName()),
     );
 
     $this->assertEquals(
-      Vector { 0, 0 },
+      vec[0, 0],
       $class->getGenericTypes()->map($x ==> $x->getConstraints()->count()),
     );
   }
@@ -37,12 +37,12 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $function = $parser->getFunction('foo');
 
     $this->assertEquals(
-      Vector { 'Tk', 'Tv' },
+      vec['Tk', 'Tv'],
       $function->getGenericTypes()->map($x ==> $x->getName()),
     );
 
     $this->assertEquals(
-      Vector { 0, 0 },
+      vec[0, 0],
       $function->getGenericTypes()->map($x ==> $x->getConstraints()->count()),
     );
   }
@@ -53,11 +53,11 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $class = $parser->getClass('Foo');
 
     $this->assertEquals(
-      Vector { 'Bar', 'Baz' },
+      vec['Bar', 'Baz'],
       $class->getGenericTypes()->map($x ==> $x->getConstraints()[0]['type']),
     );
     $this->assertEquals(
-      Vector { RelationshipToken::SUBTYPE, RelationshipToken::SUPERTYPE },
+      vec[RelationshipToken::SUBTYPE, RelationshipToken::SUPERTYPE],
       $class
         ->getGenericTypes()
         ->map($x ==> $x->getConstraints()[0]['relationship']),
@@ -84,7 +84,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $class = $parser->getClass('Foo');
 
     $this->assertEquals(
-      Vector { 'Bar\Baz' },
+      vec['Bar\Baz'],
       $class->getGenericTypes()->map($x ==> $x->getConstraints()[0]['type']),
     );
   }
@@ -96,19 +96,19 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $generics = $class->getGenericTypes();
 
     $this->assertEquals(
-      Vector { 'Ta', 'Tb', 'Tc' },
+      vec['Ta', 'Tb', 'Tc'],
       $generics->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { true, false, false },
+      vec[true, false, false],
       $generics->map($x ==> $x->isContravariant()),
     );
     $this->assertEquals(
-      Vector { false, true, false },
+      vec[false, true, false],
       $generics->map($x ==> $x->isInvariant()),
     );
     $this->assertEquals(
-      Vector { false, false, true },
+      vec[false, false, true],
       $generics->map($x ==> $x->isCovariant()),
     );
   }
@@ -151,6 +151,6 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $param_types = $function
       ->getParameters()
       ->map($param ==> $param->getTypehint()?->getTypeText());
-    $this->assertEquals(Vector { 'ImmMap<string,string>' }, $param_types);
+    $this->assertEquals(vec['ImmMap<string,string>'], $param_types);
   }
 }

@@ -17,7 +17,7 @@ final class AnonymousClassesTest extends \PHPUnit_Framework_TestCase {
   public function testParsesInFunction(): void {
     $parser =
       FileParser::FromData('<?php function foo() { return new class {}; }');
-    $this->assertEquals(Vector { 'foo' }, $parser->getFunctionNames());
+    $this->assertEquals(vec['foo'], $parser->getFunctionNames());
   }
 
   public function testParsesInMethod(): void {
@@ -26,7 +26,7 @@ final class AnonymousClassesTest extends \PHPUnit_Framework_TestCase {
     );
     $class = $parser->getClass('Foo');
     $this->assertEquals(
-      Vector { 'bar' },
+      vec['bar'],
       $class->getMethods()->map($method ==> $method->getName()),
     );
   }
@@ -46,7 +46,7 @@ EOF;
     $parser = FileParser::FromData($code);
     $class = $parser->getClass('Foo');
     $this->assertEquals(
-      Vector { 'bar' },
+      vec['bar'],
       $class->getMethods()->map($method ==> $method->getName()),
     );
   }

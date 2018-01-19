@@ -11,14 +11,16 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace HH\Lib\{C, Str, Keyset};
+
 abstract class Consumer {
   const type TContext = shape(
     'filename' => string,
     'sourceType' => SourceType,
     'namespace' => ?string,
-    'usedTypes' => ImmMap<string, string>,
-    'usedNamespaces' => ImmMap<string, string>,
-    'genericTypeNames' => ImmSet<string>,
+    'usedTypes' => dict<string, string>,
+    'usedNamespaces' => dict<string, string>,
+    'genericTypeNames' => keyset<string>,
   );
 
   protected function getBuilderContext(): ScannedBaseBuilder::TContext {
@@ -46,10 +48,10 @@ abstract class Consumer {
     );
   }
 
-  private static ?ImmSet<string> $autoImportTypes;
+  private static ?keyset<string> $autoImportTypes;
 
-  final private function getAutoImportTypes(): ImmSet<string> {
-    $scalars = ImmSet {
+  final private function getAutoImportTypes(): keyset<string> {
+    $scalars = keyset[
       'mixed',
       'void',
       'bool',
@@ -62,7 +64,7 @@ abstract class Consumer {
       'num',
       'arraykey',
       'array',
-    };
+    ];
 
     if ($this->context['sourceType'] === SourceType::PHP) {
       return $scalars;
@@ -74,7 +76,7 @@ abstract class Consumer {
      *   2016-09-20
      *   3a26de9eb51f041f1cf2df34c06d47e7c0c27015
      */
-    $classes = ImmSet {
+    $classes = keyset[
       'Traversable',
       'KeyedTraversable',
       'Container',
@@ -114,18 +116,22 @@ abstract class Consumer {
       'ExternalThreadEventWaitHandle',
       'Shapes',
       'TypeStructureKind',
-    };
+    ];
 
-    $typedefs = ImmSet { 'typename', 'classname', 'TypeStructure' };
+    $typedefs = keyset['typename', 'classname', 'TypeStructure'];
 
-    $types = $scalars->concat($classes)->concat($typedefs)->toImmSet();
+    $types = Keyset\union(
+      $scalars,
+      $classes,
+      $typedefs,
+    );
 
     self::$autoImportTypes = $types;
     return $types;
   }
 
   <<__Deprecated('Please send a pull request adding the missing types')>>
-  final public static function setAutoImportTypes(ImmSet<string> $types): void {
+  final public static function setAutoImportTypes(keyset<string> $types): void {
     self::$autoImportTypes = $types;
   }
 
@@ -232,7 +238,7 @@ abstract class Consumer {
 
     if ($mode === NameNormalizationMode::REFERENCE) {
       $autoimport = $this->getAutoImportTypes();
-      if ($autoimport->contains($name)) {
+      if (C\contains_key($autoimport, $name)) {
         return $name;
       }
     }
@@ -241,26 +247,26 @@ abstract class Consumer {
       return $name;
     }
 
-    if (substr($name, 0, 6) === 'shape(') {
+    if (Str\starts_with($name, 'shape(')) {
       return $name;
     }
 
-    if (substr($name, 0, 1) === '(') {
+    if (Str\starts_with($name, '(')) {
       // Callable or tuple
       return $name;
     }
 
-    if ($this->context['genericTypeNames']->contains($name)) {
+    if (C\contains_key($this->context['genericTypeNames'], $name)) {
       return $name;
     }
 
-    $parts = explode('\\', $name);
+    $parts = Str\split($name, "\\");
     $base = $parts[0];
     $real_base = null;
-    if (count($parts) === 1) {
-      $real_base = $this->context['usedTypes']->get($base);
+    if (C\count($parts) === 1) {
+      $real_base = $this->context['usedTypes'][$base] ?? null;
     } else {
-      $real_base = $this->context['usedNamespaces']->get($base);
+      $real_base = $this->context['usedNamespaces'][$base] ?? null;
     }
 
     if ($real_base === null) {
@@ -272,12 +278,13 @@ abstract class Consumer {
   }
 
   final protected function getContextWithGenerics(
-    \ConstVector<ScannedGeneric> $generics,
+    vec<ScannedGeneric> $generics,
   ): self::TContext {
     $context = $this->context;
-    $context['genericTypeNames'] = $context['genericTypeNames']
-      ->concat($generics->map($generic ==> $generic->getName()))
-      ->toImmSet();
+    $context['genericTypeNames'] = Keyset\union(
+      $context['genericTypeNames'],
+      Keyset\map($generics, $generic ==> $generic->getName()),
+    );
     return $context;
   }
 }

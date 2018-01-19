@@ -23,7 +23,7 @@ abstract class ScannedBase {
   public function __construct(
     private string $name,
     private self::TContext $context,
-    private Map<string, Vector<mixed>> $attributes,
+    private dict<string, vec<mixed>> $attributes,
     private ?string $docComment,
   ) {
     list($this->namespace, $this->shortName) = $this->breakName($name);
@@ -55,7 +55,7 @@ abstract class ScannedBase {
     return $this->name;
   }
 
-  public function getAttributes(): Map<string, Vector<mixed>> {
+  public function getAttributes(): dict<string, vec<mixed>> {
     return $this->attributes;
   }
 

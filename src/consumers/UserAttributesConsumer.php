@@ -11,17 +11,18 @@
 
 namespace Facebook\DefinitionFinder;
 
-use Facebook\DefinitionFinder\Expression\StaticScalarExpression;
+use type Facebook\DefinitionFinder\Expression\StaticScalarExpression;
+use namespace HH\Lib\C;
 
 final class UserAttributesConsumer extends Consumer {
   public function getUserAttributes(): AttributeMap {
-    $attrs = Map {};
+    $attrs = dict[];
     while (true) {
       $this->consumeWhitespace();
 
       list($name, $_) = $this->tq->shift();
-      if (!$attrs->containsKey($name)) {
-        $attrs[$name] = Vector {};
+      if (!C\contains_key($attrs, $name)) {
+        $attrs[$name] = vec[];
       }
 
       $this->consumeWhitespace();

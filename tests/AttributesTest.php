@@ -17,8 +17,8 @@ use Facebook\DefinitionFinder\ScannedClass;
 use Facebook\DefinitionFinder\ScannedFunction;
 
 class AttributesTest extends \PHPUnit_Framework_TestCase {
-  private \ConstVector<ScannedClass> $classes = Vector {};
-  private \ConstVector<ScannedFunction> $functions = Vector {};
+  private vec<ScannedClass> $classes = vec[];
+  private vec<ScannedFunction> $functions = vec[];
 
   protected function setUp(): void {
     $parser = FileParser::FromFile(__DIR__.'/data/attributes.php');
@@ -28,13 +28,13 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
 
   public function testSingleSimpleAttribute(): void {
     $class = $this->findClass('ClassWithSimpleAttribute');
-    $this->assertEquals(Map { "Foo" => Vector {} }, $class->getAttributes());
+    $this->assertEquals(dict["Foo" => vec[]], $class->getAttributes());
   }
 
   public function testMultipleSimpleAttributes(): void {
     $class = $this->findClass('ClassWithSimpleAttributes');
     $this->assertEquals(
-      Map { "Foo" => Vector {}, "Bar" => Vector {} },
+      dict["Foo" => vec[], "Bar" => vec[]],
       $class->getAttributes(),
     );
   }
@@ -42,7 +42,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
   public function testWithSingleStringAttribute(): void {
     $class = $this->findClass('ClassWithStringAttribute');
     $this->assertEquals(
-      Map { 'Herp' => Vector { 'derp' } },
+      dict['Herp' => vec['derp']],
       $class->getAttributes(),
     );
   }
@@ -50,7 +50,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
   public function testWithFormattedAttributes(): void {
     $class = $this->findClass('ClassWithFormattedAttributes');
     $this->assertEquals(
-      Map { 'Foo' => Vector {}, 'Bar' => Vector { 'herp', 'derp' } },
+      dict['Foo' => vec[], 'Bar' => vec['herp', 'derp']],
       $class->getAttributes(),
     );
   }
@@ -58,7 +58,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
   public function testWithFormattedArrayAttribute(): void {
     $class = $this->findClass('ClassWithFormattedArrayAttribute');
     $this->assertEquals(
-      Map { 'Bar' => Vector { ['herp'] } },
+      dict['Bar' => vec[['herp']]],
       $class->getAttributes(),
     );
   }
@@ -66,7 +66,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
   public function testWithSingleIntAttribute(): void {
     $class = $this->findClass('ClassWithIntAttribute');
     $this->assertEquals(
-      Map { 'Herp' => Vector { 123 } },
+      dict['Herp' => vec[123]],
       $class->getAttributes(),
     );
     // Check it's an int, not a string
@@ -76,7 +76,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
   public function testFunctionHasAttributes(): void {
     $func = $this->findScanned($this->functions, 'function_after_classes');
     $this->assertEquals(
-      Map { 'FunctionFoo' => Vector {} },
+      dict['FunctionFoo' => vec[]],
       $func->getAttributes(),
     );
   }
@@ -96,7 +96,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
   public function testFunctionAttrsDontPolluteClass(): void {
     $class = $this->findClass('ClassAfterFunction');
     $this->assertEquals(
-      Map { 'ClassFoo' => Vector {} },
+      dict['ClassFoo' => vec[]],
       $class->getAttributes(),
     );
   }
@@ -106,10 +106,10 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $fun = $parser->getFunction('foo');
     $params = $fun->getParameters();
-    $this->assertEquals(Vector { 'baz' }, $params->map($x ==> $x->getName()));
+    $this->assertEquals(vec['baz'], $params->map($x ==> $x->getName()));
 
     $this->assertEquals(
-      Vector { Map { 'Bar' => Vector {} } },
+      vec[dict['Bar' => vec[]] ],
       $params->map($x ==> $x->getAttributes()),
     );
   }
@@ -152,13 +152,13 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
-      Map { 'MyAttr' => Vector { $expected } },
+      dict['MyAttr' => vec[$expected]],
       $fun->getAttributes(),
     );
   }
 
   private function findScanned<T as ScannedBase>(
-    \ConstVector<T> $container,
+    vec<T> $container,
     string $name,
   ): T {
     foreach ($container as $scanned) {

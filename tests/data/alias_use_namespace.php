@@ -9,7 +9,6 @@ namespace Bar {
 }
 
 namespace {
-  /* HH_IGNORE_ERROR[1002] not valid in HHVM/Hack yet */
   use namespace Foo as Derp;
   use Bar\Derp;
 

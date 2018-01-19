@@ -16,7 +16,7 @@ use Facebook\DefinitionFinder\ScannedClass;
 
 class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
   private ?ScannedClass $class;
-  private ?\ConstVector<ScannedClass> $classes;
+  private ?vec<ScannedClass> $classes;
 
   protected function setUp(): void {
     $parser = FileParser::FromFile(__DIR__.'/data/abstract_class_contents.php');
@@ -25,7 +25,7 @@ class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   public function testClassIsAbstract(): void {
     $this->assertEquals(
-      Vector { true, false },
+      vec[true, false],
       $this->classes?->map($x ==> $x->isAbstract()),
       'isAbstract',
     );
@@ -38,7 +38,7 @@ class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
       $class?->getName(),
     );
     $this->assertEquals(
-      Vector { false, true },
+      vec[false, true],
       $class?->getMethods()?->map($x ==> $x->isAbstract()),
       'isAbstract',
     );

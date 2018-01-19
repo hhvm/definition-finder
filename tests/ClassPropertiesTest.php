@@ -15,7 +15,7 @@ use Facebook\DefinitionFinder\FileParser;
 use Facebook\DefinitionFinder\ScannedClass;
 
 class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {
-  private ?\ConstVector<ScannedClass> $classes;
+  private ?vec<ScannedClass> $classes;
 
   protected function setUp(): void {
     $parser = FileParser::FromFile(__DIR__.'/data/class_properties.php');
@@ -29,7 +29,7 @@ class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {
       $class?->getName(),
     );
     $this->assertEquals(
-      Vector { 'foo', 'bar', 'herp' },
+      vec['foo', 'bar', 'herp'],
       $class?->getProperties()?->map($x ==> $x->getName()),
     );
     $class = $this->classes ? $this->classes[1] : null;
@@ -38,7 +38,7 @@ class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {
       $class?->getName(),
     );
     $this->assertEquals(
-      Vector { 'foobar' },
+      vec['foobar'],
       $class?->getProperties()?->map($x ==> $x->getName()),
     );
   }
@@ -50,17 +50,17 @@ class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {
       $class?->getName(),
     );
     $this->assertEquals(
-      Vector { false, false, true },
+      vec[false, false, true],
       $class?->getProperties()?->map($x ==> $x->isPublic()),
       'isPublic',
     );
     $this->assertEquals(
-      Vector { false, true, false },
+      vec[false, true, false],
       $class?->getProperties()?->map($x ==> $x->isProtected()),
       'isProtected',
     );
     $this->assertEquals(
-      Vector { true, false, false },
+      vec[true, false, false],
       $class?->getProperties()?->map($x ==> $x->isPrivate()),
       'isPrivate',
     );
@@ -70,7 +70,7 @@ class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {
       $class?->getName(),
     );
     $this->assertEquals(
-      Vector { true },
+      vec[true],
       $class?->getProperties()?->map($x ==> $x->isPublic()),
       'isPublic',
     );
@@ -83,7 +83,7 @@ class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {
       $class?->getName(),
     );
     $this->assertEquals(
-      Vector { 'bool', 'int', 'string' },
+      vec['bool', 'int', 'string'],
       $class?->getProperties()?->map($x ==> $x->getTypehint()?->getTypeName()),
     );
     $class = $this->classes ? $this->classes[1] : null;
@@ -92,7 +92,7 @@ class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {
       $class?->getName(),
     );
     $this->assertEquals(
-      Vector { 'bool' },
+      vec['bool'],
       $class?->getProperties()?->map($x ==> $x->getTypehint()?->getTypeName()),
     );
   }

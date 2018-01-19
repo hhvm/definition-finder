@@ -15,23 +15,23 @@ class ScannedScope extends ScannedBase {
 
   public function __construct(
     self::TContext $context,
-    private \ConstVector<ScannedBasicClass> $classes,
-    private \ConstVector<ScannedInterface> $interfaces,
-    private \ConstVector<ScannedTrait> $traits,
-    private \ConstVector<ScannedFunction> $functions,
-    private \ConstVector<ScannedMethod> $methods,
-    private \ConstVector<ScannedTypehint> $usedTraits,
-    private \ConstVector<ScannedProperty> $properties,
-    private \ConstVector<ScannedConstant> $constants,
-    private \ConstVector<ScannedTypeConstant> $typeConstants,
-    private \ConstVector<ScannedEnum> $enums,
-    private \ConstVector<ScannedType> $types,
-    private \ConstVector<ScannedNewtype> $newtypes,
+    private vec<ScannedBasicClass> $classes,
+    private vec<ScannedInterface> $interfaces,
+    private vec<ScannedTrait> $traits,
+    private vec<ScannedFunction> $functions,
+    private vec<ScannedMethod> $methods,
+    private vec<ScannedTypehint> $usedTraits,
+    private vec<ScannedProperty> $properties,
+    private vec<ScannedConstant> $constants,
+    private vec<ScannedTypeConstant> $typeConstants,
+    private vec<ScannedEnum> $enums,
+    private vec<ScannedType> $types,
+    private vec<ScannedNewtype> $newtypes,
   ) {
     parent::__construct(
       '__SCOPE__',
       $context,
-      /* attributes = */ Map {},
+      /* attributes = */ dict[],
       /* docblock = */ null,
     );
   }
@@ -40,51 +40,51 @@ class ScannedScope extends ScannedBase {
     return null;
   }
 
-  public function getClasses(): \ConstVector<ScannedBasicClass> {
+  public function getClasses(): vec<ScannedBasicClass> {
     return $this->classes;
   }
 
-  public function getInterfaces(): \ConstVector<ScannedInterface> {
+  public function getInterfaces(): vec<ScannedInterface> {
     return $this->interfaces;
   }
 
-  public function getTraits(): \ConstVector<ScannedTrait> {
+  public function getTraits(): vec<ScannedTrait> {
     return $this->traits;
   }
 
-  public function getUsedTraits(): \ConstVector<ScannedTypehint> {
+  public function getUsedTraits(): vec<ScannedTypehint> {
     return $this->usedTraits;
   }
 
-  public function getFunctions(): \ConstVector<ScannedFunction> {
+  public function getFunctions(): vec<ScannedFunction> {
     return $this->functions;
   }
 
-  public function getMethods(): \ConstVector<ScannedMethod> {
+  public function getMethods(): vec<ScannedMethod> {
     return $this->methods;
   }
 
-  public function getProperties(): \ConstVector<ScannedProperty> {
+  public function getProperties(): vec<ScannedProperty> {
     return $this->properties;
   }
 
-  public function getConstants(): \ConstVector<ScannedConstant> {
+  public function getConstants(): vec<ScannedConstant> {
     return $this->constants;
   }
 
-  public function getTypeConstants(): \ConstVector<ScannedTypeConstant> {
+  public function getTypeConstants(): vec<ScannedTypeConstant> {
     return $this->typeConstants;
   }
 
-  public function getEnums(): \ConstVector<ScannedEnum> {
+  public function getEnums(): vec<ScannedEnum> {
     return $this->enums;
   }
 
-  public function getTypes(): \ConstVector<ScannedType> {
+  public function getTypes(): vec<ScannedType> {
     return $this->types;
   }
 
-  public function getNewtypes(): \ConstVector<ScannedNewtype> {
+  public function getNewtypes(): vec<ScannedNewtype> {
     return $this->newtypes;
   }
 }

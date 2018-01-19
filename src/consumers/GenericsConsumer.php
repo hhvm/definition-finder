@@ -14,15 +14,15 @@ namespace Facebook\DefinitionFinder;
 const int T_SUPER = 436;
 
 class GenericsConsumer extends Consumer {
-  public function getGenerics(): \ConstVector<ScannedGeneric> {
+  public function getGenerics(): vec<ScannedGeneric> {
     $tq = $this->tq;
     list($t, $ttype) = $tq->shift();
     invariant($ttype = T_TYPELIST_LT, 'Consuming generics, but not a typelist');
 
-    $ret = Vector {};
+    $ret = vec[];
 
     $name = null;
-    $constraints = Vector {};
+    $constraints = vec[];
     $variance = VarianceToken::INVARIANT;
 
     while ($tq->haveTokens()) {
@@ -37,7 +37,7 @@ class GenericsConsumer extends Consumer {
       if ($ttype === T_TYPELIST_GT) {
         if ($name !== null) {
           $ret[] =
-            new ScannedGeneric($name, $variance, $constraints->immutable());
+            new ScannedGeneric($name, $variance, $constraints);
         }
         return $ret;
       }
@@ -51,10 +51,10 @@ class GenericsConsumer extends Consumer {
         $ret[] = new ScannedGeneric(
           nullthrows($name),
           $variance,
-          $constraints->immutable(),
+          $constraints,
         );
         $name = null;
-        $constraints = Vector {};
+        $constraints = vec[];
         $variance = VarianceToken::INVARIANT;
         continue;
       }

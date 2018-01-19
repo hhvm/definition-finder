@@ -27,7 +27,7 @@ class DocCommentTest extends \PHPUnit_Framework_TestCase {
     $this->addDefs($parser->getNewtypes());
   }
 
-  private function addDefs(\ConstVector<ScannedBase> $defs): void {
+  private function addDefs(vec<ScannedBase> $defs): void {
     foreach ($defs as $def) {
       $this->defs[$def->getName()] = $def;
     }
@@ -73,11 +73,11 @@ class DocCommentTest extends \PHPUnit_Framework_TestCase {
     assert($fun instanceof ScannedFunction);
     $params = $fun->getParameters();
     $this->assertEquals(
-      Vector { 'commented', 'uncommented' },
+      vec['commented', 'uncommented'],
       $params->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { '/** param doc */', null },
+      vec['/** param doc */', null],
       $params->map($x ==> $x->getDocComment()),
     );
   }

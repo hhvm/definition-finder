@@ -50,11 +50,11 @@ class Foo {
 
     $params = $constructor->getParameters();
     $this->assertEquals(
-      Vector { 'foo', 'bar', 'baz' },
+      vec['foo', 'bar', 'baz'],
       $params->map($x ==> $x->getName()),
     );
     $this->assertEquals(
-      Vector { 'string', 'mixed', 'int' },
+      vec['string', 'mixed', 'int'],
       $params->map($x ==> $x->getTypehint()?->getTypeName()),
     );
   }
@@ -63,27 +63,27 @@ class Foo {
     $props = $this->class?->getProperties();
 
     $this->assertEquals(
-      Vector { 'foo', 'bar', 'baz' },
+      vec['foo', 'bar', 'baz'],
       $props?->map($x ==> $x->getName()),
     );
 
     $this->assertEquals(
-      Vector { true, false, false },
+      vec[true, false, false],
       $props?->map($x ==> $x->isPublic()),
     );
 
     $this->assertEquals(
-      Vector { 'string', 'mixed', 'int' },
+      vec['string', 'mixed', 'int'],
       $props?->map($x ==> $x->getTypehint()?->getTypeName()),
     );
 
     $this->assertEquals(
-      Vector { Map {}, Map { 'HerpDerp' => Vector {} }, Map {} },
+      vec[Map {}, dict['HerpDerp' => vec[]], Map {} ],
       $props?->map($x ==> $x->getAttributes()),
     );
 
     $this->assertEquals(
-      Vector { null, null, '/** baz comment */' },
+      vec[null, null, '/** baz comment */'],
       $props?->map($x ==> $x->getDocComment()),
     );
   }

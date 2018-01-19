@@ -13,14 +13,14 @@ namespace Facebook\DefinitionFinder;
 
 final class ScannedClassBuilder extends ScannedBaseBuilder {
   private ?ScannedScopeBuilder $scopeBuilder;
-  protected \ConstVector<ScannedGeneric> $generics = Vector {};
-  private \ConstVector<ScannedTypehint> $interfaces = Vector {};
+  protected vec<ScannedGeneric> $generics = vec[];
+  private vec<ScannedTypehint> $interfaces = vec[];
   private ?ScannedTypehint $parent = null;
   private ?AbstractnessToken $abstractness;
   private ?FinalityToken $finality;
 
   public function setGenericTypes(
-    \ConstVector<ScannedGeneric> $generics,
+    vec<ScannedGeneric> $generics,
   ): this {
     $this->generics = $generics;
     return $this;
@@ -46,7 +46,7 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
   }
 
   public function setInterfaces(
-    \ConstVector<ScannedTypehint> $interfaces,
+    vec<ScannedTypehint> $interfaces,
   ): this {
     $this->interfaces = $interfaces;
     return $this;
@@ -74,7 +74,7 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
     $scope = nullthrows($this->scopeBuilder)->build();
 
     $methods = $scope->getMethods();
-    $properties = new Vector($scope->getProperties());
+    $properties = vec($scope->getProperties());
 
     foreach ($methods as $method) {
       if ($method->getName() === '__construct') {

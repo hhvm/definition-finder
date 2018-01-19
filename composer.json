@@ -4,7 +4,9 @@
   "keywords": ["hack", "definitions", "hhvm", "autoload"],
   "homepage": "https://github.com/hhvm/definitions-finder",
   "require": {
-    "hhvm": "~3.23"
+    "hhvm": "~3.23",
+    "hhvm/hhvm-autoload": "^1.6",
+    "hhvm/hsl": "^1.2"
   },
   "require-dev": {
     "phpunit/phpunit": "~5.1",

@@ -11,20 +11,22 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace HH\Lib\Vec;
+
 abstract class ScannedFunctionAbstractBuilder<T as ScannedFunctionAbstract>
   extends ScannedSingleTypeBuilder<T> {
 
   protected ?bool $byRefReturn;
-  protected ?\ConstVector<ScannedGeneric> $generics = null;
+  protected ?vec<ScannedGeneric> $generics = null;
   protected ?ScannedTypehint $returnType;
-  protected Vector<ScannedParameterBuilder> $parameters = Vector {};
+  protected vec<ScannedParameterBuilder> $parameters = vec[];
 
   public function setByRefReturn(bool $v): this {
     $this->byRefReturn = $v;
     return $this;
   }
 
-  public function setGenerics(\ConstVector<ScannedGeneric> $generics): this {
+  public function setGenerics(vec<ScannedGeneric> $generics): this {
     $this->generics = $generics;
     return $this;
   }
@@ -38,7 +40,7 @@ abstract class ScannedFunctionAbstractBuilder<T as ScannedFunctionAbstract>
     $this->parameters[] = $parameter;
   }
 
-  protected function buildParameters(): \ConstVector<ScannedParameter> {
-    return $this->parameters->map($builder ==> $builder->build());
+  protected function buildParameters(): vec<ScannedParameter> {
+    return Vec\map($this->parameters, $builder ==> $builder->build());
   }
 }

@@ -23,14 +23,14 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
   public function testClassImplements(): void {
     $data = '<?hh class Foo implements Bar, Baz {}';
     $def = FileParser::FromData($data)->getClass('Foo');
-    $this->assertEquals(Vector { 'Bar', 'Baz' }, $def->getInterfaceNames());
+    $this->assertEquals(vec['Bar', 'Baz'], $def->getInterfaceNames());
     $this->assertNull($def->getParentClassName());
   }
 
   public function testInterfaceExtends(): void {
     $data = '<?hh interface Foo extends Bar, Baz {}';
     $def = FileParser::FromData($data)->getInterface('Foo');
-    $this->assertEquals(Vector { 'Bar', 'Baz' }, $def->getInterfaceNames());
+    $this->assertEquals(vec['Bar', 'Baz'], $def->getInterfaceNames());
     $this->assertNull($def->getParentClassName());
   }
 
@@ -38,7 +38,7 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh class Foo extends Bar implements Herp, Derp {}';
     $def = FileParser::FromData($data)->getClass('Foo');
     $this->assertSame('Bar', $def->getParentClassName());
-    $this->assertEquals(Vector { 'Herp', 'Derp' }, $def->getInterfaceNames());
+    $this->assertEquals(vec['Herp', 'Derp'], $def->getInterfaceNames());
   }
 
   public function testClassExtendsGeneric(): void {
@@ -51,25 +51,25 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
   public function testClassImplementsGenerics(): void {
     $data = '<?hh class Foo implements KeyedIterable<Tk,Tv> {}';
     $def = FileParser::FromData($data)->getClass('Foo');
-    $this->assertEquals(Vector { 'KeyedIterable' }, $def->getInterfaceNames());
+    $this->assertEquals(vec['KeyedIterable'], $def->getInterfaceNames());
     $this->assertEquals(
-      Vector { 'KeyedIterable<Tk,Tv>' },
+      vec['KeyedIterable<Tk,Tv>'],
       $def->getInterfaceInfo()->map($x ==> $x->getTypeText()),
     );
   }
 
   public function testClassImplementsNestedGenerics(): void {
-    $data = '<?hh class VectorIterable<Tv> implements Iterable<Vector<Tv>> {}';
+    $data = '<?hh class VectorIterable<Tv> implements Iterable<vec<Tv>> {}';
     $def = FileParser::FromData($data)->getClass('VectorIterable');
-    $this->assertEquals(Vector { 'Iterable' }, $def->getInterfaceNames());
+    $this->assertEquals(vec['Iterable'], $def->getInterfaceNames());
     $this->assertEquals(
-      Vector { Vector { 'Vector' } },
+      vec[vec['Vector'] ],
       $def
         ->getInterfaceInfo()
         ->map($x ==> $x->getGenericTypes()->map($y ==> $y->getTypeName())),
     );
     $this->assertEquals(
-      Vector { 'Iterable<Vector<Tv>>' },
+      vec['Iterable<vec<Tv>>'],
       $def->getInterfaceInfo()->map($x ==> $x->getTypeText()),
     );
   }
@@ -77,19 +77,19 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
   public function testTraitImplements(): void {
     $data = '<?hh interface IFoo {}; trait TFoo implements IFoo {}';
     $def = FileParser::FromData($data)->getTrait('TFoo');
-    $this->assertEquals(Vector { 'IFoo' }, $def->getInterfaceNames());
+    $this->assertEquals(vec['IFoo'], $def->getInterfaceNames());
   }
 
   public function testUsesTraits(): void {
     $data = '<?hh class Foo { use Herp; use Derp; }';
     $def = FileParser::FromData($data)->getClass('Foo');
-    $this->assertEquals(Vector { 'Herp', 'Derp' }, $def->getTraitNames());
+    $this->assertEquals(vec['Herp', 'Derp'], $def->getTraitNames());
   }
 
   public function testUsesMultipleTraitsInSingleStatement(): void {
     $data = '<?hh class Foo { use Herp, Derp; }';
     $def = FileParser::FromData($data)->getClass('Foo');
-    $this->assertEquals(Vector { 'Herp', 'Derp' }, $def->getTraitNames());
+    $this->assertEquals(vec['Herp', 'Derp'], $def->getTraitNames());
   }
 
   public function testUseTraitWithConflictResolution(): void {
@@ -100,7 +100,7 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
       "    Bar::herp as derp;\n".
       "}";
     $def = FileParser::FromData($data)->getClass('MyClass');
-    $this->assertEquals(Vector { 'Foo', 'Bar' }, $def->getTraitNames());
+    $this->assertEquals(vec['Foo', 'Bar'], $def->getTraitNames());
   }
 
   public function testUsesTraitsInNamespace(): void {
@@ -108,7 +108,7 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
       "<?hh\n"."namespace MyNamespace;".'class Foo { use Herp; use Derp; }';
     $def = FileParser::FromData($data)->getClass('MyNamespace\\Foo');
     $this->assertEquals(
-      Vector { 'MyNamespace\\Herp', 'MyNamespace\\Derp' },
+      vec['MyNamespace\\Herp', 'MyNamespace\\Derp'],
       $def->getTraitNames(),
     );
   }
@@ -120,7 +120,7 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
     $this->assertCount(1, $traits);
     $this->assertEquals('Herp', $traits->firstKey());
     $this->assertEquals(
-      Vector { 'string' },
+      vec['string'],
       $traits->firstValue()?->map($a ==> $a->getTypeText()),
     );
   }

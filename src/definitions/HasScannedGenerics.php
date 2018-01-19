@@ -13,5 +13,5 @@ namespace Facebook\DefinitionFinder;
 
 interface HasScannedGenerics {
   require extends ScannedBase;
-  public function getGenericTypes(): \ConstVector<ScannedGeneric>;
+  public function getGenericTypes(): vec<ScannedGeneric>;
 }

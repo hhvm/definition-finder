@@ -90,7 +90,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh class Foo { const ON = 0; }';
 
     $this->assertEquals(
-      Vector { 'ON' },
+      vec['ON'],
       FileParser::FromData($data)
         ->getClass('Foo')
         ->getConstants()
@@ -122,7 +122,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $data = '<?php namespace Foo\Bar; class Collection {}';
 
     $this->assertEquals(
-      Vector { 'Foo\Bar\Collection' },
+      vec['Foo\Bar\Collection'],
       FileParser::FromData($data)->getClassNames(),
     );
   }

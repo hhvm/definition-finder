@@ -11,12 +11,14 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace HH\Lib\{C, Str, Vec};
+
 /** Represents a parameter, property, constant, or return type hint */
 class ScannedTypehint {
   public function __construct(
     private string $typeName,
     private string $typeTextBase,
-    private \ConstVector<ScannedTypehint> $generics,
+    private vec<ScannedTypehint> $generics,
     private bool $nullable,
   ) {
   }
@@ -33,7 +35,7 @@ class ScannedTypehint {
     return $this->nullable;
   }
 
-  public function getGenericTypes(): \ConstVector<ScannedTypehint> {
+  public function getGenericTypes(): vec<ScannedTypehint> {
     return $this->generics;
   }
 
@@ -43,16 +45,18 @@ class ScannedTypehint {
 
     if (strpbrk($base, '<>')) {
       invariant(
-        $this->getGenericTypes()->isEmpty(),
+        C\is_empty($this->getGenericTypes()),
         'Typename "%s" contains <> and has generics',
         $base,
       );
-      // Invalid in most cases, but valid for eg `(function():Vector<string>)`
+      // Invalid in most cases, but valid for eg `(function():vec<string>)`
       return $base;
     }
     $generics = $this->getGenericTypes();
     if ($generics) {
-      $sub = implode(',', $generics->map($g ==> $g->getTypeText()));
+      $sub = $generics
+        |> Vec\map($$, $g ==> $g->getTypeText())
+        |> Str\join($$, ',');
       if ($base === 'tuple') {
         return '('.$sub.')';
       } else {

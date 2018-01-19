@@ -17,13 +17,13 @@ final class HaltCompilerTest extends \PHPUnit_Framework_TestCase {
   public function testDoesNotRaiseErrorAfterHaltCompiler(): void {
     $code = '<?hh function foo(){}; __halt_compiler(); function bar(;';
     $parser = FileParser::FromData($code);
-    $this->assertEquals(Vector { 'foo' }, $parser->getFunctionNames());
+    $this->assertEquals(vec['foo'], $parser->getFunctionNames());
   }
 
   public function testDoesNotParseDefinitionsAfterHaltCompiler(): void {
     $code =
       '<?hh function foo(){}; __halt_compiler(); function bar(): void {};';
     $parser = FileParser::FromData($code);
-    $this->assertEquals(Vector { 'foo' }, $parser->getFunctionNames());
+    $this->assertEquals(vec['foo'], $parser->getFunctionNames());
   }
 }

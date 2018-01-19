@@ -20,7 +20,7 @@ class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
-      Vector { 'bar' },
+      vec['bar'],
       $fun->getParameters()->map($x ==> $x->getName()),
     );
   }
@@ -30,7 +30,7 @@ class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
-      new ScannedTypehint('void', 'void', Vector {}, false),
+      new ScannedTypehint('void', 'void', vec[], false),
       $fun->getReturnType(),
     );
   }
@@ -40,7 +40,7 @@ class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
-      Vector { 'Herp', 'Derp' },
+      vec['Herp', 'Derp'],
       $fun->getAttributes()->keys(),
     );
   }
@@ -50,7 +50,7 @@ class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
-      Map { 'Herp' => Vector { 'herpderp' }, 'Derp' => Vector {} },
+      dict['Herp' => vec['herpderp'], 'Derp' => vec[]],
       $fun->getAttributes(),
     );
   }
@@ -60,7 +60,7 @@ class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $fun = $parser->getFunction('herp');
     $this->assertEquals(
-      Map { 'Foo' => Vector { 'herp', 'derp' } },
+      dict['Foo' => vec['herp', 'derp']],
       $fun->getAttributes(),
     );
   }
@@ -70,7 +70,7 @@ class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $fun = $parser->getFunction('herp');
     $this->assertEquals(
-      Map { 'Foo' => Vector { 'herpderp' } },
+      dict['Foo' => vec['herpderp']],
       $fun->getAttributes(),
     );
   }

@@ -4,19 +4,135 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "763472adb9f3e71cfbe92285fdf17643",
-    "packages": [],
+    "content-hash": "5c20711d85a13a408c3c9aaaebd45afa",
+    "packages": [
+        {
+            "name": "fredemmott/hack-error-suppressor",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fredemmott/hack-error-suppressor.git",
+                "reference": "cb145c771b50f4f4eeec8c9cac4740df3d486a12"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fredemmott/hack-error-suppressor/zipball/cb145c771b50f4f4eeec8c9cac4740df3d486a12",
+                "reference": "cb145c771b50f4f4eeec8c9cac4740df3d486a12",
+                "shasum": ""
+            },
+            "require-dev": {
+                "91carriage/phpunit-hhi": "^5.6",
+                "phpunit/phpunit": "^5.7"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "ISC"
+            ],
+            "authors": [
+                {
+                    "name": "Fred Emmott",
+                    "email": "fred@fredemmott.co.uk"
+                }
+            ],
+            "description": "Suppress HHVM's automatic conversion of typechecker errors to fatals.",
+            "time": "2017-05-02T03:07:37+00:00"
+        },
+        {
+            "name": "hhvm/hhvm-autoload",
+            "version": "v1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hhvm/hhvm-autoload.git",
+                "reference": "a2124986412f2c86d7da84b67a8c7b37bde25a3f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hhvm/hhvm-autoload/zipball/a2124986412f2c86d7da84b67a8c7b37bde25a3f",
+                "reference": "a2124986412f2c86d7da84b67a8c7b37bde25a3f",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0",
+                "fredemmott/hack-error-suppressor": "^1.0",
+                "hhvm": "^3.23"
+            },
+            "replace": {
+                "facebook/hhvm-autoload": "1.*"
+            },
+            "require-dev": {
+                "91carriage/phpunit-hhi": "^5.5",
+                "phpunit/phpunit": "^5.5"
+            },
+            "bin": [
+                "bin/hh-autoload"
+            ],
+            "type": "composer-plugin",
+            "extra": {
+                "class": [
+                    "Facebook\\AutoloadMap\\ComposerPlugin"
+                ]
+            },
+            "autoload": {
+                "classmap": [
+                    "src/Writer.php",
+                    "src/"
+                ],
+                "files": [
+                    "src/AutoloadMap.php",
+                    "src/Config.php",
+                    "src/TypeAssert.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "time": "2018-01-18T22:05:10+00:00"
+        },
+        {
+            "name": "hhvm/hsl",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hhvm/hsl.git",
+                "reference": "ef61c015ab5969d10c2b0d66cfbc1dd20b13ec17"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hhvm/hsl/zipball/ef61c015ab5969d10c2b0d66cfbc1dd20b13ec17",
+                "reference": "ef61c015ab5969d10c2b0d66cfbc1dd20b13ec17",
+                "shasum": ""
+            },
+            "require": {
+                "hhvm/hhvm-autoload": "^1.4"
+            },
+            "require-dev": {
+                "91carriage/phpunit-hhi": "^5.7",
+                "facebook/definition-finder": "^1.6.1",
+                "facebook/fbexpect": "^0.4",
+                "hhvm": "^3.23.2",
+                "phpunit/phpunit": "^5.7"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "The Hack Standard Library",
+            "time": "2018-01-05T23:38:40+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "91carriage/phpunit-hhi",
-            "version": "5.7.1",
+            "version": "5.7.2",
             "source": {
                 "type": "git",
                 "url": "https://git.simon.geek.nz/91-carriage/phpunit-hhi.git",
-                "reference": "6864897f023f111d8b72fb7340c1ef5d0d9f8a45"
+                "reference": "b2ca7d221fa4ac6b4331e0dbc32cdc918ab8b11f"
             },
             "require": {
-                "hhvm": ">=3.12.0"
+                "hhvm": ">=3.23.0"
             },
             "conflict": {
                 "phpunit/phpunit": "<5.7.15"
@@ -54,7 +170,7 @@
                 "phpunit",
                 "testing"
             ],
-            "time": "2017-04-09T02:42:01+00:00"
+            "time": "2018-01-09T08:14:01+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -112,23 +228,24 @@
         },
         {
             "name": "hhvm/systemlib-extractor",
-            "version": "v1.0",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hhvm/systemlib-extractor.git",
-                "reference": "16da778adfafc38e3801522022aa426e72304019"
+                "reference": "c148912ed92b493288d651d64bc6a9b386e5cf35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hhvm/systemlib-extractor/zipball/16da778adfafc38e3801522022aa426e72304019",
-                "reference": "16da778adfafc38e3801522022aa426e72304019",
+                "url": "https://api.github.com/repos/hhvm/systemlib-extractor/zipball/c148912ed92b493288d651d64bc6a9b386e5cf35",
+                "reference": "c148912ed92b493288d651d64bc6a9b386e5cf35",
                 "shasum": ""
             },
             "require": {
                 "hhvm": "*"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.5.*"
+                "91carriage/phpunit-hhi": "~5.7",
+                "phpunit/phpunit": "~5.7"
             },
             "type": "library",
             "autoload": {
@@ -146,7 +263,7 @@
                 "hack",
                 "hhvm"
             ],
-            "time": "2017-06-26T16:48:23+00:00"
+            "time": "2018-01-05T20:50:48+00:00"
         },
         {
             "name": "myclabs/deep-copy",

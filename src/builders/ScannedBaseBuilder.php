@@ -14,7 +14,7 @@ namespace Facebook\DefinitionFinder;
 abstract class ScannedBaseBuilder {
   const type TContext = ScannedBase::TContext;
 
-  protected ?Map<string, Vector<mixed>> $attributes;
+  protected ?dict<string, vec<mixed>> $attributes;
   protected ?string $docblock;
 
 
@@ -29,7 +29,7 @@ abstract class ScannedBaseBuilder {
     return $this;
   }
 
-  public function setAttributes(Map<string, Vector<mixed>> $v): this {
+  public function setAttributes(dict<string, vec<mixed>> $v): this {
     $this->attributes = $v;
     return $this;
   }

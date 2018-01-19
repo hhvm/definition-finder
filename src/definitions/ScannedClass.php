@@ -11,22 +11,24 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace HH\Lib\Vec;
+
 <<__ConsistentConstruct>>
 abstract class ScannedClass extends ScannedBase implements HasScannedGenerics {
 
   public function __construct(
     string $name,
     self::TContext $context,
-    Map<string, Vector<mixed>> $attributes,
+    dict<string, vec<mixed>> $attributes,
     ?string $docblock,
-    private \ConstVector<ScannedMethod> $methods,
-    private \ConstVector<ScannedProperty> $properties,
-    private \ConstVector<ScannedConstant> $constants,
-    private \ConstVector<ScannedTypeConstant> $typeConstants,
-    private \ConstVector<ScannedGeneric> $generics,
+    private vec<ScannedMethod> $methods,
+    private vec<ScannedProperty> $properties,
+    private vec<ScannedConstant> $constants,
+    private vec<ScannedTypeConstant> $typeConstants,
+    private vec<ScannedGeneric> $generics,
     private ?ScannedTypehint $parent,
-    private \ConstVector<ScannedTypehint> $interfaces,
-    private \ConstVector<ScannedTypehint> $traits,
+    private vec<ScannedTypehint> $interfaces,
+    private vec<ScannedTypehint> $traits,
     private AbstractnessToken $abstractness = AbstractnessToken::NOT_ABSTRACT,
     private FinalityToken $finality = FinalityToken::NOT_FINAL,
   ) {
@@ -41,32 +43,32 @@ abstract class ScannedClass extends ScannedBase implements HasScannedGenerics {
     return static::getType() === DefinitionType::TRAIT_DEF;
   }
 
-  public function getMethods(): \ConstVector<ScannedMethod> {
+  public function getMethods(): vec<ScannedMethod> {
     return $this->methods;
   }
 
-  public function getProperties(): \ConstVector<ScannedProperty> {
+  public function getProperties(): vec<ScannedProperty> {
     return $this->properties;
   }
 
-  public function getConstants(): \ConstVector<ScannedConstant> {
+  public function getConstants(): vec<ScannedConstant> {
     return $this->constants;
   }
 
-  public function getTypeConstants(): \ConstVector<ScannedTypeConstant> {
+  public function getTypeConstants(): vec<ScannedTypeConstant> {
     return $this->typeConstants;
   }
 
-  public function getGenericTypes(): \ConstVector<ScannedGeneric> {
+  public function getGenericTypes(): vec<ScannedGeneric> {
     return $this->generics;
   }
 
-  public function getInterfaceNames(): \ConstVector<string> {
-    return $this->interfaces->map($x ==> $x->getTypeName());
+  public function getInterfaceNames(): vec<string> {
+    return Vec\map($this->interfaces, $x ==> $x->getTypeName());
   }
 
-  public function getTraitNames(): \ConstVector<string> {
-    return $this->traits->map($x ==> $x->getTypeName());
+  public function getTraitNames(): vec<string> {
+    return Vec\map($this->traits, $x ==> $x->getTypeName());
   }
 
   public function getParentClassName(): ?string {
@@ -77,13 +79,13 @@ abstract class ScannedClass extends ScannedBase implements HasScannedGenerics {
     return $this->parent;
   }
 
-  public function getInterfaceInfo(): \ConstVector<ScannedTypehint> {
+  public function getInterfaceInfo(): vec<ScannedTypehint> {
     return $this->interfaces;
   }
 
   public function getTraitGenerics(
-  ): \ConstMap<string, \ConstVector<ScannedTypehint>> {
-    $traits = Map {};
+  ): dict<string, vec<ScannedTypehint>> {
+    $traits = dict[];
     foreach ($this->traits as $trait) {
       $traits[$trait->getTypeName()] = $trait->getGenericTypes();
     }
