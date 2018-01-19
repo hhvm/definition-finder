@@ -478,7 +478,7 @@ final class ScopeConsumer extends Consumer {
   }
 
   private function consumeUseStatement(): void {
-    $parts = [];
+    $parts = vec[];
     $alias = '';
     $imports = vec[];
     $import_type = UseStatementType::NAMESPACE_AND_TYPE;
@@ -499,7 +499,7 @@ final class ScopeConsumer extends Consumer {
         $prefix = implode("\\", $parts);
         foreach ($this->consumeGroupUseStatement() as $alias => $real) {
           $imports[] =
-            tuple($import_type, ImmVector { $prefix, $real }, $alias);
+            tuple($import_type, vec[$prefix, $real], $alias);
         }
         break;
       } else if ($token === ';') {

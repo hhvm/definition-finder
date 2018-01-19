@@ -16,7 +16,7 @@ use Facebook\DefinitionFinder\TokenQueue;
 final class StaticScalarExpression extends Expression {
   protected static function matchImpl(TokenQueue $tq): ?Expression {
 
-    $subtypes = ImmVector {
+    $subtypes = vec[
       CommonScalarExpression::class,
       StaticStringExpression::class,
       StaticClassClassConstantExpression::class,
@@ -29,7 +29,7 @@ final class StaticScalarExpression extends Expression {
       | static_vec_literal_ae              { $$ = $1;}
       | static_keyset_literal_ae           { $$ = $1;}
       */
-    };
+    ];
     foreach ($subtypes as $subtype) {
       $match = $subtype::match($tq);
       if ($match) {
