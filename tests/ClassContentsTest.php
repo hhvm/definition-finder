@@ -404,12 +404,12 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     string $returnText,
     string $expectedTypehintText,
   ): void {
-    $data = sprintf(
+    $data = \sprintf(
       '<?hh %s class Foo { public function bar(): %s {} }',
       $namespace === '' ? '' : "namespace $namespace;",
       $returnText,
     );
-    $className = ltrim($namespace.'\Foo', "\\");
+    $className = \ltrim($namespace.'\Foo', "\\");
     $parser = FileParser::FromData($data);
     $method = C\onlyx($parser->getClass($className)->getMethods());
 

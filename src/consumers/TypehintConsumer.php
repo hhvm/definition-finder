@@ -26,7 +26,7 @@ final class TypehintConsumer extends Consumer {
     while ($this->tq->haveTokens()) {
       list($t, $ttype) = $this->tq->shift();
 
-      if ($ttype === T_WHITESPACE) {
+      if ($ttype === \T_WHITESPACE) {
         if ($nesting === 0) {
           break;
         }
@@ -38,7 +38,7 @@ final class TypehintConsumer extends Consumer {
           $type_name = 'shape';
         } else if ($t === '(') {
           list($_, $pttype) = $this->tq->peek();
-          if ($pttype === T_FUNCTION) {
+          if ($pttype === \T_FUNCTION) {
             $type_name = 'callable';
           } else {
             $type_name = 'tuple';
@@ -55,8 +55,8 @@ final class TypehintConsumer extends Consumer {
         ++$nesting;
         continue;
       } else if ($t === ')') {
-        if (substr($type_text, -2) === ',)') {
-          $type_text = substr($type_text, 0, -2).')';
+        if (\substr($type_text, -2) === ',)') {
+          $type_text = \substr($type_text, 0, -2).')';
         }
         --$nesting;
         if ($nesting === 0) {
@@ -66,11 +66,11 @@ final class TypehintConsumer extends Consumer {
       }
 
       if (
-        $ttype !== T_STRING &&
-        $ttype !== T_NS_SEPARATOR &&
-        $ttype !== T_CALLABLE &&
-        $ttype !== T_ARRAY &&
-        $ttype !== T_XHP_LABEL &&
+        $ttype !== \T_STRING &&
+        $ttype !== \T_NS_SEPARATOR &&
+        $ttype !== \T_CALLABLE &&
+        $ttype !== \T_ARRAY &&
+        $ttype !== \T_XHP_LABEL &&
         !StringishTokens::isValid($ttype)
       ) {
         continue;
@@ -80,13 +80,13 @@ final class TypehintConsumer extends Consumer {
         continue;
       }
 
-      if ($ttype === T_XHP_LABEL) {
+      if ($ttype === \T_XHP_LABEL) {
         $t = normalize_xhp_class($t);
       }
 
       $type_text = $t;
       // Handle \foo
-      if ($ttype === T_NS_SEPARATOR) {
+      if ($ttype === \T_NS_SEPARATOR) {
         list($t, $_) = $this->tq->shift();
         $type_text .= $t;
       }
@@ -96,14 +96,14 @@ final class TypehintConsumer extends Consumer {
         list($_, $ttype) = $this->tq->peek();
 
         // Handle \foo\bar::TYPE, or self::SOME_CLASS_TYPE::SOME_TYPE_CONST
-        if ($ttype === T_DOUBLE_COLON) {
+        if ($ttype === \T_DOUBLE_COLON) {
           list($tDoubleColon, $_) = $this->tq->shift();
           list($tConstant, $_) = $this->tq->shift();
           $type_text = $type_text.$tDoubleColon.$tConstant;
           continue;
         }
 
-        if ($ttype !== T_NS_SEPARATOR) {
+        if ($ttype !== \T_NS_SEPARATOR) {
           break;
         }
         $this->tq->shift();

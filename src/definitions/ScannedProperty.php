@@ -33,15 +33,15 @@ class ScannedProperty extends ScannedBase implements HasScannedVisibility {
   }
 
   public function isPublic(): bool {
-    return $this->visibility === T_PUBLIC;
+    return $this->visibility === \T_PUBLIC;
   }
 
   public function isProtected(): bool {
-    return $this->visibility === T_PROTECTED;
+    return $this->visibility === \T_PROTECTED;
   }
 
   public function isPrivate(): bool {
-    return $this->visibility === T_PRIVATE;
+    return $this->visibility === \T_PRIVATE;
   }
 
   public function isStatic(): bool {

@@ -68,7 +68,7 @@ final class ScannedClassBuilder extends ScannedBaseBuilder {
       $this->type === $what::getType(),
       "Can't build a %s for a %s",
       $what,
-      token_name($this->type),
+      \token_name($this->type),
     );
 
     $scope = nullthrows($this->scopeBuilder)->build();

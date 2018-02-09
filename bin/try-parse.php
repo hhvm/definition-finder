@@ -15,16 +15,16 @@ namespace Facebook\DefinitionFinder;
 require_once (__DIR__.'/../vendor/hh_autoload.php');
 
 function try_parse(string $path): void {
-  printf('%s ... ', $path);
+  \printf('%s ... ', $path);
   try {
     FileParser::FromFile($path);
   } catch (\Exception $e) {
     $ret_code = -1;
-    system(
-      sprintf(
+    \system(
+      \sprintf(
         '%s -l %s >/dev/null',
-        escapeshellarg(PHP_BINARY),
-        escapeshellarg($path),
+        \escapeshellarg(\PHP_BINARY),
+        \escapeshellarg($path),
       ),
       &$ret_code,
     );

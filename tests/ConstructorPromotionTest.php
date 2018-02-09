@@ -40,7 +40,7 @@ class Foo {
 
   public function testFoundMethods(): void {
     $meths = $this->class?->getMethods();
-    $this->assertSame(1, count($meths));
+    $this->assertSame(1, \count($meths));
   }
 
   public function testConstructorParameters(): void {

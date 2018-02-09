@@ -41,7 +41,7 @@ class FileParser extends BaseParser {
   ///// Constructors /////
 
   public static function FromFile(string $filename): FileParser {
-    return self::FromData(file_get_contents($filename), $filename);
+    return self::FromData(\file_get_contents($filename), $filename);
   }
 
   public static function FromData(

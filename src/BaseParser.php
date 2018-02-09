@@ -96,7 +96,7 @@ abstract class BaseParser {
     vec<T> $defs,
   ): T {
     $defs = Vec\filter($defs, $x ==> $x->getName() === $name);
-    invariant(count($defs) === 1, 'not found: %s', $name);
+    invariant(\count($defs) === 1, 'not found: %s', $name);
     return $defs[0];
   }
 }

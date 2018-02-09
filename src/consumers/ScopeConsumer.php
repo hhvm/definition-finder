@@ -47,24 +47,24 @@ final class ScopeConsumer extends Consumer {
     while ($this->tq->haveTokens()) {
       list($token, $ttype) = $tq->shift();
 
-      if ($ttype !== T_OPEN_TAG) {
+      if ($ttype !== \T_OPEN_TAG) {
         continue;
       }
 
-      if (trim($token) !== '<?hh') {
+      if (\trim($token) !== '<?hh') {
         $this->sourceType = SourceType::PHP;
         return;
       }
 
       // '<?hh\n// strict' is still not strict
-      if (substr($token, -1) === "\n") {
+      if (\substr($token, -1) === "\n") {
         $this->sourceType = SourceType::HACK_PARTIAL;
         return;
       }
 
       list($next, $ntype) = $this->tq->peek();
-      if ($ntype === T_COMMENT && substr($next, 0, 2) === '//') {
-        $mode = trim(substr($next, 2));
+      if ($ntype === \T_COMMENT && \substr($next, 0, 2) === '//') {
+        $mode = \trim(\substr($next, 2));
         if ($mode === 'strict') {
           $this->sourceType = SourceType::HACK_STRICT;
           return;
@@ -118,8 +118,8 @@ final class ScopeConsumer extends Consumer {
 
       if (
         $token === '{' ||
-        $ttype === T_CURLY_OPEN ||
-        $ttype === T_DOLLAR_OPEN_CURLY_BRACES
+        $ttype === \T_CURLY_OPEN ||
+        $ttype === \T_DOLLAR_OPEN_CURLY_BRACES
       ) {
         ++$scope_depth;
         continue;
@@ -133,12 +133,12 @@ final class ScopeConsumer extends Consumer {
         continue;
       }
 
-      if ($ttype === T_CLOSE_TAG) { /* ?> ... <?php */
+      if ($ttype === \T_CLOSE_TAG) { /* ?> ... <?php */
         $this->consumeNonCode();
         continue;
       }
 
-      if ($ttype === T_SL && $scope_depth === 1 && $parens_depth === 0) {
+      if ($ttype === \T_SL && $scope_depth === 1 && $parens_depth === 0) {
         $state = $tq->getState();
         try {
           $attrs = (new UserAttributesConsumer($tq, $this->getSubContext()))
@@ -153,42 +153,42 @@ final class ScopeConsumer extends Consumer {
         continue;
       }
 
-      if ($ttype === T_DOC_COMMENT) {
+      if ($ttype === \T_DOC_COMMENT) {
         $docblock = $token;
         continue;
       }
 
-      if ($ttype === T_STATIC) {
+      if ($ttype === \T_STATIC) {
         $staticity = StaticityToken::IS_STATIC;
         continue;
       }
 
-      if ($ttype === T_ABSTRACT) {
+      if ($ttype === \T_ABSTRACT) {
         $abstractness = AbstractnessToken::IS_ABSTRACT;
         continue;
       }
 
-      if ($ttype === T_FINAL) {
+      if ($ttype === \T_FINAL) {
         $finality = FinalityToken::IS_FINAL;
         continue;
       }
 
-      if ($ttype === T_ABSTRACT) {
+      if ($ttype === \T_ABSTRACT) {
         $abstract = true;
         continue;
       }
 
-      if ($ttype === T_XHP_ATTRIBUTE) {
+      if ($ttype === \T_XHP_ATTRIBUTE) {
         $this->consumeStatement();
         continue;
       }
 
-      if ($ttype === T_USE && $this->scopeType !== ScopeType::CLASS_SCOPE) {
+      if ($ttype === \T_USE && $this->scopeType !== ScopeType::CLASS_SCOPE) {
         $this->consumeUseStatement();
         continue;
       }
 
-      if ($ttype === T_USE && $this->scopeType === ScopeType::CLASS_SCOPE) {
+      if ($ttype === \T_USE && $this->scopeType === ScopeType::CLASS_SCOPE) {
         do {
           $this->consumeWhitespace();
           $builder->addUsedTrait(
@@ -208,7 +208,7 @@ final class ScopeConsumer extends Consumer {
       }
 
       // I hate you, PHP.
-      if ($ttype === T_STRING && strtolower($token) === 'define') {
+      if ($ttype === \T_STRING && \strtolower($token) === 'define') {
         $sub_builder =
           (new DefineConsumer($tq, $this->getSubContext()))->getBuilder();
         // I hate you more, PHP. $sub_builder is null in case we've not
@@ -219,7 +219,7 @@ final class ScopeConsumer extends Consumer {
         continue;
       }
 
-      if ($ttype === T_DOUBLE_COLON) {
+      if ($ttype === \T_DOUBLE_COLON) {
         // Whatever's next it can't be the start of a definition. This stops
         // '::class' being considered the start of a class definition.
         $this->tq->shift();
@@ -238,7 +238,7 @@ final class ScopeConsumer extends Consumer {
         continue;
       }
 
-      if ($ttype === T_STRING) {
+      if ($ttype === \T_STRING) {
         $tq->unshiftNG($ngtoken);
         $property_type =
           (new TypehintConsumer($tq, $this->getSubContext()))->getTypehint();
@@ -246,8 +246,8 @@ final class ScopeConsumer extends Consumer {
       }
 
       // make sure we're not inside a method body
-      if ($ttype === T_VARIABLE && $scope_depth === 1) {
-        $name = substr($token, 1); // remove prefixed '$'
+      if ($ttype === \T_VARIABLE && $scope_depth === 1) {
+        $name = \substr($token, 1); // remove prefixed '$'
         if ($visibility === null) {
           $visibility = VisibilityToken::T_PUBLIC;
         }
@@ -314,7 +314,7 @@ final class ScopeConsumer extends Consumer {
     switch ($def_type) {
       case DefinitionType::NAMESPACE_DEF:
         list($_, $ttype) = $this->tq->peek();
-        if ($ttype === T_NS_SEPARATOR) {
+        if ($ttype === \T_NS_SEPARATOR) {
           // Relative namespace - eg 'namespace\foo()'
           $this->consumeStatement();
           return;
@@ -368,7 +368,7 @@ final class ScopeConsumer extends Consumer {
           invariant(
             $fb instanceof ScannedMethodBuilder,
             'unknown function builder type: %s',
-            get_class($fb),
+            \get_class($fb),
           );
           if ($staticity === null) {
             $staticity = StaticityToken::NOT_STATIC;
@@ -437,9 +437,9 @@ final class ScopeConsumer extends Consumer {
   ): void {
     list($name, $ttype) = $this->tq->shift();
     invariant(
-      $ttype === T_STRING,
+      $ttype === \T_STRING,
       'Expected a string for %s, got %d',
-      token_name($def_type),
+      \token_name($def_type),
       $ttype,
     );
     $name = $this->normalizeName($name);
@@ -471,8 +471,8 @@ final class ScopeConsumer extends Consumer {
 
   /** ?> ... <?php */
   private function consumeNonCode(): void {
-    $ttype = T_CLOSE_TAG;
-    while ($this->tq->haveTokens() && $ttype !== T_OPEN_TAG) {
+    $ttype = \T_CLOSE_TAG;
+    while ($this->tq->haveTokens() && $ttype !== \T_OPEN_TAG) {
       list($_, $ttype) = $this->tq->shift();
     }
   }
@@ -490,13 +490,13 @@ final class ScopeConsumer extends Consumer {
       if (StringishTokens::isValid($type)) {
         $parts[] = $token;
         continue;
-      } else if ($type === T_NS_SEPARATOR) {
+      } else if ($type === \T_NS_SEPARATOR) {
         continue;
-      } else if ($type === T_AS) {
+      } else if ($type === \T_AS) {
         $alias = $this->consumeAlias();
         continue;
       } else if ($token === '{') {
-        $prefix = implode("\\", $parts);
+        $prefix = \implode("\\", $parts);
         foreach ($this->consumeGroupUseStatement() as $alias => $real) {
           $imports[] =
             tuple($import_type, vec[$prefix, $real], $alias);
@@ -511,19 +511,19 @@ final class ScopeConsumer extends Consumer {
         $alias = '';
         $import_type = UseStatementType::NAMESPACE_AND_TYPE;
         continue;
-      } else if ($type === T_NAMESPACE && count($parts) === 0) {
+      } else if ($type === \T_NAMESPACE && \count($parts) === 0) {
         $import_type = UseStatementType::NAMESPACE_ONLY;
         continue;
-      } else if ($type === T_TYPE && count($parts) === 0) {
+      } else if ($type === \T_TYPE && \count($parts) === 0) {
         $import_type = UseStatementType::TYPE_ONLY;
         continue;
-      } else if ($type === T_FUNCTION || $type === T_CONST) {
+      } else if ($type === \T_FUNCTION || $type === \T_CONST) {
         // 'use function' and 'use const' do not create any type aliases
         $this->consumeStatement();
         break;
       }
 
-      invariant_violation('Unexpected token %s', var_export($token, true));
+      invariant_violation('Unexpected token %s', \var_export($token, true));
 
     } while ($this->tq->haveTokens());
 
@@ -531,13 +531,13 @@ final class ScopeConsumer extends Consumer {
     $namespace_imports = dict[];
 
     foreach ($imports as list($import_type, $parts, $alias)) {
-      if (count($parts) === 0) {
+      if (\count($parts) === 0) {
         continue;
       }
       if ($alias === '') {
-        $alias = $parts[count($parts) - 1];
+        $alias = $parts[\count($parts) - 1];
       }
-      $qualified = implode('\\', $parts);
+      $qualified = \implode('\\', $parts);
 
       switch ($import_type) {
         case UseStatementType::NAMESPACE_ONLY:
@@ -571,7 +571,7 @@ final class ScopeConsumer extends Consumer {
       if ($t === '}') {
         break;
       }
-      if ($ttype === T_FUNCTION || $ttype === T_CONST) {
+      if ($ttype === \T_FUNCTION || $ttype === \T_CONST) {
         $is_func_or_const = true;
         continue;
       }
@@ -581,10 +581,10 @@ final class ScopeConsumer extends Consumer {
 
       $this->consumeWhitespace();
       list($t, $ttype) = $tq->shift();
-      while ($ttype === T_NS_SEPARATOR) {
+      while ($ttype === \T_NS_SEPARATOR) {
         $name .= "\\";
         list($t, $ttype) = $tq->shift();
-        invariant($ttype === T_STRING, 'expected definition name');
+        invariant($ttype === \T_STRING, 'expected definition name');
         $name .= $t;
         $alias = $t;
         $this->consumeWhitespace();
@@ -606,14 +606,14 @@ final class ScopeConsumer extends Consumer {
         continue;
       }
 
-      invariant($ttype === T_AS, "Unexpected token %s", var_export($t, true));
+      invariant($ttype === \T_AS, "Unexpected token %s", \var_export($t, true));
       $this->consumeWhitespace();
 
       list($t, $ttype) = $tq->shift();
       invariant(
-        $ttype === T_STRING,
+        $ttype === \T_STRING,
         'Expected alias (T_STRING), got %s',
-        var_export($t, true),
+        \var_export($t, true),
       );
       $aliases[$t] = $name;
       $this->consumeWhitespace();
@@ -624,7 +624,7 @@ final class ScopeConsumer extends Consumer {
       if ($t === ',') {
         continue;
       }
-      invariant_violation("Expected '}' or ',', got %s", var_export($t, true));
+      invariant_violation("Expected '}' or ',', got %s", \var_export($t, true));
     } while (!$tq->isEmpty());
 
     return $aliases;
@@ -640,7 +640,7 @@ final class ScopeConsumer extends Consumer {
 
     list($name, $type) = $this->tq->shift();
     if (!StringishTokens::isValid($type)) {
-      invariant_violation('Unexpected token %s', var_export($name, true));
+      invariant_violation('Unexpected token %s', \var_export($name, true));
     }
 
     $this->consumeWhitespace();

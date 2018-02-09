@@ -141,7 +141,7 @@ abstract class Consumer {
   ) {
     $namespace = $context['namespace'];
     invariant(
-      $namespace === null || substr($namespace, -1) !== '\\',
+      $namespace === null || \substr($namespace, -1) !== '\\',
       "Namespaces don't end with slashes",
     );
     $this->assertValidSourceType();
@@ -150,7 +150,7 @@ abstract class Consumer {
   protected function consumeWhitespace(): void {
     while (!$this->tq->isEmpty()) {
       list($_, $ttype) = $this->tq->peek();
-      if ($ttype === T_WHITESPACE || $ttype === T_COMMENT) {
+      if ($ttype === \T_WHITESPACE || $ttype === \T_COMMENT) {
         $this->tq->shift();
         continue;
       }
@@ -182,8 +182,8 @@ abstract class Consumer {
       list($next, $next_type) = $this->tq->shift();
       if (
         $next === '{' ||
-        $next_type === T_CURLY_OPEN ||
-        $next_type === T_DOLLAR_OPEN_CURLY_BRACES
+        $next_type === \T_CURLY_OPEN ||
+        $next_type === \T_DOLLAR_OPEN_CURLY_BRACES
       ) {
         return;
       }
@@ -197,8 +197,8 @@ abstract class Consumer {
       list($next, $next_type) = $this->tq->shift();
       if (
         $next === '{' ||
-        $next_type === T_CURLY_OPEN ||
-        $next_type === T_DOLLAR_OPEN_CURLY_BRACES
+        $next_type === \T_CURLY_OPEN ||
+        $next_type === \T_DOLLAR_OPEN_CURLY_BRACES
       ) {
         ++$nesting;
       } else if ($next === '}') { // no such thing as T_CURLY_CLOSE
@@ -222,8 +222,8 @@ abstract class Consumer {
     NameNormalizationMode $mode = NameNormalizationMode::REFERENCE,
   ): string {
     $name = $this->fullyQualifyName($name, $mode);
-    if (substr($name, 0, 1) === '\\') {
-      return substr($name, 1);
+    if (\substr($name, 0, 1) === '\\') {
+      return \substr($name, 1);
     }
     return $name;
   }
@@ -232,7 +232,7 @@ abstract class Consumer {
     string $name,
     NameNormalizationMode $mode,
   ): string {
-    if (substr($name, 0, 1) === "\\") {
+    if (\substr($name, 0, 1) === "\\") {
       return $name;
     }
 
@@ -243,7 +243,7 @@ abstract class Consumer {
       }
     }
 
-    if (preg_match('/^(this|self|static)(::|$)/', $name)) {
+    if (\preg_match('/^(this|self|static)(::|$)/', $name)) {
       return $name;
     }
 
@@ -274,7 +274,7 @@ abstract class Consumer {
     }
 
     $parts[0] = $real_base;
-    return '\\'.implode('\\', $parts);
+    return '\\'.\implode('\\', $parts);
   }
 
   final protected function getContextWithGenerics(

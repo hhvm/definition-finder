@@ -43,7 +43,7 @@ class ScannedTypehint {
     $base = $this->isNullable() ? '?' : '';
     $base .= $this->typeTextBase;
 
-    if (strpbrk($base, '<>')) {
+    if (\strpbrk($base, '<>')) {
       invariant(
         C\is_empty($this->getGenericTypes()),
         'Typename "%s" contains <> and has generics',

@@ -36,13 +36,13 @@ final class ConstantConsumer extends Consumer {
     while ($this->tq->haveTokens()) {
       $next_token = $this->tq->shiftNG();
       list($next, $next_type) = $next_token->asLegacyToken();
-      if ($next_type === T_WHITESPACE) {
+      if ($next_type === \T_WHITESPACE) {
         continue;
       }
       if (StringishTokens::isValid($next_type)) {
         $this->consumeWhitespace();
         list($_, $nnt) = $this->tq->peek();
-        if ($nnt === T_STRING) {
+        if ($nnt === \T_STRING) {
           $this->tq->unshiftNG($next_token);
           $typehint =
             (new TypehintConsumer($this->tq, $this->context))->getTypehint();

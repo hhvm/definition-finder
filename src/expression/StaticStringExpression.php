@@ -18,10 +18,10 @@ final class StaticStringExpression extends Expression {
     $value = '';
     do {
       list($t, $ttype) = $tq->shift();
-      if ($ttype !== T_CONSTANT_ENCAPSED_STRING) {
+      if ($ttype !== \T_CONSTANT_ENCAPSED_STRING) {
         return null;
       }
-      $value .= substr($t, 1, -1); // remove wrapping quotes
+      $value .= \substr($t, 1, -1); // remove wrapping quotes
 
       self::consumeWhitespace($tq);
       list($t, $_) = $tq->peek();

@@ -17,7 +17,7 @@ function nullthrows<T>(?T $v): T {
 }
 
 function normalize_xhp_class(string $in): string {
-  return 'xhp_'.str_replace(':', '__', substr(strtr($in, '-', '_'), 1));
+  return 'xhp_'.\str_replace(':', '__', \substr(\strtr($in, '-', '_'), 1));
 }
 
 // Defined in runtime in global namespace, but not in HHI

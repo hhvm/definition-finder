@@ -19,9 +19,9 @@ type SourcePosition = shape('filename' => string, 'line' => ?int);
 type AttributeMap = dict<string, vec<mixed>>;
 
 enum VisibilityToken: int {
-  T_PUBLIC = T_PUBLIC;
-  T_PRIVATE = T_PRIVATE;
-  T_PROTECTED = T_PROTECTED;
+  T_PUBLIC = \T_PUBLIC;
+  T_PRIVATE = \T_PRIVATE;
+  T_PROTECTED = \T_PROTECTED;
 }
 
 enum VarianceToken: string {
@@ -79,14 +79,14 @@ const int T_DARRAY = 447;
 enum StringishTokens: int {
   T_SELECT = T_SELECT;
   T_ON = T_ON;
-  T_STRING = T_STRING;
+  T_STRING = \T_STRING;
   T_SUPER = T_SUPER;
   T_WHERE = T_WHERE;
-  T_XHP_CATEGORY = T_XHP_CATEGORY;
-  T_XHP_ATTRIBUTE = T_XHP_ATTRIBUTE;
-  T_XHP_CHILDREN = T_XHP_CHILDREN;
-  T_XHP_REQUIRED = T_XHP_REQUIRED;
-  T_ENUM = T_ENUM;
+  T_XHP_CATEGORY = \T_XHP_CATEGORY;
+  T_XHP_ATTRIBUTE = \T_XHP_ATTRIBUTE;
+  T_XHP_CHILDREN = \T_XHP_CHILDREN;
+  T_XHP_REQUIRED = \T_XHP_REQUIRED;
+  T_ENUM = \T_ENUM;
   T_DICT = T_DICT;
   T_VEC = T_VEC;
   T_KEYSET = T_KEYSET;

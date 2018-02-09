@@ -30,14 +30,14 @@ final class ClassConsumer extends Consumer {
     $generics = vec[];
     list($v, $t) = $this->tq->shift();
 
-    if ($t === T_STRING || StringishTokens::isValid($t)) {
+    if ($t === \T_STRING || StringishTokens::isValid($t)) {
       $name = $v;
     } else {
-      invariant($t === T_XHP_LABEL, 'Unknown class token %d', token_name($t));
+      invariant($t === \T_XHP_LABEL, 'Unknown class token %d', \token_name($t));
       invariant(
         DefinitionType::coerce($this->type) === DefinitionType::CLASS_DEF,
         'Seeing an XHP class name for a %s',
-        token_name($this->type),
+        \token_name($this->type),
       );
       // 'class :foo:bar' is really 'class xhp_foo__bar'
       $name = normalize_xhp_class($v);
@@ -62,13 +62,13 @@ final class ClassConsumer extends Consumer {
         break;
       }
 
-      if ($ttype === T_EXTENDS) {
+      if ($ttype === \T_EXTENDS) {
         $classes = $this->consumeClassList();
         if ($this->type === ClassDefinitionType::INTERFACE_DEF) {
           $builder->setInterfaces($classes);
         } else {
           invariant(
-            count($classes) === 1,
+            \count($classes) === 1,
             'only interfaces can have more than 1 parent at line %d',
             $this->tq->getLine(),
           );
@@ -77,7 +77,7 @@ final class ClassConsumer extends Consumer {
         continue;
       }
 
-      if ($ttype === T_IMPLEMENTS) {
+      if ($ttype === \T_IMPLEMENTS) {
         invariant(
           $this->type !== ClassDefinitionType::INTERFACE_DEF,
           'interfaces can not implement interfaces at line %d',
@@ -108,7 +108,7 @@ final class ClassConsumer extends Consumer {
         continue;
       }
 
-      if ($t === '{' || $ttype === T_IMPLEMENTS || $ttype === T_EXTENDS) {
+      if ($t === '{' || $ttype === \T_IMPLEMENTS || $ttype === \T_EXTENDS) {
         break;
       }
 

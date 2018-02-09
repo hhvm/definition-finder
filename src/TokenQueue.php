@@ -33,9 +33,9 @@ class TokenQueue {
 
   public function __construct(string $data) {
     $line = 0;
-    foreach (token_get_all($data) as $token) {
+    foreach (\token_get_all($data) as $token) {
       if (is_array($token)) {
-        if ($token[0] === T_HALT_COMPILER) {
+        if ($token[0] === \T_HALT_COMPILER) {
           break;
         }
         $line = $token[2];
@@ -80,11 +80,11 @@ class TokenQueue {
 
   public function shiftNG(): NGToken {
     invariant($this->haveTokens(), 'tried to shift without tokens');
-    return array_shift(&$this->tokens);
+    return \array_shift(&$this->tokens);
   }
 
   public function unshiftNG(NGToken $token): void {
-    array_unshift(&$this->tokens, $token);
+    \array_unshift(&$this->tokens, $token);
   }
 
   public function peek(): Token {

@@ -16,9 +16,9 @@ use Facebook\DefinitionFinder\FileParser;
 class SelfTest extends \PHPUnit_Framework_TestCase {
 
   public function filenameProvider(): array<array<string>> {
-    return array_map(
-      $filename ==> [basename($filename), $filename],
-      glob(dirname(__DIR__).'/src/**/*.php'),
+    return \array_map(
+      $filename ==> [\basename($filename), $filename],
+      \glob(\dirname(__DIR__).'/src/**/*.php'),
     );
   }
 
@@ -48,7 +48,7 @@ class SelfTest extends \PHPUnit_Framework_TestCase {
     try {
       $parser = FileParser::FromData($bytes, $name);
     } catch (\Exception $e) {
-      file_put_contents('/tmp/'.$name.'.php', $bytes);
+      \file_put_contents('/tmp/'.$name.'.php', $bytes);
       throw $e;
     }
     $this->assertNotNull($parser);

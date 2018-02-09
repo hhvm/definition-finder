@@ -32,7 +32,7 @@ abstract class Expression {
   protected static function consumeWhitespace(TokenQueue $tq): void {
     while ($tq->haveTokens()) {
       list($_, $ttype) = $tq->peek();
-      if ($ttype !== T_WHITESPACE) {
+      if ($ttype !== \T_WHITESPACE) {
         return;
       }
       $tq->shift();

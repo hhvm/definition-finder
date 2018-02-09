@@ -28,7 +28,7 @@ final class UserAttributesConsumer extends Consumer {
       $this->consumeWhitespace();
 
       list($t, $ttype) = $this->tq->shift();
-      if ($ttype === T_SR) { // this was the last attribute
+      if ($ttype === \T_SR) { // this was the last attribute
         return $attrs;
       }
       if ($t === ',') { // there's another
@@ -83,7 +83,7 @@ final class UserAttributesConsumer extends Consumer {
 
       $this->consumeWhitespace();
       list($t, $ttype) = $this->tq->shift();
-      if ($ttype === T_SR) {
+      if ($ttype === \T_SR) {
         return $attrs;
       }
       invariant(

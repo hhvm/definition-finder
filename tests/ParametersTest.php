@@ -28,7 +28,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
     $params = $function->getParameters();
 
-    $this->assertSame(2, count($params));
+    $this->assertSame(2, \count($params));
     $this->assertSame('bar', $params[0]->getName());
     $this->assertSame('baz', $params[1]->getName());
     $this->assertNull($params[0]->getTypehint());
@@ -42,7 +42,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
-    $this->assertSame(1, count($params));
+    $this->assertSame(1, \count($params));
     $param = $params[0];
     $this->assertSame('bar', $param->getName());
     $typehint = $param->getTypehint();
@@ -257,7 +257,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
   public function testWithTypedVariadicParam(): void {
     /* HH_FIXME[4106] HHVM_VERSION not defined */
     /* HH_FIXME[2049] HHVM_VERSION not defined */
-    if (!version_compare(HHVM_VERSION, '3.11.0', '>=')) {
+    if (!\version_compare(HHVM_VERSION, '3.11.0', '>=')) {
       $this->markTestSkipped('Typed variadics only supported in 3.11+');
     }
     $data = '<?hh function foo(array<mixed> ...$bar) {}';

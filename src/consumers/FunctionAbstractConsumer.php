@@ -44,7 +44,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
      * a T_SELECT
      */
     invariant(
-      preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $t) === 1,
+      \preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $t) === 1,
       'Expected function name at line %d',
       $tq->getLine(),
     );
@@ -117,7 +117,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
         $byref = true;
         continue;
       }
-      if ($ttype === T_ELLIPSIS) {
+      if ($ttype === \T_ELLIPSIS) {
         $variadic = true;
         invariant(
           !$have_variadic,
@@ -128,9 +128,9 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
         continue;
       }
 
-      if ($ttype === T_VARIABLE) {
+      if ($ttype === \T_VARIABLE) {
         $default = $this->consumeDefaultValue();
-        $name = substr($t, 1); // remove '$'
+        $name = \substr($t, 1); // remove '$'
         invariant(
           $variadic || !$have_variadic,
           'non-variadic parameter after variadic at line %d',
@@ -155,7 +155,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
         continue;
       }
 
-      if ($ttype === T_WHITESPACE || $t === ',' || $ttype === T_COMMENT) {
+      if ($ttype === \T_WHITESPACE || $t === ',' || $ttype === \T_COMMENT) {
         continue;
       }
 
@@ -163,20 +163,20 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
         invariant(
           $this->name === '__construct',
           'Saw %s for a non-constructor function parameter at line %d',
-          token_name($ttype),
+          \token_name($ttype),
           $tq->getLine(),
         );
         $visibility = VisibilityToken::assert($ttype);
         continue;
       }
 
-      if ($ttype === T_SL) {
+      if ($ttype === \T_SL) {
         $attrs = (new UserAttributesConsumer($this->tq, $this->context))
           ->getUserAttributes();
         continue;
       }
 
-      if ($ttype === T_DOC_COMMENT) {
+      if ($ttype === \T_DOC_COMMENT) {
         $doc = $t;
         continue;
       }

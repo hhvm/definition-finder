@@ -30,7 +30,7 @@ final class StaticArrayPairListExpression extends Expression {
 
       self::consumeWhitespace($tq);
       list($_, $ttype) = $tq->shift();
-      if ($ttype !== T_DOUBLE_ARROW) {
+      if ($ttype !== \T_DOUBLE_ARROW) {
         return null;
       }
       self::consumeWhitespace($tq);

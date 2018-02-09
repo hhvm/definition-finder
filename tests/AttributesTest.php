@@ -125,7 +125,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
       tuple("true", true),
       tuple("false", false),
       tuple("null", null),
-      tuple("INF", INF),
+      tuple("INF", \INF),
       tuple("+123", 123),
       tuple("-123", -123),
       tuple('array()', []),

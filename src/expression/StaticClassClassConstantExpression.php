@@ -20,11 +20,11 @@ final class StaticClassClassConstantExpression extends Expression {
       return null;
     }
     list($t, $ttype) = $tq->shift();
-    if ($ttype !== T_DOUBLE_COLON) {
+    if ($ttype !== \T_DOUBLE_COLON) {
       return null;
     }
     list($t, $ttype) = $tq->shift();
-    if ($ttype !== T_CLASS) {
+    if ($ttype !== \T_CLASS) {
       return null;
     }
     return new self($class->getValue());

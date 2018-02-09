@@ -70,9 +70,9 @@ abstract class ScannedBase {
   // Break a name into its namespace (if exists) and short name.
   // Short name === name if no namespace
   private function breakName(string $name): (string, string) {
-    $pos = strrpos($name, '\\');
-    $ns = $pos !== false ? substr($name, 0, $pos) : '';
-    $shortName = $ns !== '' ? substr($name, $pos + 1) : $name;
+    $pos = \strrpos($name, '\\');
+    $ns = $pos !== false ? \substr($name, 0, $pos) : '';
+    $shortName = $ns !== '' ? \substr($name, $pos + 1) : $name;
     return tuple($ns, $shortName);
   }
 }

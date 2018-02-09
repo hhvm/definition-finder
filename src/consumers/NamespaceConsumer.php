@@ -21,18 +21,18 @@ final class NamespaceConsumer extends Consumer {
       if (StringishTokens::isValid($next_type)) {
         $parts[] = $next;
         continue;
-      } else if ($next_type === T_NS_SEPARATOR) {
+      } else if ($next_type === \T_NS_SEPARATOR) {
         continue;
       } else if ($next === '{' || $next === ';') {
         break;
       }
-      invariant_violation('Unexpected token %s', var_export($next, true));
+      invariant_violation('Unexpected token %s', \var_export($next, true));
     } while ($this->tq->haveTokens());
 
     // empty $parts is valid inside HHVM's systemlib: namespace { } is used
     // in files that also contain HH\ or __SystemLib\
 
-    $ns = implode("\\", $parts);
+    $ns = \implode("\\", $parts);
     $context = $this->context;
     $context['namespace'] = $ns;
 

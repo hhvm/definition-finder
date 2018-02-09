@@ -21,9 +21,9 @@ final class StaticNumericScalarExpression extends Expression {
     }
 
     switch ($ttype) {
-      case T_LNUMBER:
-      case T_DNUMBER:
-      case T_ONUMBER:
+      case \T_LNUMBER:
+      case \T_DNUMBER:
+      case \T_ONUMBER:
         return new self((int)$t);
     }
     return null;

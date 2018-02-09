@@ -17,7 +17,7 @@ class ParseException extends \Exception {
     \Exception $previous,
   ) {
     parent::__construct(
-      sprintf(
+      \sprintf(
         "%s:%d: %s",
         $source['filename'],
         Shapes::idx($source, 'line', -1),

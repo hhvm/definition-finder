@@ -18,7 +18,7 @@ final class StaticArrayExpression extends Expression {
     list($t, $ttype) = $tq->shift();
     if ($t === '[') {
       $end = ']';
-    } else if ($ttype === T_ARRAY) {
+    } else if ($ttype === \T_ARRAY) {
       list($t, $ttype) = $tq->shift();
       if ($t !== '(') {
         return null;

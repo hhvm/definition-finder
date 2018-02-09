@@ -30,7 +30,7 @@ class GenericsConsumer extends Consumer {
 
       invariant($ttype !== T_TYPELIST_LT, "nested generic type");
 
-      if ($ttype === T_WHITESPACE) {
+      if ($ttype === \T_WHITESPACE) {
         continue;
       }
 
@@ -61,7 +61,7 @@ class GenericsConsumer extends Consumer {
 
       if ($name === null) {
         invariant(
-          $ttype === T_STRING,
+          $ttype === \T_STRING,
           'expected type variable name at line %d',
           $tq->getLine(),
         );
@@ -69,7 +69,7 @@ class GenericsConsumer extends Consumer {
         continue;
       }
 
-      if ($ttype === T_AS) {
+      if ($ttype === \T_AS) {
         $this->consumeWhitespace();
         $constraint = (new TypehintConsumer($tq, $this->context))
           ->getTypehint()
