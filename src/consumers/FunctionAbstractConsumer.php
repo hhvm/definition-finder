@@ -130,7 +130,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
         continue;
       }
 
-      if ($ttype === \T_INOUT) {
+      if ($ttype === T_INOUT) {
         $inout = true;
         continue;
       }
