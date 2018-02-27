@@ -102,6 +102,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
     $visibility = null;
     $param_type = null;
     $byref = false;
+    $inout = false;
     $variadic = false;
     $attrs = dict[];
     $doc = null;
@@ -121,10 +122,16 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
         $variadic = true;
         invariant(
           !$have_variadic,
+
           'multiple variadics at line %d',
           $tq->getLine(),
         );
         $have_variadic = true;
+        continue;
+      }
+
+      if ($ttype === \T_INOUT) {
+        $inout = true;
         continue;
       }
 
@@ -136,10 +143,16 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
           'non-variadic parameter after variadic at line %d',
           $tq->getLine(),
         );
+        invariant(
+          !($inout && $byref),
+          "parameters can not be both inout and byref at line %d",
+          $tq->getLine(),
+        );
         $builder->addParameter(
           (new ScannedParameterBuilder($name, $this->getBuilderContext()))
             ->setTypehint($param_type)
             ->setIsPassedByReference($byref)
+            ->setIsInOut($inout)
             ->setIsVariadic($variadic)
             ->setDefaultString($default)
             ->setVisibility($visibility)
@@ -149,6 +162,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
         $param_type = null;
         $visibility = null;
         $byref = false;
+        $inout = false;
         $variadic = false;
         $attrs = dict[];
         $doc = null;

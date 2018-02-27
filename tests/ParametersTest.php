@@ -17,7 +17,8 @@ use type Facebook\DefinitionFinder\{
   ScannedMethod,
   ScannedTypehint,
 };
-use namespace HH\Lib\Vec;
+use namespace HH\Lib\{C, Vec};
+use function Facebook\FBExpect\expect;
 
 class ParameterTest extends \PHPUnit_Framework_TestCase {
   public function testWithoutTypes(): void {
@@ -102,6 +103,31 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
         $p ==> $p->isOptional() ? $p->getDefaultString() : null,
       ),
     );
+  }
+
+  public function getInOutExamples(): array<(string, ?string, bool)> {
+    return [
+      tuple('<?hh function foo(string $bar): void {}', 'string', false),
+      tuple('<?hh function foo(inout $bar): void {}', null, true),
+      tuple('<?hh function foo(inout string $bar): void {}', 'string', true),
+    ];
+  }
+
+  /**
+   * @dataProvider getInOutExamples
+   */
+  public function testInOut(
+    string $code,
+    ?string $type,
+    bool $inout,
+  ): void {
+    $parser = FileParser::FromData($code);
+    $function = $parser->getFunction('foo');
+
+    $param = C\firstx($function->getParameters());
+    expect($param->getName())->toBeSame('bar');
+    expect($param->getTypehint()?->getTypeText())->toBeSame($type);
+    expect($param->isInOut())->toBeSame($inout);
   }
 
   public function testWithTypeAndDefault(): void {

@@ -16,6 +16,7 @@ class ScannedParameterBuilder
   private ?ScannedTypehint $typehint;
   private ?bool $variadic;
   private ?bool $byref;
+  private ?bool $inout;
   private ?string $defaultString;
   private ?VisibilityToken $visibility;
 
@@ -31,6 +32,11 @@ class ScannedParameterBuilder
 
   public function setIsVariadic(bool $variadic): this {
     $this->variadic = $variadic;
+    return $this;
+  }
+
+  public function setIsInOut(bool $inout): this {
+    $this->inout = $inout;
     return $this;
   }
 
@@ -52,6 +58,7 @@ class ScannedParameterBuilder
       $this->docblock,
       $this->typehint,
       nullthrows($this->byref),
+      nullthrows($this->inout),
       nullthrows($this->variadic),
       $this->defaultString,
       $this->visibility,

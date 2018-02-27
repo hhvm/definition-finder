@@ -19,6 +19,7 @@ class ScannedParameter extends ScannedBase {
     ?string $docComment,
     private ?ScannedTypehint $type,
     private bool $byref,
+    private bool $inout,
     private bool $variadic,
     private ?string $defaultString,
     private ?VisibilityToken $visibility,
@@ -36,6 +37,10 @@ class ScannedParameter extends ScannedBase {
 
   public function isPassedByReference(): bool {
     return $this->byref;
+  }
+
+  public function isInOut(): bool {
+    return $this->inout;
   }
 
   public function isVariadic(): bool {
