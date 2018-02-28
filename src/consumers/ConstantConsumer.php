@@ -27,59 +27,61 @@ final class ConstantConsumer extends Consumer {
     parent::__construct($tq, $context);
   }
 
+  private function consumeName(): string {
+    list($t, $tt) = $this->tq->shift();
+    invariant(
+      StringishTokens::isValid($tt),
+      'Expected a constant name at line %d, got %s',
+      $this->tq->getLine(),
+      $t,
+    );
+    return $t;
+  }
+
+  private function consumeTypehintAndName(): (ScannedTypehint, string) {
+    $th = (new TypehintConsumer($this->tq, $this->context))->getTypehint();
+    $this->consumeWhitespace();
+    return tuple($th, $this->consumeName());
+  }
+
   public function getBuilder(): ScannedConstantBuilder {
-    $name = null;
-    $value = null;
-    $builder = null;
-    $typehint = null;
-
-    while ($this->tq->haveTokens()) {
-      $next_token = $this->tq->shiftNG();
-      list($next, $next_type) = $next_token->asLegacyToken();
-      if ($next_type === \T_WHITESPACE) {
-        continue;
-      }
-      if (StringishTokens::isValid($next_type)) {
-        $this->consumeWhitespace();
-        list($_, $nnt) = $this->tq->peek();
-        if ($nnt === \T_STRING) {
-          $this->tq->unshiftNG($next_token);
-          $typehint =
-            (new TypehintConsumer($this->tq, $this->context))->getTypehint();
-          continue;
-        } else {
-          $name = $next;
-          continue;
-        }
-      }
-      if ($next === '=') {
-        $this->consumeWhitespace();
-        while ($this->tq->haveTokens()) {
-          list($nnv, $nnt) = $this->tq->peek();
-          if ($nnv === ';') {
-            break;
-          }
-          $this->tq->shift();
-          $value .= $nnv;
-        }
-      }
-
-      if ($next === ';') {
-        $this->tq->unshiftNG($next_token);
-        $builder = new ScannedConstantBuilder(
-          $this->normalizeName(nullthrows($name)),
-          $this->getBuilderContext(),
-          $value,
-          $typehint,
-          $this->abstractness,
-        );
-        $name = null;
-        $value = null;
-        $typehint = null;
-        break;
-      }
+    $this->consumeWhitespace();
+    $saved_state = $this->tq->getState();
+    try {
+      list($type, $name) = $this->consumeTypehintAndName();
+    } catch (\Exception $_) {
+      $this->tq->restoreState($saved_state);
+      $type = null;
+      $name = $this->consumeName();
     }
-    invariant($builder, 'invalid constant definition');
+    $this->consumeWhitespace();
+    $value = null;
+
+    $next = $this->tq->shiftNG();
+    list($t, $_) = $next->asLegacyToken();
+    if ($t === '=') {
+      $this->consumeWhitespace();
+      while ($this->tq->haveTokens()) {
+        list($nnv, $nnt) = $this->tq->peek();
+        if ($nnv === ';') {
+          break;
+        }
+        $this->tq->shift();
+        $value .= $nnv;
+      }
+      $next = $this->tq->shiftNG();
+      list($t, $_) = $next->asLegacyToken();
+    }
+    invariant($t === ';', 'expected semicolon, got %s', $t);
+
+    $this->tq->unshiftNG($next);
+    $builder = new ScannedConstantBuilder(
+      $this->normalizeName(nullthrows($name)),
+      $this->getBuilderContext(),
+      $value,
+      $type,
+      $this->abstractness,
+    );
     $this->consumeStatement();
     return $builder;
   }

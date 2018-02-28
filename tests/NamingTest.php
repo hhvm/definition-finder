@@ -12,7 +12,8 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\FileParser;
-use namespace HH\Lib\Vec;
+use namespace HH\Lib\{C, Vec};
+use function Facebook\FBExpect\expect;
 
 class NamingTest extends \PHPUnit_Framework_TestCase {
   public function testFunctionCalledSelect(): void {
@@ -35,6 +36,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       ['Attribute'],
       ['varray'], // HHVM >= 3.19
       ['darray'], // HHVM >= 3.19
+      ['inout'], // HHVM >= 3.21
     ];
   }
 
@@ -85,6 +87,39 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::FromData($data);
     $class = $parser->getClass('Herp');
     $this->assertNotNull($class);
+  }
+
+  /**
+  * @dataProvider specialNameProvider
+  */
+  public function testSpecialNameAsUsedAsConstName(string $type): void {
+    $data = '<?hh const '.$type.' = FOO;';
+    $parser = FileParser::FromData($data);
+    $constants = $parser->getConstantNames();
+    expect($constants)->toContain($type);
+  }
+
+  /**
+  * @dataProvider specialNameProvider
+  */
+  public function testSpecialNameAsUsedAsClassConstName(string $type): void {
+    $data = '<?hh class Foo { const int '.$type.' = FOO; }';
+    $parser = FileParser::FromData($data);
+    $constant = C\firstx($parser->getClass('Foo')->getConstants());
+    expect($constant->getName())->toBeSame($type);
+    expect($constant->getTypehint()?->getTypeText())->toBeSame('int');
+  }
+
+  /**
+  * @dataProvider specialNameProvider
+  */
+  public function testSpecialNameAsUsedAsClassConstDefault(string $type): void {
+    $data = '<?hh class Foo { const int BAR = Baz::'.$type.'; }';
+    $parser = FileParser::FromData($data);
+    $constant = C\firstx($parser->getClass('Foo')->getConstants());
+    expect($constant->getName())->toBeSame('BAR');
+    expect($constant->getTypehint()?->getTypeName())->toBeSame('int');
+    expect($constant->getValue())->toBeSame('Baz::'.$type);
   }
 
   public function testConstantCalledOn(): void {

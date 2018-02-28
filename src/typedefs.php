@@ -93,6 +93,7 @@ enum StringishTokens: int {
   T_KEYSET = T_KEYSET;
   T_VARRAY = T_VARRAY;
   T_DARRAY = T_DARRAY;
+  T_INOUT = T_INOUT;
 }
 
 enum UseStatementType: string {
