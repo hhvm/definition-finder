@@ -11,6 +11,8 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace HH\Lib\Str;
+
 /** Deals with new-style constants.
  *
  * const CONST_NAME =
@@ -30,7 +32,8 @@ final class ConstantConsumer extends Consumer {
   private function consumeName(): string {
     list($t, $tt) = $this->tq->shift();
     invariant(
-      StringishTokens::isValid($tt),
+      StringishTokens::isValid($tt) ||
+      (Str\starts_with($t, '__') && Str\ends_with($t, '__')),
       'Expected a constant name at line %d, got %s',
       $this->tq->getLine(),
       $t,

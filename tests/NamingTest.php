@@ -122,6 +122,43 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     expect($constant->getValue())->toBeSame('Baz::'.$type);
   }
 
+  public function magicConstantsProvider(
+  ): array<(string, string, string)> {
+    return [
+      tuple('int', '__LINE__', '0'),
+      tuple('string', '__CLASS__', "''"),
+      tuple('string', '__TRAIT__', "''"),
+      tuple('string', '__FILE__', "''"),
+      tuple('string', '__DIR__', "''"),
+      tuple('string', '__FUNCTION__', "''"),
+      tuple('string', '__METHOD__', "''"),
+      tuple('string', '__NAMESPACE__', "''"),
+      tuple('string', '__COMPILER_FRONTEND__', "''"),
+    ];
+  }
+
+  /** We need to be able to understand these definitions in the main HHI
+   * files.
+   *
+   * @dataProvider magicConstantsProvider
+   */
+  public function testMagicConstantDefinition(
+    string $type,
+    string $name,
+    string $value,
+  ): void {
+    $code = "<?hh // decl\nconst ".$type.' '.$name.' = '.$value.';';
+    $const = FileParser::FromData($code)->getConstants()
+      |> C\find($$, $c ==> $c->getName() === $name);
+    $const = expect($const)->toNotBeNull(
+      'const %s was not defined',
+      $name,
+    );
+    expect($const->getTypehint()?->getTypeText())
+      ->toBeSame($type);
+    expect($const->getValue())->toBeSame($value);
+  }
+
   public function testConstantCalledOn(): void {
     $data = '<?hh class Foo { const ON = 0; }';
 
