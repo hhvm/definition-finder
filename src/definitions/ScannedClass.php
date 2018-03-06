@@ -67,6 +67,10 @@ abstract class ScannedClass extends ScannedBase implements HasScannedGenerics {
     return Vec\map($this->interfaces, $x ==> $x->getTypeName());
   }
 
+  public function getTraitInfo(): vec<ScannedTypehint> {
+    return $this->traits;
+  }
+
   public function getTraitNames(): vec<string> {
     return Vec\map($this->traits, $x ==> $x->getTypeName());
   }
