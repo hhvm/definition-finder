@@ -39,6 +39,38 @@ class ScannedTypehint {
     return $this->generics;
   }
 
+  /** Implementation detail.
+   *
+   * The value here is undefined, but required to manually create/merge
+   * instances of ScannedTypehint.
+   *
+   * Example usage:
+   *
+   * ```
+   * function merge_typehints(
+   *   ScannedTypehint $a,
+   *   ScannedTypehint $b,
+   * ): ScannedTypehint {
+   *   if (Str\starts_with($a, "HH\")) {
+   *     $name = $a->getTypeName();
+   *     $base = $a->getTypeTextBase();
+   *   } else {
+   *     $name = $b->getTypeName();
+   *     $base = $b->getTypeTextBase();
+   *   }
+   *   return new ScannedTypehint(
+   *     $name,
+   *     $base,
+   *     merge_generics($a, $b),
+   *     $a->isNullable() || $b->isNullable(),
+   *   );
+   * }
+   * ```
+   */
+  public function getTypeTextBase(): string {
+    return $this->typeTextBase;
+  }
+
   public function getTypeText(): string {
     $base = $this->isNullable() ? '?' : '';
     $base .= $this->typeTextBase;
