@@ -94,45 +94,44 @@
         },
         {
             "name": "hhvm/hsl",
-            "version": "v1.3.0",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hhvm/hsl.git",
-                "reference": "556bb0a0749226417dd0f53567571ecc008f37f2"
+                "reference": "2d40281ec595b25a09bbe51d9216edbf1ad55a42"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hhvm/hsl/zipball/556bb0a0749226417dd0f53567571ecc008f37f2",
-                "reference": "556bb0a0749226417dd0f53567571ecc008f37f2",
+                "url": "https://api.github.com/repos/hhvm/hsl/zipball/2d40281ec595b25a09bbe51d9216edbf1ad55a42",
+                "reference": "2d40281ec595b25a09bbe51d9216edbf1ad55a42",
                 "shasum": ""
             },
             "require": {
+                "hhvm": "^3.23.2",
                 "hhvm/hhvm-autoload": "^1.4"
             },
             "require-dev": {
                 "91carriage/phpunit-hhi": "^5.7",
-                "facebook/definition-finder": "^1.6.1",
                 "facebook/fbexpect": "^0.4",
-                "hhvm": "^3.23.2",
                 "phpunit/phpunit": "^5.7"
             },
             "type": "library",
             "notification-url": "https://packagist.org/downloads/",
             "description": "The Hack Standard Library",
-            "time": "2018-02-05T22:10:31+00:00"
+            "time": "2018-03-09T21:53:48+00:00"
         }
     ],
     "packages-dev": [
         {
             "name": "91carriage/phpunit-hhi",
-            "version": "5.7.3",
+            "version": "5.7.4",
             "source": {
                 "type": "git",
                 "url": "https://git.simon.geek.nz/91-carriage/phpunit-hhi.git",
-                "reference": "e885e708b0658cc55f57a45c7b5720cdc617c4c9"
+                "reference": "29e50b1130dc6d72266460f1f303ba1f24937a40"
             },
             "require": {
-                "hhvm": ">=3.23.0"
+                "hhvm": ">=3.24.3"
             },
             "conflict": {
                 "phpunit/phpunit": "<5.7.15"
@@ -170,7 +169,7 @@
                 "phpunit",
                 "testing"
             ],
-            "time": "2018-02-09T19:25:38+00:00"
+            "time": "2018-03-02T23:37:33+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -1457,16 +1456,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.4.4",
+            "version": "v3.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "eab73b6c21d27ae4cd037c417618dfd4befb0bfe"
+                "reference": "a42f9da85c7c38d59f5e53f076fe81a091f894d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/eab73b6c21d27ae4cd037c417618dfd4befb0bfe",
-                "reference": "eab73b6c21d27ae4cd037c417618dfd4befb0bfe",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/a42f9da85c7c38d59f5e53f076fe81a091f894d0",
+                "reference": "a42f9da85c7c38d59f5e53f076fe81a091f894d0",
                 "shasum": ""
             },
             "require": {
@@ -1511,7 +1510,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2018-01-21T19:05:02+00:00"
+            "time": "2018-04-03T05:14:20+00:00"
         },
         {
             "name": "webmozart/assert",

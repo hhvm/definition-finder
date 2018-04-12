@@ -49,4 +49,4 @@ We welcome GitHub issues and pull requests - please see CONTRIBUTING.md for deta
 License
 =======
 
-definition-finder is [BSD-licensed](LICENSE). We also provide an additional [patent grant](PATENTS).
+definition-finder is [MIT-licensed](LICENSE).
