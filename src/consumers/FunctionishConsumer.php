@@ -10,16 +10,16 @@
 
 namespace Facebook\DefinitionFinder;
 
-abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
+abstract class FunctionishConsumer<T as ScannedFunctionish>
   extends Consumer {
 
   private ?string $name;
 
   abstract protected function constructBuilder(
     string $name,
-  ): ScannedFunctionAbstractBuilder<T>;
+  ): ScannedFunctionishBuilder<T>;
 
-  public function getBuilder(): ?ScannedFunctionAbstractBuilder<T> {
+  public function getBuilder(): ?ScannedFunctionishBuilder<T> {
     $by_ref_return = false;
 
     $tq = $this->tq;
@@ -83,7 +83,7 @@ abstract class FunctionAbstractConsumer<T as ScannedFunctionAbstract>
   }
 
   private function consumeParameterList(
-    ScannedFunctionAbstractBuilder<T> $builder,
+    ScannedFunctionishBuilder<T> $builder,
     vec<ScannedGeneric> $generics,
   ): void {
     $this->consumeWhitespace();

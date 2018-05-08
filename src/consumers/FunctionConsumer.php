@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-class FunctionConsumer extends FunctionAbstractConsumer<ScannedFunction> {
+class FunctionConsumer extends FunctionishConsumer<ScannedFunction> {
   <<__Override>>
   protected function constructBuilder(string $name): ScannedFunctionBuilder {
     return new ScannedFunctionBuilder(

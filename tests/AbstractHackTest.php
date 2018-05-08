@@ -11,7 +11,7 @@
 use type Facebook\DefinitionFinder\{
   ScannedClass,
   ScannedFunction,
-  ScannedFunctionAbstract,
+  ScannedFunctionish,
   ScannedMethod,
 };
 use namespace HH\Lib\{C, Vec};

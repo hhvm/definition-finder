@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 final class ScannedMethodBuilder
-  extends ScannedFunctionAbstractBuilder<ScannedMethod> {
+  extends ScannedFunctionishBuilder<ScannedMethod> {
 
   protected ?VisibilityToken $visibility;
   private ?StaticityToken $staticity;

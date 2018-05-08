@@ -10,5 +10,5 @@
 
 namespace Facebook\DefinitionFinder;
 
-final class ScannedFunction extends ScannedFunctionAbstract {
+final class ScannedFunction extends ScannedFunctionish {
 }

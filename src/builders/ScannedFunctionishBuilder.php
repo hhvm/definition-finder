@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder;
 
 use namespace HH\Lib\Vec;
 
-abstract class ScannedFunctionAbstractBuilder<T as ScannedFunctionAbstract>
+abstract class ScannedFunctionishBuilder<T as ScannedFunctionish>
   extends ScannedSingleTypeBuilder<T> {
 
   protected ?bool $byRefReturn;

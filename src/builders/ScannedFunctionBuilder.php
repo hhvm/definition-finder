@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 final class ScannedFunctionBuilder
-  extends ScannedFunctionAbstractBuilder<ScannedFunction> {
+  extends ScannedFunctionishBuilder<ScannedFunction> {
 
   public function build(): ScannedFunction {
     return new ScannedFunction(
