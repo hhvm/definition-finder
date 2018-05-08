@@ -10,6 +10,8 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace HH\Lib\Str;
+
 class FileParser extends BaseParser {
   private function __construct(private string $file, TokenQueue $tq) {
     try {
@@ -47,10 +49,24 @@ class FileParser extends BaseParser {
     string $data,
     ?string $filename = null,
   ): FileParser {
-    return new FileParser(
-      $filename === null ? '__DATA__' : $filename,
-      new TokenQueue($data),
-    );
+    try {
+      return new FileParser(
+        $filename ?? '__DATA__',
+        new TokenQueue($data),
+      );
+    } catch (\Exception $e) {
+      if (!Str\starts_with($data, '<?php')) {
+        throw $e;
+      }
+      // Tokenizer has started paying attention to if it's PHP or Hack; HHVM
+      // tests can assume force_hh is on.
+      //
+      // We currently assume everything is tokenezed as Hack.
+      // Proper fix is to move to hh_parse:
+      // https://github.com/hhvm/definition-finder/issues/11
+      $data = '<?hh // decl'.Str\strip_prefix($data, '<?php');
+      return static::FromData($data, $filename);
+    }
   }
 
   ///// Accessors /////
