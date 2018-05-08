@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "0cb324cb93d9381c94fff890112c4fd6",
+    "content-hash": "e54a2e65507b514deadc01fa5d9ef025",
     "packages": [
         {
             "name": "fredemmott/hack-error-suppressor",
@@ -119,6 +119,39 @@
             "notification-url": "https://packagist.org/downloads/",
             "description": "The Hack Standard Library",
             "time": "2018-03-09T21:53:48+00:00"
+        },
+        {
+            "name": "hhvm/type-assert",
+            "version": "v3.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hhvm/type-assert.git",
+                "reference": "8f70814c8268f50e2fa728893d3ad9cad73df398"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hhvm/type-assert/zipball/8f70814c8268f50e2fa728893d3ad9cad73df398",
+                "reference": "8f70814c8268f50e2fa728893d3ad9cad73df398",
+                "shasum": ""
+            },
+            "require": {
+                "hhvm": "^3.23.0",
+                "hhvm/hhvm-autoload": "^1.4",
+                "hhvm/hsl": "^1.0"
+            },
+            "require-dev": {
+                "91carriage/phpunit-hhi": "~5.1",
+                "facebook/fbexpect": "^0.2.0 | ^0.3.0 | ^0.4.0",
+                "phpunit/phpunit": "~5.1"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "Convert untyped data to typed data",
+            "keywords": [
+                "TypeAssert",
+                "hack"
+            ],
+            "time": "2018-02-09T17:05:23+00:00"
         }
     ],
     "packages-dev": [
