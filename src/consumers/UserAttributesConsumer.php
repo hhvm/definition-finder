@@ -51,12 +51,18 @@ final class UserAttributesConsumer extends Consumer {
         $this->consumeWhitespace();
 
         $expr = StaticScalarExpression::match($this->tq);
-        invariant(
-          $expr !== null,
-          "Invalid attribute value token type at line %d: %d",
-          $this->tq->getLine(),
-          $ttype,
-        );
+        if ($expr === null) {
+          list($tn, $_) = $this->tq->peek();
+          invariant(
+            $tn === ')', // <<Foo()>>
+            "Invalid attribute value token at line %d: ('%s') %d",
+            $this->tq->getLine(),
+            $t,
+            $ttype,
+          );
+          list($t, $type) = $this->tq->shift();
+          break;
+        }
 
         $attrs[$name][] = $expr->getValue();
         list($t, $ttype) = $this->tq->shift();
