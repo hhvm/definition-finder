@@ -12,8 +12,8 @@ namespace Facebook\DefinitionFinder\Expression;
 
 use Facebook\DefinitionFinder\TokenQueue;
 
-final class StaticClassClassConstantExpression extends Expression {
-  protected static function matchImpl(TokenQueue $tq): ?Expression {
+final class StaticClassClassConstantExpression extends Expression<mixed> {
+  protected static function matchImpl(TokenQueue $tq): ?this {
     $class = NamespaceStringExpression::match($tq);
     if ($class === null) {
       return null;

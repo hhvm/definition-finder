@@ -18,6 +18,7 @@ use type Facebook\DefinitionFinder\{
 };
 
 use namespace HH\Lib\Vec;
+use function Facebook\FBExpect\expect;
 
 class AttributesTest extends \PHPUnit_Framework_TestCase {
   private vec<ScannedClass> $classes = vec[];
@@ -141,6 +142,10 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
         'shape("foo" => "bar", "herp" => 123)',
         shape('foo' => 'bar', 'herp' => 123),
       ),
+      tuple('vec[123]', vec[123]),
+      tuple("vec['foo']", vec['foo']),
+      tuple('keyset[123]', keyset[123]),
+      tuple("dict[123 => '456']", dict[123 => '456']),
     );
   }
 
@@ -152,12 +157,10 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
     mixed $expected,
   ): void {
     $data = '<?hh <<MyAttr('.$source.')>> function foo(){}';
-    $parser = FileParser::FromData($data);
+    $parser = FileParser::FromData($data, $source);
     $fun = $parser->getFunction('foo');
-    $this->assertEquals(
-      dict['MyAttr' => vec[$expected]],
-      $fun->getAttributes(),
-    );
+    expect($fun->getAttributes())
+      ->toBeSame(dict['MyAttr' => vec[$expected]]);
   }
 
   private function findScanned<T as ScannedBase>(

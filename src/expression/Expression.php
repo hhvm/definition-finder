@@ -12,11 +12,11 @@ namespace Facebook\DefinitionFinder\Expression;
 
 use Facebook\DefinitionFinder\TokenQueue;
 
-abstract class Expression {
-  final protected function __construct(private mixed $value) {
+abstract class Expression<TValue> {
+  final protected function __construct(private TValue $value) {
   }
 
-  final public static function match(TokenQueue $tq): ?Expression {
+  final public static function match(TokenQueue $tq): ?Expression<TValue> {
     $state = $tq->getState();
     $ret = static::matchImpl($tq);
     if ($ret) {
@@ -26,7 +26,7 @@ abstract class Expression {
     return null;
   }
 
-  abstract protected static function matchImpl(TokenQueue $tq): ?Expression;
+  abstract protected static function matchImpl(TokenQueue $tq): ?Expression<TValue>;
 
   protected static function consumeWhitespace(TokenQueue $tq): void {
     while ($tq->haveTokens()) {
@@ -38,7 +38,7 @@ abstract class Expression {
     }
   }
 
-  final public function getValue(): mixed {
+  final public function getValue(): TValue {
     return $this->value;
   }
 }

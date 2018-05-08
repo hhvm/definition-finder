@@ -12,8 +12,8 @@ namespace Facebook\DefinitionFinder\Expression;
 
 use Facebook\DefinitionFinder\TokenQueue;
 
-final class StaticNumericScalarExpression extends Expression {
-  protected static function matchImpl(TokenQueue $tq): ?Expression {
+final class StaticNumericScalarExpression extends Expression<mixed> {
+  protected static function matchImpl(TokenQueue $tq): ?this {
     list($t, $ttype) = $tq->shift();
     if ($ttype === null) {
       return null;

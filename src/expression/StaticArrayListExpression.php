@@ -12,15 +12,15 @@ namespace Facebook\DefinitionFinder\Expression;
 
 use Facebook\DefinitionFinder\TokenQueue;
 
-final class StaticArrayListExpression extends Expression {
-  protected static function matchImpl(TokenQueue $tq): ?Expression {
-    $values = [];
+final class StaticArrayListExpression extends Expression<vec<mixed>> {
+  protected static function matchImpl(TokenQueue $tq): ?this {
+    $values = vec[];
     while ($tq->haveTokens()) {
       self::consumeWhitespace($tq);
       $expr = StaticScalarExpression::match($tq);
       if (!$expr) {
+        list($t, $_) = $tq->peek();
         if ($values) {
-          // Trailing comma
           return new self($values);
         }
         return null;

@@ -12,23 +12,24 @@ namespace Facebook\DefinitionFinder\Expression;
 
 use Facebook\DefinitionFinder\TokenQueue;
 
-final class StaticShapeExpression extends StaticArrayExpression
-implements StaticDictLikeArrayExpression {
-  public static function convertDict(dict<arraykey, mixed> $values): mixed {
-    return /* HH_FIXME[4107] */ /* HH_FIXME[2049] */darray($values);
+final class StaticVecExpression extends StaticArrayExpression
+implements StaticVecLikeArrayExpression {
+  public static function convertVec(vec<mixed> $values): mixed {
+    return $values;
   }
 
   <<__Override>>
   protected static function consumeStart(TokenQueue $tq): ?string {
-    list($t, $ttype) = $tq->shift();
-    if ($ttype !== \Facebook\DefinitionFinder\T_SHAPE) {
-      return null;
-    }
-    list($t, $ttype) = $tq->shift();
-    if ($t !== '(') {
+    list($_, $ttype) = $tq->shift();
+    if ($ttype !== \T_VEC) {
       return null;
     }
 
-    return ')';
+    list($t, $_) = $tq->shift();
+    if ($t !== '[') {
+      return null;
+    }
+
+    return ']';
   }
 }

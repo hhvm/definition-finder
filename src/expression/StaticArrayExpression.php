@@ -11,33 +11,47 @@
 namespace Facebook\DefinitionFinder\Expression;
 
 use Facebook\DefinitionFinder\TokenQueue;
+use namespace Facebook\TypeAssert;
 
-final class StaticArrayExpression extends Expression {
-  protected static function matchImpl(TokenQueue $tq): ?Expression {
-    list($t, $ttype) = $tq->shift();
-    if ($t === '[') {
-      $end = ']';
-    } else if ($ttype === \T_ARRAY) {
-      list($t, $ttype) = $tq->shift();
-      if ($t !== '(') {
-        return null;
-      }
-      $end = ')';
-    } else {
+abstract class StaticArrayExpression extends Expression<mixed> {
+  /**
+   * @return null if did not match
+   * @return string for end token if matched
+   */
+  abstract protected static function consumeStart(TokenQueue $tq): ?string;
+
+  final protected static function matchImpl(TokenQueue $tq): ?this {
+    $end = static::consumeStart($tq);
+    if ($end === null) {
       return null;
     }
 
-    $values = StaticArrayPairListExpression::match($tq);
-    if ($values === null) {
-      $values = StaticArrayListExpression::match($tq);
+    self::consumeWhitespace($tq);
+
+    $class = static::class;
+    $values = null;
+    $converted = null;
+    if (\is_a($class, StaticDictLikeArrayExpression::class, /* string = */ true)) {
+      $class = TypeAssert\classname_of(StaticDictLikeArrayExpression::class, $class);
+      list($t, $_) = $tq->peek();
+      $values = StaticArrayPairListExpression::match($tq)?->getValue();
+      $converted = $class::convertDict($values ?? dict[]);
     }
-    $values = $values?->getValue() ?? [];
+
+    if (
+      $values === null &&
+      \is_a($class, StaticVecLikeArrayExpression::class, /* string = */ true)
+    ) {
+      $class = TypeAssert\classname_of(StaticVecLikeArrayExpression::class, $class);
+      $values = StaticArrayListExpression::match($tq)?->getValue();
+      $converted = $class::convertVec($values ?? vec[]);
+    }
 
     list($t, $_) = $tq->shift();
     if ($t !== $end) {
       return null;
     }
     self::consumeWhitespace($tq);
-    return new self($values);
+    return new static($converted);
   }
 }

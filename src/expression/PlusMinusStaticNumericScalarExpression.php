@@ -12,8 +12,8 @@ namespace Facebook\DefinitionFinder\Expression;
 
 use Facebook\DefinitionFinder\TokenQueue;
 
-final class PlusMinusStaticNumericScalarExpression extends Expression {
-  protected static function matchImpl(TokenQueue $tq): ?Expression {
+final class PlusMinusStaticNumericScalarExpression extends Expression<mixed> {
+  protected static function matchImpl(TokenQueue $tq): ?this {
     list($t, $_) = $tq->shift();
     if ($t !== '+' && $t !== '-') {
       return null;

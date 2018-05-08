@@ -11,21 +11,22 @@
 namespace Facebook\DefinitionFinder\Expression;
 
 use Facebook\DefinitionFinder\TokenQueue;
+use namespace Facebook\TypeAssert;
 
-final class StaticArrayPairListExpression extends Expression {
-  protected static function matchImpl(TokenQueue $tq): ?Expression {
-    $values = [];
+final class StaticArrayPairListExpression extends Expression<dict<arraykey, mixed>> {
+  protected static function matchImpl(TokenQueue $tq): ?this {
+    $values = dict[];
     while ($tq->haveTokens()) {
       self::consumeWhitespace($tq);
       $expr = StaticScalarExpression::match($tq);
       if (!$expr) {
+        list($t, $_) = $tq->peek();
         if ($values) {
-          // Trailing comma
           return new self($values);
         }
         return null;
       }
-      $key = $expr->getValue();
+      $key = TypeAssert\arraykey($expr->getValue());
 
       self::consumeWhitespace($tq);
       list($_, $ttype) = $tq->shift();

@@ -12,23 +12,21 @@ namespace Facebook\DefinitionFinder\Expression;
 
 use Facebook\DefinitionFinder\TokenQueue;
 
-final class StaticScalarExpression extends Expression {
-  protected static function matchImpl(TokenQueue $tq): ?Expression {
-
+final class StaticScalarExpression extends Expression<mixed> {
+  protected static function matchImpl(TokenQueue $tq): ?Expression<mixed>{
     $subtypes = vec[
       CommonScalarExpression::class,
       StaticStringExpression::class,
       StaticClassClassConstantExpression::class,
       AttributeConstantExpression::class,
       PlusMinusStaticNumericScalarExpression::class,
-      StaticArrayExpression::class,
+      StaticPHPArrayExpression::class,
+      StaticDictExpression::class,
+      StaticVecExpression::class,
+      StaticKeysetExpression::class,
       StaticShapeExpression::class,
-      /*
-      | static_dict_literal_ae             { $$ = $1;}
-      | static_vec_literal_ae              { $$ = $1;}
-      | static_keyset_literal_ae           { $$ = $1;}
-      */
     ];
+
     foreach ($subtypes as $subtype) {
       $match = $subtype::match($tq);
       if ($match) {

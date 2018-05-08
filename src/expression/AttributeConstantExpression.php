@@ -12,8 +12,8 @@ namespace Facebook\DefinitionFinder\Expression;
 
 use Facebook\DefinitionFinder\TokenQueue;
 
-final class AttributeConstantExpression extends Expression {
-  protected static function matchImpl(TokenQueue $tq): ?Expression {
+final class AttributeConstantExpression extends Expression<mixed> {
+  protected static function matchImpl(TokenQueue $tq): ?this {
     list($t, $_) = $tq->shift();
     switch (\strtolower($t)) {
       case 'true':
