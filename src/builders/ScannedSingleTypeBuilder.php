@@ -10,6 +10,6 @@
 
 namespace Facebook\DefinitionFinder;
 
-abstract class ScannedSingleTypeBuilder<T> extends ScannedBaseBuilder {
+abstract class ScannedSingleTypeBuilder<T> extends ScannedDefinitionBuilder {
   abstract public function build(): T;
 }

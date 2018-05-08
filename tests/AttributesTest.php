@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\{
   FileParser,
-  ScannedBase,
+  ScannedDefinition,
   ScannedClass,
   ScannedFunction,
 };
@@ -163,7 +163,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
       ->toBeSame(dict['MyAttr' => vec[$expected]]);
   }
 
-  private function findScanned<T as ScannedBase>(
+  private function findScanned<T as ScannedDefinition>(
     vec<T> $container,
     string $name,
   ): T {

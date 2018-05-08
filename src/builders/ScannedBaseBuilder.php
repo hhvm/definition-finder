@@ -10,8 +10,8 @@
 
 namespace Facebook\DefinitionFinder;
 
-abstract class ScannedBaseBuilder {
-  const type TContext = ScannedBase::TContext;
+abstract class ScannedDefinitionBuilder {
+  const type TContext = ScannedDefinition::TContext;
 
   protected ?dict<string, vec<mixed>> $attributes;
   protected ?string $docblock;
@@ -33,7 +33,7 @@ abstract class ScannedBaseBuilder {
     return $this;
   }
 
-  protected function getDefinitionContext(): ScannedBase::TContext {
+  protected function getDefinitionContext(): ScannedDefinition::TContext {
     $context = $this->context;
     $context['sourceType'] = nullthrows(Shapes::idx($context, 'sourceType'));
     return $context;

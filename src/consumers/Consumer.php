@@ -22,7 +22,7 @@ abstract class Consumer {
     'genericTypeNames' => keyset<string>,
   );
 
-  protected function getBuilderContext(): ScannedBaseBuilder::TContext {
+  protected function getBuilderContext(): ScannedDefinitionBuilder::TContext {
     return shape(
       'position' => shape(
         'filename' => $this->context['filename'],

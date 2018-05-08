@@ -90,7 +90,7 @@ abstract class BaseParser {
     return self::GetX($name, $this->getFunctions());
   }
 
-  private static function GetX<T as ScannedBase>(
+  private static function GetX<T as ScannedDefinition>(
     string $name,
     vec<T> $defs,
   ): T {

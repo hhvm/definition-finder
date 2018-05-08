@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-final class ScannedNewtype extends ScannedBase {
+final class ScannedNewtype extends ScannedDefinition {
   public static function getType(): DefinitionType {
     return DefinitionType::NEWTYPE_DEF;
   }

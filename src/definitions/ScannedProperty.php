@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-class ScannedProperty extends ScannedBase implements HasScannedVisibility {
+class ScannedProperty extends ScannedDefinition implements HasScannedVisibility {
   public function __construct(
     string $name,
     self::TContext $context,

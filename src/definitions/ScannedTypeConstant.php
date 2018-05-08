@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-class ScannedTypeConstant extends ScannedBase {
+class ScannedTypeConstant extends ScannedDefinition {
   public function __construct(
     string $name,
     self::TContext $context,

@@ -669,7 +669,7 @@ final class ScopeConsumer extends Consumer {
   }
 
   <<__Override>>
-  protected function getBuilderContext(): ScannedBaseBuilder::TContext {
+  protected function getBuilderContext(): ScannedDefinitionBuilder::TContext {
     return shape(
       'position' => shape(
         'filename' => $this->context['filename'],

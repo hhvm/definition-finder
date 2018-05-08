@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-final class ScannedClassBuilder extends ScannedBaseBuilder {
+final class ScannedClassBuilder extends ScannedDefinitionBuilder {
   private ?ScannedScopeBuilder $scopeBuilder;
   protected vec<ScannedGeneric> $generics = vec[];
   private vec<ScannedTypehint> $interfaces = vec[];

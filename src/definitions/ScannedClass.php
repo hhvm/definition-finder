@@ -13,7 +13,7 @@ namespace Facebook\DefinitionFinder;
 use namespace HH\Lib\Vec;
 
 <<__ConsistentConstruct>>
-abstract class ScannedClass extends ScannedBase implements HasScannedGenerics {
+abstract class ScannedClass extends ScannedDefinition implements HasScannedGenerics {
 
   public function __construct(
     string $name,

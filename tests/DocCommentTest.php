@@ -11,13 +11,13 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use Facebook\DefinitionFinder\FileParser;
-use Facebook\DefinitionFinder\ScannedBase;
+use Facebook\DefinitionFinder\ScannedDefinition;
 use Facebook\DefinitionFinder\ScannedFunction;
 
 use namespace HH\Lib\Vec;
 
 class DocCommentTest extends \PHPUnit_Framework_TestCase {
-  private Map<string, ScannedBase> $defs = Map {};
+  private Map<string, ScannedDefinition> $defs = Map {};
 
   protected function setUp(): void {
     $parser = FileParser::FromFile(__DIR__.'/data/doc_comments.php');
@@ -28,7 +28,7 @@ class DocCommentTest extends \PHPUnit_Framework_TestCase {
     $this->addDefs($parser->getNewtypes());
   }
 
-  private function addDefs(vec<ScannedBase> $defs): void {
+  private function addDefs(vec<ScannedDefinition> $defs): void {
     foreach ($defs as $def) {
       $this->defs[$def->getName()] = $def;
     }
@@ -83,7 +83,7 @@ class DocCommentTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
-  private function getDef(string $name): ScannedBase {
+  private function getDef(string $name): ScannedDefinition {
     return $this->defs['Facebook\\DefinitionFinder\\DocCommentTest\\'.$name];
   }
 }

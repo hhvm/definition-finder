@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-final class ScannedEnum extends ScannedBase {
+final class ScannedEnum extends ScannedDefinition {
   public static function getType(): DefinitionType {
     return DefinitionType::ENUM_DEF;
   }

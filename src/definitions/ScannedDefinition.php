@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-abstract class ScannedBase {
+abstract class ScannedDefinition {
   const type TContext =
     shape('position' => SourcePosition, 'sourceType' => SourceType);
   // Namespace (e.g., of a class) if it exists

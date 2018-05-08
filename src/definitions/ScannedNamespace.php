@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-class ScannedNamespace extends ScannedBase {
+class ScannedNamespace extends ScannedDefinition {
   public function __construct(
     string $name,
     self::TContext $context,
