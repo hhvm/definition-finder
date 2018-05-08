@@ -86,7 +86,7 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
     foreach ($this->classBuilders as $b) {
       switch ($b->getType()) {
         case ClassDefinitionType::CLASS_DEF:
-          $classes[] = $b->build(ScannedBasicClass::class);
+          $classes[] = $b->build(ScannedClass::class);
           break;
         case ClassDefinitionType::INTERFACE_DEF:
           $interfaces[] = $b->build(ScannedInterface::class);

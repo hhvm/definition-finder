@@ -15,7 +15,7 @@ use namespace HH\Lib\Vec;
 abstract class BaseParser {
   protected ScannedScope $defs;
 
-  public function getClasses(): vec<ScannedBasicClass> {
+  public function getClasses(): vec<ScannedClass> {
     return $this->defs->getClasses();
   }
   public function getInterfaces(): vec<ScannedInterface> {
@@ -74,7 +74,7 @@ abstract class BaseParser {
     return Vec\map($this->getNewtypes(), $x ==> $x->getName());
   }
 
-  public function getClass(string $name): ScannedBasicClass {
+  public function getClass(string $name): ScannedClass {
     return self::GetX($name, $this->getClasses());
   }
 

@@ -14,7 +14,7 @@ class ScannedScope extends ScannedDefinition {
 
   public function __construct(
     self::TContext $context,
-    private vec<ScannedBasicClass> $classes,
+    private vec<ScannedClass> $classes,
     private vec<ScannedInterface> $interfaces,
     private vec<ScannedTrait> $traits,
     private vec<ScannedFunction> $functions,
@@ -39,7 +39,7 @@ class ScannedScope extends ScannedDefinition {
     return null;
   }
 
-  public function getClasses(): vec<ScannedBasicClass> {
+  public function getClasses(): vec<ScannedClass> {
     return $this->classes;
   }
 
