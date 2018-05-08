@@ -73,6 +73,7 @@ const int T_KEYSET = 444;
 const int T_WHERE = 445;
 const int T_VARRAY = 446;
 const int T_DARRAY = 447;
+const int T_USING = 448;
 const int T_INOUT = 449;
 
 // See ident_no_semireserved in hphp.y
@@ -93,6 +94,7 @@ enum StringishTokens: int {
   T_VARRAY = T_VARRAY;
   T_DARRAY = T_DARRAY;
   T_INOUT = T_INOUT;
+  T_USING = T_USING;
 }
 
 enum UseStatementType: string {
