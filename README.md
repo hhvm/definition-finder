@@ -18,9 +18,9 @@ There are three main entrypoints:
 
 `FileParser` returns definitions from a single file, whereas `TreeParser` recurses over an entire directory tree. All 3 of these functions return an implementation of [`BaseParser`](src/BaseParser.php). There are three forms of accessors:
 
- - `getClasses(): vec<ScannedBasicClass>` - returns a `vec` of [`ScannedBasicClass`](src/definitions/ScannedBasicClass.php], which has a similar interface to `ReflectionClass`
+ - `getClasses(): vec<ScannedClass>` - returns a `vec` of [`ScannedClass`](src/definitions/ScannedClass.php], which has a similar interface to `ReflectionClass`
  - `getClassNames(): vec<string>` - returns a `vec` of class names
- - `getClass(string $name): ScannedBasicClass` - returns a `ScannedBasicClass` for the specified class, or throws an exception if it was not found
+ - `getClass(string $name): ScannedClass` - returns a `ScannedClass` for the specified class, or throws an exception if it was not found
 
 Similar functions exist for interfaces, traits, constants, enums, and typedefs.
 
