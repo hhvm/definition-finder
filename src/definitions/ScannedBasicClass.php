@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-final class ScannedBasicClass extends ScannedClass {
+final class ScannedBasicClass extends ScannedClassish {
   public static function getType(): DefinitionType {
     return DefinitionType::CLASS_DEF;
   }

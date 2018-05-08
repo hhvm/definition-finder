@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\{
   FileParser,
-  ScannedClass,
+  ScannedClassish,
 };
 use function Facebook\FBExpect\expect;
 use namespace HH\Lib\C;

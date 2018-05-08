@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-final class ScannedClassBuilder extends ScannedDefinitionBuilder {
+final class ScannedClassishBuilder extends ScannedDefinitionBuilder {
   private ?ScannedScopeBuilder $scopeBuilder;
   protected vec<ScannedGeneric> $generics = vec[];
   private vec<ScannedTypehint> $interfaces = vec[];
@@ -61,7 +61,7 @@ final class ScannedClassBuilder extends ScannedDefinitionBuilder {
     return $this;
   }
 
-  public function build<T as ScannedClass>(classname<T> $what): T {
+  public function build<T as ScannedClassish>(classname<T> $what): T {
     ClassDefinitionType::assert($what::getType());
     invariant(
       $this->type === $what::getType(),

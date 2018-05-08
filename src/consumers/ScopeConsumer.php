@@ -334,7 +334,7 @@ final class ScopeConsumer extends Consumer {
         }
         $builder->addClass(
           (
-            new ClassConsumer(
+            new ClassishConsumer(
               $this->tq,
               $this->getSubContext(),
               ClassDefinitionType::assert($def_type),

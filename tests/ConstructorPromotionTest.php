@@ -12,13 +12,13 @@ namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\{
   FileParser,
-  ScannedClass,
+  ScannedClassish,
   ScannedMethod,
 };
 use namespace HH\Lib\Vec;
 
 class ConstructorPromotionTest extends \PHPUnit_Framework_TestCase {
-  private ?ScannedClass $class;
+  private ?ScannedClassish $class;
   public function setUp(): void {
     $data = '<?hh
 

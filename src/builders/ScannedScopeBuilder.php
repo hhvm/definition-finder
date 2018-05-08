@@ -17,7 +17,7 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
     parent::__construct('__SCOPE__', $context);
   }
 
-  private vec<ScannedClassBuilder> $classBuilders = vec[];
+  private vec<ScannedClassishBuilder> $classBuilders = vec[];
   private vec<ScannedFunctionBuilder> $functionBuilders = vec[];
   private vec<ScannedMethodBuilder> $methodBuilders = vec[];
   private vec<ScannedTypehint> $usedTraits = vec[];
@@ -39,7 +39,7 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
     $this->usedTraits[] = $trait;
   }
 
-  public function addClass(ScannedClassBuilder $b): void {
+  public function addClass(ScannedClassishBuilder $b): void {
     $this->classBuilders[] = $b;
   }
 

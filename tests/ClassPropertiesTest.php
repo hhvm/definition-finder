@@ -11,11 +11,11 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use Facebook\DefinitionFinder\FileParser;
-use Facebook\DefinitionFinder\ScannedClass;
+use Facebook\DefinitionFinder\ScannedClassish;
 use namespace HH\Lib\Vec;
 
 class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {
-  private ?vec<ScannedClass> $classes;
+  private ?vec<ScannedClassish> $classes;
 
   protected function setUp(): void {
     $parser = FileParser::FromFile(__DIR__.'/data/class_properties.php');

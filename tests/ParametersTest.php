@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\{
   FileParser,
-  ScannedClass,
+  ScannedClassish,
   ScannedMethod,
   ScannedTypehint,
 };

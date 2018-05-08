@@ -9,7 +9,7 @@
  */
 
 use type Facebook\DefinitionFinder\{
-  ScannedClass,
+  ScannedClassish,
   ScannedFunction,
   ScannedFunctionish,
   ScannedMethod,
@@ -251,7 +251,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
     return $func;
   }
 
-  private function getClass(string $name): ScannedClass {
+  private function getClass(string $name): ScannedClassish {
     $class = $this->parser?->getClass($this->getPrefix().$name);
     invariant($class !== null, 'Could not find class %s', $name);
     return $class;

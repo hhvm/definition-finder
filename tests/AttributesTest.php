@@ -13,7 +13,7 @@ namespace Facebook\DefinitionFinder\Test;
 use type Facebook\DefinitionFinder\{
   FileParser,
   ScannedDefinition,
-  ScannedClass,
+  ScannedClassish,
   ScannedFunction,
 };
 
@@ -21,7 +21,7 @@ use namespace HH\Lib\Vec;
 use function Facebook\FBExpect\expect;
 
 class AttributesTest extends \PHPUnit_Framework_TestCase {
-  private vec<ScannedClass> $classes = vec[];
+  private vec<ScannedClassish> $classes = vec[];
   private vec<ScannedFunction> $functions = vec[];
 
   protected function setUp(): void {
@@ -175,7 +175,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
     invariant_violation('Could not find scanned %s', $name);
   }
 
-  private function findClass(string $name): ScannedClass {
+  private function findClass(string $name): ScannedClassish {
     return $this->findScanned($this->classes, $name);
   }
 }

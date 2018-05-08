@@ -16,7 +16,7 @@ enum ClassDefinitionType: DefinitionType {
   TRAIT_DEF = DefinitionType::TRAIT_DEF;
 }
 
-final class ClassConsumer extends Consumer {
+final class ClassishConsumer extends Consumer {
   public function __construct(
     TokenQueue $tq,
     self::TContext $context,
@@ -25,7 +25,7 @@ final class ClassConsumer extends Consumer {
     parent::__construct($tq, $context);
   }
 
-  public function getBuilder(): ScannedClassBuilder {
+  public function getBuilder(): ScannedClassishBuilder {
     $generics = vec[];
     list($v, $t) = $this->tq->shift();
 
@@ -42,7 +42,7 @@ final class ClassConsumer extends Consumer {
       $name = normalize_xhp_class($v);
     }
 
-    $builder = new ScannedClassBuilder(
+    $builder = new ScannedClassishBuilder(
       $this->normalizeName($name, NameNormalizationMode::DEFINITION),
       $this->getBuilderContext(),
       $this->type,

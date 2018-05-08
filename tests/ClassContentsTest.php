@@ -12,12 +12,12 @@ namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\{
   FileParser,
-  ScannedClass,
+  ScannedClassish,
 };
 use namespace HH\Lib\{C, Vec};
 
 class ClassContentsTest extends \PHPUnit_Framework_TestCase {
-  private ?ScannedClass $class;
+  private ?ScannedClassish $class;
 
   protected function setUp(): void {
     $parser = FileParser::FromFile(__DIR__.'/data/class_contents.php');
