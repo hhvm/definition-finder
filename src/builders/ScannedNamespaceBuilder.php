@@ -20,6 +20,7 @@ final class ScannedNamespaceBuilder
     return $this;
   }
 
+  <<__Override>>
   public function build(): ScannedNamespace {
     $scope = nullthrows($this->scopeBuilder)->build();
     return new ScannedNamespace(

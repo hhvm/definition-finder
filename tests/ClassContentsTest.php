@@ -19,6 +19,7 @@ use namespace HH\Lib\{C, Vec};
 class ClassContentsTest extends \PHPUnit_Framework_TestCase {
   private ?ScannedClassish $class;
 
+  <<__Override>>
   protected function setUp(): void {
     $parser = FileParser::FromFile(__DIR__.'/data/class_contents.php');
     $this->class = $parser->getClasses()[0];
@@ -405,7 +406,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
   ): void {
     $data = \sprintf(
       '<?hh %s class Foo { public function bar(): %s {} }',
-      $namespace === '' ? '' : "namespace $namespace;",
+      $namespace === '' ? '' : "namespace ".$namespace.";",
       $returnText,
     );
     $className = \ltrim($namespace.'\Foo', "\\");

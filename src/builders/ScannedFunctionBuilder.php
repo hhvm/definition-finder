@@ -13,6 +13,7 @@ namespace Facebook\DefinitionFinder;
 final class ScannedFunctionBuilder
   extends ScannedFunctionishBuilder<ScannedFunction> {
 
+  <<__Override>>
   public function build(): ScannedFunction {
     return new ScannedFunction(
       $this->name,

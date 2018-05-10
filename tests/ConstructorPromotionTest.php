@@ -19,6 +19,7 @@ use namespace HH\Lib\Vec;
 
 class ConstructorPromotionTest extends \PHPUnit_Framework_TestCase {
   private ?ScannedClassish $class;
+  <<__Override>>
   public function setUp(): void {
     $data = '<?hh
 

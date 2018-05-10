@@ -20,6 +20,7 @@ abstract class StaticArrayExpression extends Expression<mixed> {
    */
   abstract protected static function consumeStart(TokenQueue $tq): ?string;
 
+  <<__Override>>
   final protected static function matchImpl(TokenQueue $tq): ?this {
     $end = static::consumeStart($tq);
     if ($end === null) {

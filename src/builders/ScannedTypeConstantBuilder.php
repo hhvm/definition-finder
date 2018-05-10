@@ -21,6 +21,7 @@ class ScannedTypeConstantBuilder
     parent::__construct($name, $context);
   }
 
+  <<__Override>>
   public function build(): ScannedTypeConstant {
     return new ScannedTypeConstant(
       $this->name,

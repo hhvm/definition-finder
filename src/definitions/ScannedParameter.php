@@ -26,6 +26,7 @@ class ScannedParameter extends ScannedDefinition {
     parent::__construct($name, $context, $attributes, $docComment);
   }
 
+  <<__Override>>
   public static function getType(): ?DefinitionType {
     return null;
   }

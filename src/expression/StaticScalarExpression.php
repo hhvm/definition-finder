@@ -13,6 +13,7 @@ namespace Facebook\DefinitionFinder\Expression;
 use Facebook\DefinitionFinder\TokenQueue;
 
 final class StaticScalarExpression extends Expression<mixed> {
+  <<__Override>>
   protected static function matchImpl(TokenQueue $tq): ?Expression<mixed>{
     $subtypes = vec[
       CommonScalarExpression::class,

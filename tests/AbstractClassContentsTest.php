@@ -21,6 +21,7 @@ class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
   private ?ScannedClassish $class;
   private ?vec<ScannedClassish> $classes;
 
+  <<__Override>>
   protected function setUp(): void {
     $parser = FileParser::FromFile(__DIR__.'/data/abstract_class_contents.php');
     $this->classes = $parser->getClasses();

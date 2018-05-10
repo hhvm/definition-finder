@@ -11,6 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 class ScannedEnumBuilder extends ScannedSingleTypeBuilder<ScannedEnum> {
+  <<__Override>>
   public function build(): ScannedEnum {
     return new ScannedEnum(
       $this->name,

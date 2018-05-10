@@ -79,6 +79,7 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
     $this->subscopes[] = $s;
   }
 
+  <<__Override>>
   public function build(): ScannedScope {
     $classes = vec[];
     $interfaces = vec[];

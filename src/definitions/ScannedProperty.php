@@ -23,6 +23,7 @@ class ScannedProperty extends ScannedDefinition implements HasScannedVisibility 
     parent::__construct($name, $context, $attributes, $docComment);
   }
 
+  <<__Override>>
   public static function getType(): ?DefinitionType {
     return null;
   }

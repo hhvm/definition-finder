@@ -19,6 +19,7 @@ use namespace HH\Lib\Vec;
 class DocCommentTest extends \PHPUnit_Framework_TestCase {
   private Map<string, ScannedDefinition> $defs = Map {};
 
+  <<__Override>>
   protected function setUp(): void {
     $parser = FileParser::FromFile(__DIR__.'/data/doc_comments.php');
     $this->addDefs($parser->getClasses());

@@ -1,4 +1,17 @@
 {
   "roots": [ "src/", "tests/" ],
-  "builtinLinters": "all"
+  "builtinLinters": "all",
+  "namespaceAliases": {
+    "HHAST": "Facebook\\HHAST\\Linters"
+   },
+  "overrides": [
+    {
+      "patterns": [ "tests/data/*" ],
+      "disabledLinters": [
+        "HHAST\\CamelCasedMethodsUnderscoredFunctionsLinter",
+        "HHAST\\NoStringInterpolationLinter",
+        "HHAST\\UseStatementWithAsLinter"
+      ]
+    }
+  ]
 }

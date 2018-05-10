@@ -14,6 +14,7 @@ use Facebook\DefinitionFinder\TokenQueue;
 use namespace Facebook\TypeAssert;
 
 final class StaticArrayPairListExpression extends Expression<dict<arraykey, mixed>> {
+  <<__Override>>
   protected static function matchImpl(TokenQueue $tq): ?this {
     $values = dict[];
     while ($tq->haveTokens()) {

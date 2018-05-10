@@ -11,6 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 final class ScannedInterface extends ScannedClassish {
+  <<__Override>>
   public static function getType(): DefinitionType {
     return DefinitionType::INTERFACE_DEF;
   }

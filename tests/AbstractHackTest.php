@@ -23,6 +23,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
   abstract protected function getPrefix(): string;
   abstract protected function getSuffixForRootDefinitions(): string;
 
+  <<__Override>>
   protected function setUp(): void {
     $this->parser = \Facebook\DefinitionFinder\FileParser::FromFile(
       __DIR__.'/data/'.$this->getFilename(),

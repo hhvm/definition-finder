@@ -13,6 +13,7 @@ namespace Facebook\DefinitionFinder\Expression;
 use Facebook\DefinitionFinder\TokenQueue;
 
 final class CommonScalarExpression extends Expression<mixed> {
+  <<__Override>>
   protected static function matchImpl(TokenQueue $tq): ?Expression<mixed> {
     // TODO: heredoc support (from common_scalar_ae)
     return StaticNumericScalarExpression::matchImpl($tq);

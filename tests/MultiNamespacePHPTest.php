@@ -11,6 +11,7 @@
 final class MultiNamespacePHPTest extends PHPUnit_Framework_TestCase {
   private ?Facebook\DefinitionFinder\FileParser $parser;
 
+  <<__Override>>
   protected function setUp(): void {
     $this->parser = \Facebook\DefinitionFinder\FileParser::FromFile(
       __DIR__.'/data/multi_namespace_php.php',

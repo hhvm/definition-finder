@@ -17,6 +17,7 @@ use namespace HH\Lib\Vec;
 class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {
   private ?vec<ScannedClassish> $classes;
 
+  <<__Override>>
   protected function setUp(): void {
     $parser = FileParser::FromFile(__DIR__.'/data/class_properties.php');
     $this->classes = $parser->getClasses();

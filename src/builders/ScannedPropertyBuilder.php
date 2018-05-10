@@ -30,6 +30,7 @@ class ScannedPropertyBuilder extends ScannedSingleTypeBuilder<ScannedProperty> {
     return $this;
   }
 
+  <<__Override>>
   public function build(): ScannedProperty {
     return new ScannedProperty(
       $this->name,

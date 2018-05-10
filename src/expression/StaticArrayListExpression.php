@@ -13,6 +13,7 @@ namespace Facebook\DefinitionFinder\Expression;
 use Facebook\DefinitionFinder\TokenQueue;
 
 final class StaticArrayListExpression extends Expression<vec<mixed>> {
+  <<__Override>>
   protected static function matchImpl(TokenQueue $tq): ?this {
     $values = vec[];
     while ($tq->haveTokens()) {

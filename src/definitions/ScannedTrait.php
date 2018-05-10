@@ -11,6 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 final class ScannedTrait extends ScannedClassish {
+  <<__Override>>
   public static function getType(): DefinitionType {
     return DefinitionType::TRAIT_DEF;
   }

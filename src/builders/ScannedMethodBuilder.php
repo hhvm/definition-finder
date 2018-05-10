@@ -18,6 +18,7 @@ final class ScannedMethodBuilder
   private ?AbstractnessToken $abstractness;
   private ?FinalityToken $finality;
 
+  <<__Override>>
   public function build(): ScannedMethod {
     return new ScannedMethod(
       $this->name,

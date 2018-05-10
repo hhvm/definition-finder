@@ -13,6 +13,7 @@ namespace Facebook\DefinitionFinder\Expression;
 use Facebook\DefinitionFinder\TokenQueue;
 
 final class NamespaceStringExpression extends Expression<mixed> {
+  <<__Override>>
   protected static function matchImpl(TokenQueue $tq): ?this {
     list($t, $ttype) = $tq->shift();
     if ($ttype === \T_NS_SEPARATOR) {

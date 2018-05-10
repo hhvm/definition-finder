@@ -27,6 +27,7 @@ class ScannedConstant extends ScannedDefinition {
     );
   }
 
+  <<__Override>>
   public static function getType(): DefinitionType {
     return DefinitionType::CONST_DEF;
   }

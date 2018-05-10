@@ -24,6 +24,7 @@ class ScannedNamespace extends ScannedDefinition {
     );
   }
 
+  <<__Override>>
   public static function getType(): ?DefinitionType {
     return null;
   }

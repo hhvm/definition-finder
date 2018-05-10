@@ -11,6 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 class ScannedTypeBuilder extends ScannedSingleTypeBuilder<ScannedType> {
+  <<__Override>>
   public function build(): ScannedType {
     return new ScannedType(
       $this->name,

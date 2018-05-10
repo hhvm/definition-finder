@@ -24,6 +24,7 @@ abstract class ScannedFunctionish extends ScannedDefinition
     parent::__construct($name, $context, $attributes, $docComment);
   }
 
+  <<__Override>>
   public static function getType(): DefinitionType {
     return DefinitionType::FUNCTION_DEF;
   }

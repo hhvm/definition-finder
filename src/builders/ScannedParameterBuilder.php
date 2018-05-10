@@ -49,6 +49,7 @@ class ScannedParameterBuilder
     return $this;
   }
 
+  <<__Override>>
   public function build(): ScannedParameter {
     return new ScannedParameter(
       $this->name,

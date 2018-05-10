@@ -11,6 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 final class ScannedEnum extends ScannedDefinition {
+  <<__Override>>
   public static function getType(): DefinitionType {
     return DefinitionType::ENUM_DEF;
   }
