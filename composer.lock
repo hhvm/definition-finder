@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab9d0393241c936f4a0baf6ad083aa0b",
+    "content-hash": "d6dcb174447c5290fba1bacd462ce598",
     "packages": [
         {
             "name": "fredemmott/hack-error-suppressor",
@@ -42,6 +42,42 @@
             ],
             "description": "Suppress HHVM's automatic conversion of typechecker errors to fatals.",
             "time": "2017-05-02T03:07:37+00:00"
+        },
+        {
+            "name": "hhvm/hhast",
+            "version": "v3.26.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hhvm/hhast.git",
+                "reference": "a34b2650c0b982dac81bca318fa845fbed571063"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hhvm/hhast/zipball/a34b2650c0b982dac81bca318fa845fbed571063",
+                "reference": "a34b2650c0b982dac81bca318fa845fbed571063",
+                "shasum": ""
+            },
+            "require": {
+                "hhvm": "^3.26.0",
+                "hhvm/hsl": "^1.0.0|^3.26.0",
+                "hhvm/type-assert": "^3.1"
+            },
+            "require-dev": {
+                "91carriage/phpunit-hhi": "^5.7",
+                "facebook/fbexpect": "^0.4.0|^1.0.0",
+                "facebook/hack-codegen": "~3.0.3",
+                "hhvm/hhvm-autoload": "^1.5",
+                "phpunit/phpunit": "^5.7"
+            },
+            "bin": [
+                "bin/hhast-lint"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "time": "2018-05-10T19:54:22+00:00"
         },
         {
             "name": "hhvm/hhvm-autoload",
