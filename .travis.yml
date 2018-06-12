@@ -3,8 +3,5 @@ php:
  - hhvm
  - hhvm-3.24
  - hhvm-nightly
-matrix:
-  allow_failures:
-  - php: hhvm-nightly
 script:
  - ./.travis.sh
