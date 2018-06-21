@@ -16,7 +16,7 @@ class GenericsConsumer extends Consumer {
   public function getGenerics(): vec<ScannedGeneric> {
     $tq = $this->tq;
     list($t, $ttype) = $tq->shift();
-    invariant($ttype = T_TYPELIST_LT, 'Consuming generics, but not a typelist');
+    invariant($ttype === T_TYPELIST_LT, 'Consuming generics, but not a typelist');
 
     $ret = vec[];
 

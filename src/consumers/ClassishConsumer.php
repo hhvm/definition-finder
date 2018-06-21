@@ -49,7 +49,7 @@ final class ClassishConsumer extends Consumer {
     );
 
     list($_, $ttype) = $this->tq->peek();
-    if ($ttype == T_TYPELIST_LT) {
+    if ($ttype === T_TYPELIST_LT) {
       $generics =
         (new GenericsConsumer($this->tq, $this->context))->getGenerics();
       $builder->setGenericTypes($generics);
