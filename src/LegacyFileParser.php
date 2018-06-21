@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder;
 
 use namespace HH\Lib\Str;
 
-class LegacyFileParser extends BaseParser {
+final class LegacyFileParser extends BaseParser {
   private function __construct(private string $file, TokenQueue $tq) {
     try {
       $this->defs = (
