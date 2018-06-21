@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\LegacyFileParser;
+use type Facebook\DefinitionFinder\LegacyFileParser;
 
 class SelfTest extends \PHPUnit_Framework_TestCase {
 

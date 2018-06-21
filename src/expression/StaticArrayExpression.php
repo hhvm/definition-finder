@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Expression;
 
-use Facebook\DefinitionFinder\TokenQueue;
+use type Facebook\DefinitionFinder\TokenQueue;
 use namespace Facebook\TypeAssert;
 
 abstract class StaticArrayExpression extends Expression<mixed> {

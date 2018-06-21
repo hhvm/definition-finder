@@ -10,8 +10,8 @@
 
 namespace Facebook\DefinitionFinder\Tests;
 
-use Facebook\DefinitionFinder\LegacyFileParser;
-use Facebook\DefinitionFinder\SourceType;
+use type Facebook\DefinitionFinder\LegacyFileParser;
+use type Facebook\DefinitionFinder\SourceType;
 
 class SourceTypeTest extends \PHPUnit_Framework_TestCase {
 

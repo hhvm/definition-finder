@@ -8,7 +8,7 @@
  *
  */
 
-use \Facebook\DefinitionFinder\LegacyFileParser;
+use type \Facebook\DefinitionFinder\LegacyFileParser;
 
 /**
  * 'function' is a valid keyword in several contexts other than when definining

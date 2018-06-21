@@ -9,10 +9,12 @@
  */
 
 class EndClosingTagTest extends AbstractPHPTest {
+  <<__Override>>
   protected function getFilename(): string {
     return 'end_closing_tag.php';
   }
 
+  <<__Override>>
   protected function getPrefix(): string {
     return '';
   }

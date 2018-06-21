@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Expression;
 
-use Facebook\DefinitionFinder\TokenQueue;
+use type Facebook\DefinitionFinder\TokenQueue;
 
 final class StaticPHPArrayExpression extends StaticArrayExpression
 implements StaticDictLikeArrayExpression, StaticVecLikeArrayExpression {

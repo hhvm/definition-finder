@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Expression;
 
-use Facebook\DefinitionFinder\TokenQueue;
+use type Facebook\DefinitionFinder\TokenQueue;
 
 abstract class Expression<TValue> {
   final protected function __construct(private TValue $value) {

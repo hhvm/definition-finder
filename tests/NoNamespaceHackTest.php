@@ -9,14 +9,17 @@
  */
 
 class NoNamespaceHackTest extends AbstractHackTest {
+  <<__Override>>
   protected function getFilename(): string {
     return 'no_namespace_hack.php';
   }
 
+  <<__Override>>
   protected function getPrefix(): string {
     return '';
   }
 
+  <<__Override>>
   protected function getSuffixForRootDefinitions(): string {
     return '';
   }

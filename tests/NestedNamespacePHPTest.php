@@ -9,10 +9,12 @@
  */
 
 class NestedNamespacePHPTest extends AbstractPHPTest {
+  <<__Override>>
   protected function getFilename(): string {
     return 'nested_namespace_php.php';
   }
 
+  <<__Override>>
   protected function getPrefix(): string {
     return 'Namespaces\\AreNestedNow\\';
   }

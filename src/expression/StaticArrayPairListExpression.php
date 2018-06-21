@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Expression;
 
-use Facebook\DefinitionFinder\TokenQueue;
+use type Facebook\DefinitionFinder\TokenQueue;
 use namespace Facebook\TypeAssert;
 
 final class StaticArrayPairListExpression extends Expression<dict<arraykey, mixed>> {

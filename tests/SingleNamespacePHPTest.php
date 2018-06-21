@@ -9,10 +9,12 @@
  */
 
 class SingleNamespacePHPTest extends AbstractPHPTest {
+  <<__Override>>
   protected function getFilename(): string {
     return 'single_namespace_php.php';
   }
 
+  <<__Override>>
   protected function getPrefix(): string {
     return 'SingleNamespace\\';
   }

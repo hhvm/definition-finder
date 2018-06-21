@@ -9,10 +9,12 @@
  */
 
 class MixedPHPAndHTMLTest extends AbstractPHPTest {
+  <<__Override>>
   protected function getFilename(): string {
     return 'mixed_php_html.php';
   }
 
+  <<__Override>>
   protected function getPrefix(): string {
     return '';
   }

@@ -10,8 +10,8 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\LegacyFileParser;
-use Facebook\DefinitionFinder\ScannedDefinition;
+use type Facebook\DefinitionFinder\LegacyFileParser;
+use type Facebook\DefinitionFinder\ScannedDefinition;
 use Facebook\DefinitionFinder\ScannedFunction;
 
 use namespace HH\Lib\Vec;

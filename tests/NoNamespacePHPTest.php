@@ -9,10 +9,12 @@
  */
 
 class NoNamespacePHPTest extends AbstractPHPTest {
+  <<__Override>>
   protected function getFilename(): string {
     return 'no_namespace_php.php';
   }
 
+  <<__Override>>
   protected function getPrefix(): string {
     return '';
   }

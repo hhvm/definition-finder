@@ -9,14 +9,17 @@
  */
 
 class NestedNamespaceHackTest extends AbstractHackTest {
+  <<__Override>>
   protected function getFilename(): string {
     return 'nested_namespace_hack.php';
   }
 
+  <<__Override>>
   protected function getPrefix(): string {
     return 'Namespaces\\AreNestedNow\\';
   }
 
+  <<__Override>>
   protected function getSuffixForRootDefinitions(): string {
     return '_FROM_NESTED_NS';
   }

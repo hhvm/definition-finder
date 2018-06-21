@@ -8,7 +8,7 @@
  *
  */
 
-use \Facebook\DefinitionFinder\LegacyFileParser;
+use type \Facebook\DefinitionFinder\LegacyFileParser;
 
 // Usually, '{' becomes '{' - however, when used for
 // string interpolation, you get a T_CURLY_OPEN for "{$foo}" or

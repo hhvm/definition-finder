@@ -10,8 +10,8 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\LegacyFileParser;
-use Facebook\DefinitionFinder\ScannedClassish;
+use type Facebook\DefinitionFinder\LegacyFileParser;
+use type Facebook\DefinitionFinder\ScannedClassish;
 use namespace HH\Lib\Vec;
 
 class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {

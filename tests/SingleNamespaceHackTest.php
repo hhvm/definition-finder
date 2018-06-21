@@ -10,13 +10,15 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\LegacyFileParser;
+use type Facebook\DefinitionFinder\LegacyFileParser;
 
 final class SingleNamespaceHackTest extends \AbstractHackTest {
+  <<__Override>>
   protected function getFilename(): string {
     return 'single_namespace_hack.php';
   }
 
+  <<__Override>>
   protected function getPrefix(): string {
     return 'SingleNamespace\\';
   }
@@ -34,6 +36,7 @@ final class SingleNamespaceHackTest extends \AbstractHackTest {
     $this->assertSame($herp->getParentClassName(), $derp->getParentClassName());
   }
 
+  <<__Override>>
   protected function getSuffixForRootDefinitions(): string {
     return '_FROM_SINGLE_NS';
   }

@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Tests;
 
-use Facebook\DefinitionFinder\LegacyFileParser;
+use type Facebook\DefinitionFinder\LegacyFileParser;
 
 final class TypeHintTest extends \PHPUnit_Framework_TestCase {
   public function provideTypesInNamespace(): array<(string, string, string)> {
