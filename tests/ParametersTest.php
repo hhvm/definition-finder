@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\{
-  FileParser,
+  LegacyFileParser,
   ScannedClassish,
   ScannedMethod,
   ScannedTypehint,
@@ -23,7 +23,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
   public function testWithoutTypes(): void {
     $data = '<?hh function foo($bar, $baz) {}';
 
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -38,7 +38,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
   public function testWithSimpleType(): void {
     $data = '<?hh function foo(string $bar) {}';
 
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -52,7 +52,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testWithDefault(): void {
     $data = '<?hh function foo($bar, $baz = "herp") {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -89,7 +89,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
    */
   public function testWithUnusualDefault(string $in, string $expected): void {
     $data = '<?hh function foo($bar, $baz = '.$in.') {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $function = $parser->getFunction('foo');
     $this->assertEquals(
       vec['bar', 'baz'],
@@ -120,7 +120,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     ?string $type,
     bool $inout,
   ): void {
-    $parser = FileParser::FromData($code);
+    $parser = LegacyFileParser::FromData($code);
     $function = $parser->getFunction('foo');
 
     $param = C\firstx($function->getParameters());
@@ -131,7 +131,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testWithTypeAndDefault(): void {
     $data = '<?hh function foo(string $bar = "baz") {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -151,7 +151,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testWithRootNamespacedType(): void {
     $data = '<?hh function foo(\Iterator $bar) {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -167,7 +167,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testWithNamespacedType(): void {
     $data = '<?hh function foo(\Foo\Bar $bar) {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -183,7 +183,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testWithLegacyCallableType(): void {
     $data = '<?hh function foo(callable $bar) {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -199,7 +199,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testWithByRefParam(): void {
     $data = '<?hh function foo(&$bar, $baz) {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -215,7 +215,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testWithTypedByRefParam(): void {
     $data = '<?hh function foo(string &$bar) {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -232,7 +232,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testWithArrayParam(): void {
     $data = '<?hh function foo(array $bar) {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
     $this->assertEquals(
@@ -243,7 +243,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testWithCommentedParam(): void {
     $data = '<?hh function foo(/* foo */ $bar) {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $function = $parser->getFunction('foo');
 
     $this->assertEquals(
@@ -256,7 +256,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
   public function testWithUntypedVariadicParam(): void {
     $data = '<?hh function foo(string $bar, ...$baz) {}';
 
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $function = $parser->getFunction('foo');
     $params = $function->getParameters();
 
@@ -287,7 +287,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     }
     $data = '<?hh function foo(array<mixed> ...$bar) {}';
 
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $function = $parser->getFunction('foo');
     $params = $function->getParameters();
 
@@ -310,7 +310,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testWithHackCallableTypehint(): void {
     $data = '<?hh function foo((function(int): string) $bar) {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $type = $parser->getFunction('foo')->getParameters()[0]->getTypehint();
 
     $this->assertSame('callable', $type?->getTypeName());
@@ -319,7 +319,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testEmptyShapeTypehint(): void {
     $data = '<?hh function foo(shape() $bar) {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $type = $parser->getFunction('foo')->getParameters()[0]->getTypehint();
 
     $this->assertSame('shape', $type?->getTypeName());
@@ -328,7 +328,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testNonNullableTypehint(): void {
     $data = '<?hh function foo(Herp $derp) {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
       vec['Herp'],
@@ -342,7 +342,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testNullableTypehint(): void {
     $data = '<?hh function foo(?Herp $derp) {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
       vec['Herp'],

@@ -8,12 +8,14 @@
  *
  */
 
+use type Facebook\DefinitionFinder\LegacyFileParser;
+
 final class MultiNamespacePHPTest extends PHPUnit_Framework_TestCase {
-  private ?Facebook\DefinitionFinder\FileParser $parser;
+  private ?LegacyFileParser $parser;
 
   <<__Override>>
   protected function setUp(): void {
-    $this->parser = \Facebook\DefinitionFinder\FileParser::FromFile(
+    $this->parser = LegacyFileParser::FromFile(
       __DIR__.'/data/multi_namespace_php.php',
     );
   }

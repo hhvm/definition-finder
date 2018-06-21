@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder;
 
 use namespace HH\Lib\Str;
 
-class FileParser extends BaseParser {
+class LegacyFileParser extends BaseParser {
   private function __construct(private string $file, TokenQueue $tq) {
     try {
       $this->defs = (
@@ -41,16 +41,16 @@ class FileParser extends BaseParser {
 
   ///// Constructors /////
 
-  public static function FromFile(string $filename): FileParser {
+  public static function FromFile(string $filename): LegacyFileParser {
     return self::FromData(\file_get_contents($filename), $filename);
   }
 
   public static function FromData(
     string $data,
     ?string $filename = null,
-  ): FileParser {
+  ): LegacyFileParser {
     try {
-      return new FileParser(
+      return new LegacyFileParser(
         $filename ?? '__DATA__',
         new TokenQueue($data),
       );

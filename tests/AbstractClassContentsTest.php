@@ -12,7 +12,7 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\{
-  FileParser,
+  LegacyFileParser,
   ScannedClassish,
 };
 use namespace HH\Lib\Vec;
@@ -23,7 +23,7 @@ class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   <<__Override>>
   protected function setUp(): void {
-    $parser = FileParser::FromFile(__DIR__.'/data/abstract_class_contents.php');
+    $parser = LegacyFileParser::FromFile(__DIR__.'/data/abstract_class_contents.php');
     $this->classes = $parser->getClasses();
   }
 

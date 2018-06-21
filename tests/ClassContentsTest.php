@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\{
-  FileParser,
+  LegacyFileParser,
   ScannedClassish,
 };
 use namespace HH\Lib\{C, Vec};
@@ -21,7 +21,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   <<__Override>>
   protected function setUp(): void {
-    $parser = FileParser::FromFile(__DIR__.'/data/class_contents.php');
+    $parser = LegacyFileParser::FromFile(__DIR__.'/data/class_contents.php');
     $this->class = $parser->getClasses()[0];
     $this->assertSame(
       'Facebook\\DefinitionFinder\\Test\\ClassWithContents',
@@ -30,7 +30,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testAnonymousClasses(): void {
-    $parser = FileParser::FromFile(__DIR__.'/data/class_contents_php.php');
+    $parser = LegacyFileParser::FromFile(__DIR__.'/data/class_contents_php.php');
     $this->assertEmpty(
       $parser->getFunctions(),
       'Should be no functions - probably interpreting a method as a function',
@@ -126,7 +126,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testPHPConstants(): void {
-    $parser = FileParser::FromFile(__DIR__.'/data/php_class_contents.php');
+    $parser = LegacyFileParser::FromFile(__DIR__.'/data/php_class_contents.php');
     $class = $parser->getClass('Foo');
     $constants = $class->getConstants();
 
@@ -150,7 +150,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   /** Omitting public/protected/private is permitted in PHP */
   public function testDefaultMethodVisibility(): void {
-    $parser = FileParser::FromFile(__DIR__.'/data/php_class_contents.php');
+    $parser = LegacyFileParser::FromFile(__DIR__.'/data/php_class_contents.php');
     $funcs = $parser->getClass('Foo')->getMethods();
 
     $this->assertEquals(
@@ -198,7 +198,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testTypelessProperty(): void {
-    $parser = FileParser::FromFile(__DIR__.'/data/php_class_contents.php');
+    $parser = LegacyFileParser::FromFile(__DIR__.'/data/php_class_contents.php');
     $props = $parser->getClass('Foo')->getProperties();
 
     $this->assertEquals(
@@ -232,7 +232,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     string $code,
     ?string $type,
   ): void {
-    $parser = FileParser::FromData($code);
+    $parser = LegacyFileParser::FromData($code);
     $class = $parser->getClass('Foo');
     $props = $class->getProperties();
 
@@ -249,7 +249,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   public function testTypeConstant(): void {
     $data = '<?hh class Foo { const type BAR = int; }';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $constants = $parser->getClass('Foo')->getTypeConstants();
     $constant = C\onlyx($constants);
 
@@ -265,7 +265,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       "  const type FOO = Foo;\n".
       "  function foo(self::FOO::BAR \$baz): void {}\n".
       "}";
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $class = $parser->getClass('Bar');
     $this->assertEquals(
       vec[vec['self::FOO::BAR'] ],
@@ -282,7 +282,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
   public function testConstraintedTypeConstant(): void {
     // I'm not aware of a use for this, but HHVM allows and tests for it
     $data = '<?hh class Foo { const type BAR as int = int; }';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $constants = $parser->getClass('Foo')->getTypeConstants();
     $constant = C\onlyx($constants);
 
@@ -293,7 +293,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   public function testAbstractConstant(): void {
     $data = '<?hh abstract class Foo { abstract const string BAR; }';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $constant = C\onlyx($parser->getClass('Foo')->getConstants());
 
     $this->assertSame('BAR', $constant->getName());
@@ -304,7 +304,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   public function testAbstractTypeConstant(): void {
     $data = '<?hh abstract class Foo { abstract const type BAR; }';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $constant = C\onlyx($parser->getClass('Foo')->getTypeConstants());
 
     $this->assertSame('BAR', $constant->getName());
@@ -314,7 +314,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   public function testConstrainedAbstractTypeConstant(): void {
     $data = '<?hh abstract class Foo { abstract const type BAR as Bar; }';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $constant = C\onlyx($parser->getClass('Foo')->getTypeConstants());
 
     $this->assertSame('BAR', $constant->getName());
@@ -324,7 +324,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   public function testTypeConstantAsProperty(): void {
     $data = '<?hh class Foo { public this::FOO $foo; }';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $prop = C\onlyx($parser->getClass('Foo')->getProperties());
 
     $this->assertSame('this::FOO', $prop->getTypehint()?->getTypeText());
@@ -333,7 +333,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   public function testTypeconstantAsReturnType(): void {
     $data = '<?hh class Foo { public function bar(): this::FOO {} }';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $method = C\onlyx($parser->getClass('Foo')->getMethods());
 
     $this->assertSame('this::FOO', $method->getReturnType()?->getTypeText());
@@ -341,7 +341,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   public function testTypeconstantAsParameterType(): void {
     $data = '<?hh class Foo { public function bar(this::FOO $foo): void {} }';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $method = C\onlyx($parser->getClass('Foo')->getMethods());
     $param = C\onlyx($method->getParameters());
 
@@ -410,7 +410,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       $returnText,
     );
     $className = \ltrim($namespace.'\Foo', "\\");
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $method = C\onlyx($parser->getClass($className)->getMethods());
 
     $this->assertSame(

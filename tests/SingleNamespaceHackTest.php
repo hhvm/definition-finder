@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\FileParser;
+use Facebook\DefinitionFinder\LegacyFileParser;
 
 final class SingleNamespaceHackTest extends \AbstractHackTest {
   protected function getFilename(): string {
@@ -26,7 +26,7 @@ final class SingleNamespaceHackTest extends \AbstractHackTest {
       "class Herp extends Foo\Bar {}\n".
       "class Derp extends \Foo\Bar {}\n";
 
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $herp = $parser->getClass('Herp');
     $derp = $parser->getClass('Derp');
 

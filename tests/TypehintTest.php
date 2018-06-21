@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Tests;
 
-use Facebook\DefinitionFinder\FileParser;
+use Facebook\DefinitionFinder\LegacyFileParser;
 
 final class TypeHintTest extends \PHPUnit_Framework_TestCase {
   public function provideTypesInNamespace(): array<(string, string, string)> {
@@ -50,7 +50,7 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
       "function main(".
       $input.
       " \$_): void {}\n";
-    $def = FileParser::FromData($code)->getFunction('MyNamespace\\main');
+    $def = LegacyFileParser::FromData($code)->getFunction('MyNamespace\\main');
     $type = $def->getParameters()[0]->getTypehint();
     $this->assertNotNull($type);
     $this->assertSame($name, $type?->getTypeName(), 'type name differs');
@@ -84,7 +84,7 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
     string $text,
   ): void {
     $code = "<?hh \n"."function main(".$input." \$_): void {}\n";
-    $def = FileParser::FromData($code)->getFunction('main');
+    $def = LegacyFileParser::FromData($code)->getFunction('main');
     $type = $def->getParameters()[0]->getTypehint();
     $this->assertNotNull($type);
     $this->assertSame($nullable, $type?->isNullable(), 'nullability differs');

@@ -8,7 +8,7 @@
  *
  */
 
-use type \Facebook\DefinitionFinder\FileParser;
+use type \Facebook\DefinitionFinder\LegacyFileParser;
 use namespace HH\Lib\Vec;
 
 /**
@@ -18,7 +18,7 @@ use namespace HH\Lib\Vec;
 final class RelativeNamespaceTest extends PHPUnit_Framework_TestCase {
   public function testFunctionBodyUsesRelativeNamespace(): void {
     $code = '<?php function foo() { namespace\bar(); } function baz() {}';
-    $fp = FileParser::FromData($code);
+    $fp = LegacyFileParser::FromData($code);
     $this->assertEquals(
       vec['foo', 'baz'],
       $fp->getFunctionNames(),
@@ -32,7 +32,7 @@ final class RelativeNamespaceTest extends PHPUnit_Framework_TestCase {
 
   public function testPseudomainUsesRelativeNamespace(): void {
     $code = '<?php namespace\foo(); function bar() {}';
-    $fp = FileParser::FromData($code);
+    $fp = LegacyFileParser::FromData($code);
     $this->assertEquals(vec['bar'], $fp->getFunctionNames());
 
     $this->assertEquals(

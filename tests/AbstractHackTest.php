@@ -9,6 +9,7 @@
  */
 
 use type Facebook\DefinitionFinder\{
+  LegacyFileParser,
   ScannedClassish,
   ScannedFunction,
   ScannedFunctionish,
@@ -17,7 +18,7 @@ use type Facebook\DefinitionFinder\{
 use namespace HH\Lib\{C, Vec};
 
 abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
-  private ?Facebook\DefinitionFinder\FileParser $parser;
+  private ?LegacyFileParser $parser;
 
   abstract protected function getFilename(): string;
   abstract protected function getPrefix(): string;
@@ -25,7 +26,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
   <<__Override>>
   protected function setUp(): void {
-    $this->parser = \Facebook\DefinitionFinder\FileParser::FromFile(
+    $this->parser = LegacyFileParser::FromFile(
       __DIR__.'/data/'.$this->getFilename(),
     );
   }

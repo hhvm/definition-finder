@@ -8,15 +8,17 @@
  *
  */
 
+use type Facebook\DefinitionFinder\LegacyFileParser;
+
 abstract class AbstractPHPTest extends PHPUnit_Framework_TestCase {
-  private ?Facebook\DefinitionFinder\FileParser $parser;
+  private ?LegacyFileParser $parser;
 
   abstract protected function getFilename(): string;
   abstract protected function getPrefix(): string;
 
   <<__Override>>
   protected function setUp(): void {
-    $this->parser = \Facebook\DefinitionFinder\FileParser::FromFile(
+    $this->parser = LegacyFileParser::FromFile(
       __DIR__.'/data/'.$this->getFilename(),
     );
   }

@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\{
-  FileParser,
+  LegacyFileParser,
   ScannedClassish,
   ScannedMethod,
 };
@@ -34,7 +34,7 @@ class Foo {
 }
 ';
 
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $this->class = $parser->getClass('Foo');
   }
 

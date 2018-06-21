@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\FileParser;
+use Facebook\DefinitionFinder\LegacyFileParser;
 
 class SelfTest extends \PHPUnit_Framework_TestCase {
 
@@ -27,7 +27,7 @@ class SelfTest extends \PHPUnit_Framework_TestCase {
    * Bogus first argument to make test failure messages more useful
    */
   public function testSelf(string $_, string $filename): void {
-    $parser = FileParser::FromFile($filename);
+    $parser = LegacyFileParser::FromFile($filename);
     $this->assertNotNull($parser);
   }
 
@@ -45,7 +45,7 @@ class SelfTest extends \PHPUnit_Framework_TestCase {
    */
   public function testELFSection(string $name, string $bytes): void {
     try {
-      $parser = FileParser::FromData($bytes, $name);
+      $parser = LegacyFileParser::FromData($bytes, $name);
     } catch (\Exception $e) {
       \file_put_contents('/tmp/'.$name.'.php', $bytes);
       throw $e;

@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use Facebook\DefinitionFinder\FileParser;
+use Facebook\DefinitionFinder\LegacyFileParser;
 use Facebook\DefinitionFinder\ScannedClassish;
 use namespace HH\Lib\Vec;
 
@@ -19,7 +19,7 @@ class FinalTest extends \PHPUnit_Framework_TestCase {
 
   <<__Override>>
   protected function setUp(): void {
-    $parser = FileParser::FromFile(__DIR__.'/data/finals.php');
+    $parser = LegacyFileParser::FromFile(__DIR__.'/data/finals.php');
     $this->classes = $parser->getClasses();
   }
 

@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use type Facebook\DefinitionFinder\FileParser;
+use type Facebook\DefinitionFinder\LegacyFileParser;
 use namespace HH\Lib\{C, Vec};
 use function Facebook\FBExpect\expect;
 
@@ -20,7 +20,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh function select() {}';
 
     // Check that it parses
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $this->assertNotNull($parser->getFunction('select'));
   }
 
@@ -42,7 +42,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   /** @dataProvider specialNameProvider */
   public function testSpecialReturnType(string $type): void {
     $data = '<?hh function foo(): '.$type.' {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $func = $parser->getFunction('foo');
     $this->assertSame($type, $func->getReturnType()?->getTypeName());
   }
@@ -50,7 +50,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   /** @dataProvider specialNameProvider */
   public function testSpecialNameAsFuncName(string $type): void {
     $data = '<?hh function '.$type.'(): void {}';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $func = $parser->getFunction($type);
     $this->assertSame('void', $func->getReturnType()?->getTypeName());
     $this->assertSame($type, $func->getName());
@@ -59,7 +59,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   /** @dataProvider specialNameProvider */
   public function testSpecialNameAsClassName(string $type): void {
     $data = '<?hh class '.$type.' { }';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $class = $parser->getClass($type);
     $this->assertNotNull($class);
   }
@@ -67,7 +67,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   /** @dataProvider specialNameProvider */
   public function testSpecialNameAsNamespaceName(string $type): void {
     $data = '<?hh namespace '.$type.' { class Foo {} }';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $class = $parser->getClass($type."\\Foo");
     $this->assertNotNull($class);
   }
@@ -75,7 +75,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   /** @dataProvider specialNameProvider */
   public function testSpecialNameAsUsedName(string $type): void {
     $data = '<?hh use Foo\\'.$type.'; class Herp extends '.$type.' { }';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $class = $parser->getClass('Herp');
     $this->assertNotNull($class);
   }
@@ -83,7 +83,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   /** @dataProvider specialNameProvider */
   public function testSpecialNameAsUsedAsName(string $type): void {
     $data = '<?hh use Foo\\Bar as '.$type.'; class Herp extends '.$type.' { }';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $class = $parser->getClass('Herp');
     $this->assertNotNull($class);
   }
@@ -93,7 +93,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   */
   public function testSpecialNameAsUsedAsConstName(string $type): void {
     $data = '<?hh const '.$type.' = FOO;';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $constants = $parser->getConstantNames();
     expect($constants)->toContain($type);
   }
@@ -103,7 +103,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   */
   public function testSpecialNameAsUsedAsClassConstName(string $type): void {
     $data = '<?hh class Foo { const int '.$type.' = FOO; }';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $constant = C\firstx($parser->getClass('Foo')->getConstants());
     expect($constant->getName())->toBeSame($type);
     expect($constant->getTypehint()?->getTypeText())->toBeSame('int');
@@ -114,7 +114,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   */
   public function testSpecialNameAsUsedAsClassConstDefault(string $type): void {
     $data = '<?hh class Foo { const int BAR = Baz::'.$type.'; }';
-    $parser = FileParser::FromData($data);
+    $parser = LegacyFileParser::FromData($data);
     $constant = C\firstx($parser->getClass('Foo')->getConstants());
     expect($constant->getName())->toBeSame('BAR');
     expect($constant->getTypehint()?->getTypeName())->toBeSame('int');
@@ -147,7 +147,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     string $value,
   ): void {
     $code = "<?hh // decl\nconst ".$type.' '.$name.' = '.$value.';';
-    $const = FileParser::FromData($code)->getConstants()
+    $const = LegacyFileParser::FromData($code)->getConstants()
       |> C\find($$, $c ==> $c->getName() === $name);
     $const = expect($const)->toNotBeNull(
       'const %s was not defined',
@@ -163,7 +163,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       vec['ON'],
-      FileParser::FromData($data)
+      LegacyFileParser::FromData($data)
         ->getClass('Foo')
         ->getConstants()
         |> Vec\map($$, $x ==> $x->getName()),
@@ -176,7 +176,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     // This could throw because the ; comes after the keyword class
     $this->assertEquals(
       'Foo',
-      FileParser::FromData($data)->getClass('Foo')->getName(),
+      LegacyFileParser::FromData($data)->getClass('Foo')->getName(),
     );
   }
 
@@ -185,7 +185,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       'Foo',
-      FileParser::FromData($data)->getClass('Foo')->getName(),
+      LegacyFileParser::FromData($data)->getClass('Foo')->getName(),
     );
   }
 
@@ -195,7 +195,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals(
       vec['Foo\Bar\Collection'],
-      FileParser::FromData($data)->getClassNames(),
+      LegacyFileParser::FromData($data)->getClassNames(),
     );
   }
 
@@ -203,8 +203,8 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $php = "<?php namespace Foo; class MyClass extends Collection {}";
     $hack = "<?hh namespace Foo; class MyClass extends Collection {}";
 
-    $php_class = FileParser::FromData($php)->getClass("Foo\\MyClass");
-    $hack_class = FileParser::FromData($hack)->getClass("Foo\\MyClass");
+    $php_class = LegacyFileParser::FromData($php)->getClass("Foo\\MyClass");
+    $hack_class = LegacyFileParser::FromData($hack)->getClass("Foo\\MyClass");
 
     $this->assertSame("Foo\\Collection", $php_class->getParentClassName());
     $this->assertSame('Collection', $hack_class->getParentClassName());
@@ -216,8 +216,8 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $php = '<?php namespace Foo; function myfunc(): string {}';
     $hack = '<?hh namespace Foo; function myfunc(): string {}';
 
-    $php_func = FileParser::FromData($php)->getFunction("Foo\\myfunc");
-    $hack_func = FileParser::FromData($hack)->getFunction("Foo\\myfunc");
+    $php_func = LegacyFileParser::FromData($php)->getFunction("Foo\\myfunc");
+    $hack_func = LegacyFileParser::FromData($hack)->getFunction("Foo\\myfunc");
 
     $this->assertEquals('string', $php_func->getReturnType()?->getTypeName());
     $this->assertEquals('string', $hack_func->getReturnType()?->getTypeName());
@@ -229,7 +229,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       "class MyClass {\n".
       "  function foo(): this { }\n".
       "}";
-    $parser = FileParser::FromData($code);
+    $parser = LegacyFileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
     $this->assertSame('this', $method->getReturnType()?->getTypeName());
@@ -241,7 +241,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       "class MyClass<T> {\n".
       "  function foo(): T { }\n".
       "}";
-    $parser = FileParser::FromData($code);
+    $parser = LegacyFileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
     $this->assertSame('T', $method->getReturnType()?->getTypeName());
@@ -253,7 +253,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       "class MyClass<T> {\n".
       "  function foo(): ?T { }\n".
       "}";
-    $parser = FileParser::FromData($code);
+    $parser = LegacyFileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
     $this->assertSame('T', $method->getReturnType()?->getTypeName());
@@ -266,7 +266,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       "class MyClass {\n".
       "  function foo<T>(): T { }\n".
       "}";
-    $parser = FileParser::FromData($code);
+    $parser = LegacyFileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
     $this->assertSame('T', $method->getReturnType()?->getTypeName());
@@ -283,7 +283,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       "  function foo<TFunctionGeneric>(\n".
       "    TFunctionGeneric \$p,\n".
       "  ): TClassGeneric {}";
-    $parser = FileParser::FromData($code);
+    $parser = LegacyFileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
     $this->assertSame(
@@ -302,7 +302,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
       "class MyClass {\n".
       "  function foo<T>(T \$bar): void { }\n".
       "}";
-    $parser = FileParser::FromData($code);
+    $parser = LegacyFileParser::FromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
     $this->assertSame(
