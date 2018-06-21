@@ -8,7 +8,7 @@
  *
  */
 
-use type \Facebook\DefinitionFinder\LegacyFileParser;
+use type \Facebook\DefinitionFinder\FileParser;
 
 // Usually, '{' becomes '{' - however, when used for
 // string interpolation, you get a T_CURLY_OPEN for "{$foo}" or
@@ -22,7 +22,7 @@ final class CurlyTest extends PHPUnit_Framework_TestCase {
   const string DATA_FILE = __DIR__.'/data/curly_then_function.php';
 
   public function testDefinitions(): void {
-    $p = LegacyFileParser::FromFile(self::DATA_FILE);
+    $p = FileParser::fromFile(self::DATA_FILE);
     $this->assertEquals(vec['Foo'], $p->getClassNames());
     $this->assertEquals(vec['my_func'], $p->getFunctionNames());
   }

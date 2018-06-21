@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use type Facebook\DefinitionFinder\LegacyFileParser;
+use type Facebook\DefinitionFinder\FileParser;
 use type Facebook\DefinitionFinder\ScannedClassish;
 use namespace HH\Lib\Vec;
 
@@ -19,7 +19,7 @@ class ClassPropertiesTest extends \PHPUnit_Framework_TestCase {
 
   <<__Override>>
   protected function setUp(): void {
-    $parser = LegacyFileParser::FromFile(__DIR__.'/data/class_properties.php');
+    $parser = FileParser::fromFile(__DIR__.'/data/class_properties.php');
     $this->classes = $parser->getClasses();
   }
 

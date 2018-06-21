@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use type Facebook\DefinitionFinder\LegacyFileParser;
+use type Facebook\DefinitionFinder\FileParser;
 use type Facebook\DefinitionFinder\ScannedDefinition;
 use type Facebook\DefinitionFinder\ScannedFunction;
 
@@ -21,7 +21,7 @@ class DocCommentTest extends \PHPUnit_Framework_TestCase {
 
   <<__Override>>
   protected function setUp(): void {
-    $parser = LegacyFileParser::FromFile(__DIR__.'/data/doc_comments.php');
+    $parser = FileParser::fromFile(__DIR__.'/data/doc_comments.php');
     $this->addDefs($parser->getClasses());
     $this->addDefs($parser->getFunctions());
     $this->addDefs($parser->getEnums());

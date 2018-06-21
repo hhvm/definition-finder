@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\{
-  LegacyFileParser,
+  FileParser,
   ScannedDefinition,
   ScannedClassish,
   ScannedFunction,
@@ -26,7 +26,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
 
   <<__Override>>
   protected function setUp(): void {
-    $parser = LegacyFileParser::FromFile(__DIR__.'/data/attributes.php');
+    $parser = FileParser::fromFile(__DIR__.'/data/attributes.php');
     $this->classes = $parser->getClasses();
     $this->functions = $parser->getFunctions();
   }
@@ -88,14 +88,14 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
 
   public function testFunctionContainingBitShift(): void {
     $data = '<?hh function foo() { 1 << 3; }';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEmpty($fun->getAttributes());
   }
 
   public function testPseudmainContainingBitShift(): void {
     $data = '<?hh print 1 << 3;';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
   }
 
   public function testFunctionAttrsDontPolluteClass(): void {
@@ -108,7 +108,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
 
   public function testParameterHasAttribute(): void {
     $data = '<?hh function foo(<<Bar>> $baz) {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('foo');
     $params = $fun->getParameters();
     $this->assertEquals(vec['baz'], Vec\map($params, $x ==> $x->getName()));
@@ -158,7 +158,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
     mixed $expected,
   ): void {
     $data = '<?hh <<MyAttr('.$source.')>> function foo(){}';
-    $parser = LegacyFileParser::FromData($data, $source);
+    $parser = FileParser::fromData($data, $source);
     $fun = $parser->getFunction('foo');
     expect($fun->getAttributes())
       ->toBeSame(dict['MyAttr' => vec[$expected]]);

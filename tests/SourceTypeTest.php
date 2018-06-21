@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Tests;
 
-use type Facebook\DefinitionFinder\LegacyFileParser;
+use type Facebook\DefinitionFinder\FileParser;
 use type Facebook\DefinitionFinder\SourceType;
 
 class SourceTypeTest extends \PHPUnit_Framework_TestCase {
@@ -36,12 +36,12 @@ class SourceTypeTest extends \PHPUnit_Framework_TestCase {
     SourceType $expected,
   ): void {
     $code = $prefix."\nclass Foo {}";
-    $parser = LegacyFileParser::FromData($code);
+    $parser = FileParser::fromData($code);
     $this->assertSame($expected, $parser->getClass('Foo')->getSourceType());
   }
 
   public function testPlainTextFileParses(): void {
-    $parser = LegacyFileParser::FromData('foo');
+    $parser = FileParser::fromData('foo');
     $this->assertEmpty($parser->getClasses());
     $this->assertEmpty($parser->getFunctions());
     $this->assertEmpty($parser->getTypes());

@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\{
-  LegacyFileParser,
+  FileParser,
   ScannedTypehint,
 };
 use namespace HH\Lib\Vec;
@@ -20,7 +20,7 @@ use function Facebook\FBExpect\expect;
 final class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
   public function testFunctionWithWhitespaceBeforeParamsList(): void {
     $data = '<?hh function foo ($bar) {};';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
       vec['bar'],
@@ -30,7 +30,7 @@ final class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
 
   public function testFunctionWithWhitespaceBeforeReturnType(): void {
     $data = '<?hh function foo() : void {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
       new ScannedTypehint('void', 'void', vec[], false),
@@ -40,7 +40,7 @@ final class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
 
   public function testWhitespaceBetweenAttributes(): void {
     $data = '<?hh <<Herp, Derp>> function foo() {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
       vec['Herp', 'Derp'],
@@ -50,7 +50,7 @@ final class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
 
   public function testWhitespaceBetweenAttributesWithValue(): void {
     $data = '<?hh <<Herp("herpderp"), Derp>> function foo() {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('foo');
     $this->assertEquals(
       dict['Herp' => vec['herpderp'], 'Derp' => vec[]],
@@ -60,7 +60,7 @@ final class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
 
   public function testWhitespaceBetweenAttributeValues(): void {
     $data = '<?hh <<Foo("herp", "derp")>> function herp() {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('herp');
     $this->assertEquals(
       dict['Foo' => vec['herp', 'derp']],
@@ -70,7 +70,7 @@ final class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
 
   public function testWhitespaceBetweenConcatenatedAttributeParts(): void {
     $data = '<?hh <<Foo("herp". "derp")>> function herp() {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('herp');
     $this->assertEquals(
       dict['Foo' => vec['herpderp']],
@@ -80,7 +80,7 @@ final class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
 
   public function testTrailingCommaInAsyncReturnTuple(): void {
     $data = '<?hh async function herp(): Awaitable<(string, string, )> {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     expect($parser->getFunctionNames())->toContain('herp');
   }
 }

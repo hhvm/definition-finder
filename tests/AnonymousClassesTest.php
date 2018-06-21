@@ -10,18 +10,18 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use type Facebook\DefinitionFinder\LegacyFileParser;
+use type Facebook\DefinitionFinder\FileParser;
 use namespace HH\Lib\Vec;
 
 final class AnonymousClassesTest extends \PHPUnit_Framework_TestCase {
   public function testParsesInFunction(): void {
     $parser =
-      LegacyFileParser::FromData('<?php function foo() { return new class {}; }');
+      FileParser::fromData('<?php function foo() { return new class {}; }');
     $this->assertEquals(vec['foo'], $parser->getFunctionNames());
   }
 
   public function testParsesInMethod(): void {
-    $parser = LegacyFileParser::FromData(
+    $parser = FileParser::fromData(
       '<?php class Foo { function bar() { return new class {}; } }',
     );
     $class = $parser->getClass('Foo');
@@ -43,7 +43,7 @@ class Foo {
   }
 }
 EOF;
-    $parser = LegacyFileParser::FromData($code);
+    $parser = FileParser::fromData($code);
     $class = $parser->getClass('Foo');
     $this->assertEquals(
       vec['bar'],

@@ -10,18 +10,18 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use type Facebook\DefinitionFinder\LegacyFileParser;
+use type Facebook\DefinitionFinder\FileParser;
 
 class VariableDefinesTest extends \PHPUnit_Framework_TestCase {
   public function testVariableDefine(): void {
     $data = '<?php define($foo, $bar)';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $this->assertEmpty($parser->getConstants());
   }
 
   public function testExpressionDefine(): void {
     $data = '<?php define("foo"."bar", $baz)';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $this->assertEmpty($parser->getConstants());
   }
 }

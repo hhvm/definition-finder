@@ -13,7 +13,7 @@ namespace Facebook\DefinitionFinder;
 use namespace Facebook\HHAST;
 use namespace HH\Lib\{C, Str};
 
-final class HHASTFileParser extends BaseParser {
+final class FileParser extends BaseParser {
   private function __construct(private string $file, HHAST\EditableNode $ast) {
     $this->defs = new ScannedScope(
       self::getScopeContext($file, $ast),
@@ -33,12 +33,18 @@ final class HHASTFileParser extends BaseParser {
   }
 
   ///// Constructors /////
-  public static async function fromFileAsync(
-    string $filename,
-  ): Awaitable<this> {
-    // TODO: use HHAST\from_file_async() when it's included in a release
+
+  public static function fromFile(string $filename): this {
     $ast = HHAST\from_file($filename);
     return new self($filename, $ast);
+  }
+
+  public static function fromData(
+    string $data,
+    ?string $filename = null,
+  ): this {
+    $ast = HHAST\from_code($data);
+    return new self($filename ?? '__DATA__', $ast);
   }
 
   ///// Accessors /////

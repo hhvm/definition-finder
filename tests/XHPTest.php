@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\{
-  LegacyFileParser,
+  FileParser,
   ScannedClassish,
 };
 use function Facebook\FBExpect\expect;
@@ -21,13 +21,13 @@ final class XHPTest extends \PHPUnit_Framework_TestCase {
   public function testXHPRootClass(): void {
     $data = '<?hh class :foo:bar {}';
 
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     expect($parser->getClassNames())->toContain('xhp_foo__bar');
   }
 
   public function testNullableXHPReturn(): void {
     $data = '<?hh function foo(): ?:foo:bar {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $function = $parser->getFunction('foo');
     $ret = $function->getReturnType();
     $ret = expect($ret)->toNotBeNull();
@@ -38,7 +38,7 @@ final class XHPTest extends \PHPUnit_Framework_TestCase {
   public function testXHPClassWithParent(): void {
     $data = '<?hh class :foo:bar extends :herp:derp {}';
 
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     expect($parser->getClassNames())->toContain('xhp_foo__bar');
 
     $this->assertSame(
@@ -52,7 +52,7 @@ final class XHPTest extends \PHPUnit_Framework_TestCase {
     $data =
       '<?hh class :foo:bar { attribute enum { "herp", "derp" } myattr @required; }';
 
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     expect($parser->getClassNames())->toContain('xhp_foo__bar');
   }
 
@@ -66,12 +66,12 @@ final class XHPTest extends \PHPUnit_Framework_TestCase {
 }
 EOF;
 
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     expect($parser->getClassNames())->toContain('xhp_example');
   }
 
   public function testXHPClassNamesAreCorrect(): void {
-    $parser = LegacyFileParser::FromData('<?hh class :foo:bar:baz:herp-derp {}');
+    $parser = FileParser::fromData('<?hh class :foo:bar:baz:herp-derp {}');
 
     $this->assertContains(
       /* UNSAFE_EXPR */ :foo:bar:baz:herp-derp::class,

@@ -32,7 +32,7 @@ class TreeParser extends BaseParser {
       if ($ext !== 'php' && $ext !== 'hh' && $ext !== 'xhp') {
         continue;
       }
-      $parser = LegacyFileParser::FromFile($info->getPathname());
+      $parser = FileParser::fromFile($info->getPathname());
       $builder->addSubScope($parser->defs);
     }
     $this->defs = $builder->build();

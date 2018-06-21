@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\{
-  LegacyFileParser,
+  FileParser,
   RelationshipToken,
 };
 use namespace HH\Lib\{C, Vec};
@@ -19,7 +19,7 @@ use namespace HH\Lib\{C, Vec};
 class GenericsTest extends \PHPUnit_Framework_TestCase {
   public function testClassHasGenerics(): void {
     $data = '<?hh class Foo<Tk, Tv> {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $class = $parser->getClass('Foo');
 
     $this->assertEquals(
@@ -35,7 +35,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
   public function testFunctionHasGenerics(): void {
     $data = '<?hh function foo<Tk, Tv>(){}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $function = $parser->getFunction('foo');
 
     $this->assertEquals(
@@ -54,7 +54,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
   public function testConstrainedGenerics(): void {
     $data = '<?hh class Foo<T1 as Bar, T2 super Baz> {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $class = $parser->getClass('Foo');
 
     $this->assertEquals(
@@ -72,7 +72,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
   public function testGenericsWithMultipleConstraints(): void {
     $data = '<?hh class Foo<T super Herp as Derp> {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $constraints =
       $parser->getClass('Foo')->getGenericTypes()[0]->getConstraints();
     $this->assertEquals(
@@ -86,7 +86,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
   public function testNamespacedConstrainedGenerics(): void {
     $data = '<?hh class Foo<T as \Bar\Baz> {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $class = $parser->getClass('Foo');
 
     $this->assertEquals(
@@ -97,7 +97,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
   public function testVariance(): void {
     $data = '<?hh class Foo<-Ta, Tb, +Tc> {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $class = $parser->getClass('Foo');
     $generics = $class->getGenericTypes();
 
@@ -121,25 +121,25 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
 
   public function testVectorLikeArrayParam(): void {
     $data = '<?hh function foo(array<SomeClass> $param): void {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $function = $parser->getFunction('foo');
   }
 
   public function testVectorLikeArrayOfPrimitivesParam(): void {
     $data = '<?hh function foo(array<string> $param): void {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $function = $parser->getFunction('foo');
   }
 
   public function testMapLikeArrayParam(): void {
     $data = '<?hh function foo(array<string, PharFileInfo> $list): void {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $function = $parser->getFunction('foo');
   }
 
   public function testInlineShapeConstraint(): void {
     $data = '<?hh function foo<T as shape()>(): void {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $function = $parser->getFunction('foo');
     $generics = $function->getGenericTypes();
     $this->assertSame('shape()', $generics[0]->getConstraints()[0]['type']);
@@ -152,7 +152,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
       $this->markTestSkipped('only supported on 3.12+');
     }
     $data = '<?hh function foo(ImmMap<string,string,> $bar): void {}';
-    $parser = LegacyFileParser::FromData($data);
+    $parser = FileParser::fromData($data);
     $function = $parser->getFunction('foo');
     $param_types = Vec\map(
       $function->getParameters(),

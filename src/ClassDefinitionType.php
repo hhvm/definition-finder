@@ -10,8 +10,8 @@
 
 namespace Facebook\DefinitionFinder;
 
-enum ScopeType: string {
-  FILE_SCOPE = 'file';
-  NAMESPACE_SCOPE = 'namespace';
-  CLASS_SCOPE = 'class';
+enum ClassDefinitionType: DefinitionType {
+  CLASS_DEF = DefinitionType::CLASS_DEF;
+  INTERFACE_DEF = DefinitionType::INTERFACE_DEF;
+  TRAIT_DEF = DefinitionType::TRAIT_DEF;
 }

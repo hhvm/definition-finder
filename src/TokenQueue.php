@@ -8,91 +8,26 @@
  *
  */
 
-
 namespace Facebook\DefinitionFinder;
 
-type TokenValue = string;
-type TokenType = ?int;
-type Token = (TokenValue, TokenType);
-
-class TokenQueue {
-  private vec<NGToken> $tokens = vec[];
-  private int $line = 0;
-
-  const type TSavedState = shape('tokens' => vec<NGToken>, 'line' => int);
-
-  public function getState(): self::TSavedState {
-    return shape('tokens' => $this->tokens, 'line' => $this->line);
+/** Placeholder to not have hack errors */
+final class TokenQueue {
+  public function getState(): mixed {
+    return null;
   }
 
-  public function restoreState(self::TSavedState $state): void {
-    $this->tokens = vec($state['tokens']);
-    $this->line = $state['line'];
-  }
-
-  public function __construct(string $data) {
-    $line = 0;
-    foreach (\token_get_all($data) as $token) {
-      if (is_array($token)) {
-        if ($token[0] === \T_HALT_COMPILER) {
-          break;
-        }
-        $line = $token[2];
-        $this->tokens[] = new NGToken(
-          $token[1],
-          $token[0],
-          shape(
-            'firstLine' => $line,
-            'firstChar' => null,
-            'lastChar' => null,
-            'lastLine' => null,
-          ),
-        );
-      } else {
-        $this->tokens[] = new NGToken(
-          $token,
-          null,
-          shape(
-            'firstLine' => $line,
-            'firstChar' => null,
-            'lastChar' => null,
-            'lastLine' => null,
-          ),
-        );
-      }
-    }
+  public function restoreState(mixed $_): void{
   }
 
   public function haveTokens(): bool {
-    return (bool)$this->tokens;
+    return false;
   }
 
-  public function isEmpty(): bool {
-    return !$this->haveTokens();
+  public function peek(): (string, arraykey) {
+    invariant_violation("Don't call me, I'll call you");
   }
 
-  public function shift(): Token {
-    $token = $this->shiftNG();
-    $this->line = $token->getPosition()['firstLine'];
-    return $token->asLegacyToken();
-  }
-
-  public function shiftNG(): NGToken {
-    invariant($this->haveTokens(), 'tried to shift without tokens');
-    return \array_shift(&$this->tokens);
-  }
-
-  public function unshiftNG(NGToken $token): void {
-    \array_unshift(&$this->tokens, $token);
-  }
-
-  public function peek(): Token {
-    $t = $this->shiftNG();
-    $this->unshiftNG($t);
-    return $t->asLegacyToken();
-  }
-
-  public function getLine(): int {
-    return $this->line;
+  public function shift(): (string, arraykey) {
+    invariant_violation("Don't call me, I'll call you");
   }
 }
