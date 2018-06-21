@@ -7,11 +7,7 @@
   "overrides": [
     {
       "patterns": [ "tests/data/*" ],
-      "disabledLinters": [
-        "HHAST\\CamelCasedMethodsUnderscoredFunctionsLinter",
-        "HHAST\\NoStringInterpolationLinter",
-        "HHAST\\UseStatementWithAsLinter"
-      ]
+      "disableAllLinters": true
     }
   ]
 }
