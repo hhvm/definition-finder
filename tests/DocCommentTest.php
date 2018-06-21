@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\LegacyFileParser;
 use type Facebook\DefinitionFinder\ScannedDefinition;
-use Facebook\DefinitionFinder\ScannedFunction;
+use type Facebook\DefinitionFinder\ScannedFunction;
 
 use namespace HH\Lib\Vec;
 
