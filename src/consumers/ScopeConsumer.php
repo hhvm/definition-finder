@@ -506,7 +506,7 @@ final class ScopeConsumer extends Consumer {
         break;
       } else if ($token === ',') {
         $imports[] = tuple($import_type, $parts, $alias);
-        $parts = [];
+        $parts = vec[];
         $alias = '';
         $import_type = UseStatementType::NAMESPACE_AND_TYPE;
         continue;
