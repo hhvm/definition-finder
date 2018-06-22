@@ -11,13 +11,14 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{C, Vec};
+use namespace HH\Lib\{C, Keyset, Vec};
 
 function classish_from_ast<T as ScannedClassish>(
   ConsumerContext $context,
   classname<T> $def_class,
   HHAST\ClassishDeclaration $node,
 ): ?T {
+  $context = context_with_node_position($context, $node);
   switch ($def_class) {
     case ScannedClass::class:
       if (!$node->getKeyword() instanceof HHAST\ClassToken) {
@@ -48,11 +49,17 @@ function classish_from_ast<T as ScannedClassish>(
   $modifiers = $node->getModifiers() ?? new HHAST\EditableList(vec[]);
   $has_modifier = $m ==> !C\is_empty($modifiers->getItemsOfType($m));
 
+  $generics = generics_from_ast($context, $node->getTypeParameters());
+  $context['genericTypeNames'] = Keyset\union(
+    $context['genericTypeNames'],
+    Keyset\map($generics, $g ==> $g->getName()),
+  );
+
   $builder = (
     new ScannedClassishBuilder(
       $node,
       $name,
-      context_with_node_position($context, $node)['definitionContext'],
+      $context['definitionContext'],
       ClassDefinitionType::assert($def_class::getType()),
     )
   )
@@ -67,7 +74,7 @@ function classish_from_ast<T as ScannedClassish>(
         ? FinalityToken::IS_FINAL
         : FinalityToken::NOT_FINAL,
     )
-    ->setGenericTypes(generics_from_ast($context, $node->getTypeParameters()))
+    ->setGenericTypes($generics)
     ->setContents(scope_from_ast($context, $node->getBody()->getElements()));
 
   $extends = $node->getExtendsList();

@@ -11,15 +11,23 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\C;
+use namespace HH\Lib\{C, Keyset};
 
 function method_from_ast(
   ConsumerContext $context,
   HHAST\MethodishDeclaration $node,
 ): ScannedMethod {
+  $context = context_with_node_position($context, $node);
+
   $header = $node->getFunctionDeclHeader();
   $modifiers = $header->getModifiers() ?? (new HHAST\EditableList(vec[]));
   $has_modifier = $m ==> !C\is_empty($modifiers->getItemsOfType($m));
+
+  $generics = generics_from_ast($context, $header->getTypeParameterList());
+  $context['genericTypeNames'] = Keyset\union(
+    $context['genericTypeNames'],
+    Keyset\map($generics, $g ==> $g->getName()),
+  );
 
   return (
     new ScannedMethodBuilder(
@@ -27,11 +35,11 @@ function method_from_ast(
       // Don't bother with decl_name_in_context() as methods are always inside
       // a class, so don't get decorated with the namespace
       $header->getNamex()->getCode(),
-      context_with_node_position($context, $node)['definitionContext'],
+      $context['definitionContext'],
     )
   )
     ->setAttributes(attributes_from_ast($node->getAttribute()))
-    ->setGenerics(generics_from_ast($context, $header->getTypeParameterList()))
+    ->setGenerics($generics)
     ->setParameters(parameters_from_ast($context, $header->getParameterList()))
     ->setReturnType(typehint_from_ast($context, $header->getType()))
     ->setVisibility(

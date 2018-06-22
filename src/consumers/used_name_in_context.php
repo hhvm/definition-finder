@@ -17,7 +17,8 @@ function used_name_in_context(
   ConsumerContext $context,
   string $name,
 ): string {
-  $used = $context['usedTypes'][$name] ?? null;
+  $used =
+    $context['usedTypes'][$name] ?? $context['genericTypeNames'][$name] ?? null;
   if ($used !== null) {
     return $used;
   }
