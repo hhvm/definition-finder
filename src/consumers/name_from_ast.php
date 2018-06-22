@@ -21,7 +21,7 @@ function name_from_ast(
     return $node->getText();
   }
   if ($node instanceof HHAST\QualifiedName) {
-    return $node->getParts()->getItemsOfType(HHAST\EditableToken::class)
+    return _Private\items_of_type($node->getParts(), HHAST\EditableToken::class)
       |> Vec\map($$, $x ==> $x->getText())
       |> Str\join($$, '');
   }

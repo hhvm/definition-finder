@@ -21,14 +21,17 @@ function scope_from_ast(
     $ast = new HHAST\EditableList(vec[]);
   }
 
-  $ns = $ast->getItemsOfType(HHAST\NamespaceDeclaration::class);
+  $ns = _Private\items_of_type($ast, HHAST\NamespaceDeclaration::class);
   invariant(C\count($ns) <= 1, "Too many namespace declarations!\n");
   $context['namespace'] = C\first($ns)?->getName()?->getCode();
 
-  $uses = $ast->getItemsOfType(HHAST\NamespaceUseDeclaration::class);
+  $uses = _Private\items_of_type($ast, HHAST\NamespaceUseDeclaration::class);
   foreach ($uses as $use) {
     $mapping = Dict\pull(
-      $use->getClauses()->getItemsOfType(HHAST\NamespaceUseClause::class),
+      _Private\items_of_type(
+        $use->getClauses(),
+        HHAST\NamespaceUseClause::class,
+      ),
       $node ==> name_from_ast($node->getName()),
       $node ==> name_from_ast(
         $node->hasAlias() ? $node->getAliasx() : $node->getName(),
@@ -38,7 +41,7 @@ function scope_from_ast(
 
   // TODO: group use clauses
 
-  $classish = $ast->getItemsOfType(HHAST\ClassishDeclaration::class);
+  $classish = _Private\items_of_type($ast, HHAST\ClassishDeclaration::class);
 
   return new ScannedScope(
     $context['definitionContext'],
@@ -49,7 +52,7 @@ function scope_from_ast(
     vec[], // interfaces
     vec[], // traits
     Vec\map(
-      $ast->getItemsOfType(HHAST\FunctionDeclaration::class),
+      _Private\items_of_type($ast, HHAST\FunctionDeclaration::class),
       $node ==> function_from_ast($context, $node),
     ),
     vec[], // methods

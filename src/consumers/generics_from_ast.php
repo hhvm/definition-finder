@@ -21,7 +21,7 @@ function generics_from_ast(
     return vec[];
   }
   return Vec\map(
-    $node->getParameters()->getItemsOfType(HHAST\TypeParameter::class),
+    _Private\items_of_type($node->getParameters(), HHAST\TypeParameter::class),
     $p ==> generic_from_ast($context, $p),
   );
 }
