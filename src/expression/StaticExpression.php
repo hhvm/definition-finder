@@ -12,12 +12,26 @@ namespace Facebook\DefinitionFinder\Expression;
 
 use namespace Facebook\HHAST;
 
-final class StaticScalarExpression extends Expression<mixed> {
+final class StaticExpression extends Expression<mixed> {
   const type TNode = HHAST\EditableNode;
   <<__Override>>
   protected static function matchImpl(
     HHAST\EditableNode $n,
   ): ?Expression<mixed> {
-    return LiteralExpression::match($n);
+    $impls = vec[
+      StaticDictExpression::class,
+      StaticListExpression::class,
+      StaticScalarExpression::class,
+      StaticVecExpression::class,
+    ];
+    foreach ($impls as $class) {
+      $r = $class::match($n);
+      if ($r) {
+        return $r;
+      }
+    }
+
+    // TODO: throw on failure
+    return null;
   }
 }

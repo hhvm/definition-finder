@@ -11,18 +11,16 @@
 namespace Facebook\DefinitionFinder\Expression;
 
 use namespace Facebook\HHAST;
+use namespace HH\Lib\Str;
 
-final class StaticVecExpression extends Expression<vec<mixed>> {
-  const type TNode = HHAST\VectorIntrinsicExpression;
+final class SingleQuotedStringLiteralExpression extends Expression<string> {
+  const type TNode = HHAST\SingleQuotedStringLiteralToken;
 
   <<__Override>>
   protected static function matchImpl(
-    this::TNode $node,
-  ): ?Expression<vec<mixed>> {
-    $m = $node->getMembers();
-    if ($m === null) {
-      return new self(vec[]);
-    }
-    return StaticListExpression::match($m);
+    self::TNode $n,
+  ): Expression<string> {
+    $t = $n->getText();
+    return new self(Str\slice($t, 1, Str\length($t) - 2));
   }
 }

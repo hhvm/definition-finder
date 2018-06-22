@@ -10,12 +10,16 @@
 
 namespace Facebook\DefinitionFinder\Expression;
 
-use type Facebook\DefinitionFinder\TokenQueue;
+use namespace Facebook\HHAST;
+use namespace HH\Lib\Str;
 
-final class CommonScalarExpression extends Expression<mixed> {
+final class DecimalLiteralExpression extends Expression<int> {
+  const type TNode = HHAST\DecimalLiteralToken;
+
   <<__Override>>
-  protected static function matchImpl(TokenQueue $tq): ?Expression<mixed> {
-    // TODO: heredoc support (from common_scalar_ae)
-    return StaticNumericScalarExpression::matchImpl($tq);
+  protected static function matchImpl(
+    self::TNode $n,
+  ): Expression<int> {
+    return new self((int) $n->getText());
   }
 }

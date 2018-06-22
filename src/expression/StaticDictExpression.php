@@ -10,26 +10,23 @@
 
 namespace Facebook\DefinitionFinder\Expression;
 
-use type Facebook\DefinitionFinder\TokenQueue;
+use namespace Facebook\HHAST;
+use namespace HH\Lib\{Dict, Vec};
 
-final class StaticDictExpression extends StaticArrayExpression
-implements StaticDictLikeArrayExpression {
-  public static function convertDict(dict<arraykey, mixed> $values): mixed {
-    return $values;
-  }
+final class StaticDictExpression extends Expression<dict<arraykey, mixed>> {
+  const type TNode = HHAST\DictionaryIntrinsicExpression;
 
   <<__Override>>
-  protected static function consumeStart(TokenQueue $tq): ?string {
-    list($_, $ttype) = $tq->shift();
-    if ($ttype !== \T_DICT) {
-      return null;
-    }
-
-    list($t, $_) = $tq->shift();
-    if ($t !== '[') {
-      return null;
-    }
-
-    return ']';
+  protected static function matchImpl(
+    this::TNode $node,
+  ): ?Expression<dict<arraykey, mixed>> {
+    return Vec\map(
+      $node->getMembers()?->getItemsOfType(HHAST\EditableNode::class) ?? vec[],
+      $m ==> StaticElementInitializerExpression::match($m),
+    )
+      |> Vec\filter_nulls($$)
+      |> Vec\map($$, $e ==> $e->getValue())
+      |> Dict\from_entries($$)
+      |> new self($$);
   }
 }

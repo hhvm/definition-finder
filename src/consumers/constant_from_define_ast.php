@@ -21,7 +21,7 @@ function constant_from_define_ast(
   $items = $arg_list->getItemsOfType(HHAST\EditableNode::class);
   invariant(C\count($items) === 2, 'Expected define() to have two arguments');
   $name = $items[0];
-  $_value = $items[1];
+  $value = $items[1];
 
   if ($name instanceof HHAST\NameToken) {
     $name = $name->getText();
@@ -49,7 +49,7 @@ function constant_from_define_ast(
       $node,
       $name, // these are not relative to the current namespace
       context_with_node_position($context, $node)['definitionContext'],
-      null, // FIXME: value
+      value_from_ast($value),
       /* typehint = */ null,
       AbstractnessToken::NOT_ABSTRACT,
     )

@@ -23,8 +23,8 @@ function attributes_from_ast(
     |> Dict\pull(
       $$,
       $attr ==> Vec\map(
-        $attr->getValues()?->getChildren() ?? vec[],
-        $child ==> $child->getCode(), // TODO: evaluate static exprs
+        $attr->getValues()?->getItemsOfType(HHAST\EditableNode::class) ?? vec[],
+        $child ==> value_from_ast($child),
       ),
       $attr ==> $attr->getName()->getCode(),
     );

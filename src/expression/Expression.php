@@ -10,33 +10,30 @@
 
 namespace Facebook\DefinitionFinder\Expression;
 
-use type Facebook\DefinitionFinder\TokenQueue;
+use namespace Facebook\HHAST;
+use namespace Facebook\TypeAssert;
 
-abstract class Expression<TValue> {
+abstract class Expression<+TValue> {
+  abstract const type TNode as HHAST\EditableNode;
+
   final protected function __construct(private TValue $value) {
   }
 
-  final public static function match(TokenQueue $tq): ?Expression<TValue> {
-    $state = $tq->getState();
-    $ret = static::matchImpl($tq);
-    if ($ret) {
-      return $ret;
+  final public static function match(
+    HHAST\EditableNode $node,
+  ): ?Expression<TValue> {
+    $ts = type_structure(static::class, 'TNode');
+    try {
+      $node = TypeAssert\matches_type_structure($ts, $node);
+    } catch (\Throwable $_) {
+      return null;
     }
-    $tq->restoreState($state);
-    return null;
+    return static::matchImpl($node);
   }
 
-  abstract protected static function matchImpl(TokenQueue $tq): ?Expression<TValue>;
-
-  protected static function consumeWhitespace(TokenQueue $tq): void {
-    while ($tq->haveTokens()) {
-      list($_, $ttype) = $tq->peek();
-      if ($ttype !== \T_WHITESPACE) {
-        return;
-      }
-      $tq->shift();
-    }
-  }
+  abstract protected static function matchImpl(
+    this::TNode $node,
+  ): ?Expression<TValue>;
 
   final public function getValue(): TValue {
     return $this->value;
