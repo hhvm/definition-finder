@@ -86,6 +86,14 @@ function classish_from_ast<T as ScannedClassish>(
     }
   }
 
+  $implements = $node->getImplementsList();
+  if ($implements) {
+    $implements->getItemsOfType(HHAST\EditableNode::class)
+      |> Vec\map($$, $super ==> typehint_from_ast($context, $super))
+      |> Vec\filter_nulls($$)
+      |> $builder->setInterfaces($$);
+  }
+
   return $builder
     ->build($def_class);
 }
