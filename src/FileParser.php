@@ -14,7 +14,7 @@ use namespace Facebook\HHAST;
 use namespace HH\Lib\{C, Str, Vec};
 
 final class FileParser extends BaseParser {
-  private function __construct(private string $file, HHAST\EditableNode $ast) {
+  private function __construct(private string $file, HHAST\Script $ast) {
     $context = self::getScopeContext($file, $ast);
     $this->defs = new ScannedScope(
       $context,
@@ -41,6 +41,11 @@ final class FileParser extends BaseParser {
 
   public static function fromFile(string $filename): this {
     $ast = HHAST\from_file($filename);
+    invariant(
+      $ast instanceof HHAST\Script,
+      "Expected the top-level definition to be a Script, got a %s",
+      \get_class($ast),
+    );
     return new self($filename, $ast);
   }
 
@@ -49,6 +54,11 @@ final class FileParser extends BaseParser {
     ?string $filename = null,
   ): this {
     $ast = HHAST\from_code($data);
+    invariant(
+      $ast instanceof HHAST\Script,
+      "Expected top-level definition to be a Script, got a %s",
+      \get_class($ast),
+    );
     return new self($filename ?? '__DATA__', $ast);
   }
 

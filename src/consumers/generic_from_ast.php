@@ -44,12 +44,17 @@ function generic_from_ast(
           );
           $r = RelationshipToken::SUPERTYPE;
         }
+        $type = typehint_from_ast($c->getType());
+        if ($type === null) {
+          return null;
+        }
+
         return shape(
-          'type' => typehint_from_ast($c->getType()),
+          'type' => $type,
           'relationship' => $r,
         );
       },
-    );
+    ) |> Vec\filter_nulls($$);
   }
 
   return new ScannedGeneric(
