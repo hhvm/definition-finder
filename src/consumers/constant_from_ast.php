@@ -11,17 +11,23 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\Vec;
 
-function constants_from_ast(
+function constant_from_ast(
   ConsumerContext $context,
-  HHAST\ConstDeclaration $decl,
-): vec<ScannedConstant> {
-  return Vec\map(
-    _Private\items_of_type(
-      $decl->getDeclarators(),
-      HHAST\ConstantDeclarator::class,
-    ),
-    $inner ==> constant_from_ast($context, $decl, $inner),
-  );
+  HHAST\ConstDeclaration $outer,
+  HHAST\ConstantDeclarator $inner,
+): ScannedConstant {
+  return (
+    new ScannedConstantBuilder(
+      $inner,
+      decl_name_in_context($context, name_from_ast($inner->getName())),
+      context_with_node_position($context, $inner)['definitionContext'],
+      null, // FIXME: value
+      typehint_from_ast($context, $outer->getTypeSpecifier()),
+      $outer->getAbstract() instanceof HHAST\AbstractToken
+        ? AbstractnessToken::IS_ABSTRACT
+        : AbstractnessToken::NOT_ABSTRACT,
+    )
+  )
+    ->build();
 }

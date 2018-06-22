@@ -11,6 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
+use namespace Facebook\TypeAssert;
 use namespace HH\Lib\{C, Dict, Str, Vec};
 
 function scope_from_ast(
@@ -94,10 +95,21 @@ function scope_from_ast(
     ),
     vec[], // used traits
     vec[], // properties
-    Vec\map(
-      _Private\items_of_type($ast, HHAST\ConstDeclaration::class),
-      $node ==> constants_from_ast($context, $node),
-    ) |> Vec\flatten($$),
+    Vec\concat(
+      Vec\map(
+        _Private\items_of_type($ast, HHAST\ConstDeclaration::class),
+        $node ==> constants_from_ast($context, $node),
+      )
+      |> Vec\flatten($$),
+      _Private\items_of_type($ast, HHAST\ExpressionStatement::class)
+        |> Vec\map($$, $s ==> $s->getExpression())
+        |> Vec\filter($$, $e ==> $e instanceof HHAST\DefineExpression::class)
+        |> Vec\map(
+          $$,
+          $e ==> TypeAssert\instance_of(HHAST\DefineExpression::class, $e),
+        )
+        |> Vec\map($$, $e ==> constant_from_define_ast($context, $e)),
+    ),
     vec[], // type constants
     Vec\map(
       _Private\items_of_type($ast, HHAST\EnumDeclaration::class),
