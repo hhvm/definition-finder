@@ -52,7 +52,7 @@ function typehint_from_ast(
   }
   if ($node instanceof HHAST\ClosureTypeSpecifier) {
     return
-      new ScannedTypehint($node, 'closure', $node->getCode(), vec[], false);
+      new ScannedTypehint($node, 'callable', $node->getCode(), vec[], false);
   }
   if ($node instanceof HHAST\DarrayTypeSpecifier) {
     return new ScannedTypehint(

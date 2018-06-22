@@ -10,8 +10,9 @@
 
 namespace Facebook\DefinitionFinder;
 
-// and hphp/hack/src/parser/hh_autoimport.ml
 const keyset<string> AUTOIMPORT_TYPES = keyset[
+  // not a real type
+  'callable',
   // hack/src/parser/hh_autoimport.ml
   'bool',
   'int',
