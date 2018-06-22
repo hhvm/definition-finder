@@ -9,6 +9,7 @@
  */
 
 use type Facebook\DefinitionFinder\FileParser;
+use function Facebook\FBExpect\expect;
 
 abstract class AbstractPHPTest extends PHPUnit_Framework_TestCase {
   private ?FileParser $parser;
@@ -24,27 +25,30 @@ abstract class AbstractPHPTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testClasses(): void {
-    $this->assertEquals(
+    expect(
+      $this->parser?->getClassNames(),
+    )->toBeSame(
       vec[
         $this->getPrefix().'SimpleClass',
         $this->getPrefix().'SimpleAbstractClass',
         $this->getPrefix().'SimpleFinalClass',
       ],
-      $this->parser?->getClassNames(),
     );
   }
 
   public function testInterfaces(): void {
-    $this->assertEquals(
-      vec[$this->getPrefix().'SimpleInterface'],
+    expect(
       $this->parser?->getInterfaceNames(),
+    )->toBeSame(
+      vec[$this->getPrefix().'SimpleInterface'],
     );
   }
 
   public function testTraits(): void {
-    $this->assertEquals(
-      vec[$this->getPrefix().'SimpleTrait'],
+    expect(
       $this->parser?->getTraitNames(),
+    )->toBeSame(
+      vec[$this->getPrefix().'SimpleTrait'],
     );
   }
 }

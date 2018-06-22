@@ -10,6 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
+use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\FileParser;
 
 final class SingleNamespaceHackTest extends \AbstractHackTest {
@@ -32,8 +33,8 @@ final class SingleNamespaceHackTest extends \AbstractHackTest {
     $herp = $parser->getClass('Herp');
     $derp = $parser->getClass('Derp');
 
-    $this->assertSame('Foo\Bar', $herp->getParentClassName());
-    $this->assertSame($herp->getParentClassName(), $derp->getParentClassName());
+    expect($herp->getParentClassName())->toBeSame("Foo\\Bar");
+    expect($derp->getParentClassName())->toBeSame($herp->getParentClassName());
   }
 
   <<__Override>>

@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder;
 
 abstract class ScannedDefinition {
   const type TContext =
-    shape('position' => SourcePosition, 'sourceType' => SourceType);
+    shape('filename' => string, ?'position' => SourcePosition, 'sourceType' => SourceType);
   // Namespace (e.g., of a class) if it exists
   private string $namespace;
   // Short name of the name without the namespace.
@@ -30,8 +30,8 @@ abstract class ScannedDefinition {
 
   abstract public static function getType(): ?DefinitionType;
 
-  public function getPosition(): SourcePosition {
-    return $this->context['position'];
+  public function getPosition(): ?SourcePosition {
+    return $this->context['position'] ?? null;
   }
 
   public function getDocComment(): ?string {
@@ -43,7 +43,7 @@ abstract class ScannedDefinition {
   }
 
   public function getFileName(): string {
-    return $this->context['position']['filename'];
+    return $this->context['filename'];
   }
 
   public function getSourceType(): SourceType {

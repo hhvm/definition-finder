@@ -12,14 +12,16 @@ namespace Facebook\DefinitionFinder;
 
 class ParseException extends \Exception {
   public function __construct(
-    private SourcePosition $source,
+    private string $sourceFile,
+    private ?SourcePosition $pos,
     \Exception $previous,
   ) {
     parent::__construct(
       \sprintf(
-        "%s:%d: %s",
-        $source['filename'],
-        Shapes::idx($source, 'line', -1),
+        "%s:%d:%d %s",
+        $sourceFile,
+        $pos['line'] ?? 01,
+        $pos['character'] ?? -1,
         $previous->getMessage(),
       ),
       /* code = */ 0,
@@ -27,7 +29,11 @@ class ParseException extends \Exception {
     );
   }
 
-  public function getSourcePosition(): SourcePosition {
-    return $this->source;
+  public function getFilename(): string {
+    return $this->sourceFile;
+  }
+
+  public function getPosition(): ?SourcePosition {
+    return $this->pos;
   }
 }

@@ -11,24 +11,29 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{C, Str};
+use namespace HH\Lib\{C, Str, Vec};
 
 final class FileParser extends BaseParser {
   private function __construct(private string $file, HHAST\EditableNode $ast) {
+    $context = self::getScopeContext($file, $ast);
     $this->defs = new ScannedScope(
-      self::getScopeContext($file, $ast),
-      vec[],
-      vec[],
-      vec[],
-      vec[],
-      vec[],
-      vec[],
-      vec[],
-      vec[],
-      vec[],
-      vec[],
-      vec[],
-      vec[],
+      $context,
+      vec[], // classes
+      vec[], // interfaces
+      vec[], // traits
+      $ast->getDescendantsOfType(HHAST\FunctionDeclaration::class)
+      |> Vec\map(
+        $$,
+        $node ==> function_from_ast($context, $ast, $node),
+      ),
+      vec[], // methods
+      vec[], // used traits
+      vec[], // properties
+      vec[], // constants
+      vec[], // type constants
+      vec[], // enums
+      vec[], // types
+      vec[], // newtypes
     );
   }
 
@@ -78,7 +83,7 @@ final class FileParser extends BaseParser {
       $type = SourceType::UNKNOWN;
     }
     return shape(
-      'position' => shape('filename' => $file, 'line' => null),
+      'filename' => $file,
       'sourceType' => $type,
     );
   }
