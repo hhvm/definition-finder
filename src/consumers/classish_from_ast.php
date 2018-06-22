@@ -38,9 +38,16 @@ function classish_from_ast<T as ScannedClassish>(
       invariant_violation('new classish kind: %s', $def_class);
   }
 
+  $name = $node->getName();
+  if ($name instanceof HHAST\XHPClassNameToken) {
+    $name = mangle_xhp_name_token($context, $name);
+  } else {
+    $name = name_in_context($context, $name->getText());
+  }
+
   return (
     new ScannedClassishBuilder(
-      name_in_context($context, $node->getName()->getText()),
+      $name,
       context_with_node_position($context, $node)['definitionContext'],
       ClassDefinitionType::assert($def_class::getType()),
     )
