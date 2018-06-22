@@ -68,8 +68,14 @@ function scope_from_ast(
       $classish,
       $node ==> classish_from_ast($context, ScannedClass::class, $node),
     )),
-    vec[], // interfaces
-    vec[], // traits
+    Vec\filter_nulls(Vec\map(
+      $classish,
+      $node ==> classish_from_ast($context, ScannedInterface::class, $node),
+    )),
+    Vec\filter_nulls(Vec\map(
+      $classish,
+      $node ==> classish_from_ast($context, ScannedTrait::class, $node),
+    )),
     Vec\map(
       _Private\items_of_type($ast, HHAST\FunctionDeclaration::class),
       $node ==> function_from_ast($context, $node),
