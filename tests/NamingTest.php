@@ -26,6 +26,9 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
 
   /** Things that are valid names, but have a weird token type */
   public function specialNameProvider(): array<array<string>> {
+    if (\HHVM_VERSION_ID === 32600) {
+      $this->markTestIncomplete("https://github.com/facebook/hhvm/issues/8240");
+    }
     return [
       ['dict'], // HHVM >= 3.13
       ['vec'], // HHVM >= 3.14
@@ -41,7 +44,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
 
   /** @dataProvider specialNameProvider */
   public function testSpecialReturnType(string $type): void {
-    $data = '<?hh function foo(): '.$type.' {}';
+    $data = '<?php function foo(): '.$type.' {}';
     $parser = FileParser::fromData($data);
     $func = $parser->getFunction('foo');
     $this->assertSame($type, $func->getReturnType()?->getTypeName());
@@ -49,7 +52,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
 
   /** @dataProvider specialNameProvider */
   public function testSpecialNameAsFuncName(string $type): void {
-    $data = '<?hh function '.$type.'(): void {}';
+    $data = '<?php function '.$type.'(): void {}';
     $parser = FileParser::fromData($data);
     $func = $parser->getFunction($type);
     $this->assertSame('void', $func->getReturnType()?->getTypeName());
@@ -58,7 +61,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
 
   /** @dataProvider specialNameProvider */
   public function testSpecialNameAsClassName(string $type): void {
-    $data = '<?hh class '.$type.' { }';
+    $data = '<?php class '.$type.' { }';
     $parser = FileParser::fromData($data);
     $class = $parser->getClass($type);
     $this->assertNotNull($class);
@@ -66,7 +69,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
 
   /** @dataProvider specialNameProvider */
   public function testSpecialNameAsNamespaceName(string $type): void {
-    $data = '<?hh namespace '.$type.' { class Foo {} }';
+    $data = '<?php namespace '.$type.' { class Foo {} }';
     $parser = FileParser::fromData($data);
     $class = $parser->getClass($type."\\Foo");
     $this->assertNotNull($class);
@@ -74,7 +77,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
 
   /** @dataProvider specialNameProvider */
   public function testSpecialNameAsUsedName(string $type): void {
-    $data = '<?hh use Foo\\'.$type.'; class Herp extends '.$type.' { }';
+    $data = '<?php use Foo\\'.$type.'; class Herp extends '.$type.' { }';
     $parser = FileParser::fromData($data);
     $class = $parser->getClass('Herp');
     $this->assertNotNull($class);
@@ -82,7 +85,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
 
   /** @dataProvider specialNameProvider */
   public function testSpecialNameAsUsedAsName(string $type): void {
-    $data = '<?hh use Foo\\Bar as '.$type.'; class Herp extends '.$type.' { }';
+    $data = '<?php use Foo\\Bar as '.$type.'; class Herp extends '.$type.' { }';
     $parser = FileParser::fromData($data);
     $class = $parser->getClass('Herp');
     $this->assertNotNull($class);
@@ -92,7 +95,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   * @dataProvider specialNameProvider
   */
   public function testSpecialNameAsUsedAsConstName(string $type): void {
-    $data = '<?hh const '.$type.' = FOO;';
+    $data = '<?php const '.$type.' = FOO;';
     $parser = FileParser::fromData($data);
     $constants = $parser->getConstantNames();
     expect($constants)->toContain($type);
@@ -102,7 +105,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   * @dataProvider specialNameProvider
   */
   public function testSpecialNameAsUsedAsClassConstName(string $type): void {
-    $data = '<?hh class Foo { const int '.$type.' = FOO; }';
+    $data = '<?php class Foo { const int '.$type.' = FOO; }';
     $parser = FileParser::fromData($data);
     $constant = C\firstx($parser->getClass('Foo')->getConstants());
     expect($constant->getName())->toBeSame($type);
@@ -113,7 +116,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   * @dataProvider specialNameProvider
   */
   public function testSpecialNameAsUsedAsClassConstDefault(string $type): void {
-    $data = '<?hh class Foo { const int BAR = Baz::'.$type.'; }';
+    $data = '<?php class Foo { const int BAR = Baz::'.$type.'; }';
     $parser = FileParser::fromData($data);
     $constant = C\firstx($parser->getClass('Foo')->getConstants());
     expect($constant->getName())->toBeSame('BAR');
