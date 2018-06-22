@@ -25,7 +25,10 @@ function typehint_from_ast(
   }
 
   // Special cases
-
+  if ($node instanceof HHAST\XHPClassNameToken) {
+    $name = used_name_in_context($context, mangle_xhp_name_token($node));
+    return new ScannedTypehint($name, $name, vec[], false, $node);
+  }
   if ($node instanceof HHAST\EditableToken) {
     $name = used_name_in_context($context, name_from_ast($node));
     return new ScannedTypehint($name, $name, vec[], false, $node);
