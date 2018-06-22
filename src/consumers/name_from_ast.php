@@ -11,11 +11,10 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
+use namespace Facebook\TypeAssert;
 use namespace HH\Lib\{Str, Vec};
 
-function name_from_ast(
-  HHAST\EditableNode $node,
-): string {
+function name_from_ast(HHAST\EditableNode $node): string {
   if ($node instanceof HHAST\EditableToken) {
     return $node->getText();
   }
@@ -24,8 +23,13 @@ function name_from_ast(
     // lists.
     //
     // If there's a leading `\` in the name, the first item is empty.
-    return _Private\items_of_type($node->getParts(), HHAST\EditableToken::class)
-      |> Vec\map($$, $x ==> $x->getText())
+    return _Private\items_of_type($node->getParts(), HHAST\EditableNode::class)
+      |> Vec\map(
+        $$,
+        $x ==> $x->isMissing()
+          ? ''
+          : TypeAssert\instance_of(HHAST\EditableToken::class, $x)->getText(),
+      )
       |> Str\join($$, "\\");
   }
 
