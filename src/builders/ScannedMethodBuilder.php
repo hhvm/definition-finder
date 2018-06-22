@@ -28,7 +28,7 @@ final class ScannedMethodBuilder
       $this->docblock,
       nullthrows($this->generics),
       $this->returnType,
-      $this->buildParameters(),
+      nullthrows($this->parameters),
       nullthrows($this->visibility),
       nullthrows($this->staticity),
       nullthrows($this->abstractness),

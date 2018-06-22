@@ -18,7 +18,7 @@ abstract class ScannedFunctionishBuilder<T as ScannedFunctionish>
   protected ?bool $byRefReturn;
   protected ?vec<ScannedGeneric> $generics = null;
   protected ?ScannedTypehint $returnType;
-  protected vec<ScannedParameterBuilder> $parameters = vec[];
+  protected ?vec<ScannedParameter> $parameters = vec[];
 
   public function setByRefReturn(bool $v): this {
     $this->byRefReturn = $v;
@@ -35,11 +35,8 @@ abstract class ScannedFunctionishBuilder<T as ScannedFunctionish>
     return $this;
   }
 
-  public function addParameter(ScannedParameterBuilder $parameter): void {
-    $this->parameters[] = $parameter;
-  }
-
-  protected function buildParameters(): vec<ScannedParameter> {
-    return Vec\map($this->parameters, $builder ==> $builder->build());
+  public function setParameters(vec<ScannedParameter> $params): this {
+    $this->parameters = $params;
+    return $this;
   }
 }

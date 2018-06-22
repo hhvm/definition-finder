@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-function nullthrows<T>(?T $v): T {
+function nullthrows<T as nonnull>(?T $v): T {
   invariant($v !== null, 'unexpected null');
   return $v;
 }

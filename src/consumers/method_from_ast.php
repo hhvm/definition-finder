@@ -32,6 +32,7 @@ function method_from_ast(
   )
     ->setAttributes(attributes_from_ast($node->getAttribute()))
     ->setGenerics(generics_from_ast($context, $header->getTypeParameterList()))
+    ->setParameters(parameters_from_ast($context, $header->getParameterList()))
     ->setReturnType(typehint_from_ast($context, $header->getType()))
     ->setVisibility(
       $has_modifier(HHAST\PrivateToken::class)
