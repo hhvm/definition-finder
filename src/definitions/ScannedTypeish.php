@@ -10,9 +10,6 @@
 
 namespace Facebook\DefinitionFinder;
 
-final class ScannedNewtype extends ScannedTypeish {
-  <<__Override>>
-  public static function getType(): DefinitionType {
-    return DefinitionType::NEWTYPE_DEF;
-  }
+<<__ConsistentConstruct, __Sealed(ScannedType::class, ScannedNewtype::class)>>
+abstract class ScannedTypeish extends ScannedDefinition {
 }

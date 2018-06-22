@@ -124,7 +124,13 @@ function scope_from_ast(
       _Private\items_of_type($ast, HHAST\EnumDeclaration::class),
       $node ==> enum_from_ast($context, $node),
     ),
-    /* types = */ vec[],
-    /* newtypes = */ vec[],
+    /* types = */ Vec\map(
+      _Private\items_of_type($ast, HHAST\AliasDeclaration::class),
+      $node ==> typeish_from_ast($context, ScannedType::class, $node),
+    ) |> Vec\filter_nulls($$),
+    /* newtypes = */ Vec\map(
+      _Private\items_of_type($ast, HHAST\AliasDeclaration::class),
+      $node ==> typeish_from_ast($context, ScannedNewtype::class, $node),
+    ) |> Vec\filter_nulls($$),
   );
 }
