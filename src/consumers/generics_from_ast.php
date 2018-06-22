@@ -13,12 +13,15 @@ namespace Facebook\DefinitionFinder;
 use namespace Facebook\HHAST;
 use namespace HH\Lib\{Dict, Vec};
 
-function generics_from_ast(?HHAST\TypeParameters $node): vec<ScannedGeneric> {
+function generics_from_ast(
+  ConsumerContext $context,
+  ?HHAST\TypeParameters $node,
+): vec<ScannedGeneric> {
   if ($node === null) {
     return vec[];
   }
   return Vec\map(
     $node->getParameters()->getItemsOfType(HHAST\TypeParameter::class),
-    $p ==> generic_from_ast($p),
+    $p ==> generic_from_ast($context, $p),
   );
 }

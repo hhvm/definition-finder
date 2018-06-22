@@ -69,7 +69,7 @@ function classish_from_ast<T as ScannedClassish>(
         ? FinalityToken::NOT_FINAL
         : FinalityToken::IS_FINAL,
     )
-    ->setGenericTypes(generics_from_ast($node->getTypeParameters()))
+    ->setGenericTypes(generics_from_ast($context, $node->getTypeParameters()))
     ->setContents(scope_from_ast($context, $node->getBody()->getElements()))
     ->build($def_class);
 }

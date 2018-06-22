@@ -13,12 +13,15 @@ namespace Facebook\DefinitionFinder;
 use namespace Facebook\HHAST;
 use namespace HH\Lib\{Dict, Vec};
 
-function typehints_from_ast(?HHAST\EditableList $node): vec<ScannedTypehint> {
+function typehints_from_ast(
+  ConsumerContext $context,
+  ?HHAST\EditableList $node,
+): vec<ScannedTypehint> {
   if ($node === null) {
     return vec[];
   }
   return $node->getChildren()
     |> Vec\map($$, $c ==> $c instanceof HHAST\ListItem ? $c->getItem() : $c)
-    |> Vec\map($$, $c ==> typehint_from_ast($c))
+    |> Vec\map($$, $c ==> typehint_from_ast($context, $c))
     |> Vec\filter_nulls($$);
 }

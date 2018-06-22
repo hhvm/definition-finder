@@ -14,6 +14,7 @@ use namespace Facebook\HHAST;
 use namespace HH\Lib\{Dict, Vec};
 
 function generic_from_ast(
+  ConsumerContext $context,
   HHAST\TypeParameter $node,
 ): ScannedGeneric {
   $v = $node->getVariance();
@@ -44,7 +45,7 @@ function generic_from_ast(
           );
           $r = RelationshipToken::SUPERTYPE;
         }
-        $type = typehint_from_ast($c->getType());
+        $type = typehint_from_ast($context, $c->getType());
         if ($type === null) {
           return null;
         }

@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{C, Vec};
+use namespace HH\Lib\{C, Dict, Str, Vec};
 
 function scope_from_ast(
   ConsumerContext $context,
@@ -24,6 +24,19 @@ function scope_from_ast(
   $ns = $ast->getItemsOfType(HHAST\NamespaceDeclaration::class);
   invariant(C\count($ns) <= 1, "Too many namespace declarations!\n");
   $context['namespace'] = C\first($ns)?->getName()?->getCode();
+
+  $uses = $ast->getItemsOfType(HHAST\NamespaceUseDeclaration::class);
+  foreach ($uses as $use) {
+    $mapping = Dict\pull(
+      $use->getClauses()->getItemsOfType(HHAST\NamespaceUseClause::class),
+      $node ==> name_from_ast($node->getName()),
+      $node ==> name_from_ast(
+        $node->hasAlias() ? $node->getAliasx() : $node->getName(),
+      ),
+    );
+  }
+
+  // TODO: group use clauses
 
   $classish = $ast->getItemsOfType(HHAST\ClassishDeclaration::class);
 
