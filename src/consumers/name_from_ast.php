@@ -20,9 +20,13 @@ function name_from_ast(
     return $node->getText();
   }
   if ($node instanceof HHAST\QualifiedName) {
+    // Join with `\` as the `\` is an item separator, not an actual item in the
+    // lists.
+    //
+    // If there's a leading `\` in the name, the first item is empty.
     return _Private\items_of_type($node->getParts(), HHAST\EditableToken::class)
       |> Vec\map($$, $x ==> $x->getText())
-      |> Str\join($$, '');
+      |> Str\join($$, "\\");
   }
 
   invariant_violation(
