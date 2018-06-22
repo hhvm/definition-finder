@@ -22,9 +22,16 @@ function scope_from_ast(
   }
 
   $namespaces = _Private\items_of_type($ast, HHAST\NamespaceDeclaration::class);
-  $without_bodies = Vec\filter($namespaces, $ns ==> !$ns->hasBody());
+  $without_bodies = Vec\filter(
+    $namespaces,
+    $ns ==>
+      $ns->getBody() instanceof HHAST\NamespaceEmptyBody || !$ns->hasBody(),
+  );
   // TODO: Process ones with bodies
-  invariant(C\count($without_bodies) <= 1, "Too many namespace declarations!\n");
+  invariant(
+    C\count($without_bodies) <= 1,
+    "Too many namespace declarations!\n",
+  );
   $context['namespace'] = C\first($without_bodies)?->getName()?->getCode();
 
   $uses = _Private\items_of_type($ast, HHAST\NamespaceUseDeclaration::class);
@@ -89,7 +96,10 @@ function scope_from_ast(
     vec[], // properties
     vec[], // constants
     vec[], // type constants
-    Vec\map(_Private\items_of_type($ast, HHAST\EnumDeclaration::class), $node ==> enum_from_ast($context, $node)),
+    Vec\map(
+      _Private\items_of_type($ast, HHAST\EnumDeclaration::class),
+      $node ==> enum_from_ast($context, $node),
+    ),
     vec[], // types
     vec[], // newtypes
   );
