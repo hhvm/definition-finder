@@ -27,11 +27,11 @@ function typehint_from_ast(
   // Special cases
 
   if ($node instanceof HHAST\EditableToken) {
-    $name = name_in_context($context, name_from_ast($node));
+    $name = used_name_in_context($context, name_from_ast($node));
     return new ScannedTypehint($name, $name, vec[], false, $node);
   }
   if ($node instanceof HHAST\QualifiedName) {
-    $str = name_in_context($context, name_from_ast($node));
+    $str = used_name_in_context($context, name_from_ast($node));
     return new ScannedTypehint($str, $str, vec[], false, $node);
   }
 

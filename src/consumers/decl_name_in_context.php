@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
 
-function name_in_context(
+function decl_name_in_context(
   ConsumerContext $context,
   string $name,
 ): string {

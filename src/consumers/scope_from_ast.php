@@ -21,12 +21,21 @@ function scope_from_ast(
     $ast = new HHAST\EditableList(vec[]);
   }
 
-  $ns = _Private\items_of_type($ast, HHAST\NamespaceDeclaration::class);
-  invariant(C\count($ns) <= 1, "Too many namespace declarations!\n");
-  $context['namespace'] = C\first($ns)?->getName()?->getCode();
+  $namespaces = _Private\items_of_type($ast, HHAST\NamespaceDeclaration::class);
+  $without_bodies = Vec\filter($namespaces, $ns ==> !$ns->hasBody());
+  // TODO: Process ones with bodies
+  invariant(C\count($without_bodies) <= 1, "Too many namespace declarations!\n");
+  $context['namespace'] = C\first($without_bodies)?->getName()?->getCode();
 
   $uses = _Private\items_of_type($ast, HHAST\NamespaceUseDeclaration::class);
   foreach ($uses as $use) {
+    $kind = $use->getKind();
+    if ($kind instanceof HHAST\ConstToken) {
+      continue;
+    }
+    if ($kind instanceof HHAST\FunctionToken) {
+      continue;
+    }
     $mapping = Dict\pull(
       _Private\items_of_type(
         $use->getClauses(),
@@ -37,6 +46,16 @@ function scope_from_ast(
         $node->hasAlias() ? $node->getAliasx() : $node->getName(),
       ),
     );
+
+    if ($kind instanceof HHAST\TypeToken || $kind === null) {
+      $context['usedTypes'] = Dict\merge($context['usedTypes'], $mapping);
+      continue;
+    }
+    if ($kind instanceof HHAST\NamespaceToken || $kind === null) {
+      $context['usedNamespaces'] =
+        Dict\merge($context['usedNamespaces'], $mapping);
+      continue;
+    }
   }
 
   // TODO: group use clauses

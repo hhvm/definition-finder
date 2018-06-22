@@ -14,12 +14,10 @@ use namespace Facebook\HHAST;
 use namespace HH\Lib\Str;
 
 function mangle_xhp_name_token(
-  ConsumerContext $context,
   HHAST\XHPClassNameToken $token,
 ): string {
   return $token->getText()
     |> Str\strip_prefix($$, ':')
     |> Str\replace_every($$, dict[':' => '__', '-' => '_'])
-    |> 'xhp_'.$$
-    |> name_in_context($context, $$);
+    |> 'xhp_'.$$;
 }

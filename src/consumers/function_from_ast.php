@@ -20,7 +20,7 @@ function function_from_ast(
 
   return (
     new ScannedFunctionBuilder(
-      name_in_context(
+      decl_name_in_context(
         $context,
         $node->getDeclarationHeaderx()->getNamex()->getCode(),
       ),
