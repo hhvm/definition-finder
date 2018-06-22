@@ -11,12 +11,15 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{Dict, Vec};
+use namespace HH\Lib\{C, Vec};
 
 function scope_from_ast(
   ConsumerContext $context,
   HHAST\EditableList $ast,
 ): ScannedScope {
+  $ns = $ast->getItemsOfType(HHAST\NamespaceDeclaration::class);
+  invariant(C\count($ns) <= 1, "Too many namespace declarations!\n");
+  $context['namespace'] = C\first($ns)?->getName()?->getCode();
   return new ScannedScope(
     $context['definitionContext'],
     vec[], // classes

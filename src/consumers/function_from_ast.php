@@ -23,14 +23,15 @@ function function_from_ast(
 
   return (
     new ScannedFunctionBuilder(
-      $node->getDeclarationHeaderx()->getNamex()->getCode(),
+      name_in_context(
+        $context,
+        $node->getDeclarationHeaderx()->getNamex()->getCode(),
+      ),
       $def_context,
     )
   )
     ->setAttributes(attributes_from_ast($node->getAttributeSpec()))
-    ->setGenerics(
-      generics_from_ast($header->getTypeParameterList()),
-    )
+    ->setGenerics(generics_from_ast($header->getTypeParameterList()))
     ->setReturnType(typehint_from_ast($header->getType()))
     ->build();
 }
