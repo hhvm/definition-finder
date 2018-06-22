@@ -19,6 +19,7 @@ function function_from_ast(
 ): ScannedFunction {
   $pos = HHAST\find_position($root, $node);
   $context['position'] = shape('line' => $pos[0], 'character' => $pos[1]);
+  $header = $node->getDeclarationHeader();
 
   return (
     new ScannedFunctionBuilder(
@@ -28,7 +29,8 @@ function function_from_ast(
   )
     ->setAttributes(attributes_from_ast($node->getAttributeSpec()))
     ->setGenerics(
-      generics_from_ast($node->getDeclarationHeader()->getTypeParameterList()),
+      generics_from_ast($header->getTypeParameterList()),
     )
+    ->setReturnType(typehint_from_ast($header->getType()))
     ->build();
 }

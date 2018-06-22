@@ -18,17 +18,43 @@ function generic_from_ast(
 ): ScannedGeneric {
   $v = $node->getVariance();
   if ($v instanceof HHAST\PlusToken) {
-    $v = VarianceToken::COVARIANT;
+    $variance = VarianceToken::COVARIANT;
   } else if ($v instanceof HHAST\MinusToken) {
-    $v = VarianceToken::CONTRAVARIANT;
+    $variance = VarianceToken::CONTRAVARIANT;
   } else {
     invariant($v === null, 'unknown variance');
-    $v = VarianceToken::INVARIANT;
+    $variance = VarianceToken::INVARIANT;
+  }
+
+  $constraints = $node->getConstraints();
+  if ($constraints === null) {
+    $constraints = vec[];
+  } else {
+    $constraints = Vec\map(
+      $constraints->getItemsOfType(HHAST\TypeConstraint::class),
+      $c ==> {
+        $kw = $c->getKeyword();
+        if ($kw instanceof HHAST\AsToken) {
+          $r = RelationshipToken::SUBTYPE;
+        } else {
+          invariant(
+            $kw instanceof HHAST\SuperToken,
+            'unexpected relationship token: %s',
+            $kw->getCode(),
+          );
+          $r = RelationshipToken::SUPERTYPE;
+        }
+        return shape(
+          'type' => typehint_from_ast($c->getType()),
+          'relationship' => $r,
+        );
+      },
+    );
   }
 
   return new ScannedGeneric(
     $node->getName()->getText(),
-    $v,
-    vec[], // FIXME: constraints
+    $variance,
+    $constraints,
   );
 }

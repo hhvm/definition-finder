@@ -10,6 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
 use namespace HH\Lib\{C, Str, Vec};
 
 /** Represents a parameter, property, constant, or return type hint */
@@ -19,6 +20,7 @@ class ScannedTypehint {
     private string $typeTextBase,
     private vec<ScannedTypehint> $generics,
     private bool $nullable,
+    private HHAST\EditableNode $ast,
   ) {
   }
 

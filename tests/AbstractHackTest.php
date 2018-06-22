@@ -207,7 +207,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
         $func->getGenericTypes(),
         $x ==> {
           $constraints = $x->getConstraints();
-          return $constraints[0]['type'] ?? null;
+          return ($constraints[0]['type'] ?? null)?->getTypeText();
         },
       ),
     )->toBeSame(vec['arraykey', null]);
