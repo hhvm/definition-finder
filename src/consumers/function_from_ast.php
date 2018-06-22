@@ -13,18 +13,18 @@ namespace Facebook\DefinitionFinder;
 use namespace Facebook\HHAST;
 
 function function_from_ast(
-  ScannedScope::TContext $context,
-  HHAST\EditableNode $root,
+  ConsumerContext $context,
   HHAST\FunctionDeclaration $node,
 ): ScannedFunction {
-  $pos = HHAST\find_position($root, $node);
-  $context['position'] = shape('line' => $pos[0], 'character' => $pos[1]);
+  $pos = HHAST\find_position($context['ast'], $node);
+  $def_context = $context['definitionContext'];
+  $def_context['position'] = shape('line' => $pos[0], 'character' => $pos[1]);
   $header = $node->getDeclarationHeader();
 
   return (
     new ScannedFunctionBuilder(
       $node->getDeclarationHeaderx()->getNamex()->getCode(),
-      $context,
+      $def_context,
     )
   )
     ->setAttributes(attributes_from_ast($node->getAttributeSpec()))

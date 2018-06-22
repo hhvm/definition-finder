@@ -15,26 +15,16 @@ use namespace HH\Lib\{C, Str, Vec};
 
 final class FileParser extends BaseParser {
   private function __construct(private string $file, HHAST\Script $ast) {
-    $context = self::getScopeContext($file, $ast);
-    $this->defs = new ScannedScope(
-      $context,
-      vec[], // classes
-      vec[], // interfaces
-      vec[], // traits
-      $ast->getDescendantsOfType(HHAST\FunctionDeclaration::class)
-      |> Vec\map(
-        $$,
-        $node ==> function_from_ast($context, $ast, $node),
-      ),
-      vec[], // methods
-      vec[], // used traits
-      vec[], // properties
-      vec[], // constants
-      vec[], // type constants
-      vec[], // enums
-      vec[], // types
-      vec[], // newtypes
+    $context = shape(
+      'definitionContext' => self::getScopeContext($file, $ast),
+      'includeAst' => true,
+      'ast' => $ast,
+      'namespace' => null,
+      'usedTypes' => dict[],
+      'usedNamespaces' => dict[],
+      'genericTypeNames' => keyset[],
     );
+    $this->defs = scope_from_ast($context, $ast->getDeclarations());
   }
 
   ///// Constructors /////
