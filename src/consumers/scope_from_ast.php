@@ -94,7 +94,10 @@ function scope_from_ast(
     ),
     vec[], // used traits
     vec[], // properties
-    vec[], // constants
+    Vec\map(
+      _Private\items_of_type($ast, HHAST\ConstDeclaration::class),
+      $node ==> constants_from_ast($context, $node),
+    ) |> Vec\flatten($$),
     vec[], // type constants
     Vec\map(
       _Private\items_of_type($ast, HHAST\EnumDeclaration::class),
