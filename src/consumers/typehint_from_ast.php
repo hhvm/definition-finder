@@ -104,7 +104,7 @@ function typehint_from_ast(
     $inner = nullthrows(typehint_from_ast($context, $node->getType()));
     return new ScannedTypehint(
       $node,
-      '?'.$inner->getTypeName(),
+      $inner->getTypeName(),
       $inner->getTypeTextBase(),
       $inner->getGenericTypes(),
       /* nullable = */ true,

@@ -96,6 +96,8 @@ class ScannedTypehint {
         |> Str\join($$, ',');
       if ($base === 'tuple') {
         return '('.$sub.')';
+      } else if ($base === '?tuple') {
+        return '?('.$sub.')';
       } else {
         return $base.'<'.$sub.'>';
       }
