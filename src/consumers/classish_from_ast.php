@@ -45,6 +45,9 @@ function classish_from_ast<T as ScannedClassish>(
     $name = decl_name_in_context($context, $name->getText());
   }
 
+  $modifiers = $node->getModifiers() ?? new HHAST\EditableList(vec[]);
+  $has_modifier = $m ==> !C\is_empty($modifiers->getItemsOfType($m));
+
   return (
     new ScannedClassishBuilder(
       $name,
@@ -54,20 +57,14 @@ function classish_from_ast<T as ScannedClassish>(
   )
     ->setAttributes(attributes_from_ast($node->getAttribute()))
     ->setAbstractness(
-      C\is_empty(
-        $node->getModifiers()?->getItemsOfType(HHAST\AbstractToken::class) ??
-          vec[],
-      )
-        ? AbstractnessToken::NOT_ABSTRACT
-        : AbstractnessToken::IS_ABSTRACT,
+      $has_modifier(HHAST\AbstractToken::class)
+        ? AbstractnessToken::IS_ABSTRACT
+        : AbstractnessToken::NOT_ABSTRACT,
     )
     ->setFinality(
-      C\is_empty(
-        $node->getModifiers()?->getItemsOfType(HHAST\FinalToken::class) ??
-          vec[],
-      )
-        ? FinalityToken::NOT_FINAL
-        : FinalityToken::IS_FINAL,
+      $has_modifier(HHAST\FinalToken::class)
+        ? FinalityToken::IS_FINAL
+        : FinalityToken::NOT_FINAL,
     )
     ->setGenericTypes(generics_from_ast($context, $node->getTypeParameters()))
     ->setContents(scope_from_ast($context, $node->getBody()->getElements()))
