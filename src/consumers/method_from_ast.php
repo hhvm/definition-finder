@@ -24,7 +24,9 @@ function method_from_ast(
   return (
     new ScannedMethodBuilder(
       $node,
-      decl_name_in_context($context, $header->getNamex()->getCode()),
+      // Don't bother with decl_name_in_context() as methods are always inside
+      // a class, so don't get decorated with the namespace
+      $header->getNamex()->getCode(),
       context_with_node_position($context, $node)['definitionContext'],
     )
   )
