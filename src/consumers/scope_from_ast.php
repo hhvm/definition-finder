@@ -89,7 +89,7 @@ function scope_from_ast(
     vec[], // properties
     vec[], // constants
     vec[], // type constants
-    vec[], // enums
+    Vec\map(_Private\items_of_type($ast, HHAST\EnumDeclaration::class), $node ==> enum_from_ast($context, $node)),
     vec[], // types
     vec[], // newtypes
   );
