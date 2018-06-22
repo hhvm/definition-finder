@@ -19,7 +19,7 @@ final class FileParser extends BaseParser {
       'definitionContext' => self::getScopeContext($file, $ast),
       'ast' => $ast,
       'namespace' => null,
-      'usedTypes' => dict(AUTOIMPORT_TYPES),
+      'usedTypes' => dict[],
       'usedNamespaces' => dict[],
       'genericTypeNames' => keyset[],
     );

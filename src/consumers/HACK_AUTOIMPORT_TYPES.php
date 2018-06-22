@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-const keyset<string> AUTOIMPORT_TYPES = keyset[
+const keyset<string> HACK_AUTOIMPORT_TYPES = keyset[
   // not a real type
   'callable',
   // hack/src/parser/hh_autoimport.ml

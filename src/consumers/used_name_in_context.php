@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{C, Str};
 
 function used_name_in_context(
   ConsumerContext $context,
@@ -21,6 +21,13 @@ function used_name_in_context(
     $context['usedTypes'][$name] ?? $context['genericTypeNames'][$name] ?? null;
   if ($used !== null) {
     return $used;
+  }
+
+  $ai = $context['definitionContext']['sourceType'] === SourceType::PHP
+    ? PHP_AUTOIMPORT_TYPES
+    : HACK_AUTOIMPORT_TYPES;
+  if (C\contains_key($ai, $name)) {
+    return $name;
   }
 
   $ns = Str\search($name, "\\");
