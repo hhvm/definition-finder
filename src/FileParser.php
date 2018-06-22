@@ -63,7 +63,7 @@ final class FileParser extends BaseParser {
     HHAST\EditableNode $ast,
   ): ScannedScope::TContext {
     $suffix = C\first($ast->getDescendantsOfType(HHAST\MarkupSuffix::class));
-    $name = $suffix?->getName()?->getCode();
+    $name = $suffix?->getName()?->getText();
     if ($name === 'php' || $name === '' || $name === null) {
       $type = SourceType::PHP;
     } else if ($name === 'hh') {
