@@ -59,12 +59,10 @@ function scope_from_ast(
 
     if ($kind instanceof HHAST\TypeToken || $kind === null) {
       $context['usedTypes'] = Dict\merge($context['usedTypes'], $mapping);
-      continue;
     }
     if ($kind instanceof HHAST\NamespaceToken || $kind === null) {
       $context['usedNamespaces'] =
         Dict\merge($context['usedNamespaces'], $mapping);
-      continue;
     }
   }
 
