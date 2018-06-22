@@ -54,7 +54,7 @@ function scope_from_ast(
       $node ==> name_from_ast($node->getName()),
       $node ==> name_from_ast(
         $node->hasAlias() ? $node->getAliasx() : $node->getName(),
-      ),
+      ) |> Str\split($$, "\\") |> C\lastx($$),
     );
 
     if ($kind instanceof HHAST\TypeToken || $kind === null) {
