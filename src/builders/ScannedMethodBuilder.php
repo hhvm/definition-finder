@@ -21,6 +21,7 @@ final class ScannedMethodBuilder
   <<__Override>>
   public function build(): ScannedMethod {
     return new ScannedMethod(
+      $this->ast,
       $this->name,
       $this->getDefinitionContext(),
       nullthrows($this->attributes),

@@ -10,8 +10,11 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
+
 class ScannedTypeConstant extends ScannedDefinition {
   public function __construct(
+    HHAST\EditableNode $ast,
     string $name,
     self::TContext $context,
     ?string $docblock,
@@ -19,6 +22,7 @@ class ScannedTypeConstant extends ScannedDefinition {
     private AbstractnessToken $abstractness,
   ) {
     parent::__construct(
+      $ast,
       $name,
       $context,
       /* attributes = */ dict[],

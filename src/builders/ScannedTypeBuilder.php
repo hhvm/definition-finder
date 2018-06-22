@@ -14,6 +14,7 @@ class ScannedTypeBuilder extends ScannedSingleTypeBuilder<ScannedType> {
   <<__Override>>
   public function build(): ScannedType {
     return new ScannedType(
+      $this->ast,
       $this->name,
       $this->getDefinitionContext(),
       /* attributes = */ dict[],

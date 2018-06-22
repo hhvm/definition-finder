@@ -33,6 +33,7 @@ class ScannedPropertyBuilder extends ScannedSingleTypeBuilder<ScannedProperty> {
   <<__Override>>
   public function build(): ScannedProperty {
     return new ScannedProperty(
+      $this->ast,
       $this->name,
       $this->getDefinitionContext(),
       nullthrows($this->attributes),

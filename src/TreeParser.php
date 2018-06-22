@@ -10,14 +10,19 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
+
 class TreeParser extends BaseParser {
   protected ScannedScope $defs;
 
   private function __construct(string $path) {
-    $builder = new ScannedScopeBuilder(shape(
-      'filename' => '__TREE__',
-      'sourceType' => SourceType::MULTIPLE_FILES,
-    ));
+    $builder = new ScannedScopeBuilder(
+      HHAST\Missing(),
+      shape(
+        'filename' => '__TREE__',
+        'sourceType' => SourceType::MULTIPLE_FILES,
+      ),
+    );
 
     $rdi = new \RecursiveDirectoryIterator($path);
     $rii = new \RecursiveIteratorIterator($rdi);

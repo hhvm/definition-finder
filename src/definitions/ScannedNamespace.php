@@ -10,13 +10,17 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
+
 class ScannedNamespace extends ScannedDefinition {
   public function __construct(
+    HHAST\EditableNode $ast,
     string $name,
     self::TContext $context,
     private ScannedScope $contents,
   ) {
     parent::__construct(
+      $ast,
       $name,
       $context,
       /* attributes = */ dict[],

@@ -10,6 +10,8 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
+
 abstract class ScannedDefinition {
   const type TContext =
     shape('filename' => string, ?'position' => SourcePosition, 'sourceType' => SourceType);
@@ -20,12 +22,17 @@ abstract class ScannedDefinition {
   private string $shortName;
 
   public function __construct(
+    private HHAST\EditableNode $ast,
     private string $name,
     private self::TContext $context,
     private dict<string, vec<mixed>> $attributes,
     private ?string $docComment,
   ) {
     list($this->namespace, $this->shortName) = $this->breakName($name);
+  }
+
+  final public function getAST(): HHAST\EditableNode {
+    return $this->ast;
   }
 
   abstract public static function getType(): ?DefinitionType;

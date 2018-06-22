@@ -16,12 +16,16 @@ use namespace HH\Lib\{C, Str, Vec};
 /** Represents a parameter, property, constant, or return type hint */
 class ScannedTypehint {
   public function __construct(
+    private HHAST\EditableNode $ast,
     private string $typeName,
     private string $typeTextBase,
     private vec<ScannedTypehint> $generics,
     private bool $nullable,
-    private HHAST\EditableNode $ast,
   ) {
+  }
+
+  public function getAST(): HHAST\EditableNode {
+    return $this->ast;
   }
 
   public function getTypeName(): string {

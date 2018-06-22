@@ -10,8 +10,11 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
+
 class ScannedParameter extends ScannedDefinition {
   public function __construct(
+    HHAST\EditableNode $ast,
     string $name,
     self::TContext $context,
     dict<string, vec<mixed>> $attributes,
@@ -23,7 +26,7 @@ class ScannedParameter extends ScannedDefinition {
     private ?string $defaultString,
     private ?VisibilityToken $visibility,
   ) {
-    parent::__construct($name, $context, $attributes, $docComment);
+    parent::__construct($ast, $name, $context, $attributes, $docComment);
   }
 
   <<__Override>>

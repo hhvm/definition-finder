@@ -10,9 +10,12 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
+
 final class ScannedMethod extends ScannedFunctionish
   implements HasScannedVisibility {
   public function __construct(
+    HHAST\EditableNode $ast,
     string $name,
     self::TContext $context,
     dict<string, vec<mixed>> $attributes,
@@ -26,6 +29,7 @@ final class ScannedMethod extends ScannedFunctionish
     private FinalityToken $finality = FinalityToken::NOT_FINAL,
   ) {
     parent::__construct(
+      $ast,
       $name,
       $context,
       $attributes,

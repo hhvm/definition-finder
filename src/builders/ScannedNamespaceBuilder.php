@@ -24,6 +24,7 @@ final class ScannedNamespaceBuilder
   public function build(): ScannedNamespace {
     $scope = nullthrows($this->scopeBuilder)->build();
     return new ScannedNamespace(
+      $this->ast,
       nullthrows($this->name),
       $this->getDefinitionContext(),
       $scope,

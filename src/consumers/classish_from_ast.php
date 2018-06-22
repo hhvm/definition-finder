@@ -50,6 +50,7 @@ function classish_from_ast<T as ScannedClassish>(
 
   return (
     new ScannedClassishBuilder(
+      $node,
       $name,
       context_with_node_position($context, $node)['definitionContext'],
       ClassDefinitionType::assert($def_class::getType()),

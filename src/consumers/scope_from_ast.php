@@ -63,6 +63,7 @@ function scope_from_ast(
   $classish = _Private\items_of_type($ast, HHAST\ClassishDeclaration::class);
 
   return new ScannedScope(
+    $ast,
     $context['definitionContext'],
     Vec\filter_nulls(Vec\map(
       $classish,

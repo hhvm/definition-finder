@@ -20,6 +20,7 @@ function function_from_ast(
 
   return (
     new ScannedFunctionBuilder(
+      $node,
       decl_name_in_context($context, $header->getNamex()->getCode()),
       context_with_node_position($context, $node)['definitionContext'],
     )

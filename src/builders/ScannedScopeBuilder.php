@@ -10,11 +10,15 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
 use namespace HH\Lib\Vec;
 
 class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
-  public function __construct(self::TContext $context) {
-    parent::__construct('__SCOPE__', $context);
+  public function __construct(
+    HHAST\EditableNode $ast,
+    self::TContext $context,
+  ) {
+    parent::__construct($ast, '__SCOPE__', $context);
   }
 
   private vec<ScannedClassishBuilder> $classBuilders = vec[];
@@ -123,6 +127,7 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
     $newtypes = self::merge($newtypes, $scopes, $s ==> $s->getNewtypes());
 
     return new ScannedScope(
+      $this->ast,
       $this->getDefinitionContext(),
       $classes,
       $interfaces,

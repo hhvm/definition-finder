@@ -10,8 +10,11 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
+
 class ScannedProperty extends ScannedDefinition implements HasScannedVisibility {
   public function __construct(
+    HHAST\EditableNode $ast,
     string $name,
     self::TContext $context,
     dict<string, vec<mixed>> $attributes,
@@ -20,7 +23,7 @@ class ScannedProperty extends ScannedDefinition implements HasScannedVisibility 
     private VisibilityToken $visibility,
     private StaticityToken $staticity = StaticityToken::NOT_STATIC,
   ) {
-    parent::__construct($name, $context, $attributes, $docComment);
+    parent::__construct($ast, $name, $context, $attributes, $docComment);
   }
 
   <<__Override>>

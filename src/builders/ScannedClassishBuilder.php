@@ -10,6 +10,8 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
+
 final class ScannedClassishBuilder extends ScannedDefinitionBuilder {
   private ?ScannedScope $scope;
   protected vec<ScannedGeneric> $generics = vec[];
@@ -26,11 +28,12 @@ final class ScannedClassishBuilder extends ScannedDefinitionBuilder {
   }
 
   public function __construct(
+    HHAST\EditableNode $ast,
     string $name,
     self::TContext $context,
     private ClassDefinitionType $type,
   ) {
-    parent::__construct($name, $context);
+    parent::__construct($ast, $name, $context);
   }
 
   public function setContents(ScannedScope $scope): this {
@@ -82,6 +85,7 @@ final class ScannedClassishBuilder extends ScannedDefinitionBuilder {
             // Not using the builder as we should have all the data up front,
             // and I want the typechecker to notice if we're missing something
             $properties[] = new ScannedProperty(
+              $param->getAST(),
               $param->getName(),
               $param->getContext(),
               $param->getAttributes(),
@@ -97,6 +101,7 @@ final class ScannedClassishBuilder extends ScannedDefinitionBuilder {
     }
 
     return new $what(
+      $this->ast,
       $this->name,
       $this->getDefinitionContext(),
       nullthrows($this->attributes),

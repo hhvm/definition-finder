@@ -14,6 +14,7 @@ class ScannedEnumBuilder extends ScannedSingleTypeBuilder<ScannedEnum> {
   <<__Override>>
   public function build(): ScannedEnum {
     return new ScannedEnum(
+      $this->ast,
       $this->name,
       $this->getDefinitionContext(),
       /* attributes = */ dict[],

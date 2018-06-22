@@ -10,20 +10,24 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
+
 class ScannedTypeConstantBuilder
   extends ScannedSingleTypeBuilder<ScannedTypeConstant> {
   public function __construct(
+    HHAST\EditableNode $ast,
     string $name,
     self::TContext $context,
     private ?ScannedTypehint $value,
     private AbstractnessToken $abstractness,
   ) {
-    parent::__construct($name, $context);
+    parent::__construct($ast, $name, $context);
   }
 
   <<__Override>>
   public function build(): ScannedTypeConstant {
     return new ScannedTypeConstant(
+      $this->ast,
       $this->name,
       $this->getDefinitionContext(),
       $this->docblock,

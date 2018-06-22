@@ -10,9 +10,12 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
+
 abstract class ScannedFunctionish extends ScannedDefinition
   implements HasScannedGenerics {
   public function __construct(
+    HHAST\EditableNode $ast,
     string $name,
     self::TContext $context,
     dict<string, vec<mixed>> $attributes,
@@ -21,7 +24,7 @@ abstract class ScannedFunctionish extends ScannedDefinition
     private ?ScannedTypehint $returnType,
     private vec<ScannedParameter> $parameters,
   ) {
-    parent::__construct($name, $context, $attributes, $docComment);
+    parent::__construct($ast, $name, $context, $attributes, $docComment);
   }
 
   <<__Override>>

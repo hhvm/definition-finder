@@ -10,6 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
 use namespace HH\Lib\Vec;
 
 <<
@@ -21,6 +22,7 @@ abstract class ScannedClassish
   implements HasScannedGenerics {
 
   public function __construct(
+    HHAST\EditableNode $ast,
     string $name,
     self::TContext $context,
     dict<string, vec<mixed>> $attributes,
@@ -36,7 +38,7 @@ abstract class ScannedClassish
     private AbstractnessToken $abstractness = AbstractnessToken::NOT_ABSTRACT,
     private FinalityToken $finality = FinalityToken::NOT_FINAL,
   ) {
-    parent::__construct($name, $context, $attributes, $docblock);
+    parent::__construct($ast, $name, $context, $attributes, $docblock);
   }
 
   public function isInterface(): bool {

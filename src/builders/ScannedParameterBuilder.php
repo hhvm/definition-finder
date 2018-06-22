@@ -52,6 +52,7 @@ class ScannedParameterBuilder
   <<__Override>>
   public function build(): ScannedParameter {
     return new ScannedParameter(
+      $this->ast,
       $this->name,
       $this->getDefinitionContext(),
       nullthrows($this->attributes),

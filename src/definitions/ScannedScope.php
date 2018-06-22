@@ -10,9 +10,12 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
+
 class ScannedScope extends ScannedDefinition {
 
   public function __construct(
+    HHAST\EditableNode $ast,
     self::TContext $context,
     private vec<ScannedClass> $classes,
     private vec<ScannedInterface> $interfaces,
@@ -28,6 +31,7 @@ class ScannedScope extends ScannedDefinition {
     private vec<ScannedNewtype> $newtypes,
   ) {
     parent::__construct(
+      $ast,
       '__SCOPE__',
       $context,
       /* attributes = */ dict[],

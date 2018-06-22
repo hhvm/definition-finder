@@ -10,6 +10,8 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
+
 abstract class ScannedDefinitionBuilder {
   const type TContext = ScannedDefinition::TContext;
 
@@ -18,6 +20,7 @@ abstract class ScannedDefinitionBuilder {
 
 
   public function __construct(
+    protected HHAST\EditableNode $ast,
     protected string $name,
     protected self::TContext $context,
   ) {
