@@ -10,7 +10,6 @@
 
 namespace Facebook\DefinitionFinder;
 
-use namespace Facebook\TypeAssert;
 use namespace Facebook\HHAST;
 use namespace HH\Lib\{Str, Vec};
 
