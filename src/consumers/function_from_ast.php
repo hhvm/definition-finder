@@ -16,9 +16,6 @@ function function_from_ast(
   ConsumerContext $context,
   HHAST\FunctionDeclaration $node,
 ): ScannedFunction {
-  $pos = HHAST\find_position($context['ast'], $node);
-  $def_context = $context['definitionContext'];
-  $def_context['position'] = shape('line' => $pos[0], 'character' => $pos[1]);
   $header = $node->getDeclarationHeader();
 
   return (
@@ -27,7 +24,7 @@ function function_from_ast(
         $context,
         $node->getDeclarationHeaderx()->getNamex()->getCode(),
       ),
-      $def_context,
+      context_with_node_position($context, $node)['definitionContext'],
     )
   )
     ->setAttributes(attributes_from_ast($node->getAttributeSpec()))

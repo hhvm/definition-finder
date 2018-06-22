@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 final class ScannedClassishBuilder extends ScannedDefinitionBuilder {
-  private ?ScannedScopeBuilder $scopeBuilder;
+  private ?ScannedScope $scope;
   protected vec<ScannedGeneric> $generics = vec[];
   private vec<ScannedTypehint> $interfaces = vec[];
   private ?ScannedTypehint $parent = null;
@@ -33,9 +33,9 @@ final class ScannedClassishBuilder extends ScannedDefinitionBuilder {
     parent::__construct($name, $context);
   }
 
-  public function setContents(ScannedScopeBuilder $scope): this {
-    invariant($this->scopeBuilder === null, 'class already has a scope');
-    $this->scopeBuilder = $scope;
+  public function setContents(ScannedScope $scope): this {
+    invariant($this->scope === null, 'class already has a scope');
+    $this->scope = $scope;
     return $this;
   }
 
@@ -70,7 +70,7 @@ final class ScannedClassishBuilder extends ScannedDefinitionBuilder {
       \token_name($this->type),
     );
 
-    $scope = nullthrows($this->scopeBuilder)->build();
+    $scope = nullthrows($this->scope);
 
     $methods = $scope->getMethods();
     $properties = vec($scope->getProperties());

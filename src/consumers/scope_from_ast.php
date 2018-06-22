@@ -15,14 +15,24 @@ use namespace HH\Lib\{C, Vec};
 
 function scope_from_ast(
   ConsumerContext $context,
-  HHAST\EditableList $ast,
+  ?HHAST\EditableList $ast,
 ): ScannedScope {
+  if ($ast === null) {
+    $ast = new HHAST\EditableList(vec[]);
+  }
+
   $ns = $ast->getItemsOfType(HHAST\NamespaceDeclaration::class);
   invariant(C\count($ns) <= 1, "Too many namespace declarations!\n");
   $context['namespace'] = C\first($ns)?->getName()?->getCode();
+
+  $classish = $ast->getItemsOfType(HHAST\ClassishDeclaration::class);
+
   return new ScannedScope(
     $context['definitionContext'],
-    vec[], // classes
+    Vec\filter_nulls(Vec\map(
+      $classish,
+      $node ==> classish_from_ast($context, ScannedClass::class, $node),
+    )),
     vec[], // interfaces
     vec[], // traits
     Vec\map(

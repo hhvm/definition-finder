@@ -12,8 +12,13 @@ namespace Facebook\DefinitionFinder;
 
 use namespace HH\Lib\Vec;
 
-<<__ConsistentConstruct>>
-abstract class ScannedClassish extends ScannedDefinition implements HasScannedGenerics {
+<<
+  __ConsistentConstruct,
+  __Sealed(ScannedClass::class, ScannedInterface::class, ScannedTrait::class)
+>>
+abstract class ScannedClassish
+  extends ScannedDefinition
+  implements HasScannedGenerics {
 
   public function __construct(
     string $name,
@@ -86,8 +91,7 @@ abstract class ScannedClassish extends ScannedDefinition implements HasScannedGe
     return $this->interfaces;
   }
 
-  public function getTraitGenerics(
-  ): dict<string, vec<ScannedTypehint>> {
+  public function getTraitGenerics(): dict<string, vec<ScannedTypehint>> {
     $traits = dict[];
     foreach ($this->traits as $trait) {
       $traits[$trait->getTypeName()] = $trait->getGenericTypes();
