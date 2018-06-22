@@ -33,7 +33,9 @@ function scope_from_ast(
     C\count($without_bodies) <= 1,
     "Too many namespace declarations!\n",
   );
-  $context['namespace'] = C\first($without_bodies)?->getName()?->getCode();
+  if ($without_bodies) {
+    $context['namespace'] = C\first($without_bodies)?->getName()?->getCode();
+  }
 
   $uses = _Private\items_of_type($ast, HHAST\NamespaceUseDeclaration::class);
   foreach ($uses as $use) {

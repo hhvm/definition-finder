@@ -23,7 +23,9 @@ function used_name_in_context(
   }
 
   $ns = Str\search($name, "\\");
-  if ($ns !== null) {
+  if ($ns === 0) {
+    return Str\slice($name, 1);
+  } else if ($ns !== null) {
     $first = Str\slice($name, 0, $ns);
     $used = $context['usedNamespaces'][$first] ?? null;
     if ($used !== null) {
