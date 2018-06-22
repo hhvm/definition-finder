@@ -47,7 +47,7 @@ function constant_from_define_ast(
   return (
     new ScannedConstantBuilder(
       $node,
-      decl_name_in_context($context, $name),
+      $name, // these are not relative to the current namespace
       context_with_node_position($context, $node)['definitionContext'],
       null, // FIXME: value
       /* typehint = */ null,
