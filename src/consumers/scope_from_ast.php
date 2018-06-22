@@ -93,7 +93,14 @@ function scope_from_ast(
       _Private\items_of_type($ast, HHAST\MethodishDeclaration::class),
       $node ==> method_from_ast($context, $node),
     ),
-    vec[], // used traits
+    Vec\map(
+      _Private\items_of_type($ast, HHAST\TraitUse::class),
+      $node ==> Vec\map(
+        $node->getNames()->getItemsOfType(HHAST\EditableNode::class),
+        $inner ==> typehint_from_ast($context, $inner),
+      ),
+    )
+    |> Vec\flatten($$) |> Vec\filter_nulls($$),
     vec[], // properties
     Vec\concat(
       Vec\map(

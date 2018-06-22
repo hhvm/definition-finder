@@ -18,9 +18,12 @@ use namespace Facebook\HHAST;
  * type.
  */
 function items_of_type<T as HHAST\EditableNode>(
-  HHAST\EditableList $list,
+  ?HHAST\EditableList $list,
   classname<T> $what,
 ): vec<T> {
+  if ($list === null) {
+    return vec[];
+  }
   /* HH_FIXME[4110] */
   return $list->getItemsOfType($what);
 }
