@@ -74,7 +74,10 @@ function scope_from_ast(
       _Private\items_of_type($ast, HHAST\FunctionDeclaration::class),
       $node ==> function_from_ast($context, $node),
     ),
-    vec[], // methods
+    Vec\map(
+      _Private\items_of_type($ast, HHAST\MethodishDeclaration::class),
+      $node ==> method_from_ast($context, $node),
+    ),
     vec[], // used traits
     vec[], // properties
     vec[], // constants
