@@ -73,27 +73,27 @@ function scope_from_ast(
   return new ScannedScope(
     $ast,
     $context['definitionContext'],
-    Vec\filter_nulls(Vec\map(
+    /* classes = */ Vec\filter_nulls(Vec\map(
       $classish,
       $node ==> classish_from_ast($context, ScannedClass::class, $node),
     )),
-    Vec\filter_nulls(Vec\map(
+    /* interfaces = */ Vec\filter_nulls(Vec\map(
       $classish,
       $node ==> classish_from_ast($context, ScannedInterface::class, $node),
     )),
-    Vec\filter_nulls(Vec\map(
+    /* traits = */ Vec\filter_nulls(Vec\map(
       $classish,
       $node ==> classish_from_ast($context, ScannedTrait::class, $node),
     )),
-    Vec\map(
+    /* functions = */ Vec\map(
       _Private\items_of_type($ast, HHAST\FunctionDeclaration::class),
       $node ==> function_from_ast($context, $node),
     ),
-    Vec\map(
+    /* methods = */ Vec\map(
       _Private\items_of_type($ast, HHAST\MethodishDeclaration::class),
       $node ==> method_from_ast($context, $node),
     ),
-    Vec\map(
+    /* trait use statements = */ Vec\map(
       _Private\items_of_type($ast, HHAST\TraitUse::class),
       $node ==> Vec\map(
         $node->getNames()->getItemsOfType(HHAST\EditableNode::class),
@@ -101,8 +101,8 @@ function scope_from_ast(
       ),
     )
     |> Vec\flatten($$) |> Vec\filter_nulls($$),
-    vec[], // properties
-    Vec\concat(
+    /* properties = */ vec[],
+    /* constants = */ Vec\concat(
       Vec\map(
         _Private\items_of_type($ast, HHAST\ConstDeclaration::class),
         $node ==> constants_from_ast($context, $node),
@@ -117,12 +117,12 @@ function scope_from_ast(
         )
         |> Vec\map($$, $e ==> constant_from_define_ast($context, $e)),
     ),
-    vec[], // type constants
-    Vec\map(
+    /* type constants = */ vec[],
+    /* enums = */ Vec\map(
       _Private\items_of_type($ast, HHAST\EnumDeclaration::class),
       $node ==> enum_from_ast($context, $node),
     ),
-    vec[], // types
-    vec[], // newtypes
+    /* types = */ vec[],
+    /* newtypes = */ vec[],
   );
 }
