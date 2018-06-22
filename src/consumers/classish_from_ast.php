@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\C;
+use namespace HH\Lib\{C, Vec};
 
 function classish_from_ast<T as ScannedClassish>(
   ConsumerContext $context,
@@ -48,7 +48,7 @@ function classish_from_ast<T as ScannedClassish>(
   $modifiers = $node->getModifiers() ?? new HHAST\EditableList(vec[]);
   $has_modifier = $m ==> !C\is_empty($modifiers->getItemsOfType($m));
 
-  return (
+  $builder = (
     new ScannedClassishBuilder(
       $node,
       $name,
@@ -68,6 +68,24 @@ function classish_from_ast<T as ScannedClassish>(
         : FinalityToken::NOT_FINAL,
     )
     ->setGenericTypes(generics_from_ast($context, $node->getTypeParameters()))
-    ->setContents(scope_from_ast($context, $node->getBody()->getElements()))
+    ->setContents(scope_from_ast($context, $node->getBody()->getElements()));
+
+  $extends = $node->getExtendsList();
+  if ($extends) {
+    $extends = $extends->getItemsOfType(HHAST\EditableNode::class)
+      |> Vec\map($$, $super ==> typehint_from_ast($context, $super))
+      |> Vec\filter_nulls($$);
+    if ($def_class === ScannedClass::class) {
+      $builder->setParentClassInfo(C\onlyx($extends));
+    } else {
+      invariant(
+        $def_class === ScannedInterface::class,
+        "Shouldnt see `extends` unless we're dealing with a class or interface",
+      );
+      $builder->setInterfaces($extends);
+    }
+  }
+
+  return $builder
     ->build($def_class);
 }
