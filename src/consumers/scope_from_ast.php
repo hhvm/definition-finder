@@ -110,7 +110,7 @@ function scope_from_ast(
       |> Vec\flatten($$),
       _Private\items_of_type($ast, HHAST\ExpressionStatement::class)
         |> Vec\map($$, $s ==> $s->getExpression())
-        |> Vec\filter($$, $e ==> $e instanceof HHAST\DefineExpression::class)
+        |> Vec\filter($$, $e ==> $e instanceof HHAST\DefineExpression)
         |> Vec\map(
           $$,
           $e ==> TypeAssert\instance_of(HHAST\DefineExpression::class, $e),
