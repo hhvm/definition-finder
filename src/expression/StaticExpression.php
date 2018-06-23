@@ -11,6 +11,7 @@
 namespace Facebook\DefinitionFinder\Expression;
 
 use namespace Facebook\HHAST;
+use namespace HH\Lib\Str;
 
 final class StaticExpression extends Expression<mixed> {
   const type TNode = HHAST\EditableNode;
@@ -19,9 +20,12 @@ final class StaticExpression extends Expression<mixed> {
     HHAST\EditableNode $n,
   ): ?Expression<mixed> {
     $impls = vec[
+      LiteralExpression::class,
+      StaticArrayExpression::class,
+      StaticDarrayExpression::class,
       StaticDictExpression::class,
+      StaticKeysetExpression::class,
       StaticListExpression::class,
-      StaticScalarExpression::class,
       StaticVecExpression::class,
     ];
     foreach ($impls as $class) {
@@ -30,7 +34,6 @@ final class StaticExpression extends Expression<mixed> {
         return $r;
       }
     }
-
     // TODO: throw on failure
     return null;
   }
