@@ -22,7 +22,7 @@ function constant_from_ast(
       $inner,
       decl_name_in_context($context, name_from_ast($inner->getName())),
       context_with_node_position($context, $inner)['definitionContext'],
-      value_from_ast($inner->getInitializer()),
+      value_from_ast($inner->getInitializer()?->getValue()),
       typehint_from_ast($context, $outer->getTypeSpecifier()),
       $outer->getAbstract() instanceof HHAST\AbstractToken
         ? AbstractnessToken::IS_ABSTRACT
