@@ -55,9 +55,10 @@ function scope_from_ast(
         HHAST\NamespaceUseClause::class,
       ),
       $node ==> name_from_ast($node->getName()),
-      $node ==> name_from_ast(
-        $node->hasAlias() ? $node->getAliasx() : $node->getName(),
-      ) |> Str\split($$, "\\") |> C\lastx($$),
+      $node ==>
+        name_from_ast($node->hasAlias() ? $node->getAliasx() : $node->getName())
+        |> Str\split($$, "\\")
+        |> C\lastx($$),
     );
 
     if ($kind instanceof HHAST\TypeToken || $kind === null) {
@@ -103,11 +104,13 @@ function scope_from_ast(
         $inner ==> typehint_from_ast($context, $inner),
       ),
     )
-    |> Vec\flatten($$) |> Vec\filter_nulls($$),
+    |> Vec\flatten($$)
+    |> Vec\filter_nulls($$),
     /* properties = */ Vec\map(
       _Private\items_of_type($ast, HHAST\PropertyDeclaration::class),
       $node ==> properties_from_ast($context, $node),
-    ) |> Vec\flatten($$),
+    )
+    |> Vec\flatten($$),
     /* constants = */ Vec\concat(
       Vec\map(
         _Private\items_of_type($ast, HHAST\ConstDeclaration::class),
@@ -131,11 +134,13 @@ function scope_from_ast(
     /* types = */ Vec\map(
       _Private\items_of_type($ast, HHAST\AliasDeclaration::class),
       $node ==> typeish_from_ast($context, ScannedType::class, $node),
-    ) |> Vec\filter_nulls($$),
+    )
+    |> Vec\filter_nulls($$),
     /* newtypes = */ Vec\map(
       _Private\items_of_type($ast, HHAST\AliasDeclaration::class),
       $node ==> typeish_from_ast($context, ScannedNewtype::class, $node),
-    ) |> Vec\filter_nulls($$),
+    )
+      |> Vec\filter_nulls($$),
   );
 
   if (C\is_empty($with_bodies)) {
@@ -146,7 +151,8 @@ function scope_from_ast(
     ->addSubScope($decls);
 
   foreach ($with_bodies as $ns) {
-    $context['namespace'] = name_from_ast($ns->getName());
+    $context['namespace'] =
+      $ns->getName()->isMissing() ? '' : name_from_ast($ns->getName());
     $body = $ns->getBody();
     invariant(
       $body instanceof HHAST\NamespaceBody,
