@@ -22,10 +22,12 @@ final class StaticExpression extends Expression<mixed> {
     $impls = vec[
       LiteralExpression::class,
       StaticArrayExpression::class,
+      StaticBinaryExpression::class,
       StaticDarrayExpression::class,
       StaticDictExpression::class,
       StaticKeysetExpression::class,
       StaticListExpression::class,
+      StaticPrefixUnaryExpression::class,
       StaticScopeResolutionExpression::class,
       StaticVecExpression::class,
     ];
