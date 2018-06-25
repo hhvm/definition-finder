@@ -18,9 +18,16 @@ final class StaticListExpression extends Expression<vec<mixed>> {
   <<__Override>>
   protected static function matchImpl(
     HHAST\EditableList $n,
-  ): Expression<vec<mixed>> {
-    return $n->getItemsOfType(HHAST\EditableNode::class)
-      |> Vec\map($$, $item ==> StaticExpression::match($item))
-      |> new self($$);
+  ): ?Expression<vec<mixed>> {
+    $items = $n->getItemsOfType(HHAST\EditableNode::class)
+      |> Vec\map($$, $item ==> StaticExpression::match($item));
+    $out = vec[];
+    foreach ($items as $item) {
+      if ($item === null) {
+        return null;
+      }
+      $out[] = $item->getValue();
+    }
+    return new self($out);
   }
 }
