@@ -26,6 +26,7 @@ final class StaticExpression extends Expression<mixed> {
       StaticDictExpression::class,
       StaticKeysetExpression::class,
       StaticListExpression::class,
+      StaticScopeResolutionExpression::class,
       StaticVecExpression::class,
     ];
     foreach ($impls as $class) {
