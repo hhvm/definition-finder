@@ -15,20 +15,24 @@ use namespace Facebook\HHAST;
 final class LiteralExpression extends Expression<mixed> {
   const type TNode = HHAST\LiteralExpression;
   <<__Override>>
-  protected static function matchImpl(
-    self::TNode $node,
-  ): ?Expression<mixed> {
+  protected static function matchImpl(self::TNode $node): ?Expression<mixed> {
     $classes = vec[
       DecimalLiteralExpression::class,
       DoubleQuotedStringLiteralExpression::class,
       SingleQuotedStringLiteralExpression::class,
     ];
+    $expr = $node->getExpression();
     foreach ($classes as $class) {
-      $m = $class::match($node->getExpression());
+      $m = $class::match($expr);
       if ($m !== null) {
         return $m;
       }
     }
+    invariant_violation(
+      "Unhandled literal expression: %s: %s\n",
+      \get_class($expr),
+      $node->getCode(),
+    );
     return null;
   }
 }
