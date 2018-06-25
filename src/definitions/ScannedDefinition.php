@@ -29,6 +29,10 @@ abstract class ScannedDefinition {
     private ?string $docComment,
   ) {
     list($this->namespace, $this->shortName) = $this->breakName($name);
+
+    if ($docComment === null && !$ast->isMissing()) {
+      $this->docComment = doccomment_from_ast($context, $ast);
+    }
   }
 
   final public function getAST(): HHAST\EditableNode {
