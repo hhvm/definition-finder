@@ -79,8 +79,9 @@ class ScannedScopeBuilder extends ScannedSingleTypeBuilder<ScannedScope> {
     $this->namespaceBuilders[] = $b;
   }
 
-  public function addSubScope(ScannedScope $s): void {
+  public function addSubScope(ScannedScope $s): this {
     $this->subscopes[] = $s;
+    return $this;
   }
 
   <<__Override>>

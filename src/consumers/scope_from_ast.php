@@ -23,12 +23,15 @@ function scope_from_ast(
   }
 
   $namespaces = _Private\items_of_type($ast, HHAST\NamespaceDeclaration::class);
-  $without_bodies = Vec\filter(
-    $namespaces,
-    $ns ==>
-      $ns->getBody() instanceof HHAST\NamespaceEmptyBody || !$ns->hasBody(),
-  );
-  // TODO: Process ones with bodies
+  $with_bodies = vec[];
+  $without_bodies = vec[];
+  foreach ($namespaces as $ns) {
+    if ($ns->getBody() instanceof HHAST\NamespaceEmptyBody || !$ns->hasBody()) {
+      $without_bodies[] = $ns;
+    } else {
+      $with_bodies[] = $ns;
+    }
+  }
   invariant(
     C\count($without_bodies) <= 1,
     "Too many namespace declarations!\n",
@@ -70,7 +73,7 @@ function scope_from_ast(
 
   $classish = _Private\items_of_type($ast, HHAST\ClassishDeclaration::class);
 
-  return new ScannedScope(
+  $decls = new ScannedScope(
     $ast,
     $context['definitionContext'],
     /* classes = */ Vec\filter_nulls(Vec\map(
@@ -134,4 +137,23 @@ function scope_from_ast(
       $node ==> typeish_from_ast($context, ScannedNewtype::class, $node),
     ) |> Vec\filter_nulls($$),
   );
+
+  if (C\is_empty($with_bodies)) {
+    return $decls;
+  }
+
+  $builder = (new ScannedScopeBuilder($ast, $context['definitionContext']))
+    ->addSubScope($decls);
+
+  foreach ($with_bodies as $ns) {
+    $context['namespace'] = name_from_ast($ns->getName());
+    $body = $ns->getBody();
+    invariant(
+      $body instanceof HHAST\NamespaceBody,
+      "Expected a namespace body, got %s",
+      \get_class($body),
+    );
+    $builder->addSubScope(scope_from_ast($context, $body->getDeclarations()));
+  }
+  return $builder->build();
 }
