@@ -21,7 +21,7 @@ class ScannedProperty extends ScannedDefinition implements HasScannedVisibility 
     ?string $docComment,
     private ?ScannedTypehint $typehint,
     private VisibilityToken $visibility,
-    private StaticityToken $staticity = StaticityToken::NOT_STATIC,
+    private StaticityToken $staticity,
   ) {
     parent::__construct($ast, $name, $context, $attributes, $docComment);
   }

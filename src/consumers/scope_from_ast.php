@@ -101,7 +101,10 @@ function scope_from_ast(
       ),
     )
     |> Vec\flatten($$) |> Vec\filter_nulls($$),
-    /* properties = */ vec[],
+    /* properties = */ Vec\map(
+      _Private\items_of_type($ast, HHAST\PropertyDeclaration::class),
+      $node ==> properties_from_ast($context, $node),
+    ) |> Vec\flatten($$),
     /* constants = */ Vec\concat(
       Vec\map(
         _Private\items_of_type($ast, HHAST\ConstDeclaration::class),
