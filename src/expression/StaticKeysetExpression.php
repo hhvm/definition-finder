@@ -13,7 +13,7 @@ namespace Facebook\DefinitionFinder\Expression;
 use namespace Facebook\HHAST;
 
 final class StaticKeysetExpression extends Expression<keyset<arraykey>> {
-  const type TNode = HHAST\VectorIntrinsicExpression;
+  const type TNode = HHAST\KeysetIntrinsicExpression;
 
   <<__Override>>
   protected static function matchImpl(
