@@ -30,6 +30,7 @@ final class StaticExpression extends Expression<mixed> {
       StaticPrefixUnaryExpression::class,
       StaticScopeResolutionExpression::class,
       StaticShapeExpression::class,
+      StaticVarrayExpression::class,
       StaticVecExpression::class,
     ];
     foreach ($impls as $class) {
