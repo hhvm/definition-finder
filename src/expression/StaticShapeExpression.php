@@ -12,18 +12,18 @@ namespace Facebook\DefinitionFinder\Expression;
 
 use namespace Facebook\HHAST;
 
-final class StaticDarrayExpression extends Expression<darray<arraykey, mixed>> {
-  const type TNode = HHAST\DarrayIntrinsicExpression;
+final class StaticShapeExpression extends Expression<darray<arraykey, mixed>> {
+  const type TNode = HHAST\ShapeExpression;
 
   <<__Override>>
   protected static function matchImpl(
     this::TNode $node,
   ): ?Expression<darray<arraykey, mixed>> {
-    $members = $node->getMembers();
+    $members = $node->getFields();
     $members = $members?->getItemsOfType(HHAST\EditableNode::class) ?? vec[];
     $ret = darray[];
     foreach ($members as $m) {
-      $pair = StaticElementInitializerExpression::match($m);
+      $pair = StaticFieldInitializerExpression::match($m);
       if ($pair === null) {
         return null;
       }
