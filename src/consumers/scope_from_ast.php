@@ -152,7 +152,7 @@ function scope_from_ast(
 
   foreach ($with_bodies as $ns) {
     $context['namespace'] =
-      $ns->getName()->isMissing() ? '' : name_from_ast($ns->getName());
+      $ns->getName()->isMissing() ? null : name_from_ast($ns->getName());
     $body = $ns->getBody();
     invariant(
       $body instanceof HHAST\NamespaceBody,

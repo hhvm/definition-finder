@@ -16,8 +16,9 @@ function decl_name_in_context(
   ConsumerContext $context,
   string $name,
 ): string {
-  if ($context['namespace'] === null) {
+  $ns = $context['namespace'];
+  if ($ns === null || $ns === '') {
     return $name;
   }
-  return $context['namespace']."\\".$name;
+  return $ns."\\".$name;
 }
