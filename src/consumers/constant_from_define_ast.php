@@ -26,22 +26,13 @@ function constant_from_define_ast(
   if ($name instanceof HHAST\NameToken) {
     $name = $name->getText();
   } else {
+    $name = value_from_ast($name);
     invariant(
-      $name instanceof HHAST\LiteralExpression,
-      "Don't know how to handle define name of type %s",
-      \get_class($name),
+      $name !== null,
+      "Don't know how to handle constant name: '%s'",
+      $items[0]->getCode(),
     );
-    $name = $name->getExpression();
-    if ($name instanceof HHAST\SingleQuotedStringLiteralToken) {
-      $name = Str\slice($name->getText(), 1, Str\length($name->getText()) - 2);
-    } else if ($name instanceof HHAST\DoubleQuotedStringLiteralToken) {
-      $name = Str\slice($name->getText(), 1, Str\length($name->getText()) - 2);
-    } else {
-      invariant_violation(
-        "Don't know how to handle define name literal of type %s",
-        \get_class($name),
-      );
-    }
+    $name = (string) $name;
   }
 
   return (
