@@ -8,6 +8,7 @@
  *
  */
 
+use function Facebook\FBExpect\expect;
 use type \Facebook\DefinitionFinder\FileParser;
 
 // Usually, '{' becomes '{' - however, when used for

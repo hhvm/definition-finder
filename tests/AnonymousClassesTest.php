@@ -11,6 +11,7 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\FileParser;
+use function Facebook\FBExpect\expect;
 use namespace HH\Lib\Vec;
 
 final class AnonymousClassesTest extends \PHPUnit_Framework_TestCase {
