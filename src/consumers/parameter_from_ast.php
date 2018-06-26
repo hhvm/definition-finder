@@ -24,7 +24,10 @@ function parameter_from_ast(
   } else if ($name instanceof HHAST\DecoratedExpression) {
     $info = parameter_info_from_decorated_expression($name);
   } else {
-    invariant_violation("Don't know how to handle name type %s", \get_class($name));
+    invariant_violation(
+      "Don't know how to handle name type %s",
+      \get_class($name),
+    );
   }
   return new ScannedParameter(
     $node,
@@ -36,8 +39,9 @@ function parameter_from_ast(
     $info['byref'],
     $node->getCallConvention() instanceof HHAST\InoutToken,
     $info['variadic'],
-    ($node->getDefaultValue() === null) ? null :
-    ast_without_trivia($node->getDefaultValuex())->getCode(),
+    ($node->getDefaultValue() === null)
+      ? null
+      : ast_without_trivia($node->getDefaultValuex()->getValue())->getCode(),
     /* visibility = */ null, // FIXME
   );
 }
