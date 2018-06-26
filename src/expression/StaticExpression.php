@@ -40,12 +40,6 @@ final class StaticExpression extends Expression<mixed> {
         return $r;
       }
     }
-    invariant_violation(
-      "Unhandled static expression: %s: %s\n",
-      \get_class($n),
-      $n->getCode(),
-    );
-    // TODO: throw on failure
     return null;
   }
 }
