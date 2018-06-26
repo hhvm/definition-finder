@@ -50,7 +50,6 @@ final class NameExpression extends Expression<mixed> {
     if ($text === '__COMPILER_FRONTEND__') {
       return new self('');
     }
-    \var_dump($text);
     return null;
   }
 }

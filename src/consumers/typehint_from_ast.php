@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{Dict, Str, Vec};
+use namespace HH\Lib\{C, Dict, Str, Vec};
 
 function typehint_from_ast(
   ConsumerContext $context,
@@ -51,10 +51,23 @@ function typehint_from_ast(
     );
   }
   if ($node instanceof HHAST\ClosureTypeSpecifier) {
+    $normalized = ast_without_trivia($node);
+    // Remove trailing comma
+    $parameters = $normalized->getParameterList();
+    if ($parameters !== null) {
+      $parameters = $parameters->getChildren();
+      $key = C\last_keyx($parameters);
+      $item = $parameters[$key];
+      invariant($item instanceof HHAST\ListItem, "List with non-item children");
+      $parameters[$key] = $item->withSeparator(HHAST\Missing());
+      $normalized = $normalized->withParameterList(
+        new HHAST\EditableList(vec($parameters)),
+      );
+    }
     return new ScannedTypehint(
       $node,
       'callable',
-      ast_without_trivia($node)->getCode(),
+      $normalized->getCode(),
       vec[],
       false,
     );

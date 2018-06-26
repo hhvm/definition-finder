@@ -19,7 +19,9 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
       tuple('shape("foo" => string)', 'shape', 'shape("foo"=>string)'),
       tuple('(string, string)', 'tuple', '(string,string)'),
       tuple('(string, string,)', 'tuple', '(string,string)'),
-      tuple('(function(){})', 'callable', '(function(){})'),
+      tuple('(function(): void)', 'callable', '(function():void)'),
+      tuple('(function(string,): int)', 'callable', '(function(string):int)'),
+      tuple('(function(a,b): int)', 'callable', '(function(a,b):int)'),
 
       // Autoimports
       tuple('void', 'void', 'void'),
@@ -36,7 +38,9 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
       tuple('?dict<int, string>', 'dict', '?dict<int,string>'),
       tuple('?shape("foo" => string)', 'shape', '?shape("foo"=>string)'),
       tuple('?(string, string)', 'tuple', '?(string,string)'),
-      tuple('?(function(){})', 'callable', '?(function(){})'),
+      tuple('?(function(): void)', 'callable', '?(function():void)'),
+      tuple('?(function(string,): int)', 'callable', '?(function(string):int)'),
+      tuple('?(function(a,b): int)', 'callable', '?(function(a,b):int)'),
     ];
   }
 

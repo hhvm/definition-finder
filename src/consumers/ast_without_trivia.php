@@ -13,10 +13,10 @@ namespace Facebook\DefinitionFinder;
 use namespace Facebook\HHAST;
 use namespace HH\Lib\{C, Vec};
 
-function ast_without_trivia(
-  HHAST\EditableNode $node,
-): HHAST\EditableNode {
-  return $node->rewrite(
+function ast_without_trivia<T as HHAST\EditableNode>(
+  T $node,
+): T {
+  return $node->rewriteDescendants(
     ($inner, $_) ==>
       $inner instanceof HHAST\EditableTrivia ? HHAST\Missing() : $inner,
   );
