@@ -10,18 +10,20 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
+use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\FileParser;
 
 class VariableDefinesTest extends \PHPUnit_Framework_TestCase {
   public function testVariableDefine(): void {
     $data = '<?php define($foo, $bar)';
     $parser = FileParser::fromData($data);
-    $this->assertEmpty($parser->getConstants());
+    expect($parser->getConstants())->toBeEmpty();
   }
 
   public function testExpressionDefine(): void {
     $data = '<?php define("foo"."bar", $baz)';
     $parser = FileParser::fromData($data);
-    $this->assertEmpty($parser->getConstants());
+    $c = $parser->getConstant('foobar');
+    expect($c->getValue())->toBeNull();
   }
 }

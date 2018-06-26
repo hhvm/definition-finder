@@ -78,6 +78,10 @@ abstract class BaseParser {
     return self::GetX($name, $this->getClasses());
   }
 
+  public function getConstant(string $name): ScannedConstant {
+    return self::GetX($name, $this->getConstants());
+  }
+
   public function getInterface(string $name): ScannedInterface {
     return self::GetX($name, $this->getInterfaces());
   }
