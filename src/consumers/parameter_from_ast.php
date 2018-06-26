@@ -36,7 +36,8 @@ function parameter_from_ast(
     $info['byref'],
     $node->getCallConvention() instanceof HHAST\InoutToken,
     $info['variadic'],
-    ast_without_trivia($node->getDefaultValue() ?? HHAST\Missing())->getCode(),
+    ($node->getDefaultValue() === null) ? null :
+    ast_without_trivia($node->getDefaultValuex())->getCode(),
     /* visibility = */ null, // FIXME
   );
 }
