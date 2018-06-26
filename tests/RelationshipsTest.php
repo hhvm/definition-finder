@@ -67,7 +67,7 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
         $def->getInterfaceInfo(),
         $x ==> Vec\map($x->getGenericTypes(), $y ==> $y->getTypeName()),
       ),
-    )->toBeSame(vec[vec['Vector']]);
+    )->toBeSame(vec[vec['vec']]);
     expect(Vec\map($def->getInterfaceInfo(), $x ==> $x->getTypeText()))
       ->toBeSame(vec['Iterable<vec<Tv>>']);
   }
