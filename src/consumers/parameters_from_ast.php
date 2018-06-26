@@ -15,10 +15,30 @@ use namespace HH\Lib\Vec;
 
 function parameters_from_ast(
   ConsumerContext $context,
-  ?HHAST\EditableList $node,
+  HHAST\FunctionDeclarationHeader $header,
 ): vec<ScannedParameter> {
-  return Vec\map(
-    _Private\items_of_type($node, HHAST\ParameterDeclaration::class),
-    $n ==> parameter_from_ast($context, $n),
+  $params = $header->getParameterList();
+  if ($params === null) {
+    return vec[];
+  }
+  // Doc comments are being attached as trailing on the preceding token
+  $next_doccomment = doccomment_from_ast(
+    $context['definitionContext'],
+    $header->getLeftParenx()->getTrailing(),
   );
+  $out = vec[];
+  foreach ($params->getChildren() as $node) {
+    invariant($node instanceof HHAST\ListItem, "Got non-listitem child");
+    $item = $node->getItem();
+    invariant(
+      $item instanceof HHAST\ParameterDeclaration,
+      "Got non-decl child",
+    );
+    $out[] = parameter_from_ast($context, $item, $next_doccomment);
+    $next_doccomment = doccomment_from_ast(
+      $context['definitionContext'],
+      $node->getSeparator()?->getTrailing() ?? HHAST\Missing(),
+    );
+  }
+  return $out;
 }

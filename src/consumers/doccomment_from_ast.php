@@ -21,7 +21,10 @@ function doccomment_from_ast(
     return null;
   }
   $leading = $node->getFirstToken()?->getLeading() ?? HHAST\Missing();
-  if ($leading instanceof HHAST\EditableList) {
+  if ($leading->isMissing() && $node instanceof HHAST\EditableList) {
+    $maybe_doc_comments =
+      _Private\items_of_type($node, HHAST\DelimitedComment::class);
+  } else if ($leading instanceof HHAST\EditableList) {
     $maybe_doc_comments =
       _Private\items_of_type($leading, HHAST\DelimitedComment::class);
   } else if ($leading instanceof HHAST\DelimitedComment) {

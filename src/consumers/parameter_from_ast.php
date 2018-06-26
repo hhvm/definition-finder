@@ -16,6 +16,7 @@ use namespace HH\Lib\Str;
 function parameter_from_ast(
   ConsumerContext $context,
   HHAST\ParameterDeclaration $node,
+  ?string $doccomment,
 ): ScannedParameter {
   $variadic = false;
   $name = $node->getName();
@@ -34,7 +35,7 @@ function parameter_from_ast(
     Str\strip_prefix($info['name']->getText(), '$'),
     context_with_node_position($context, $node)['definitionContext'],
     attributes_from_ast($node->getAttribute()),
-    /* doccomment = */ null,
+    $doccomment,
     typehint_from_ast($context, $node->getType()),
     $info['byref'],
     $node->getCallConvention() instanceof HHAST\InoutToken,

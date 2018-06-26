@@ -35,7 +35,7 @@ function function_from_ast(
   )
     ->setAttributes(attributes_from_ast($node->getAttributeSpec()))
     ->setGenerics($generics)
-    ->setParameters(parameters_from_ast($context, $header->getParameterList()))
+    ->setParameters(parameters_from_ast($context, $header))
     ->setReturnType(typehint_from_ast($context, $header->getType()))
     ->build();
 }
