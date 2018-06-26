@@ -23,7 +23,7 @@ final class RelativeNamespaceTest extends PHPUnit_Framework_TestCase {
     expect($fp->getFunctionNames())->toBeSame(vec['foo', 'baz']);
 
     expect(Vec\map($fp->getFunctions(), $f ==> $f->getNamespaceName()))
-      ->toBeSame(vec[]);
+      ->toBeSame(vec['', '']);
   }
 
   public function testPseudomainUsesRelativeNamespace(): void {
