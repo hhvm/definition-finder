@@ -105,7 +105,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       vec[false, false],
     );
     expect(Vec\map($constants ?? vec[], $x ==> $x->getValue()))->toBeSame(
-      vec["'bar'", '60 * 60 * 24'],
+      vec['bar', 60 * 60 * 24],
     );
     expect(Vec\map($constants ?? vec[], $x ==> $x->getDocComment()))->toBeSame(
       vec['/** FooDoc */', '/** BarDoc */'],
@@ -124,7 +124,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       vec[null, null],
     );
     expect(Vec\map($constants, $x ==> $x->getValue()))->toBeSame(
-      vec["'bar'", '60 * 60 * 24'],
+      vec['bar', 60 * 60 * 24],
     );
     expect(Vec\map($constants, $x ==> $x->getDocComment()))->toBeSame(
       vec['/** FooDoc */', '/** BarDoc */'],

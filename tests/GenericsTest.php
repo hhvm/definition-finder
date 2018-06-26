@@ -53,7 +53,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     expect(
       Vec\map(
         $class->getGenericTypes(),
-        $x ==> $x->getConstraints()[0]['type'],
+        $x ==> $x->getConstraints()[0]['type']->getTypeText(),
       ),
     )->toBeSame(vec['Bar', 'Baz']);
     expect(
@@ -67,8 +67,13 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
   public function testGenericsWithMultipleConstraints(): void {
     $data = '<?hh class Foo<T super Herp as Derp> {}';
     $parser = FileParser::fromData($data);
-    $constraints =
-      $parser->getClass('Foo')->getGenericTypes()[0]->getConstraints();
+    $constraints = Vec\map(
+      $parser->getClass('Foo')->getGenericTypes()[0]->getConstraints(),
+      $c ==> {
+        $c['type'] = $c['type']->getTypeText();
+        return $c;
+      },
+    );
     expect($constraints)->toBeSame(
       vec[
         shape('type' => 'Herp', 'relationship' => RelationshipToken::SUPERTYPE),
@@ -85,7 +90,7 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     expect(
       Vec\map(
         $class->getGenericTypes(),
-        $x ==> $x->getConstraints()[0]['type'],
+        $x ==> $x->getConstraints()[0]['type']->getTypeText(),
       ),
     )->toBeSame(vec['Bar\Baz']);
   }
