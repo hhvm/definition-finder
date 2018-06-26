@@ -41,5 +41,9 @@ function used_name_in_context(
     }
   }
 
-  return decl_name_in_context($context, $name);
+  $ns = $context['namespace'];
+  if ($ns === null || $ns === '') {
+    return $name;
+  }
+  return $ns."\\".$name;
 }
