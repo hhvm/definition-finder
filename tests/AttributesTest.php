@@ -33,57 +33,43 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
 
   public function testSingleSimpleAttribute(): void {
     $class = $this->findClass('ClassWithSimpleAttribute');
-    $this->assertEquals(dict["Foo" => vec[]], $class->getAttributes());
+    expect($class->getAttributes())->toBeSame(dict["Foo" => vec[]]);
   }
 
   public function testMultipleSimpleAttributes(): void {
     $class = $this->findClass('ClassWithSimpleAttributes');
-    $this->assertEquals(
+    expect($class->getAttributes())->toBeSame(
       dict["Foo" => vec[], "Bar" => vec[]],
-      $class->getAttributes(),
     );
   }
 
   public function testWithSingleStringAttribute(): void {
     $class = $this->findClass('ClassWithStringAttribute');
-    $this->assertEquals(
-      dict['Herp' => vec['derp']],
-      $class->getAttributes(),
-    );
+    expect($class->getAttributes())->toBeSame(dict['Herp' => vec['derp']]);
   }
 
   public function testWithFormattedAttributes(): void {
     $class = $this->findClass('ClassWithFormattedAttributes');
-    $this->assertEquals(
+    expect($class->getAttributes())->toBeSame(
       dict['Foo' => vec[], 'Bar' => vec['herp', 'derp']],
-      $class->getAttributes(),
     );
   }
 
   public function testWithFormattedArrayAttribute(): void {
     $class = $this->findClass('ClassWithFormattedArrayAttribute');
-    $this->assertEquals(
-      dict['Bar' => vec[['herp']]],
-      $class->getAttributes(),
-    );
+    expect($class->getAttributes())->toBeSame(dict['Bar' => vec[['herp']]]);
   }
 
   public function testWithSingleIntAttribute(): void {
     $class = $this->findClass('ClassWithIntAttribute');
-    $this->assertEquals(
-      dict['Herp' => vec[123]],
-      $class->getAttributes(),
-    );
+    expect($class->getAttributes())->toBeSame(dict['Herp' => vec[123]]);
     // Check it's an int, not a string
     $this->assertSame(123, $class->getAttributes()['Herp'][0]);
   }
 
   public function testFunctionHasAttributes(): void {
     $func = $this->findScanned($this->functions, 'function_after_classes');
-    $this->assertEquals(
-      dict['FunctionFoo' => vec[]],
-      $func->getAttributes(),
-    );
+    expect($func->getAttributes())->toBeSame(dict['FunctionFoo' => vec[]]);
   }
 
   public function testFunctionContainingBitShift(): void {
@@ -100,10 +86,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
 
   public function testFunctionAttrsDontPolluteClass(): void {
     $class = $this->findClass('ClassAfterFunction');
-    $this->assertEquals(
-      dict['ClassFoo' => vec[]],
-      $class->getAttributes(),
-    );
+    expect($class->getAttributes())->toBeSame(dict['ClassFoo' => vec[]]);
   }
 
   public function testParameterHasAttribute(): void {
@@ -111,11 +94,10 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('foo');
     $params = $fun->getParameters();
-    $this->assertEquals(vec['baz'], Vec\map($params, $x ==> $x->getName()));
+    expect(Vec\map($params, $x ==> $x->getName()))->toBeSame(vec['baz']);
 
-    $this->assertEquals(
-      vec[dict['Bar' => vec[]] ],
-      Vec\map($params, $x ==> $x->getAttributes()),
+    expect(Vec\map($params, $x ==> $x->getAttributes()))->toBeSame(
+      vec[dict['Bar' => vec[]]],
     );
   }
 

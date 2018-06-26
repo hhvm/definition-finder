@@ -124,8 +124,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     expect($constant->getValue())->toBeSame('Baz::'.$type);
   }
 
-  public function magicConstantsProvider(
-  ): array<(string, string, string)> {
+  public function magicConstantsProvider(): array<(string, string, string)> {
     return [
       tuple('int', '__LINE__', '0'),
       tuple('string', '__CLASS__', "''"),
@@ -152,10 +151,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $code = "<?hh // decl\nconst ".$type.' '.$name.' = '.$value.';';
     $const = FileParser::fromData($code)->getConstants()
       |> C\find($$, $c ==> $c->getName() === $name);
-    $const = expect($const)->toNotBeNull(
-      'const %s was not defined',
-      $name,
-    );
+    $const = expect($const)->toNotBeNull('const %s was not defined', $name);
     expect($const->getTypehint()?->getTypeText())
       ->toBeSame($type);
     expect(\var_export($const->getValue(), true))->toBeSame($value);
@@ -164,31 +160,28 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   public function testConstantCalledOn(): void {
     $data = '<?hh class Foo { const ON = 0; }';
 
-    $this->assertEquals(
-      vec['ON'],
+    expect(
       FileParser::fromData($data)
         ->getClass('Foo')
         ->getConstants()
         |> Vec\map($$, $x ==> $x->getName()),
-    );
+    )->toBeSame(vec['ON']);
   }
 
   public function testClassMagicConstant(): void {
     $data = "<?hh Foo::class;\nclass Foo{}";
 
     // This could throw because the ; comes after the keyword class
-    $this->assertEquals(
+    expect(FileParser::fromData($data)->getClass('Foo')->getName())->toBeSame(
       'Foo',
-      FileParser::fromData($data)->getClass('Foo')->getName(),
     );
   }
 
   public function testClassConstant(): void {
     $data = "<?hh Herp::DERP;\nclass Foo{}";
 
-    $this->assertEquals(
+    expect(FileParser::fromData($data)->getClass('Foo')->getName())->toBeSame(
       'Foo',
-      FileParser::fromData($data)->getClass('Foo')->getName(),
     );
   }
 
@@ -196,9 +189,8 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   public function testNamespacedClassCalledCollection(): void {
     $data = '<?php namespace Foo\Bar; class Collection {}';
 
-    $this->assertEquals(
+    expect(FileParser::fromData($data)->getClassNames())->toBeSame(
       vec['Foo\Bar\Collection'],
-      FileParser::fromData($data)->getClassNames(),
     );
   }
 
@@ -222,8 +214,8 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $php_func = FileParser::fromData($php)->getFunction("Foo\\myfunc");
     $hack_func = FileParser::fromData($hack)->getFunction("Foo\\myfunc");
 
-    $this->assertEquals('string', $php_func->getReturnType()?->getTypeName());
-    $this->assertEquals('string', $hack_func->getReturnType()?->getTypeName());
+    expect($php_func->getReturnType()?->getTypeName())->toBeSame('string');
+    expect($hack_func->getReturnType()?->getTypeName())->toBeSame('string');
   }
 
   public function testReturnsThisInNamespace(): void {

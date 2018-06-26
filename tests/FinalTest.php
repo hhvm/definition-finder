@@ -10,6 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
+use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\FileParser;
 use type Facebook\DefinitionFinder\ScannedClassish;
 use namespace HH\Lib\Vec;
@@ -24,19 +25,15 @@ class FinalTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testClassIsFinal(): void {
-    $this->assertEquals(
+    expect(Vec\map($this->classes ?? vec[], $x ==> $x->isFinal()))->toBeSame(
       vec[true, false],
-      Vec\map($this->classes?? vec[], $x ==> $x->isFinal()),
       'isFinal',
     );
   }
 
   public function testMethodsAreFinal(): void {
     $class = $this->classes ? $this->classes[1] : null;
-    $this->assertEquals(
-      vec[true, false],
-      Vec\map($class?->getMethods()?? vec[], $x ==> $x->isFinal()),
-      'isFinal',
-    );
+    expect(Vec\map($class?->getMethods() ?? vec[], $x ==> $x->isFinal()))
+      ->toBeSame(vec[true, false], 'isFinal');
   }
 }

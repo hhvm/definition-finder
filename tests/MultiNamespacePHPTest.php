@@ -8,6 +8,7 @@
  *
  */
 
+use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\FileParser;
 
 final class MultiNamespacePHPTest extends PHPUnit_Framework_TestCase {
@@ -15,15 +16,13 @@ final class MultiNamespacePHPTest extends PHPUnit_Framework_TestCase {
 
   <<__Override>>
   protected function setUp(): void {
-    $this->parser = FileParser::fromFile(
-      __DIR__.'/data/multi_namespace_php.php',
-    );
+    $this->parser =
+      FileParser::fromFile(__DIR__.'/data/multi_namespace_php.php');
   }
 
   public function testClasses(): void {
-    $this->assertEquals(
+    expect($this->parser?->getClassNames())->toBeSame(
       vec['Foo\\Bar', 'Herp\\Derp', 'EmptyNamespace'],
-      $this->parser?->getClassNames(),
     );
   }
 }

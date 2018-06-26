@@ -10,6 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
+use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\FileParser;
 use type Facebook\DefinitionFinder\ScannedDefinition;
 use type Facebook\DefinitionFinder\ScannedFunction;
@@ -74,13 +75,11 @@ class DocCommentTest extends \PHPUnit_Framework_TestCase {
     $fun = $this->getDef('param_with_doc_comment');
     assert($fun instanceof ScannedFunction);
     $params = $fun->getParameters();
-    $this->assertEquals(
+    expect(Vec\map($params, $x ==> $x->getName()))->toBeSame(
       vec['commented', 'uncommented'],
-      Vec\map($params, $x ==> $x->getName()),
     );
-    $this->assertEquals(
+    expect(Vec\map($params, $x ==> $x->getDocComment()))->toBeSame(
       vec['/** param doc */', null],
-      Vec\map($params, $x ==> $x->getDocComment()),
     );
   }
 

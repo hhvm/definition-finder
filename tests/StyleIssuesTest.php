@@ -10,10 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use type Facebook\DefinitionFinder\{
-  FileParser,
-  ScannedTypehint,
-};
+use type Facebook\DefinitionFinder\{FileParser, ScannedTypehint};
 use namespace HH\Lib\Vec;
 use function Facebook\FBExpect\expect;
 
@@ -22,9 +19,8 @@ final class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh function foo ($bar) {};';
     $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('foo');
-    $this->assertEquals(
+    expect(Vec\map($fun->getParameters(), $x ==> $x->getName()))->toBeSame(
       vec['bar'],
-      Vec\map($fun->getParameters(), $x ==> $x->getName()),
     );
   }
 
@@ -44,19 +40,15 @@ final class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh <<Herp, Derp>> function foo() {}';
     $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('foo');
-    $this->assertEquals(
-      vec['Herp', 'Derp'],
-      Vec\keys($fun->getAttributes()),
-    );
+    expect(Vec\keys($fun->getAttributes()))->toBeSame(vec['Herp', 'Derp']);
   }
 
   public function testWhitespaceBetweenAttributesWithValue(): void {
     $data = '<?hh <<Herp("herpderp"), Derp>> function foo() {}';
     $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('foo');
-    $this->assertEquals(
+    expect($fun->getAttributes())->toBeSame(
       dict['Herp' => vec['herpderp'], 'Derp' => vec[]],
-      $fun->getAttributes(),
     );
   }
 
@@ -64,20 +56,14 @@ final class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh <<Foo("herp", "derp")>> function herp() {}';
     $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('herp');
-    $this->assertEquals(
-      dict['Foo' => vec['herp', 'derp']],
-      $fun->getAttributes(),
-    );
+    expect($fun->getAttributes())->toBeSame(dict['Foo' => vec['herp', 'derp']]);
   }
 
   public function testWhitespaceBetweenConcatenatedAttributeParts(): void {
     $data = '<?hh <<Foo("herp". "derp")>> function herp() {}';
     $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('herp');
-    $this->assertEquals(
-      dict['Foo' => vec['herpderp']],
-      $fun->getAttributes(),
-    );
+    expect($fun->getAttributes())->toBeSame(dict['Foo' => vec['herpderp']]);
   }
 
   public function testTrailingCommaInAsyncReturnTuple(): void {

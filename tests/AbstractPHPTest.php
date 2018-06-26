@@ -19,15 +19,11 @@ abstract class AbstractPHPTest extends PHPUnit_Framework_TestCase {
 
   <<__Override>>
   protected function setUp(): void {
-    $this->parser = FileParser::fromFile(
-      __DIR__.'/data/'.$this->getFilename(),
-    );
+    $this->parser = FileParser::fromFile(__DIR__.'/data/'.$this->getFilename());
   }
 
   public function testClasses(): void {
-    expect(
-      $this->parser?->getClassNames(),
-    )->toBeSame(
+    expect($this->parser?->getClassNames())->toBeSame(
       vec[
         $this->getPrefix().'SimpleClass',
         $this->getPrefix().'SimpleAbstractClass',
@@ -37,17 +33,13 @@ abstract class AbstractPHPTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testInterfaces(): void {
-    expect(
-      $this->parser?->getInterfaceNames(),
-    )->toBeSame(
+    expect($this->parser?->getInterfaceNames())->toBeSame(
       vec[$this->getPrefix().'SimpleInterface'],
     );
   }
 
   public function testTraits(): void {
-    expect(
-      $this->parser?->getTraitNames(),
-    )->toBeSame(
+    expect($this->parser?->getTraitNames())->toBeSame(
       vec[$this->getPrefix().'SimpleTrait'],
     );
   }

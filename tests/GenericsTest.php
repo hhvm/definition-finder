@@ -10,10 +10,8 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use type Facebook\DefinitionFinder\{
-  FileParser,
-  RelationshipToken,
-};
+use function Facebook\FBExpect\expect;
+use type Facebook\DefinitionFinder\{FileParser, RelationshipToken};
 use namespace HH\Lib\{C, Vec};
 
 class GenericsTest extends \PHPUnit_Framework_TestCase {
@@ -22,15 +20,13 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $class = $parser->getClass('Foo');
 
-    $this->assertEquals(
+    expect(Vec\map($class->getGenericTypes(), $x ==> $x->getName()))->toBeSame(
       vec['Tk', 'Tv'],
-      Vec\map($class->getGenericTypes(), $x ==> $x->getName()),
     );
 
-    $this->assertEquals(
-      vec[0, 0],
+    expect(
       Vec\map($class->getGenericTypes(), $x ==> C\count($x->getConstraints())),
-    );
+    )->toBeSame(vec[0, 0]);
   }
 
   public function testFunctionHasGenerics(): void {
@@ -38,18 +34,15 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $function = $parser->getFunction('foo');
 
-    $this->assertEquals(
-      vec['Tk', 'Tv'],
-      Vec\map($function->getGenericTypes(), $x ==> $x->getName()),
-    );
+    expect(Vec\map($function->getGenericTypes(), $x ==> $x->getName()))
+      ->toBeSame(vec['Tk', 'Tv']);
 
-    $this->assertEquals(
-      vec[0, 0],
+    expect(
       Vec\map(
         $function->getGenericTypes(),
         $x ==> C\count($x->getConstraints()),
       ),
-    );
+    )->toBeSame(vec[0, 0]);
   }
 
   public function testConstrainedGenerics(): void {
@@ -57,17 +50,18 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $class = $parser->getClass('Foo');
 
-    $this->assertEquals(
-      vec['Bar', 'Baz'],
-      Vec\map($class->getGenericTypes(), $x ==> $x->getConstraints()[0]['type']),
-    );
-    $this->assertEquals(
-      vec[RelationshipToken::SUBTYPE, RelationshipToken::SUPERTYPE],
+    expect(
+      Vec\map(
+        $class->getGenericTypes(),
+        $x ==> $x->getConstraints()[0]['type'],
+      ),
+    )->toBeSame(vec['Bar', 'Baz']);
+    expect(
       Vec\map(
         $class->getGenericTypes(),
         $x ==> $x->getConstraints()[0]['relationship'],
       ),
-    );
+    )->toBeSame(vec[RelationshipToken::SUBTYPE, RelationshipToken::SUPERTYPE]);
   }
 
   public function testGenericsWithMultipleConstraints(): void {
@@ -75,12 +69,11 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $constraints =
       $parser->getClass('Foo')->getGenericTypes()[0]->getConstraints();
-    $this->assertEquals(
+    expect($constraints)->toBeSame(
       vec[
         shape('type' => 'Herp', 'relationship' => RelationshipToken::SUPERTYPE),
         shape('type' => 'Derp', 'relationship' => RelationshipToken::SUBTYPE),
       ],
-      $constraints,
     );
   }
 
@@ -89,10 +82,12 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $class = $parser->getClass('Foo');
 
-    $this->assertEquals(
-      vec['Bar\Baz'],
-      Vec\map($class->getGenericTypes(), $x ==> $x->getConstraints()[0]['type']),
-    );
+    expect(
+      Vec\map(
+        $class->getGenericTypes(),
+        $x ==> $x->getConstraints()[0]['type'],
+      ),
+    )->toBeSame(vec['Bar\Baz']);
   }
 
   public function testVariance(): void {
@@ -101,21 +96,17 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $class = $parser->getClass('Foo');
     $generics = $class->getGenericTypes();
 
-    $this->assertEquals(
+    expect(Vec\map($generics, $x ==> $x->getName()))->toBeSame(
       vec['Ta', 'Tb', 'Tc'],
-      Vec\map($generics, $x ==> $x->getName()),
     );
-    $this->assertEquals(
+    expect(Vec\map($generics, $x ==> $x->isContravariant()))->toBeSame(
       vec[true, false, false],
-      Vec\map($generics, $x ==> $x->isContravariant()),
     );
-    $this->assertEquals(
+    expect(Vec\map($generics, $x ==> $x->isInvariant()))->toBeSame(
       vec[false, true, false],
-      Vec\map($generics, $x ==> $x->isInvariant()),
     );
-    $this->assertEquals(
+    expect(Vec\map($generics, $x ==> $x->isCovariant()))->toBeSame(
       vec[false, false, true],
-      Vec\map($generics, $x ==> $x->isCovariant()),
     );
   }
 
@@ -156,6 +147,6 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
       $function->getParameters(),
       $param ==> $param->getTypehint()?->getTypeText(),
     );
-    $this->assertEquals(vec['ImmMap<string,string>'], $param_types);
+    expect($param_types)->toBeSame(vec['ImmMap<string,string>']);
   }
 }

@@ -10,11 +10,8 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use type Facebook\DefinitionFinder\{
-  FileParser,
-  ScannedClassish,
-  ScannedMethod,
-};
+use function Facebook\FBExpect\expect;
+use type Facebook\DefinitionFinder\{FileParser, ScannedClassish, ScannedMethod};
 use namespace HH\Lib\Vec;
 
 class ConstructorPromotionTest extends \PHPUnit_Framework_TestCase {
@@ -52,42 +49,33 @@ class Foo {
 
 
     $params = $constructor->getParameters();
-    $this->assertEquals(
+    expect(Vec\map($params, $x ==> $x->getName()))->toBeSame(
       vec['foo', 'bar', 'baz'],
-      Vec\map($params, $x ==> $x->getName()),
     );
-    $this->assertEquals(
-      vec['string', 'mixed', 'int'],
-      Vec\map($params, $x ==> $x->getTypehint()?->getTypeName()),
-    );
+    expect(Vec\map($params, $x ==> $x->getTypehint()?->getTypeName()))
+      ->toBeSame(vec['string', 'mixed', 'int']);
   }
 
   public function testClassProperties(): void {
     $props = $this->class?->getProperties();
 
-    $this->assertEquals(
+    expect(Vec\map($props ?? vec[], $x ==> $x->getName()))->toBeSame(
       vec['foo', 'bar', 'baz'],
-      Vec\map($props?? vec[], $x ==> $x->getName()),
     );
 
-    $this->assertEquals(
+    expect(Vec\map($props ?? vec[], $x ==> $x->isPublic()))->toBeSame(
       vec[true, false, false],
-      Vec\map($props?? vec[], $x ==> $x->isPublic()),
     );
 
-    $this->assertEquals(
-      vec['string', 'mixed', 'int'],
-      Vec\map($props?? vec[], $x ==> $x->getTypehint()?->getTypeName()),
+    expect(Vec\map($props ?? vec[], $x ==> $x->getTypehint()?->getTypeName()))
+      ->toBeSame(vec['string', 'mixed', 'int']);
+
+    expect(Vec\map($props ?? vec[], $x ==> $x->getAttributes()))->toBeSame(
+      vec[Map {}, dict['HerpDerp' => vec[]], Map {}],
     );
 
-    $this->assertEquals(
-      vec[Map {}, dict['HerpDerp' => vec[]], Map {} ],
-      Vec\map($props?? vec[], $x ==> $x->getAttributes()),
-    );
-
-    $this->assertEquals(
+    expect(Vec\map($props ?? vec[], $x ==> $x->getDocComment()))->toBeSame(
       vec[null, null, '/** baz comment */'],
-      Vec\map($props?? vec[], $x ==> $x->getDocComment()),
     );
   }
 }

@@ -8,6 +8,7 @@
  *
  */
 
+use function Facebook\FBExpect\expect;
 use type \Facebook\DefinitionFinder\FileParser;
 
 /**
@@ -17,18 +18,18 @@ use type \Facebook\DefinitionFinder\FileParser;
 final class FunctionNotDefinitionTest extends PHPUnit_Framework_TestCase {
   public function testActuallyAFunction(): void {
     $p = FileParser::fromData('<?hh function foo();');
-    $this->assertEquals(vec['foo'], $p->getFunctionNames());
+    expect($p->getFunctionNames())->toBeSame(vec['foo']);
   }
 
   public function testFunctionTypeAlias(): void {
     $p = FileParser::fromData('<?hh newtype Foo = function(int): void;');
-    $this->assertEquals(vec[], $p->getFunctionNames());
-    $this->assertEquals(vec['Foo'], $p->getNewtypeNames());
+    expect($p->getFunctionNames())->toBeSame(vec[]);
+    expect($p->getNewtypeNames())->toBeSame(vec['Foo']);
 
     // Add extra whitespace
     $p = FileParser::fromData('<?hh newtype Foo = function (int): void;');
-    $this->assertEquals(vec[], $p->getFunctionNames());
-    $this->assertEquals(vec['Foo'], $p->getNewtypeNames());
+    expect($p->getFunctionNames())->toBeSame(vec[]);
+    expect($p->getNewtypeNames())->toBeSame(vec['Foo']);
   }
 
   public function testFunctionReturnType(): void {
@@ -37,7 +38,7 @@ final class FunctionNotDefinitionTest extends PHPUnit_Framework_TestCase {
 function foo(\$bar): (function():void) { return \$bar; }
 EOF
     );
-    $this->assertEquals(vec['foo'], $p->getFunctionNames());
+    expect($p->getFunctionNames())->toBeSame(vec['foo']);
     $rt = $p->getFunction('foo')->getReturnType();
 
     $this->assertSame('callable', $rt?->getTypeName());
@@ -47,7 +48,7 @@ EOF
   public function testReturnsGenericCallable(): void {
     $code = '<?hh function foo(): (function():vec<string>) { }';
     $p = FileParser::fromData($code);
-    $this->assertEquals(vec['foo'], $p->getFunctionNames());
+    expect($p->getFunctionNames())->toBeSame(vec['foo']);
 
     $rt = $p->getFunction('foo')->getReturnType();
     $this->assertSame('callable', $rt?->getTypeName());
@@ -58,7 +59,7 @@ EOF
     $p = FileParser::fromData(
       '<?hh function foo((function():void) $callback) { }',
     );
-    $this->assertEquals(vec['foo'], $p->getFunctionNames());
+    expect($p->getFunctionNames())->toBeSame(vec['foo']);
   }
 
   public function testUsingAnonymousFunctions(): void {
@@ -70,7 +71,7 @@ function foo() {
 }
 EOF
     );
-    $this->assertEquals(vec['foo'], $p->getFunctionNames());
+    expect($p->getFunctionNames())->toBeSame(vec['foo']);
   }
 
   public function testAsParameter(): void {
@@ -80,7 +81,7 @@ spl_autoload_register(function(\$class) { });
 function foo() { }
 EOF
     );
-    $this->assertEquals(vec['foo'], $p->getFunctionNames());
+    expect($p->getFunctionNames())->toBeSame(vec['foo']);
   }
 
   public function testAsRVal(): void {

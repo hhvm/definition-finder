@@ -11,10 +11,8 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use type Facebook\DefinitionFinder\{
-  FileParser,
-  ScannedClassish,
-};
+use function Facebook\FBExpect\expect;
+use type Facebook\DefinitionFinder\{FileParser, ScannedClassish};
 use namespace HH\Lib\Vec;
 
 class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
@@ -28,9 +26,8 @@ class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testClassIsAbstract(): void {
-    $this->assertEquals(
+    expect(Vec\map($this->classes ?? vec[], $x ==> $x->isAbstract()))->toBeSame(
       vec[true, false],
-      Vec\map($this->classes ?? vec[], $x ==> $x->isAbstract()),
       'isAbstract',
     );
   }
@@ -41,10 +38,7 @@ class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
       'Facebook\\DefinitionFinder\\Test\\AbstractClassWithContents',
       $class?->getName(),
     );
-    $this->assertEquals(
-      vec[false, true],
-      Vec\map($class?->getMethods() ?? vec[], $x ==> $x->isAbstract()),
-      'isAbstract',
-    );
+    expect(Vec\map($class?->getMethods() ?? vec[], $x ==> $x->isAbstract()))
+      ->toBeSame(vec[false, true], 'isAbstract');
   }
 }

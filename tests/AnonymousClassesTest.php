@@ -17,7 +17,7 @@ final class AnonymousClassesTest extends \PHPUnit_Framework_TestCase {
   public function testParsesInFunction(): void {
     $parser =
       FileParser::fromData('<?php function foo() { return new class {}; }');
-    $this->assertEquals(vec['foo'], $parser->getFunctionNames());
+    expect($parser->getFunctionNames())->toBeSame(vec['foo']);
   }
 
   public function testParsesInMethod(): void {
@@ -25,10 +25,8 @@ final class AnonymousClassesTest extends \PHPUnit_Framework_TestCase {
       '<?php class Foo { function bar() { return new class {}; } }',
     );
     $class = $parser->getClass('Foo');
-    $this->assertEquals(
-      vec['bar'],
-      Vec\map($class->getMethods(), $method ==> $method->getName()),
-    );
+    expect(Vec\map($class->getMethods(), $method ==> $method->getName()))
+      ->toBeSame(vec['bar']);
   }
 
   public function testMethodsNotPropagatedToContainer(): void {
@@ -45,9 +43,7 @@ class Foo {
 EOF;
     $parser = FileParser::fromData($code);
     $class = $parser->getClass('Foo');
-    $this->assertEquals(
-      vec['bar'],
-      Vec\map($class->getMethods(), $method ==> $method->getName()),
-    );
+    expect(Vec\map($class->getMethods(), $method ==> $method->getName()))
+      ->toBeSame(vec['bar']);
   }
 }

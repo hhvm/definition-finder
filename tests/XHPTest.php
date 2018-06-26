@@ -10,10 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use type Facebook\DefinitionFinder\{
-  FileParser,
-  ScannedClassish,
-};
+use type Facebook\DefinitionFinder\{FileParser, ScannedClassish};
 use function Facebook\FBExpect\expect;
 use namespace HH\Lib\C;
 

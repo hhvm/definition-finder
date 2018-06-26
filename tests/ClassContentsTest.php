@@ -10,10 +10,8 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use type Facebook\DefinitionFinder\{
-  FileParser,
-  ScannedClassish,
-};
+use function Facebook\FBExpect\expect;
+use type Facebook\DefinitionFinder\{FileParser, ScannedClassish};
 use namespace HH\Lib\{C, Vec};
 
 class ClassContentsTest extends \PHPUnit_Framework_TestCase {
@@ -41,87 +39,76 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       'The anonymous class should not be returned',
     );
     $class = $parser->getClass('ClassUsingAnonymousClass');
-    $this->assertEquals(
+    expect(Vec\map($class->getMethods(), $it ==> $it->getName()))->toBeSame(
       vec['methodOne', 'methodTwo'],
-      Vec\map($class->getMethods(), $it ==> $it->getName()),
     );
   }
 
   public function testNamespaceName(): void {
-    $this->assertEquals(
+    expect($this->class?->getNamespaceName())->toBeSame(
       'Facebook\DefinitionFinder\Test',
-      $this->class?->getNamespaceName(),
     );
-    $this->assertEquals(
-      vec['', '', '', ''],
-      Vec\map($this->class?->getMethods()?? vec[], $x ==> $x->getNamespaceName()),
-    );
+    expect(
+      Vec\map(
+        $this->class?->getMethods() ?? vec[],
+        $x ==> $x->getNamespaceName(),
+      ),
+    )->toBeSame(vec['', '', '', '']);
   }
 
   public function testShortName(): void {
-    $this->assertEquals('ClassWithContents', $this->class?->getShortName());
-    $this->assertEquals(
+    expect($this->class?->getShortName())->toBeSame('ClassWithContents');
+    expect(
+      Vec\map($this->class?->getMethods() ?? vec[], $x ==> $x->getShortName()),
+    )->toBeSame(
       vec[
         'publicMethod',
         'protectedMethod',
         'privateMethod',
         'PublicStaticMethod',
       ],
-      Vec\map($this->class?->getMethods()?? vec[], $x ==> $x->getShortName()),
     );
   }
 
   public function testMethodNames(): void {
-    $this->assertEquals(
-      vec[
-        'publicMethod',
-        'protectedMethod',
-        'privateMethod',
-        'PublicStaticMethod',
-      ],
-      Vec\map($this->class?->getMethods()?? vec[], $x ==> $x->getName()),
-    );
+    expect(Vec\map($this->class?->getMethods() ?? vec[], $x ==> $x->getName()))
+      ->toBeSame(
+        vec[
+          'publicMethod',
+          'protectedMethod',
+          'privateMethod',
+          'PublicStaticMethod',
+        ],
+      );
   }
 
   public function testMethodVisibility(): void {
-    $this->assertEquals(
-      vec[true, false, false, true],
-      Vec\map($this->class?->getMethods()?? vec[], $x ==> $x->isPublic()),
-      'isPublic',
-    );
-    $this->assertEquals(
-      vec[false, true, false, false],
-      Vec\map($this->class?->getMethods()?? vec[], $x ==> $x->isProtected()),
-      'isProtected',
-    );
-    $this->assertEquals(
-      vec[false, false, true, false],
-      Vec\map($this->class?->getMethods()?? vec[], $x ==> $x->isPrivate()),
-      'isPrivate',
-    );
+    expect(Vec\map($this->class?->getMethods() ?? vec[], $x ==> $x->isPublic()))
+      ->toBeSame(vec[true, false, false, true], 'isPublic');
+    expect(
+      Vec\map($this->class?->getMethods() ?? vec[], $x ==> $x->isProtected()),
+    )->toBeSame(vec[false, true, false, false], 'isProtected');
+    expect(
+      Vec\map($this->class?->getMethods() ?? vec[], $x ==> $x->isPrivate()),
+    )->toBeSame(vec[false, false, true, false], 'isPrivate');
   }
 
   public function testHackConstants(): void {
     $constants = $this->class?->getConstants();
-    $this->assertEquals(
+    expect(Vec\map($constants ?? vec[], $x ==> $x->getName()))->toBeSame(
       vec['FOO', 'BAR'],
-      Vec\map($constants?? vec[], $x ==> $x->getName()),
     );
-    $this->assertEquals(
-      vec['string', 'int'],
-      Vec\map($constants?? vec[], $x ==> $x->getTypehint()?->getTypeName()),
-    );
-    $this->assertEquals(
+    expect(
+      Vec\map($constants ?? vec[], $x ==> $x->getTypehint()?->getTypeName()),
+    )->toBeSame(vec['string', 'int']);
+    expect(Vec\map($constants ?? vec[], $x ==> $x->isAbstract()))->toBeSame(
       vec[false, false],
-      Vec\map($constants?? vec[], $x ==> $x->isAbstract()),
     );
-    $this->assertEquals(
+    expect(Vec\map($constants ?? vec[], $x ==> $x->getValue()))->toBeSame(
       vec["'bar'", '60 * 60 * 24'],
-      Vec\map($constants?? vec[], $x ==> $x->getValue()),
     );
-    $this->assertEquals(
+    expect(Vec\map($constants ?? vec[], $x ==> $x->getDocComment()))->toBeSame(
       vec['/** FooDoc */', '/** BarDoc */'],
-      Vec\map($constants?? vec[], $x ==> $x->getDocComment()),
     );
   }
 
@@ -130,21 +117,17 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $class = $parser->getClass('Foo');
     $constants = $class->getConstants();
 
-    $this->assertEquals(
+    expect(Vec\map($constants, $x ==> $x->getName()))->toBeSame(
       vec['FOO', 'BAR'],
-      Vec\map($constants, $x ==> $x->getName()),
     );
-    $this->assertEquals(
+    expect(Vec\map($constants, $x ==> $x->getTypehint()))->toBeSame(
       vec[null, null],
-      Vec\map($constants, $x ==> $x->getTypehint()),
     );
-    $this->assertEquals(
+    expect(Vec\map($constants, $x ==> $x->getValue()))->toBeSame(
       vec["'bar'", '60 * 60 * 24'],
-      Vec\map($constants, $x ==> $x->getValue()),
     );
-    $this->assertEquals(
+    expect(Vec\map($constants, $x ==> $x->getDocComment()))->toBeSame(
       vec['/** FooDoc */', '/** BarDoc */'],
-      Vec\map($constants, $x ==> $x->getDocComment()),
     );
   }
 
@@ -153,59 +136,50 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromFile(__DIR__.'/data/php_class_contents.php');
     $funcs = $parser->getClass('Foo')->getMethods();
 
-    $this->assertEquals(
+    expect(Vec\map($funcs, $x ==> $x->getName()))->toBeSame(
       vec[
         'defaultVisibility',
         'privateVisibility',
         'alsoDefaultVisibility',
       ],
-      Vec\map($funcs, $x ==> $x->getName()),
     );
-    $this->assertEquals(
+    expect(Vec\map($funcs, $x ==> $x->isPublic()))->toBeSame(
       vec[true, false, true],
-      Vec\map($funcs, $x ==> $x->isPublic()),
     );
   }
 
   public function testMethodsAreStatic(): void {
-    $this->assertEquals(
-      vec[false, false, false, true],
-      Vec\map($this->class?->getMethods()?? vec[], $x ==> $x->isStatic()),
-      'isPublic',
-    );
+    expect(Vec\map($this->class?->getMethods() ?? vec[], $x ==> $x->isStatic()))
+      ->toBeSame(vec[false, false, false, true], 'isPublic');
   }
 
   public function testPropertyNames(): void {
-    $this->assertEquals(
-      vec['foo', 'herp'],
-      Vec\map($this->class?->getProperties()?? vec[], $x ==> $x->getName()),
-    );
+    expect(
+      Vec\map($this->class?->getProperties() ?? vec[], $x ==> $x->getName()),
+    )->toBeSame(vec['foo', 'herp']);
   }
 
   public function testPropertyVisibility(): void {
-    $this->assertEquals(
-      vec[false, true],
-      Vec\map($this->class?->getProperties()?? vec[], $x ==> $x->isPublic()),
-    );
+    expect(
+      Vec\map($this->class?->getProperties() ?? vec[], $x ==> $x->isPublic()),
+    )->toBeSame(vec[false, true]);
   }
 
   public function testPropertyTypes(): void {
-    $this->assertEquals(
-      vec['bool', 'string'],
+    expect(
       $this->class?->getProperties()
-      |> Vec\map($$ ?? vec[], $x ==> $x->getTypehint()?->getTypeName()),
-    );
+        |> Vec\map($$ ?? vec[], $x ==> $x->getTypehint()?->getTypeName()),
+    )->toBeSame(vec['bool', 'string']);
   }
 
   public function testTypelessProperty(): void {
     $parser = FileParser::fromFile(__DIR__.'/data/php_class_contents.php');
     $props = $parser->getClass('Foo')->getProperties();
 
-    $this->assertEquals(
+    expect(Vec\map($props, $x ==> $x->getName()))->toBeSame(
       vec['untypedProperty'],
-      Vec\map($props, $x ==> $x->getName()),
     );
-    $this->assertEquals(vec[null], Vec\map($props, $x ==> $x->getTypehint()));
+    expect(Vec\map($props, $x ==> $x->getTypehint()))->toBeSame(vec[null]);
   }
 
   public function staticPropertyProvider(): array<array<mixed>> {
@@ -236,15 +210,14 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $class = $parser->getClass('Foo');
     $props = $class->getProperties();
 
-    $this->assertEquals(vec['bar'], Vec\map($props, $x ==> $x->getName()));
+    expect(Vec\map($props, $x ==> $x->getName()))->toBeSame(vec['bar']);
 
-    $this->assertEquals(
+    expect(Vec\map($props, $x ==> $x->getTypehint()?->getTypeName()))->toBeSame(
       vec[$type],
-      Vec\map($props, $x ==> $x->getTypehint()?->getTypeName()),
     );
 
 
-    $this->assertEquals(vec[true], Vec\map($props, $x ==> $x->isStatic()));
+    expect(Vec\map($props, $x ==> $x->isStatic()))->toBeSame(vec[true]);
   }
 
   public function testTypeConstant(): void {
@@ -267,16 +240,15 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
       "}";
     $parser = FileParser::fromData($data);
     $class = $parser->getClass('Bar');
-    $this->assertEquals(
-      vec[vec['self::FOO::BAR'] ],
+    expect(
       Vec\map(
         $class->getMethods(),
         $method ==> Vec\map(
           $method->getParameters(),
-          $param ==> $param->getTypehint()?->getTypeText()
+          $param ==> $param->getTypehint()?->getTypeText(),
         ),
       ),
-    );
+    )->toBeSame(vec[vec['self::FOO::BAR']]);
   }
 
   public function testConstraintedTypeConstant(): void {

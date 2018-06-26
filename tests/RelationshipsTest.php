@@ -10,6 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
+use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\FileParser;
 use namespace HH\Lib\{C, Vec};
 
@@ -24,14 +25,14 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
   public function testClassImplements(): void {
     $data = '<?hh class Foo implements Bar, Baz {}';
     $def = FileParser::fromData($data)->getClass('Foo');
-    $this->assertEquals(vec['Bar', 'Baz'], $def->getInterfaceNames());
+    expect($def->getInterfaceNames())->toBeSame(vec['Bar', 'Baz']);
     $this->assertNull($def->getParentClassName());
   }
 
   public function testInterfaceExtends(): void {
     $data = '<?hh interface Foo extends Bar, Baz {}';
     $def = FileParser::fromData($data)->getInterface('Foo');
-    $this->assertEquals(vec['Bar', 'Baz'], $def->getInterfaceNames());
+    expect($def->getInterfaceNames())->toBeSame(vec['Bar', 'Baz']);
     $this->assertNull($def->getParentClassName());
   }
 
@@ -39,7 +40,7 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh class Foo extends Bar implements Herp, Derp {}';
     $def = FileParser::fromData($data)->getClass('Foo');
     $this->assertSame('Bar', $def->getParentClassName());
-    $this->assertEquals(vec['Herp', 'Derp'], $def->getInterfaceNames());
+    expect($def->getInterfaceNames())->toBeSame(vec['Herp', 'Derp']);
   }
 
   public function testClassExtendsGeneric(): void {
@@ -52,46 +53,41 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
   public function testClassImplementsGenerics(): void {
     $data = '<?hh class Foo implements KeyedIterable<Tk,Tv> {}';
     $def = FileParser::fromData($data)->getClass('Foo');
-    $this->assertEquals(vec['KeyedIterable'], $def->getInterfaceNames());
-    $this->assertEquals(
-      vec['KeyedIterable<Tk,Tv>'],
-      Vec\map($def->getInterfaceInfo(), $x ==> $x->getTypeText()),
-    );
+    expect($def->getInterfaceNames())->toBeSame(vec['KeyedIterable']);
+    expect(Vec\map($def->getInterfaceInfo(), $x ==> $x->getTypeText()))
+      ->toBeSame(vec['KeyedIterable<Tk,Tv>']);
   }
 
   public function testClassImplementsNestedGenerics(): void {
     $data = '<?hh class VectorIterable<Tv> implements Iterable<vec<Tv>> {}';
     $def = FileParser::fromData($data)->getClass('VectorIterable');
-    $this->assertEquals(vec['Iterable'], $def->getInterfaceNames());
-    $this->assertEquals(
-      vec[vec['Vector']],
+    expect($def->getInterfaceNames())->toBeSame(vec['Iterable']);
+    expect(
       Vec\map(
         $def->getInterfaceInfo(),
         $x ==> Vec\map($x->getGenericTypes(), $y ==> $y->getTypeName()),
       ),
-    );
-    $this->assertEquals(
-      vec['Iterable<vec<Tv>>'],
-      Vec\map($def->getInterfaceInfo(), $x ==> $x->getTypeText()),
-    );
+    )->toBeSame(vec[vec['Vector']]);
+    expect(Vec\map($def->getInterfaceInfo(), $x ==> $x->getTypeText()))
+      ->toBeSame(vec['Iterable<vec<Tv>>']);
   }
 
   public function testTraitImplements(): void {
     $data = '<?hh interface IFoo {}; trait TFoo implements IFoo {}';
     $def = FileParser::fromData($data)->getTrait('TFoo');
-    $this->assertEquals(vec['IFoo'], $def->getInterfaceNames());
+    expect($def->getInterfaceNames())->toBeSame(vec['IFoo']);
   }
 
   public function testUsesTraits(): void {
     $data = '<?hh class Foo { use Herp; use Derp; }';
     $def = FileParser::fromData($data)->getClass('Foo');
-    $this->assertEquals(vec['Herp', 'Derp'], $def->getTraitNames());
+    expect($def->getTraitNames())->toBeSame(vec['Herp', 'Derp']);
   }
 
   public function testUsesMultipleTraitsInSingleStatement(): void {
     $data = '<?hh class Foo { use Herp, Derp; }';
     $def = FileParser::fromData($data)->getClass('Foo');
-    $this->assertEquals(vec['Herp', 'Derp'], $def->getTraitNames());
+    expect($def->getTraitNames())->toBeSame(vec['Herp', 'Derp']);
   }
 
   public function testUseTraitWithConflictResolution(): void {
@@ -102,16 +98,15 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
       "    Bar::herp as derp;\n".
       "}";
     $def = FileParser::fromData($data)->getClass('MyClass');
-    $this->assertEquals(vec['Foo', 'Bar'], $def->getTraitNames());
+    expect($def->getTraitNames())->toBeSame(vec['Foo', 'Bar']);
   }
 
   public function testUsesTraitsInNamespace(): void {
     $data =
       "<?hh\n"."namespace MyNamespace;".'class Foo { use Herp; use Derp; }';
     $def = FileParser::fromData($data)->getClass('MyNamespace\\Foo');
-    $this->assertEquals(
+    expect($def->getTraitNames())->toBeSame(
       vec['MyNamespace\\Herp', 'MyNamespace\\Derp'],
-      $def->getTraitNames(),
     );
   }
 
@@ -119,11 +114,9 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh class Foo { use Herp<string>; }';
     $def = FileParser::fromData($data)->getClass('Foo');
     $traits = $def->getTraitGenerics();
-    $this->assertEquals(1, C\count($traits));
-    $this->assertEquals('Herp', C\first_key($traits));
-    $this->assertEquals(
-      vec['string'],
-      Vec\map(C\first($traits) ?? vec[], $a ==> $a->getTypeText()),
-    );
+    expect(C\count($traits))->toBeSame(1);
+    expect(C\first_key($traits))->toBeSame('Herp');
+    expect(Vec\map(C\first($traits) ?? vec[], $a ==> $a->getTypeText()))
+      ->toBeSame(vec['string']);
   }
 }

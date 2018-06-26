@@ -8,6 +8,7 @@
  *
  */
 
+use function Facebook\FBExpect\expect;
 use type \Facebook\DefinitionFinder\FileParser;
 use namespace HH\Lib\Vec;
 
@@ -19,25 +20,18 @@ final class RelativeNamespaceTest extends PHPUnit_Framework_TestCase {
   public function testFunctionBodyUsesRelativeNamespace(): void {
     $code = '<?php function foo() { namespace\bar(); } function baz() {}';
     $fp = FileParser::fromData($code);
-    $this->assertEquals(
-      vec['foo', 'baz'],
-      $fp->getFunctionNames(),
-    );
+    expect($fp->getFunctionNames())->toBeSame(vec['foo', 'baz']);
 
-    $this->assertEquals(
-      vec[],
-      Vec\map($fp->getFunctions(), $f ==> $f->getNamespaceName()),
-    );
+    expect(Vec\map($fp->getFunctions(), $f ==> $f->getNamespaceName()))
+      ->toBeSame(vec[]);
   }
 
   public function testPseudomainUsesRelativeNamespace(): void {
     $code = '<?php namespace\foo(); function bar() {}';
     $fp = FileParser::fromData($code);
-    $this->assertEquals(vec['bar'], $fp->getFunctionNames());
+    expect($fp->getFunctionNames())->toBeSame(vec['bar']);
 
-    $this->assertEquals(
-      vec[''],
-      Vec\map($fp->getFunctions(), $f ==> $f->getNamespaceName()),
-    );
+    expect(Vec\map($fp->getFunctions(), $f ==> $f->getNamespaceName()))
+      ->toBeSame(vec['']);
   }
 }
