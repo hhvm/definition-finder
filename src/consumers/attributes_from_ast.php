@@ -26,6 +26,6 @@ function attributes_from_ast(
         $attr->getValues()?->getItemsOfType(HHAST\EditableNode::class) ?? vec[],
         $child ==> value_from_ast($child),
       ),
-      $attr ==> $attr->getName()->getCode(),
+      $attr ==> name_from_ast($attr->getName()),
     );
 }
