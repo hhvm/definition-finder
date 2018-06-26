@@ -51,8 +51,13 @@ function typehint_from_ast(
     );
   }
   if ($node instanceof HHAST\ClosureTypeSpecifier) {
-    return
-      new ScannedTypehint($node, 'callable', $node->getCode(), vec[], false);
+    return new ScannedTypehint(
+      $node,
+      'callable',
+      ast_without_trivia($node)->getCode(),
+      vec[],
+      false,
+    );
   }
   if ($node instanceof HHAST\DarrayTypeSpecifier) {
     return new ScannedTypehint(
@@ -111,7 +116,13 @@ function typehint_from_ast(
     );
   }
   if ($node instanceof HHAST\ShapeTypeSpecifier) {
-    return new ScannedTypehint($node, 'shape', 'shape', vec[], false);
+    return new ScannedTypehint(
+      $node,
+      'shape',
+      ast_without_trivia($node)->getCode(),
+      vec[],
+      false,
+    );
   }
   if ($node instanceof HHAST\SimpleTypeSpecifier) {
     return typehint_from_ast($context, $node->getSpecifier());
@@ -130,7 +141,8 @@ function typehint_from_ast(
     );
   }
   if ($node instanceof HHAST\TypeConstant) {
-    $left = nullthrows(typehint_from_ast($context, $node->getLeftType()))->getTypeText();
+    $left = nullthrows(typehint_from_ast($context, $node->getLeftType()))
+      ->getTypeText();
     $str = $left.'::'.$node->getRightType()->getText();
     return new ScannedTypehint($node, $str, $str, vec[], false);
   }
