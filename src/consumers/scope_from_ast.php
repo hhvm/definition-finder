@@ -39,41 +39,17 @@ function scope_from_ast(
   if ($without_bodies) {
     $context['namespace'] = C\first($without_bodies)?->getName()?->getCode();
   }
-
-  $uses = _Private\items_of_type($ast, HHAST\NamespaceUseDeclaration::class);
-  foreach ($uses as $use) {
-    $kind = $use->getKind();
-    if ($kind instanceof HHAST\ConstToken) {
-      continue;
-    }
-    if ($kind instanceof HHAST\FunctionToken) {
-      continue;
-    }
-    $mapping = Dict\pull(
-      _Private\items_of_type(
-        $use->getClauses(),
-        HHAST\NamespaceUseClause::class,
-      ),
-      $node ==> name_from_ast($node->getName()),
-      $node ==>
-        name_from_ast($node->hasAlias() ? $node->getAliasx() : $node->getName())
-        |> Str\split($$, "\\")
-        |> C\lastx($$),
+  $context = $context
+    |> context_with_use_declarations(
+      $$,
+      _Private\items_of_type($ast, HHAST\NamespaceUseDeclaration::class),
+    )
+    |> context_with_group_use_declarations(
+      $$,
+      _Private\items_of_type($ast, HHAST\NamespaceGroupUseDeclaration::class),
     );
 
-    if ($kind instanceof HHAST\TypeToken || $kind === null) {
-      $context['usedTypes'] = Dict\merge($context['usedTypes'], $mapping);
-    }
-    if ($kind instanceof HHAST\NamespaceToken || $kind === null) {
-      $context['usedNamespaces'] =
-        Dict\merge($context['usedNamespaces'], $mapping);
-    }
-  }
-
-  // TODO: group use clauses
-
   $classish = _Private\items_of_type($ast, HHAST\ClassishDeclaration::class);
-
   $decls = new ScannedScope(
     $ast,
     $context['definitionContext'],
@@ -129,7 +105,7 @@ function scope_from_ast(
     ),
     /* type constants = */ Vec\map(
       _Private\items_of_type($ast, HHAST\TypeConstDeclaration::class),
-      $node ==> type_constant_from_ast($context, $node,)
+      $node ==> type_constant_from_ast($context, $node),
     ),
     /* enums = */ Vec\map(
       _Private\items_of_type($ast, HHAST\EnumDeclaration::class),
