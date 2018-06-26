@@ -126,7 +126,10 @@ function scope_from_ast(
         )
         |> Vec\map($$, $e ==> constant_from_define_ast($context, $e)),
     ),
-    /* type constants = */ vec[],
+    /* type constants = */ Vec\map(
+      _Private\items_of_type($ast, HHAST\TypeConstDeclaration::class),
+      $node ==> type_constant_from_ast($context, $node,)
+    ),
     /* enums = */ Vec\map(
       _Private\items_of_type($ast, HHAST\EnumDeclaration::class),
       $node ==> enum_from_ast($context, $node),

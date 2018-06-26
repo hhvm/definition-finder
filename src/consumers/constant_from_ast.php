@@ -18,16 +18,16 @@ function constant_from_ast(
   HHAST\ConstantDeclarator $inner,
 ): ScannedConstant {
   return (
-    new ScannedConstantBuilder(
+    new ScannedConstant(
       $inner,
       decl_name_in_context($context, name_from_ast($inner->getName())),
       context_with_node_position($context, $inner)['definitionContext'],
+      /* docblock = */ null,
       value_from_ast($inner->getInitializer()?->getValue()),
       typehint_from_ast($context, $outer->getTypeSpecifier()),
       $outer->getAbstract() instanceof HHAST\AbstractToken
         ? AbstractnessToken::IS_ABSTRACT
         : AbstractnessToken::NOT_ABSTRACT,
     )
-  )
-    ->build();
+  );
 }
