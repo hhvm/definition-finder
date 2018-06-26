@@ -23,6 +23,7 @@ final class LiteralExpression extends Expression<mixed> {
       DecimalLiteralExpression::class,
       DoubleQuotedStringLiteralExpression::class,
       FloatingLiteralExpression::class,
+      HeredocStringLiteralExpression::class,
       NullLiteralExpression::class,
       OctalLiteralExpression::class,
       SingleQuotedStringLiteralExpression::class,
