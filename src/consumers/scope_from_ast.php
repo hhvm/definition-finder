@@ -124,7 +124,8 @@ function scope_from_ast(
           $$,
           $e ==> TypeAssert\instance_of(HHAST\DefineExpression::class, $e),
         )
-        |> Vec\map($$, $e ==> constant_from_define_ast($context, $e)),
+        |> Vec\map($$, $e ==> constant_from_define_ast($context, $e))
+        |> Vec\filter_nulls($$),
     ),
     /* type constants = */ Vec\map(
       _Private\items_of_type($ast, HHAST\TypeConstDeclaration::class),

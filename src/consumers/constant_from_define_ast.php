@@ -16,7 +16,7 @@ use namespace HH\Lib\{C, Str};
 function constant_from_define_ast(
   ConsumerContext $context,
   HHAST\DefineExpression $node,
-): ScannedConstant {
+): ?ScannedConstant {
   $arg_list = $node->getArgumentListx();
   $items = $arg_list->getItemsOfType(HHAST\EditableNode::class);
   invariant(C\count($items) === 2, 'Expected define() to have two arguments');
@@ -27,22 +27,19 @@ function constant_from_define_ast(
     $name = $name->getText();
   } else {
     $name = value_from_ast($name);
-    invariant(
-      $name !== null,
-      "Don't know how to handle constant name: '%s'",
-      $items[0]->getCode(),
-    );
-    $name = (string) $name;
+    if ($name === null) {
+      return null;
+    }
+    $name = (string)$name;
   }
 
-  return (
-    new ScannedConstantBuilder(
-      $node,
-      $name, // these are not relative to the current namespace
-      context_with_node_position($context, $node)['definitionContext'],
-      value_from_ast($value),
-      /* typehint = */ null,
-      AbstractnessToken::NOT_ABSTRACT,
-    )
-  )->build();
+  return new ScannedConstant(
+    $node,
+    $name, // these are not relative to the current namespace
+    context_with_node_position($context, $node)['definitionContext'],
+    null,
+    value_from_ast($value),
+    /* typehint = */ null,
+    AbstractnessToken::NOT_ABSTRACT,
+  );
 }
