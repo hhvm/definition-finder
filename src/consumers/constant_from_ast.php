@@ -22,7 +22,8 @@ function constant_from_ast(
       $inner,
       decl_name_in_context($context, name_from_ast($inner->getName())),
       context_with_node_position($context, $inner)['definitionContext'],
-      /* docblock = */ null,
+      doccomment_from_ast($context['definitionContext'], $inner) ??
+      doccomment_from_ast($context['definitionContext'], $outer),
       value_from_ast($inner->getInitializer()?->getValue()),
       typehint_from_ast($context, $outer->getTypeSpecifier()),
       $outer->getAbstract() instanceof HHAST\AbstractToken
