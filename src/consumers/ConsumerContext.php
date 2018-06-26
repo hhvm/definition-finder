@@ -16,6 +16,7 @@ use namespace Facebook\HHAST;
  * definitions found in the AST */
 type ConsumerContext = shape(
   'definitionContext' => ScannedDefinition::TContext,
+  'scopeType' => ScopeType,
   'ast' => HHAST\Script,
   'namespace' => ?string,
   'usedTypes' => dict<string, string>,

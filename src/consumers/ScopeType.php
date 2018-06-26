@@ -12,16 +12,8 @@ namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
 
-function decl_name_in_context(
-  ConsumerContext $context,
-  string $name,
-): string {
-  if ($context['scopeType'] === ScopeType::CLASSISH_SCOPE) {
-    return $name;
-  }
-  $ns = $context['namespace'];
-  if ($ns === null || $ns === '') {
-    return $name;
-  }
-  return $ns."\\".$name;
+enum ScopeType: string {
+  FILE_SCOPE = 'file';
+  NAMESPACE_SCOPE = 'ns';
+  CLASSISH_SCOPE = 'classish';
 }

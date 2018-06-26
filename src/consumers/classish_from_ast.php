@@ -55,6 +55,9 @@ function classish_from_ast<T as ScannedClassish>(
     Keyset\map($generics, $g ==> $g->getName()),
   );
 
+  $contents_context = $context;
+  $contents_context['scopeType'] = ScopeType::CLASSISH_SCOPE;
+
   $builder = (
     new ScannedClassishBuilder(
       $node,
@@ -75,7 +78,9 @@ function classish_from_ast<T as ScannedClassish>(
         : FinalityToken::NOT_FINAL,
     )
     ->setGenericTypes($generics)
-    ->setContents(scope_from_ast($context, $node->getBody()->getElements()));
+    ->setContents(
+      scope_from_ast($contents_context, $node->getBody()->getElements()),
+    );
 
   $extends = $node->getExtendsList();
   if ($extends) {

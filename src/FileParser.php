@@ -17,6 +17,7 @@ final class FileParser extends BaseParser {
   private function __construct(private string $file, HHAST\Script $ast) {
     $context = shape(
       'definitionContext' => self::getScopeContext($file, $ast),
+      'scopeType' => ScopeType::FILE_SCOPE,
       'ast' => $ast,
       'namespace' => null,
       'usedTypes' => dict[],
