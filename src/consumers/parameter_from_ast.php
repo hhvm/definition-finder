@@ -26,15 +26,17 @@ function parameter_from_ast(
   } else {
     invariant_violation("Don't know how to handle name type %s", \get_class($name));
   }
-  return (new ScannedParameterBuilder(
+  return new ScannedParameter(
     $node,
     Str\strip_prefix($info['name']->getText(), '$'),
     context_with_node_position($context, $node)['definitionContext'],
-  ))
-  ->setAttributes(attributes_from_ast($node->getAttribute()))
-  ->setTypehint(typehint_from_ast($context, $node->getType()))
-  ->setIsVariadic($info['variadic'])
-  ->setIsPassedByReference($info['byref'])
-  ->setIsInOut($node->getCallConvention() instanceof HHAST\InoutToken)
-  ->build();
+    attributes_from_ast($node->getAttribute()),
+    /* doccomment = */ null,
+    typehint_from_ast($context, $node->getType()),
+    $info['byref'],
+    $node->getCallConvention() instanceof HHAST\InoutToken,
+    $info['variadic'],
+    ast_without_trivia($node->getDefaultValue() ?? HHAST\Missing())->getCode(),
+    /* visibility = */ null, // FIXME
+  );
 }
