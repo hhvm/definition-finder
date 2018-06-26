@@ -71,7 +71,7 @@ class Foo {
       ->toBeSame(vec['string', 'mixed', 'int']);
 
     expect(Vec\map($props ?? vec[], $x ==> $x->getAttributes()))->toBeSame(
-      vec[Map {}, dict['HerpDerp' => vec[]], Map {}],
+      vec[dict[], dict['HerpDerp' => vec[]], dict[]],
     );
 
     expect(Vec\map($props ?? vec[], $x ==> $x->getDocComment()))->toBeSame(
