@@ -96,6 +96,7 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
       "  use Foo, Bar {\n".
       "    Foo::herp insteadof Bar;\n".
       "    Bar::herp as derp;\n".
+      "  };\n".
       "}";
     $def = FileParser::fromData($data)->getClass('MyClass');
     expect($def->getTraitNames())->toBeSame(vec['Foo', 'Bar']);

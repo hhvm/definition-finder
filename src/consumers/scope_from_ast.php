@@ -73,14 +73,18 @@ function scope_from_ast(
       _Private\items_of_type($ast, HHAST\MethodishDeclaration::class),
       $node ==> method_from_ast($context, $node),
     ),
-    /* trait use statements = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\TraitUse::class),
-      $node ==> Vec\map(
-        $node->getNames()->getItemsOfType(HHAST\EditableNode::class),
-        $inner ==> typehint_from_ast($context, $inner),
+    /* trait use statements = */ Vec\concat(
+      Vec\map(
+        _Private\items_of_type($ast, HHAST\TraitUse::class),
+        $node ==> $node->getNames()->getItemsOfType(HHAST\EditableNode::class),
+      ),
+      Vec\map(
+        _Private\items_of_type($ast, HHAST\TraitUseConflictResolution::class),
+        $node ==> $node->getNames()->getItemsOfType(HHAST\EditableNode::class),
       ),
     )
     |> Vec\flatten($$)
+    |> Vec\map($$, $node ==> typehint_from_ast($context, $node))
     |> Vec\filter_nulls($$),
     /* properties = */ Vec\map(
       _Private\items_of_type($ast, HHAST\PropertyDeclaration::class),
