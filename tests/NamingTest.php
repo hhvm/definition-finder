@@ -26,9 +26,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
 
   /** Things that are valid names, but have a weird token type */
   public function specialNameProvider(): array<array<string>> {
-    if (\HHVM_VERSION_ID === 32700) {
-      $this->markTestIncomplete("https://github.com/facebook/hhvm/issues/8240");
-    }
+    $this->markTestIncomplete("https://github.com/facebook/hhvm/issues/8240");
     return [
       ['dict'], // HHVM >= 3.13
       ['vec'], // HHVM >= 3.14
