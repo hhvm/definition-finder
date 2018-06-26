@@ -30,6 +30,18 @@ function parameter_from_ast(
       \get_class($name),
     );
   }
+
+  $v = $node->getVisibility();
+  if ($v instanceof HHAST\PrivateToken) {
+    $visibility = VisibilityToken::T_PRIVATE;
+  } else if ($v instanceof HHAST\ProtectedToken) {
+    $visibility = VisibilityToken::T_PROTECTED;
+  } else if ($v instanceof HHAST\PublicToken) {
+    $visibility = VisibilityToken::T_PUBLIC;
+  } else {
+    $visibility = null;
+  }
+
   return new ScannedParameter(
     $node,
     Str\strip_prefix($info['name']->getText(), '$'),
@@ -43,6 +55,6 @@ function parameter_from_ast(
     ($node->getDefaultValue() === null)
       ? null
       : ast_without_trivia($node->getDefaultValuex()->getValue())->getCode(),
-    /* visibility = */ null, // FIXME
+    $visibility,
   );
 }
