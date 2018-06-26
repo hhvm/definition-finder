@@ -24,6 +24,6 @@ function items_of_type<T as HHAST\EditableNode>(
   if ($list === null) {
     return vec[];
   }
-  /* HH_FIXME[4110] */
+  /* HH_FIXME[4110] remove when getItemsOfType is typed in HHAST itself */
   return $list->getItemsOfType($what);
 }

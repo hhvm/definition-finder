@@ -126,12 +126,12 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     expect(Vec\map($function->getParameters(), $x ==> $x->getName()))->toBeSame(
       vec['bar'],
     );
-    /* FIXME
-    $this->assertEquals(
-      vec[new ScannedTypehint('string', 'string', vec[], false)],
-      Vec\map($function->getParameters(), $x ==> $x->getTypehint()),
-    );
-    */
+    expect(
+      Vec\map(
+        $function->getParameters(),
+        $x ==> $x->getTypehint()?->getTypeText(),
+      ),
+    )->toBeSame(vec['string']);
     expect(Vec\map($params, $x ==> $x->getDefaultString()))->toBeSame(
       vec['"baz"'],
     );
@@ -244,23 +244,11 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       vec[false, true],
     );
 
-    /* FIXME
-    $this->assertEquals(
-      vec[
-        new ScannedTypehint('string', 'string', vec[], false),
-        null,
-      ],
-      Vec\map($params, $x ==> $x->getTypehint()),
-    );
-    */
+    expect(Vec\map($params, $x ==> $x->getTypehint()?->getTypeText()))
+      ->toBeSame(vec['string', null]);
   }
 
   public function testWithTypedVariadicParam(): void {
-    /* HH_FIXME[4106] HHVM_VERSION not defined */
-    /* HH_FIXME[2049] HHVM_VERSION not defined */
-    if (!\version_compare(HHVM_VERSION, '3.11.0', '>=')) {
-      $this->markTestSkipped('Typed variadics only supported in 3.11+');
-    }
     $data = '<?hh function foo(array<mixed> ...$bar) {}';
 
     $parser = FileParser::fromData($data);
@@ -271,19 +259,8 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
     expect(Vec\map($params, $x ==> $x->isVariadic()))->toBeSame(vec[true]);
 
-    /* FIXME
-        $this->assertEquals(
-          vec[
-            new ScannedTypehint(
-              'array',
-              'array',
-              vec[new ScannedTypehint('mixed', 'mixed', vec[], false)],
-              false,
-            ),
-          ],
-          Vec\map($params, $x ==> $x->getTypehint()),
-        );
-        */
+    expect(Vec\map($params, $x ==> $x->getTypehint()?->getTypeText()))
+      ->toBeSame(vec['array<mixed>']);
   }
 
   public function testWithHackCallableTypehint(): void {

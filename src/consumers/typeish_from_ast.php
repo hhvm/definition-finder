@@ -36,6 +36,6 @@ function typeish_from_ast<T as ScannedTypeish>(
     decl_name_in_context($context, name_from_ast($node->getName())),
     context_with_node_position($context, $node)['definitionContext'],
     attributes_from_ast($node->getAttributeSpec()),
-    /* FIXME: doccomemnt = */ null,
+    null,
   );
 }

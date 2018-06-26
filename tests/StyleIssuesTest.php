@@ -28,12 +28,7 @@ final class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh function foo() : void {}';
     $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('foo');
-    /* FIXME
-    $this->assertEquals(
-      new ScannedTypehint('void', 'void', vec[], false),
-      $fun->getReturnType(),
-    );
-    */
+    expect($fun->getReturnType()?->getTypeText())->toBeSame('void');
   }
 
   public function testWhitespaceBetweenAttributes(): void {
