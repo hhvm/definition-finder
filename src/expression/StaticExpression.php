@@ -21,6 +21,7 @@ final class StaticExpression extends Expression<mixed> {
   ): ?Expression<mixed> {
     $impls = vec[
       LiteralExpression::class,
+      NameExpression::class,
       StaticArrayExpression::class,
       StaticBinaryExpression::class,
       StaticDarrayExpression::class,

@@ -158,7 +158,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     );
     expect($const->getTypehint()?->getTypeText())
       ->toBeSame($type);
-    expect($const->getValue())->toBeSame($value);
+    expect(\var_export($const->getValue(), true))->toBeSame($value);
   }
 
   public function testConstantCalledOn(): void {
