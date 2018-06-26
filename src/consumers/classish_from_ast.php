@@ -88,7 +88,9 @@ function classish_from_ast<T as ScannedClassish>(
       |> Vec\map($$, $super ==> typehint_from_ast($context, $super))
       |> Vec\filter_nulls($$);
     if ($def_class === ScannedClass::class) {
-      $builder->setParentClassInfo(C\onlyx($extends));
+      if (C\count($extends) === 1) {
+        $builder->setParentClassInfo(C\onlyx($extends));
+      }
     } else {
       invariant(
         $def_class === ScannedInterface::class,
