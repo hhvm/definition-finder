@@ -43,6 +43,7 @@ final class StaticArrayExpression extends Expression<mixed> {
         }
       } else {
         /* HH_IGNORE_ERROR[4110] PHP-compatible array craziness */
+        /* HH_IGNORE_ERROR[4006] PHP-compatible array craziness */
         $ret[] = StaticExpression::match($m)?->getValue();
       }
     }
