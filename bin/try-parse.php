@@ -16,7 +16,7 @@ require_once (__DIR__.'/../vendor/hh_autoload.php');
 function try_parse(string $path): void {
   \printf('%s ... ', $path);
   try {
-    LegacyFileParser::FromFile($path);
+    FileParser::fromFile($path);
   } catch (\Exception $e) {
     $ret_code = -1;
     \system(

@@ -20,7 +20,7 @@ class ParseException extends \Exception {
       \sprintf(
         "%s:%d:%d %s",
         $sourceFile,
-        $pos['line'] ?? 01,
+        $pos['line'] ?? -1,
         $pos['character'] ?? -1,
         $previous->getMessage(),
       ),

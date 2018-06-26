@@ -24,7 +24,17 @@ final class FileParser extends BaseParser {
       'usedNamespaces' => dict[],
       'genericTypeNames' => keyset[],
     );
-    $this->defs = scope_from_ast($context, $ast->getDeclarations());
+    try {
+      $this->defs = scope_from_ast($context, $ast->getDeclarations());
+    } catch (namespace\Exception $e) {
+      throw $e;
+    } catch (\Exception $e) {
+      throw new ParseException(
+        $file,
+        /* pos = */ null,
+        $e,
+      );
+    }
   }
 
   ///// Constructors /////
