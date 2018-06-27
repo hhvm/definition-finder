@@ -24,6 +24,7 @@ final class LiteralExpression extends Expression<mixed> {
       DoubleQuotedStringLiteralExpression::class,
       FloatingLiteralExpression::class,
       HeredocStringLiteralExpression::class,
+      HexadecimalLiteralExpression::class,
       NowdocStringLiteralExpression::class,
       NullLiteralExpression::class,
       OctalLiteralExpression::class,

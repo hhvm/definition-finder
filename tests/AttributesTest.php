@@ -132,6 +132,8 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
       tuple("dict[123 => '456']", dict[123 => '456']),
       tuple("\n<<<EOF\nHello!\nEOF\n", "Hello!"),
       tuple("\n<<<'EOF'\nHello!\nEOF\n", "Hello!"),
+      tuple('010', 010),
+      tuple('0x10', 0x10),
     );
   }
 
