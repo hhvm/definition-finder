@@ -19,6 +19,7 @@ final class LiteralExpression extends Expression<mixed> {
     self::TNode $node,
   ): ?Expression<mixed> {
     $classes = vec[
+      BinaryLiteralExpression::class,
       BooleanLiteralExpression::class,
       DecimalLiteralExpression::class,
       DoubleQuotedStringLiteralExpression::class,
