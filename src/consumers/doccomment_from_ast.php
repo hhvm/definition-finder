@@ -35,19 +35,5 @@ function doccomment_from_ast(
   $doc_comments = $maybe_doc_comments
     |> Vec\map($$, $c ==> $c->getText())
     |> Vec\filter($$, $c ==> Str\starts_with($c, '/**'));
-  switch (C\count($doc_comments)) {
-    case 0:
-      return null;
-    case 1:
-      return $doc_comments[0];
-    default:
-      $pos = $context['position'] ??
-        shape('line' => -1, 'character' => -1);
-      invariant_violation(
-        "More than one doccomment for node at %s:%d:%d",
-        $context['filename'],
-        $pos['line'],
-        $pos['character'],
-      );
-  }
+  return C\last($doc_comments);
 }

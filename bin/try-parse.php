@@ -13,23 +13,27 @@ namespace Facebook\DefinitionFinder;
 
 require_once (__DIR__.'/../vendor/hh_autoload.php');
 
+use namespace HH\Lib\Str;
+
 function try_parse(string $path): void {
   \printf('%s ... ', $path);
   try {
     FileParser::fromFile($path);
   } catch (\Exception $e) {
-    $ret_code = -1;
-    \system(
-      \sprintf(
-        '%s -l %s >/dev/null',
-        \escapeshellarg(\PHP_BINARY),
-        \escapeshellarg($path),
-      ),
-      &$ret_code,
-    );
-    if ($ret_code !== 0) {
-      print ("HHVM SYNTAX ERROR\n");
-      return;
+    if (!Str\ends_with($path, '.hhi')) {
+      $ret_code = -1;
+      \system(
+        \sprintf(
+          '%s -l %s >/dev/null',
+          \escapeshellarg(\PHP_BINARY),
+          \escapeshellarg($path),
+        ),
+        &$ret_code,
+      );
+      if ($ret_code !== 0) {
+        print("HHVM SYNTAX ERROR\n");
+        return;
+      }
     }
     throw $e;
   }

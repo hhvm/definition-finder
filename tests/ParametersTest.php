@@ -263,6 +263,19 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
       ->toBeSame(vec['array<mixed>']);
   }
 
+  public function testWithUnnamedVariadic(): void {
+    $data = '<?hh function foo(string $bar, ...) {}';
+
+    $parser = FileParser::fromData($data);
+    $function = $parser->getFunction('foo');
+    $params = $function->getParameters();
+
+    expect(Vec\map($params, $x ==> $x->getName()))->toBeSame(vec['bar', '']);
+    expect(Vec\map($params, $x ==> $x->isVariadic()))->toBeSame(
+      vec[false, true],
+    );
+  }
+
   public function testWithHackCallableTypehint(): void {
     $data = '<?hh function foo((function(int): string) $bar) {}';
     $parser = FileParser::fromData($data);

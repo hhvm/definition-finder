@@ -30,9 +30,28 @@ function parameters_from_ast(
   foreach ($params->getChildren() as $node) {
     invariant($node instanceof HHAST\ListItem, "Got non-listitem child");
     $item = $node->getItem();
+    if ($item instanceof HHAST\VariadicParameter) {
+      $out[] = new ScannedParameter(
+        $item,
+        '',
+        context_with_node_position($context, $item)['definitionContext'],
+        /* attributes = */ dict[],
+        /* doccomment = */ null,
+        typehint_from_ast($context, $item->getType()), /* byref = */
+        false, /* inout = */
+        false, /* variadic = */
+        true, /* default = */
+        null, /* visibility = */
+        null,
+      );
+      continue;
+    }
     invariant(
       $item instanceof HHAST\ParameterDeclaration,
-      "Got non-decl child",
+      "Got non-decl child: %s: %s\n%s",
+      \get_class($item),
+      $item->getCode(),
+      $header->getCode(),
     );
     $out[] = parameter_from_ast($context, $item, $next_doccomment);
     $next_doccomment = doccomment_from_ast(
