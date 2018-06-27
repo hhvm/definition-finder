@@ -131,6 +131,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
       tuple('keyset[123]', keyset[123]),
       tuple("dict[123 => '456']", dict[123 => '456']),
       tuple("\n<<<EOF\nHello!\nEOF\n", "Hello!"),
+      tuple("\n<<<'EOF'\nHello!\nEOF\n", "Hello!"),
     );
   }
 
