@@ -23,127 +23,50 @@ function scope_from_ast(
   }
 
   $namespaces = _Private\items_of_type($ast, HHAST\NamespaceDeclaration::class);
-  $with_bodies = vec[];
-  $without_bodies = vec[];
-  foreach ($namespaces as $ns) {
-    if ($ns->getBody() instanceof HHAST\NamespaceEmptyBody || !$ns->hasBody()) {
-      $without_bodies[] = $ns;
-    } else {
-      $with_bodies[] = $ns;
-    }
+
+  if (C\is_empty($namespaces)) {
+    return scope_from_ast_and_ns($context, $ast, $context['namespace']);
   }
-  invariant(
-    C\count($without_bodies) <= 1,
-    "Too many namespace declarations!\n",
+
+  $items = _Private\items_of_type($ast, HHAST\EditableNode::class);
+  $offsets = Vec\map(
+    $namespaces,
+    $ns ==> nullthrows(C\find_key($items, $item ==> $item === $ns)),
   );
-  if ($without_bodies) {
-    $context['namespace'] = C\first($without_bodies)?->getName()?->getCode();
-  }
-  $context = $context
-    |> context_with_use_declarations(
-      $$,
-      _Private\items_of_type($ast, HHAST\NamespaceUseDeclaration::class),
-    )
-    |> context_with_group_use_declarations(
-      $$,
-      _Private\items_of_type($ast, HHAST\NamespaceGroupUseDeclaration::class),
-    );
+  $count = C\count($namespaces);
 
-  $classish = _Private\items_of_type($ast, HHAST\ClassishDeclaration::class);
-  $decls = new ScannedScope(
-    $ast,
-    $context['definitionContext'],
-    /* classes = */ Vec\filter_nulls(Vec\map(
-      $classish,
-      $node ==> classish_from_ast($context, ScannedClass::class, $node),
-    )),
-    /* interfaces = */ Vec\filter_nulls(Vec\map(
-      $classish,
-      $node ==> classish_from_ast($context, ScannedInterface::class, $node),
-    )),
-    /* traits = */ Vec\filter_nulls(Vec\map(
-      $classish,
-      $node ==> classish_from_ast($context, ScannedTrait::class, $node),
-    )),
-    /* functions = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\FunctionDeclaration::class),
-      $node ==> function_from_ast($context, $node),
-    ),
-    /* methods = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\MethodishDeclaration::class),
-      $node ==> method_from_ast($context, $node),
-    ),
-    /* trait use statements = */ Vec\concat(
-      Vec\map(
-        _Private\items_of_type($ast, HHAST\TraitUse::class),
-        $node ==> $node->getNames()->getItemsOfType(HHAST\EditableNode::class),
-      ),
-      Vec\map(
-        _Private\items_of_type($ast, HHAST\TraitUseConflictResolution::class),
-        $node ==> $node->getNames()->getItemsOfType(HHAST\EditableNode::class),
-      ),
-    )
-    |> Vec\flatten($$)
-    |> Vec\map($$, $node ==> typehint_from_ast($context, $node))
-    |> Vec\filter_nulls($$),
-    /* properties = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\PropertyDeclaration::class),
-      $node ==> properties_from_ast($context, $node),
-    )
-    |> Vec\flatten($$),
-    /* constants = */ Vec\concat(
-      Vec\map(
-        _Private\items_of_type($ast, HHAST\ConstDeclaration::class),
-        $node ==> constants_from_ast($context, $node),
-      )
-      |> Vec\flatten($$),
-      _Private\items_of_type($ast, HHAST\ExpressionStatement::class)
-        |> Vec\map($$, $s ==> $s->getExpression())
-        |> Vec\filter($$, $e ==> $e instanceof HHAST\DefineExpression)
-        |> Vec\map(
-          $$,
-          $e ==> TypeAssert\instance_of(HHAST\DefineExpression::class, $e),
-        )
-        |> Vec\map($$, $e ==> constant_from_define_ast($context, $e))
-        |> Vec\filter_nulls($$),
-    ),
-    /* type constants = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\TypeConstDeclaration::class),
-      $node ==> type_constant_from_ast($context, $node),
-    ),
-    /* enums = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\EnumDeclaration::class),
-      $node ==> enum_from_ast($context, $node),
-    ),
-    /* types = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\AliasDeclaration::class),
-      $node ==> typeish_from_ast($context, ScannedType::class, $node),
-    )
-    |> Vec\filter_nulls($$),
-    /* newtypes = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\AliasDeclaration::class),
-      $node ==> typeish_from_ast($context, ScannedNewtype::class, $node),
-    )
-      |> Vec\filter_nulls($$),
-  );
-
-  if (C\is_empty($with_bodies)) {
-    return $decls;
-  }
-
-  $builder = (new ScannedScopeBuilder($ast, $context['definitionContext']))
-    ->addSubScope($decls);
-
-  foreach ($with_bodies as $ns) {
-    $context['namespace'] =
-      $ns->getName()->isMissing() ? null : name_from_ast($ns->getName());
+  $builder = (new ScannedScopeBuilder($ast, $context['definitionContext']));
+  foreach ($namespaces as $i => $ns) {
     $body = $ns->getBody();
+    if ($body instanceof HHAST\NamespaceBody) {
+      $builder->addSubScope(
+        scope_from_ast_and_ns(
+          $context,
+          $body->getDeclarations(),
+          $ns->hasName() ? name_from_ast($ns->getName()) : null,
+        ),
+      );
+      continue;
+    }
+
     invariant(
-      $body instanceof HHAST\NamespaceBody,
-      "Expected a namespace body, got %s",
-      \get_class($body),
+      $body === null || $body instanceof HHAST\NamespaceEmptyBody,
+      "Expected a NamespaceBody or NamespaceEmptyBody",
     );
-    $builder->addSubScope(scope_from_ast($context, $body->getDeclarations()));
+
+    $offset = $offsets[$i];
+    $next_offset = $offsets[$i + 1] ?? null;
+    $length = ($next_offset === null) ? null : ($next_offset - $offset);
+    $ns_items = Vec\slice($items, $offset, $length);
+
+    $builder->addSubScope(
+      scope_from_ast_and_ns(
+        $context,
+        new HHAST\EditableList($ns_items),
+        name_from_ast($ns->getName()),
+      ),
+    );
   }
+
   return $builder->build();
 }

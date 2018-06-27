@@ -25,4 +25,12 @@ final class MultiNamespacePHPTest extends PHPUnit_Framework_TestCase {
       vec['Foo\\Bar', 'Herp\\Derp', 'EmptyNamespace'],
     );
   }
+
+  public function testMultipleNamespaceStatements(): void {
+    $parser =
+      FileParser::fromFile(__DIR__.'/data/multi_namespace_statement.php');
+    expect($parser->getFunctionNames())->toBeSame(
+      vec["Foo\\bar", "Herp\\derp"],
+    );
+  }
 }
