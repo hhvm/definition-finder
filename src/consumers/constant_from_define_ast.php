@@ -17,7 +17,10 @@ function constant_from_define_ast(
   ConsumerContext $context,
   HHAST\DefineExpression $node,
 ): ?ScannedConstant {
-  $arg_list = $node->getArgumentListx();
+  $arg_list = $node->getArgumentList();
+  if ($arg_list === null) {
+    return null;
+  }
   $items = $arg_list->getItemsOfType(HHAST\EditableNode::class);
   invariant(C\count($items) === 2, 'Expected define() to have two arguments');
   $name = $items[0];
