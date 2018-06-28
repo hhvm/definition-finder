@@ -16,13 +16,11 @@ function enum_from_ast(
   ConsumerContext $context,
   HHAST\EnumDeclaration $node,
 ): ScannedEnum {
-  return (
-    new ScannedEnumBuilder(
-      $node,
-      decl_name_in_context($context, $node->getName()->getText()),
-      context_with_node_position($context, $node)['definitionContext'],
-    )
-  )
-    ->setAttributes(attributes_from_ast($node->getAttributeSpec()))
-    ->build();
+  return new ScannedEnum(
+    $node,
+    decl_name_in_context($context, $node->getName()->getText()),
+    context_with_node_position($context, $node)['definitionContext'],
+    attributes_from_ast($node->getAttributeSpec()),
+    /* doccomment = */ null,
+  );
 }
