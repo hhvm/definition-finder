@@ -26,16 +26,14 @@ function function_from_ast(
     Keyset\map($generics, $g ==> $g->getName()),
   );
 
-  return (
-    new ScannedFunctionBuilder(
-      $node,
-      decl_name_in_context($context, name_from_ast($header->getName())),
-      $context['definitionContext'],
-    )
-  )
-    ->setAttributes(attributes_from_ast($node->getAttributeSpec()))
-    ->setGenerics($generics)
-    ->setParameters(parameters_from_ast($context, $header))
-    ->setReturnType(typehint_from_ast($context, $header->getType()))
-    ->build();
+  return new ScannedFunction(
+    $node,
+    decl_name_in_context($context, name_from_ast($header->getName())),
+    $context['definitionContext'],
+    attributes_from_ast($node->getAttributeSpec()),
+    /* docblock = */ null,
+    $generics,
+    typehint_from_ast($context, $header->getType()),
+    parameters_from_ast($context, $header),
+  );
 }
