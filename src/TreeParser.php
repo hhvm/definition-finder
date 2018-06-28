@@ -16,13 +16,7 @@ class TreeParser extends BaseParser {
   protected ScannedScope $defs;
 
   private function __construct(string $path) {
-    $builder = new ScannedScopeBuilder(
-      HHAST\Missing(),
-      shape(
-        'filename' => '__TREE__',
-        'sourceType' => SourceType::MULTIPLE_FILES,
-      ),
-    );
+    $scopes = vec[];
 
     $rdi = new \RecursiveDirectoryIterator($path);
     $rii = new \RecursiveIteratorIterator($rdi);
@@ -38,9 +32,17 @@ class TreeParser extends BaseParser {
         continue;
       }
       $parser = FileParser::fromFile($info->getPathname());
-      $builder->addSubScope($parser->defs);
+      $scopes[] = $parser->defs;
     }
-    $this->defs = $builder->build();
+
+    $this->defs = merge_scopes(
+      HHAST\Missing(),
+      shape(
+        'filename' => '__TREE__',
+        'sourceType' => SourceType::MULTIPLE_FILES,
+      ),
+      $scopes,
+    );
   }
 
   public static function FromPath(string $path): TreeParser {

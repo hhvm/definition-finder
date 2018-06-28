@@ -35,16 +35,14 @@ function scope_from_ast(
   );
   $count = C\count($namespaces);
 
-  $builder = (new ScannedScopeBuilder($ast, $context['definitionContext']));
+  $scopes = vec[];
   foreach ($namespaces as $i => $ns) {
     $body = $ns->getBody();
     if ($body instanceof HHAST\NamespaceBody) {
-      $builder->addSubScope(
-        scope_from_ast_and_ns(
-          $context,
-          $body->getDeclarations(),
-          $ns->hasName() ? name_from_ast($ns->getName()) : null,
-        ),
+      $scopes[] = scope_from_ast_and_ns(
+        $context,
+        $body->getDeclarations(),
+        $ns->hasName() ? name_from_ast($ns->getName()) : null,
       );
       continue;
     }
@@ -59,14 +57,13 @@ function scope_from_ast(
     $length = ($next_offset === null) ? null : ($next_offset - $offset);
     $ns_items = Vec\slice($items, $offset, $length);
 
-    $builder->addSubScope(
+    $scopes[] =
       scope_from_ast_and_ns(
         $context,
         new HHAST\EditableList($ns_items),
         name_from_ast($ns->getName()),
-      ),
     );
   }
 
-  return $builder->build();
+  return merge_scopes($ast, $context['definitionContext'], $scopes);
 }
