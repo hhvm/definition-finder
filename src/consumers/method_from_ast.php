@@ -29,42 +29,32 @@ function method_from_ast(
     Keyset\map($generics, $g ==> $g->getName()),
   );
 
-  return (
-    new ScannedMethodBuilder(
-      $node,
-      // Don't bother with decl_name_in_context() as methods are always inside
-      // a class, so don't get decorated with the namespace
-      $header->getNamex()->getCode(),
-      $context['definitionContext'],
-    )
-  )
-    ->setAttributes(attributes_from_ast($node->getAttribute()))
-    ->setGenerics($generics)
-    ->setParameters(parameters_from_ast($context, $header))
-    ->setReturnType(typehint_from_ast($context, $header->getType()))
-    ->setVisibility(
-      $has_modifier(HHAST\PrivateToken::class)
-        ? VisibilityToken::T_PRIVATE
-        : (
-            $has_modifier(HHAST\ProtectedToken::class)
-              ? VisibilityToken::T_PROTECTED
-              : VisibilityToken::T_PUBLIC
-          ),
-    )
-    ->setStaticity(
-      $has_modifier(HHAST\StaticToken::class)
-        ? StaticityToken::IS_STATIC
-        : StaticityToken::NOT_STATIC,
-    )
-    ->setAbstractness(
-      $has_modifier(HHAST\AbstractToken::class)
-        ? AbstractnessToken::IS_ABSTRACT
-        : AbstractnessToken::NOT_ABSTRACT,
-    )
-    ->setFinality(
-      $has_modifier(HHAST\FinalToken::class)
-        ? FinalityToken::IS_FINAL
-        : FinalityToken::NOT_FINAL,
-    )
-    ->build();
+  return new ScannedMethod(
+    $node,
+    // Don't use decl_name_in_context() as methods are always inside
+    // a class, so never get decorated with the namespace
+    $header->getNamex()->getCode(),
+    $context['definitionContext'],
+    attributes_from_ast($node->getAttribute()),
+    /* docblock = */ null,
+    $generics,
+    typehint_from_ast($context, $header->getType()),
+    parameters_from_ast($context, $header),
+    $has_modifier(HHAST\PrivateToken::class)
+      ? VisibilityToken::T_PRIVATE
+      : (
+          $has_modifier(HHAST\ProtectedToken::class)
+            ? VisibilityToken::T_PROTECTED
+            : VisibilityToken::T_PUBLIC
+        ),
+    $has_modifier(HHAST\StaticToken::class)
+      ? StaticityToken::IS_STATIC
+      : StaticityToken::NOT_STATIC,
+    $has_modifier(HHAST\AbstractToken::class)
+      ? AbstractnessToken::IS_ABSTRACT
+      : AbstractnessToken::NOT_ABSTRACT,
+    $has_modifier(HHAST\FinalToken::class)
+      ? FinalityToken::IS_FINAL
+      : FinalityToken::NOT_FINAL,
+  );
 }
