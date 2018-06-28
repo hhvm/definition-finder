@@ -12,12 +12,12 @@ namespace Facebook\DefinitionFinder;
 
 require_once (__DIR__.'/../vendor/hh_autoload.php');
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Str, Vec};
 
-function try_parse(string $path): void {
-  \printf('%s ... ', $path);
+async function try_parse_async(string $path): Awaitable<void> {
+  $line = Str\format('%s ... ', $path);
   try {
-    FileParser::fromFile($path);
+    await FileParser::fromFileAsync($path);
   } catch (\Exception $e) {
     if (!Str\ends_with($path, '.hhi')) {
       $ret_code = -1;
@@ -30,7 +30,7 @@ function try_parse(string $path): void {
         &$ret_code,
       );
       if ($ret_code !== 0) {
-        print("HHVM SYNTAX ERROR\n");
+        print $line."HHVM SYNTAX ERROR\n";
         return;
       }
     }
@@ -39,16 +39,17 @@ function try_parse(string $path): void {
     );
     $json = Str\trim($json);
     if (json_decode($json) === null && \json_last_error() === \JSON_ERROR_DEPTH) {
-      print("JSON TOO DEEP\n");
+      print $line."JSON TOO DEEP";
       return;
     }
+    print $line;
     throw $e;
   }
-  print ("OK\n");
+  print $line."OK\n";
 }
 
 $files = array_slice($argv, 1);
 
-foreach ($files as $file) {
-  try_parse($file);
-}
+\HH\Asio\join(
+  Vec\map_async($files, async $file ==> await try_parse_async($file)),
+);

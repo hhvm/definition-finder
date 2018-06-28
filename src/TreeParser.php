@@ -11,15 +11,21 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
+use namespace HH\Lib\Vec;
 
-class TreeParser extends BaseParser {
-  protected ScannedScope $defs;
+final class TreeParser extends BaseParser {
+  private function __construct(ScannedScope $defs) {
+    $this->defs = $defs;
+  }
 
-  private function __construct(string $path) {
+  public static async function fromPathAsync(
+    string $path,
+  ): Awaitable<TreeParser> {
     $scopes = vec[];
 
     $rdi = new \RecursiveDirectoryIterator($path);
     $rii = new \RecursiveIteratorIterator($rdi);
+    $parsers = vec[];
     foreach ($rii as $info) {
       if (!$info->isFile()) {
         continue;
@@ -31,21 +37,23 @@ class TreeParser extends BaseParser {
       if ($ext !== 'php' && $ext !== 'hh' && $ext !== 'xhp') {
         continue;
       }
-      $parser = FileParser::fromFile($info->getPathname());
-      $scopes[] = $parser->defs;
+      $parsers[] = FileParser::fromFileAsync($info->getPathname());
     }
+    $scopes = await Vec\map_async(
+      $parsers,
+      async $p ==> {
+        $p = await $p;
+        return $p->defs;
+      },
+    );
 
-    $this->defs = merge_scopes(
+    return new self(merge_scopes(
       HHAST\Missing(),
       shape(
         'filename' => '__TREE__',
         'sourceType' => SourceType::MULTIPLE_FILES,
       ),
       $scopes,
-    );
-  }
-
-  public static function fromPath(string $path): TreeParser {
-    return new TreeParser($path);
+    ));
   }
 }
