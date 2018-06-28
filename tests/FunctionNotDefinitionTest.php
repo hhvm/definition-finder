@@ -22,12 +22,12 @@ final class FunctionNotDefinitionTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testFunctionTypeAlias(): void {
-    $p = FileParser::fromData('<?hh newtype Foo = function(int): void;');
+    $p = FileParser::fromData('<?hh newtype Foo = (function(int): void);');
     expect($p->getFunctionNames())->toBeSame(vec[]);
     expect($p->getNewtypeNames())->toBeSame(vec['Foo']);
 
     // Add extra whitespace
-    $p = FileParser::fromData('<?hh newtype Foo = function (int): void;');
+    $p = FileParser::fromData('<?hh newtype Foo = (function (int): void);');
     expect($p->getFunctionNames())->toBeSame(vec[]);
     expect($p->getNewtypeNames())->toBeSame(vec['Foo']);
   }
