@@ -57,11 +57,10 @@ function scope_from_ast(
     $length = ($next_offset === null) ? null : ($next_offset - $offset);
     $ns_items = Vec\slice($items, $offset, $length);
 
-    $scopes[] =
-      scope_from_ast_and_ns(
-        $context,
-        new HHAST\EditableList($ns_items),
-        name_from_ast($ns->getName()),
+    $scopes[] = scope_from_ast_and_ns(
+      $context,
+      new HHAST\EditableList($ns_items),
+      name_from_ast($ns->getName()),
     );
   }
 
