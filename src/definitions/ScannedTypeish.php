@@ -10,6 +10,22 @@
 
 namespace Facebook\DefinitionFinder;
 
+use namespace Facebook\HHAST;
+
 <<__ConsistentConstruct, __Sealed(ScannedType::class, ScannedNewtype::class)>>
 abstract class ScannedTypeish extends ScannedDefinition {
+  public function __construct(
+    HHAST\EditableNode $ast,
+    string $name,
+    self::TContext $context,
+    dict<string, vec<mixed>> $attributes,
+    ?string $doccomment,
+    private ScannedTypehint $aliasedType,
+  ) {
+    parent::__construct($ast, $name, $context, $attributes, $doccomment);
+  }
+
+  public function getAliasedType(): ScannedTypehint {
+    return $this->aliasedType;
+  }
 }

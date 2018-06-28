@@ -31,11 +31,14 @@ function typeish_from_ast<T as ScannedTypeish>(
       break;
   }
 
+  $context = context_with_node_position($context, $node);
+
   return new $def_class(
     $node,
     decl_name_in_context($context, name_from_ast($node->getName())),
-    context_with_node_position($context, $node)['definitionContext'],
+    $context['definitionContext'],
     attributes_from_ast($node->getAttributeSpec()),
     null,
+    nullthrows(typehint_from_ast($context, $node->getType())),
   );
 }

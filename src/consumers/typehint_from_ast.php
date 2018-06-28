@@ -27,15 +27,15 @@ function typehint_from_ast(
   // Special cases
   if ($node instanceof HHAST\XHPClassNameToken) {
     $name = used_name_in_context($context, mangle_xhp_name_token($node));
-    return new ScannedTypehint($node, $name, $name, vec[], false);
+    return new ScannedTypehint($node, $name, $name, vec[], false, null);
   }
   if ($node instanceof HHAST\EditableToken) {
     $name = used_name_in_context($context, name_from_ast($node));
-    return new ScannedTypehint($node, $name, $name, vec[], false);
+    return new ScannedTypehint($node, $name, $name, vec[], false, null);
   }
   if ($node instanceof HHAST\QualifiedName) {
     $str = used_name_in_context($context, name_from_ast($node));
-    return new ScannedTypehint($node, $str, $str, vec[], false);
+    return new ScannedTypehint($node, $str, $str, vec[], false, null);
   }
 
   // This list is taken from the docblock of
@@ -48,6 +48,7 @@ function typehint_from_ast(
       'classname',
       typehints_from_ast_va($context, $node->getType()),
       /* nullable = */ false,
+      /* shape fields = */ null,
     );
   }
   if ($node instanceof HHAST\ClosureTypeSpecifier) {
@@ -70,6 +71,7 @@ function typehint_from_ast(
       $normalized->getCode(),
       vec[],
       false,
+      null,
     );
   }
   if ($node instanceof HHAST\DarrayTypeSpecifier) {
@@ -79,6 +81,7 @@ function typehint_from_ast(
       'darray',
       typehints_from_ast_va($context, $node->getKey(), $node->getValue()),
       false,
+      null,
     );
   }
   if ($node instanceof HHAST\DictionaryTypeSpecifier) {
@@ -88,6 +91,7 @@ function typehint_from_ast(
       'dict',
       typehints_from_ast($context, $node->getMembers()),
       false,
+      null,
     );
   }
   if ($node instanceof HHAST\GenericTypeSpecifier) {
@@ -97,6 +101,7 @@ function typehint_from_ast(
       $node->getClassType()->getCode(),
       typehints_from_ast($context, $node->getArgumentList()->getTypes()),
       false,
+      null,
     );
   }
   if ($node instanceof HHAST\KeysetTypeSpecifier) {
@@ -106,6 +111,7 @@ function typehint_from_ast(
       'keyset',
       typehints_from_ast_va($context, $node->getType()),
       false,
+      null,
     );
   }
   if ($node instanceof HHAST\MapArrayTypeSpecifier) {
@@ -115,6 +121,7 @@ function typehint_from_ast(
       'array',
       typehints_from_ast_va($context, $node->getKey(), $node->getValue()),
       false,
+      null,
     );
   }
   // HHAST\Missing was handled at top
@@ -126,6 +133,7 @@ function typehint_from_ast(
       $inner->getTypeTextBase(),
       $inner->getGenericTypes(),
       /* nullable = */ true,
+      /* shape fields = */ null,
     );
   }
   if ($node instanceof HHAST\ShapeTypeSpecifier) {
@@ -135,6 +143,10 @@ function typehint_from_ast(
       ast_without_trivia($node)->getCode(),
       vec[],
       false,
+      Vec\map(
+        _Private\items_of_type($node->getFields(), HHAST\FieldSpecifier::class),
+        $field ==> shape_field_from_ast($context, $field),
+      ),
     );
   }
   if ($node instanceof HHAST\SimpleTypeSpecifier) {
@@ -151,13 +163,14 @@ function typehint_from_ast(
       'tuple',
       typehints_from_ast($context, $node->getTypes()),
       false,
+      null,
     );
   }
   if ($node instanceof HHAST\TypeConstant) {
     $left = nullthrows(typehint_from_ast($context, $node->getLeftType()))
       ->getTypeText();
     $str = $left.'::'.$node->getRightType()->getText();
-    return new ScannedTypehint($node, $str, $str, vec[], false);
+    return new ScannedTypehint($node, $str, $str, vec[], false, null);
   }
   if ($node instanceof HHAST\VarrayTypeSpecifier) {
     return new ScannedTypehint(
@@ -166,6 +179,7 @@ function typehint_from_ast(
       'varray',
       typehints_from_ast_va($context, $node->getType()),
       false,
+      null,
     );
   }
   if ($node instanceof HHAST\VectorArrayTypeSpecifier) {
@@ -175,6 +189,7 @@ function typehint_from_ast(
       'array',
       typehints_from_ast_va($context, $node->getType()),
       false,
+      null,
     );
   }
   if ($node instanceof HHAST\VectorTypeSpecifier) {
@@ -184,6 +199,7 @@ function typehint_from_ast(
       'vec',
       typehints_from_ast_va($context, $node->getType()),
       false,
+      null,
     );
   }
 

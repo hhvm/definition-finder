@@ -94,6 +94,14 @@ abstract class BaseParser {
     return self::GetX($name, $this->getFunctions());
   }
 
+  public function getType(string $name): ScannedType {
+    return self::GetX($name, $this->getTypes());
+  }
+
+  public function getNewtype(string $name): ScannedNewtype {
+    return self::GetX($name, $this->getNewtypes());
+  }
+
   private static function GetX<T as ScannedDefinition>(
     string $name,
     vec<T> $defs,

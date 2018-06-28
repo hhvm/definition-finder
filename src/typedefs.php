@@ -21,6 +21,11 @@ enum VisibilityToken: int {
   T_PROTECTED = \T_PROTECTED;
 }
 
+enum OptionalityToken: int {
+  IS_REQUIRED = 0;
+  IS_OPTIONAL = 1;
+}
+
 enum VarianceToken: string {
   COVARIANT = '+';
   INVARIANT = '';

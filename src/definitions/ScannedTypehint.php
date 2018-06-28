@@ -21,6 +21,7 @@ class ScannedTypehint {
     private string $typeTextBase,
     private vec<ScannedTypehint> $generics,
     private bool $nullable,
+    private ?vec<ScannedShapeField> $shapeFields,
   ) {
   }
 
@@ -103,5 +104,15 @@ class ScannedTypehint {
       }
     }
     return $base;
+  }
+
+  public function isShape(): bool {
+    return $this->shapeFields !== null;
+  }
+
+  public function getShapeFields(): vec<ScannedShapeField> {
+    $fields = $this->shapeFields;
+    invariant($fields !== null, "Called getShapeFields, but not a shape");
+    return $fields;
   }
 }
