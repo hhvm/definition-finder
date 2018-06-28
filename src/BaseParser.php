@@ -75,34 +75,34 @@ abstract class BaseParser {
   }
 
   public function getClass(string $name): ScannedClass {
-    return self::GetX($name, $this->getClasses());
+    return self::getX($name, $this->getClasses());
   }
 
   public function getConstant(string $name): ScannedConstant {
-    return self::GetX($name, $this->getConstants());
+    return self::getX($name, $this->getConstants());
   }
 
   public function getInterface(string $name): ScannedInterface {
-    return self::GetX($name, $this->getInterfaces());
+    return self::getX($name, $this->getInterfaces());
   }
 
   public function getTrait(string $name): ScannedTrait {
-    return self::GetX($name, $this->getTraits());
+    return self::getX($name, $this->getTraits());
   }
 
   public function getFunction(string $name): ScannedFunction {
-    return self::GetX($name, $this->getFunctions());
+    return self::getX($name, $this->getFunctions());
   }
 
   public function getType(string $name): ScannedType {
-    return self::GetX($name, $this->getTypes());
+    return self::getX($name, $this->getTypes());
   }
 
   public function getNewtype(string $name): ScannedNewtype {
-    return self::GetX($name, $this->getNewtypes());
+    return self::getX($name, $this->getNewtypes());
   }
 
-  private static function GetX<T as ScannedDefinition>(
+  private static function getX<T as ScannedDefinition>(
     string $name,
     vec<T> $defs,
   ): T {

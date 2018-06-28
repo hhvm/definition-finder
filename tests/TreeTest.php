@@ -15,7 +15,7 @@ use function Facebook\FBExpect\expect;
 
 final class TreeTest extends \PHPUnit_Framework_TestCase {
   public function testTreeDefs(): void {
-    $parser = TreeParser::FromPath(__DIR__.'/data/');
+    $parser = TreeParser::fromPath(__DIR__.'/data/');
     // From multiple files
     $classes = $parser->getClassNames();
     expect($classes)->toContain("SingleNamespace\\SimpleClass");

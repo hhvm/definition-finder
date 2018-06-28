@@ -45,7 +45,7 @@ class TreeParser extends BaseParser {
     );
   }
 
-  public static function FromPath(string $path): TreeParser {
+  public static function fromPath(string $path): TreeParser {
     return new TreeParser($path);
   }
 }
