@@ -23,7 +23,7 @@ class ScannedParameter extends ScannedDefinition {
     private bool $byref,
     private bool $inout,
     private bool $variadic,
-    private ?string $defaultString,
+    private ?ScannedValue $default,
     private ?VisibilityToken $visibility,
   ) {
     parent::__construct($ast, $name, $context, $attributes, $docComment);
@@ -51,15 +51,15 @@ class ScannedParameter extends ScannedDefinition {
   }
 
   public function isOptional(): bool {
-    return $this->defaultString !== null;
+    return $this->hasDefault();
   }
 
-  public function getDefaultString(): string {
-    invariant(
-      $this->isOptional(),
-      'trying to retrieve default for non-optional param',
-    );
-    return nullthrows($this->defaultString);
+  public function hasDefault(): bool {
+    return $this->default !== null;
+  }
+
+  public function getDefault(): ?ScannedValue {
+    return $this->default;
   }
 
   public function __isPromoted(): bool {

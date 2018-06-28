@@ -17,6 +17,7 @@ use type Facebook\DefinitionFinder\{
   ScannedTypehint,
 };
 use namespace HH\Lib\{C, Vec};
+use function Facebook\DefinitionFinder\{ast_without_trivia, nullthrows};
 use function Facebook\FBExpect\expect;
 
 class ParameterTest extends \PHPUnit_Framework_TestCase {
@@ -63,11 +64,25 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     expect(Vec\map($params, $x ==> $x->isOptional()))->toBeSame(
       vec[false, true],
     );
+    expect(Vec\map($params, $x ==> $x->hasDefault()))->toBeSame(
+      vec[false, true],
+    );
     expect(
       $params
         |> Vec\filter($$, $x ==> $x->isOptional() && $x->getName() === 'baz')
-        |> Vec\map($$, $x ==> $x->getDefaultString()),
+        |> Vec\map($$, $x ==> $x->getDefault()?->getAST()?->getCode()),
     )->toBeSame(vec['"herp"']);
+    expect(C\lastx($params)->getDefault()?->getStaticValue())->toBeSame('herp');
+  }
+
+  public function testWithNullDefault(): void {
+    $data = '<?hh function foo($bar, $baz = null) {}';
+    $parameters = FileParser::fromData($data)->getFunction('foo')->getParameters();
+    list($bar, $baz) = $parameters;
+    expect($bar->getDefault())->toBeNull();
+    $default = expect($baz->getDefault())->toNotBeNull();
+    expect($default->hasStaticValue())->toBeTrue();
+    expect($default->getStaticValue())->toBeNull();
   }
 
   public function getUnusualDefaults(): array<(string, string)> {
@@ -91,7 +106,10 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     expect(
       Vec\map(
         $function->getParameters(),
-        $p ==> $p->isOptional() ? $p->getDefaultString() : null,
+        $p ==> $p->isOptional()
+          ? ast_without_trivia(nullthrows($p->getDefault()?->getAST()))
+            ->getCode()
+          : null,
       ),
     )->toBeSame(vec[null, $expected]);
   }
@@ -132,9 +150,8 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
         $x ==> $x->getTypehint()?->getTypeText(),
       ),
     )->toBeSame(vec['string']);
-    expect(Vec\map($params, $x ==> $x->getDefaultString()))->toBeSame(
-      vec['"baz"'],
-    );
+    expect(Vec\map($params, $x ==> $x->getDefault()?->getAST()?->getCode()))
+      ->toBeSame(vec['"baz"']);
   }
 
   public function testWithRootNamespacedType(): void {

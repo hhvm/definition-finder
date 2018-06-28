@@ -152,7 +152,9 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $const = expect($const)->toNotBeNull('const %s was not defined', $name);
     expect($const->getTypehint()?->getTypeText())
       ->toBeSame($type);
-    expect(\var_export($const->getValue(), true))->toBeSame($value);
+    expect(\var_export($const->getValue()->getStaticValue(), true))->toBeSame(
+      $value,
+    );
   }
 
   public function testConstantCalledOn(): void {

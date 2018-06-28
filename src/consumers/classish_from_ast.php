@@ -104,6 +104,7 @@ function classish_from_ast<T as ScannedClassish>(
           $p->getTypehint(),
           $p->__getVisibility(),
           StaticityToken::NOT_STATIC,
+          $p->getDefault(),
         ),
       );
   }

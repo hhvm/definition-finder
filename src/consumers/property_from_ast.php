@@ -54,6 +54,7 @@ function properties_from_ast(
       $type,
       $visibility,
       $is_static,
+      value_from_ast($inner->getInitializer()?->getValue()),
     ),
   );
 }

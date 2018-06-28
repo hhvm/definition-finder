@@ -12,13 +12,13 @@ namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
 
-class ScannedConstant extends ScannedDefinition {
+final class ScannedConstant extends ScannedDefinition {
   public function __construct(
     HHAST\EditableNode $node,
     string $name,
     self::TContext $context,
     ?string $docblock,
-    private mixed $value,
+    private ?ScannedValue $value,
     private ?ScannedTypehint $typehint,
     private AbstractnessToken $abstractness,
   ) {
@@ -28,6 +28,10 @@ class ScannedConstant extends ScannedDefinition {
       $context,
       /* attributes = */ dict[],
       $docblock,
+    );
+    invariant(
+      ($value === null) === ($abstractness === AbstractnessToken::IS_ABSTRACT),
+      'Abstract constants with value or non-abstract constant without',
     );
   }
 
@@ -40,7 +44,12 @@ class ScannedConstant extends ScannedDefinition {
     return $this->abstractness === AbstractnessToken::IS_ABSTRACT;
   }
 
-  public function getValue(): mixed {
+  public function hasValue(): bool {
+    return $this->value !== null;
+  }
+
+  public function getValue(): ScannedValue {
+    invariant($this->value !== null, "Can't get value of an abstract constant");
     return $this->value;
   }
 

@@ -104,9 +104,9 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     expect(Vec\map($constants ?? vec[], $x ==> $x->isAbstract()))->toBeSame(
       vec[false, false],
     );
-    expect(Vec\map($constants ?? vec[], $x ==> $x->getValue()))->toBeSame(
-      vec['bar', 60 * 60 * 24],
-    );
+    expect(
+      Vec\map($constants ?? vec[], $x ==> $x->getValue()->getStaticValue()),
+    )->toBeSame(vec['bar', 60 * 60 * 24]);
     expect(Vec\map($constants ?? vec[], $x ==> $x->getDocComment()))->toBeSame(
       vec['/** FooDoc */', '/** BarDoc */'],
     );
@@ -123,9 +123,8 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     expect(Vec\map($constants, $x ==> $x->getTypehint()))->toBeSame(
       vec[null, null],
     );
-    expect(Vec\map($constants, $x ==> $x->getValue()))->toBeSame(
-      vec['bar', 60 * 60 * 24],
-    );
+    expect(Vec\map($constants, $x ==> $x->getValue()->getStaticValue()))
+      ->toBeSame(vec['bar', 60 * 60 * 24]);
     expect(Vec\map($constants, $x ==> $x->getDocComment()))->toBeSame(
       vec['/** FooDoc */', '/** BarDoc */'],
     );
@@ -228,7 +227,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertSame('BAR', $constant->getName());
     $this->assertFalse($constant->isAbstract());
-    $this->assertSame('int', $constant->getValue()?->getTypeText());
+    $this->assertSame('int', $constant->getAliasedType()?->getTypeText());
   }
 
   public function testClassAsTypeConstant(): void {
@@ -260,7 +259,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertSame('BAR', $constant->getName());
     $this->assertFalse($constant->isAbstract());
-    $this->assertSame('int', $constant->getValue()?->getTypeText());
+    $this->assertSame('int', $constant->getAliasedType()?->getTypeText());
   }
 
   public function testAbstractConstant(): void {
@@ -270,7 +269,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertSame('BAR', $constant->getName());
     $this->assertTrue($constant->isAbstract());
-    $this->assertNull($constant->getValue());
+    $this->assertFalse($constant->hasValue());
   }
 
 
@@ -281,7 +280,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertSame('BAR', $constant->getName());
     $this->assertTrue($constant->isAbstract());
-    $this->assertNull($constant->getValue());
+    $this->assertNull($constant->getAliasedType());
   }
 
   public function testConstrainedAbstractTypeConstant(): void {
@@ -291,7 +290,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertSame('BAR', $constant->getName());
     $this->assertTrue($constant->isAbstract());
-    $this->assertSame('Bar', $constant->getValue()?->getTypeText());
+    $this->assertSame('Bar', $constant->getAliasedType()?->getTypeText());
   }
 
   public function testTypeConstantAsProperty(): void {

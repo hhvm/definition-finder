@@ -32,10 +32,10 @@ function constant_from_define_ast(
     $name = $name->getText();
   } else {
     $name = value_from_ast($name);
-    if ($name === null) {
+    if ($name === null || !$name->hasStaticValue()) {
       return null;
     }
-    $name = (string)$name;
+    $name = (string)$name->getStaticValue();
   }
 
   return new ScannedConstant(

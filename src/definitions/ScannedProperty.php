@@ -12,7 +12,9 @@ namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
 
-class ScannedProperty extends ScannedDefinition implements HasScannedVisibility {
+final class ScannedProperty
+  extends ScannedDefinition
+  implements HasScannedVisibility {
   public function __construct(
     HHAST\EditableNode $ast,
     string $name,
@@ -22,6 +24,7 @@ class ScannedProperty extends ScannedDefinition implements HasScannedVisibility 
     private ?ScannedTypehint $typehint,
     private VisibilityToken $visibility,
     private StaticityToken $staticity,
+    private ?ScannedValue $default,
   ) {
     parent::__construct($ast, $name, $context, $attributes, $docComment);
   }
@@ -49,5 +52,13 @@ class ScannedProperty extends ScannedDefinition implements HasScannedVisibility 
 
   public function isStatic(): bool {
     return $this->staticity === StaticityToken::IS_STATIC;
+  }
+
+  public function hasDefault(): bool {
+    return $this->default !== null;
+  }
+
+  public function getDefault(): ?ScannedValue {
+    return $this->default;
   }
 }

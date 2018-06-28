@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
 
-class ScannedTypeConstant extends ScannedDefinition {
+final class ScannedTypeConstant extends ScannedDefinition {
   public function __construct(
     HHAST\EditableNode $ast,
     string $name,
@@ -39,7 +39,7 @@ class ScannedTypeConstant extends ScannedDefinition {
     return $this->abstractness === AbstractnessToken::IS_ABSTRACT;
   }
 
-  public function getValue(): ?ScannedTypehint {
+  public function getAliasedType(): ?ScannedTypehint {
     return $this->value;
   }
 }

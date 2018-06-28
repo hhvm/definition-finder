@@ -24,6 +24,7 @@ class VariableDefinesTest extends \PHPUnit_Framework_TestCase {
     $data = '<?php define("foo"."bar", $baz)';
     $parser = FileParser::fromData($data);
     $c = $parser->getConstant('foobar');
-    expect($c->getValue())->toBeNull();
+    expect($c->getValue()->getAST()->getCode())->toBeSame('$baz');
+    expect($c->getValue()->hasStaticValue())->toBeFalse();
   }
 }

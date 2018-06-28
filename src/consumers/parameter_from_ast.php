@@ -52,9 +52,7 @@ function parameter_from_ast(
     $info['byref'],
     $node->getCallConvention() instanceof HHAST\InoutToken,
     $info['variadic'],
-    ($node->getDefaultValue() === null)
-      ? null
-      : ast_without_trivia($node->getDefaultValuex()->getValue())->getCode(),
+    value_from_ast($node->getDefaultValue()?->getValue()),
     $visibility,
   );
 }

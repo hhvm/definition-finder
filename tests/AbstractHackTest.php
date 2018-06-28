@@ -125,7 +125,10 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
       ],
     );
     expect(
-      Vec\map($this->parser?->getConstants() ?? vec[], $x ==> $x->getValue()),
+      Vec\map(
+        $this->parser?->getConstants() ?? vec[],
+        $x ==> $x->getValue()->getStaticValue(),
+      ),
     )->toBeSame(vec[456, 123, 789, 'herp', 'derp']);
   }
 
