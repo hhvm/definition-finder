@@ -12,22 +12,30 @@ namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
 
-final class ScannedShapeField extends ScannedDefinition {
+final class ScannedShapeField {
   public function __construct(
-    HHAST\EditableNode $ast,
-    string $name,
-    self::TContext $context,
-    dict<string, vec<mixed>> $attributes,
-    ?string $docComment,
+    private HHAST\EditableNode $ast,
+    private ScannedExpression $name,
+    ScannedDefinition::TContext $context,
+    private ?string $docComment,
     private OptionalityToken $optional,
     private ScannedTypehint $type,
   ) {
-    parent::__construct($ast, $name, $context, $attributes, $docComment);
+    if ($docComment === null) {
+      $this->docComment = doccomment_from_ast($context, $ast);
+    }
   }
 
-  <<__Override>>
-  public static function getType(): DefinitionType {
-    return DefinitionType::SHAPE_FIELD_DEF;
+  public function getAST(): HHAST\EditableNode {
+    return $this->ast;
+  }
+
+  public function getName(): ScannedExpression {
+    return $this->name;
+  }
+
+  public function getDocComment(): ?string {
+    return $this->docComment;
   }
 
   public function isOptional(): bool {

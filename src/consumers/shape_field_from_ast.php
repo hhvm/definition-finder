@@ -21,10 +21,8 @@ function shape_field_from_ast(
 
   return new ScannedShapeField(
     $node,
-    (string)nullthrows(Expression\LiteralExpression::match($node->getName()))
-      ->getValue(),
+    nullthrows(value_from_ast($node->getName())),
     $context['definitionContext'],
-    /* attributes (unsupported) = */ dict[],
     /* doccomment = */ null,
     $node->getQuestion() instanceof HHAST\QuestionToken
       ? OptionalityToken::IS_OPTIONAL

@@ -34,9 +34,8 @@ final class ShapesTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testFieldNames(): void {
-    expect(Vec\map($this->getFields(), $f ==> $f->getName()))->toBeSame(
-      vec['foo', 'bar'],
-    );
+    expect(Vec\map($this->getFields(), $f ==> $f->getName()->getStaticValue()))
+      ->toBeSame(vec['foo', 'bar']);
   }
 
   public function testOptionality(): void {
@@ -64,7 +63,7 @@ final class ShapesTest extends \PHPUnit_Framework_TestCase {
     expect($inner->getTypeName())->toBeSame('shape');
 
     $fields = $inner->getShapeFields();
-    expect(Vec\map($fields, $f ==> $f->getName()))->toBeSame(
+    expect(Vec\map($fields, $f ==> $f->getName()->getStaticValue()))->toBeSame(
       vec['herp', 'derp'],
     );
     expect(Vec\map($fields, $f ==> $f->getDocComment()))
