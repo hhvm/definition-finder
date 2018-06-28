@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
 
-class ScannedParameter extends ScannedDefinition {
+final class ScannedParameter extends ScannedDefinition {
   public function __construct(
     HHAST\EditableNode $ast,
     string $name,

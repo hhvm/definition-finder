@@ -14,7 +14,7 @@ use namespace Facebook\HHAST;
 use namespace HH\Lib\{C, Str, Vec};
 
 /** Represents a parameter, property, constant, or return type hint */
-class ScannedTypehint {
+final class ScannedTypehint {
   public function __construct(
     private HHAST\EditableNode $ast,
     private string $typeName,

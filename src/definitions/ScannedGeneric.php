@@ -10,7 +10,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-class ScannedGeneric {
+final class ScannedGeneric {
   const type TConstraint =
     shape('type' => ScannedTypehint, 'relationship' => RelationshipToken);
 
