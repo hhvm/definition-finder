@@ -29,6 +29,15 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
       tuple('Vector<string>', 'Vector', 'Vector<string>'),
       tuple('callable', 'callable', 'callable'),
 
+      // Special
+      tuple('classname<T>', 'classname', 'classname<MyNamespace\T>'),
+      tuple(
+        'keyset<classname<T>>',
+        'keyset',
+        'keyset<classname<MyNamespace\\T>>',
+      ),
+      tuple('vec<classname<T>>', 'vec', 'vec<classname<MyNamespace\\T>>'),
+
       // Namespacing
       tuple('\\Foo', 'Foo', 'Foo'),
       tuple('Foo', 'MyNamespace\\Foo', 'MyNamespace\\Foo'),

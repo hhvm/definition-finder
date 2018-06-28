@@ -109,7 +109,8 @@ function typehint_from_ast(
       $node,
       'keyset',
       'keyset',
-      typehints_from_ast_va($context, $node->getType()),
+      // https://github.com/hhvm/hhast/issues/95
+      typehints_from_ast_va($context, $node->getTypeUNTYPED()),
       false,
       null,
     );
