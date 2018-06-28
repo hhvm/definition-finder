@@ -1,4 +1,5 @@
 ignored_paths = [ "vendor/.+/tests/.+" ]
+assume_php=false
 forward_compatibility_level=3.27
 disallow_elvis_space=true
 disallow_non_arraykey_keys=true

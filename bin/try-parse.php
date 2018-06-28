@@ -34,11 +34,11 @@ async function try_parse_async(string $path): Awaitable<void> {
         return;
       }
     }
-    $json = exec(
+    $json = \exec(
       'hh_parse --full-fidelity-json '.\escapeshellarg($path).' 2>/dev/null'
     );
     $json = Str\trim($json);
-    if (json_decode($json) === null && \json_last_error() === \JSON_ERROR_DEPTH) {
+    if (\json_decode($json) === null && \json_last_error() === \JSON_ERROR_DEPTH) {
       print $line."JSON TOO DEEP";
       return;
     }
