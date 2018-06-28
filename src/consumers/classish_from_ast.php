@@ -55,59 +55,78 @@ function classish_from_ast<T as ScannedClassish>(
     Keyset\map($generics, $g ==> $g->getName()),
   );
 
-  $contents_context = $context;
-  $contents_context['scopeType'] = ScopeType::CLASSISH_SCOPE;
-
-  $builder = (
-    new ScannedClassishBuilder(
-      $node,
-      $name,
-      $context['definitionContext'],
-      ClassDefinitionType::assert($def_class::getType()),
-    )
-  )
-    ->setAttributes(attributes_from_ast($node->getAttribute()))
-    ->setAbstractness(
-      $has_modifier(HHAST\AbstractToken::class)
-        ? AbstractnessToken::IS_ABSTRACT
-        : AbstractnessToken::NOT_ABSTRACT,
-    )
-    ->setFinality(
-      $has_modifier(HHAST\FinalToken::class)
-        ? FinalityToken::IS_FINAL
-        : FinalityToken::NOT_FINAL,
-    )
-    ->setGenericTypes($generics)
-    ->setContents(
-      scope_from_ast($contents_context, $node->getBody()->getElements()),
-    );
-
   $extends = $node->getExtendsList();
+  $parent = null;
+  $interfaces = vec[];
   if ($extends) {
     $extends = $extends->getItemsOfType(HHAST\EditableNode::class)
       |> Vec\map($$, $super ==> typehint_from_ast($context, $super))
       |> Vec\filter_nulls($$);
     if ($def_class === ScannedClass::class) {
       if (C\count($extends) === 1) {
-        $builder->setParentClassInfo(C\onlyx($extends));
+        $parent = C\onlyx($extends);
       }
     } else {
       invariant(
         $def_class === ScannedInterface::class,
         "Shouldnt see `extends` unless we're dealing with a class or interface",
       );
-      $builder->setInterfaces($extends);
+      $interfaces = $extends;
     }
   }
 
   $implements = $node->getImplementsList();
   if ($implements) {
-    $implements->getItemsOfType(HHAST\EditableNode::class)
+    $interfaces = $implements->getItemsOfType(HHAST\EditableNode::class)
       |> Vec\map($$, $super ==> typehint_from_ast($context, $super))
-      |> Vec\filter_nulls($$)
-      |> $builder->setInterfaces($$);
+      |> Vec\filter_nulls($$);
   }
 
-  return $builder
-    ->build($def_class);
+  $contents_context = $context;
+  $contents_context['scopeType'] = ScopeType::CLASSISH_SCOPE;
+  $contents =
+    scope_from_ast($contents_context, $node->getBody()->getElements());
+
+  $promoted_constructor_args = vec[];
+  $constructor =
+    C\find($contents->getMethods(), $m ==> $m->getName() === '__construct');
+  if ($constructor) {
+    $promoted_constructor_args =
+      Vec\filter($constructor->getParameters(), $p ==> $p->__isPromoted())
+      |> Vec\map(
+        $$,
+        $p ==> new ScannedProperty(
+          $p->getAST(),
+          $p->getName(),
+          $p->getContext(),
+          $p->getAttributes(),
+          $p->getDocComment(),
+          $p->getTypehint(),
+          $p->__getVisibility(),
+          StaticityToken::NOT_STATIC,
+        ),
+      );
+  }
+
+  return new $def_class(
+    $node,
+    $name,
+    $context['definitionContext'],
+    attributes_from_ast($node->getAttribute()),
+    /* docblock = */ null,
+    $contents->getMethods(),
+    Vec\concat($contents->getProperties(), $promoted_constructor_args),
+    $contents->getConstants(),
+    $contents->getTypeConstants(),
+    $generics,
+    $parent,
+    $interfaces,
+    $contents->getUsedTraits(),
+    $has_modifier(HHAST\AbstractToken::class)
+      ? AbstractnessToken::IS_ABSTRACT
+      : AbstractnessToken::NOT_ABSTRACT,
+    $has_modifier(HHAST\FinalToken::class)
+      ? FinalityToken::IS_FINAL
+      : FinalityToken::NOT_FINAL,
+  );
 }
