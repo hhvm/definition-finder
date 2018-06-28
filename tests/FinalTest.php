@@ -32,7 +32,7 @@ class FinalTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testMethodsAreFinal(): void {
-    $class = $this->classes ? $this->classes[1] : null;
+    $class = $this->classes[1] ?? null;
     expect(Vec\map($class?->getMethods() ?? vec[], $x ==> $x->isFinal()))
       ->toBeSame(vec[true, false], 'isFinal');
   }

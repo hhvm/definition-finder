@@ -33,7 +33,7 @@ class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testMethodsAreAbstract(): void {
-    $class = $this->classes ? $this->classes[0] : null;
+    $class = $this->classes[0] ?? null;
     $this->assertSame(
       'Facebook\\DefinitionFinder\\Test\\AbstractClassWithContents',
       $class?->getName(),
