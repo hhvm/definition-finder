@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
 
-final class ScannedValue {
+final class ScannedExpression {
   public function __construct(
     private HHAST\EditableNode $ast,
     private Option<mixed> $staticValue,

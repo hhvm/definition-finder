@@ -14,16 +14,16 @@ use namespace Facebook\HHAST;
 
 function value_from_ast(
   ?HHAST\EditableNode $node,
-): ?ScannedValue {
+): ?ScannedExpression {
   if ($node === null) {
     return null;
   }
   $expr = Expression\StaticExpression::match($node);
   if (!$expr) {
-    return new ScannedValue(
+    return new ScannedExpression(
       $node,
       None(),
     );
   }
-  return new ScannedValue($node, Some($expr->getValue()));
+  return new ScannedExpression($node, Some($expr->getValue()));
 }

@@ -24,7 +24,7 @@ final class ScannedProperty
     private ?ScannedTypehint $typehint,
     private VisibilityToken $visibility,
     private StaticityToken $staticity,
-    private ?ScannedValue $default,
+    private ?ScannedExpression $default,
   ) {
     parent::__construct($ast, $name, $context, $attributes, $docComment);
   }
@@ -58,7 +58,7 @@ final class ScannedProperty
     return $this->default !== null;
   }
 
-  public function getDefault(): ?ScannedValue {
+  public function getDefault(): ?ScannedExpression {
     return $this->default;
   }
 }

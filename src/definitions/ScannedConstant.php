@@ -18,7 +18,7 @@ final class ScannedConstant extends ScannedDefinition {
     string $name,
     self::TContext $context,
     ?string $docblock,
-    private ?ScannedValue $value,
+    private ?ScannedExpression $value,
     private ?ScannedTypehint $typehint,
     private AbstractnessToken $abstractness,
   ) {
@@ -48,7 +48,7 @@ final class ScannedConstant extends ScannedDefinition {
     return $this->value !== null;
   }
 
-  public function getValue(): ScannedValue {
+  public function getValue(): ScannedExpression {
     invariant($this->value !== null, "Can't get value of an abstract constant");
     return $this->value;
   }

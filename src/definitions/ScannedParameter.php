@@ -23,7 +23,7 @@ final class ScannedParameter extends ScannedDefinition {
     private bool $byref,
     private bool $inout,
     private bool $variadic,
-    private ?ScannedValue $default,
+    private ?ScannedExpression $default,
     private ?VisibilityToken $visibility,
   ) {
     parent::__construct($ast, $name, $context, $attributes, $docComment);
@@ -58,7 +58,7 @@ final class ScannedParameter extends ScannedDefinition {
     return $this->default !== null;
   }
 
-  public function getDefault(): ?ScannedValue {
+  public function getDefault(): ?ScannedExpression {
     return $this->default;
   }
 
