@@ -3,8 +3,7 @@
 /*
  *  Copyright (c) 2015-present, Facebook, Inc.
  *  All rights reserved.
- *
- *  This source code is licensed under the MIT license found in the
+ * *  This source code is licensed under the MIT license found in the
  *  LICENSE file in the root directory of this source tree.
  *
  */
@@ -34,6 +33,14 @@ function try_parse(string $path): void {
         print("HHVM SYNTAX ERROR\n");
         return;
       }
+    }
+    $json = exec(
+      'hh_parse --full-fidelity-json '.\escapeshellarg($path).' 2>/dev/null'
+    );
+    $json = Str\trim($json);
+    if (json_decode($json) === null && \json_last_error() === \JSON_ERROR_DEPTH) {
+      print("JSON TOO DEEP\n");
+      return;
     }
     throw $e;
   }
