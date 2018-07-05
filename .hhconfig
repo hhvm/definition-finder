@@ -1,6 +1,6 @@
 ignored_paths = [ "vendor/.+/tests/.+" ]
 assume_php=false
-forward_compatibility_level=3.27
+forward_compatibility_level=20180704
 disallow_elvis_space=true
 disallow_non_arraykey_keys=true
 disallow_unsafe_comparisons=true
