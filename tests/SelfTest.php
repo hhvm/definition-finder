@@ -30,26 +30,4 @@ class SelfTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromFile($filename);
     $this->assertNotNull($parser);
   }
-
-  public function elfSectionsProvider(): array<array<string>> {
-    $extractor = new \HHVM\SystemlibExtractor\SystemlibExtractor();
-    return $extractor
-      ->getSectionNames()
-      ->toVector()
-      ->map($name ==> [$name, $extractor->getSectionContents($name)])
-      ->toArray();
-  }
-
-  /**
-   * @dataProvider elfSectionsProvider
-   */
-  public function testELFSection(string $name, string $bytes): void {
-    try {
-      $parser = FileParser::fromData($bytes, $name);
-    } catch (\Exception $e) {
-      \file_put_contents('/tmp/'.$name.'.php', $bytes);
-      throw $e;
-    }
-    $this->assertNotNull($parser);
-  }
 }

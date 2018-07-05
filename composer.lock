@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "00220e5ae4b5bbd6188e553f044fcf09",
+    "content-hash": "b73644ef4a14ae00776ef4aeeef99e53",
     "packages": [
         {
             "name": "facebook/hh-clilib",
@@ -369,45 +369,6 @@
             ],
             "description": "Unit test helpers for Facebook projects",
             "time": "2018-06-11T22:04:56+00:00"
-        },
-        {
-            "name": "hhvm/systemlib-extractor",
-            "version": "v1.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hhvm/systemlib-extractor.git",
-                "reference": "02c408a20c6d9ddcf1b81075de0ceff7b0a04e3c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hhvm/systemlib-extractor/zipball/02c408a20c6d9ddcf1b81075de0ceff7b0a04e3c",
-                "reference": "02c408a20c6d9ddcf1b81075de0ceff7b0a04e3c",
-                "shasum": ""
-            },
-            "require": {
-                "hhvm": "*"
-            },
-            "require-dev": {
-                "91carriage/phpunit-hhi": "~5.7",
-                "phpunit/phpunit": "~5.7"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Extract the PHP, Hack, and HNI files embedded in HHVM",
-            "homepage": "https://github.com/hhvm/systemlib-extractor",
-            "keywords": [
-                "hack",
-                "hhvm"
-            ],
-            "time": "2018-02-08T23:24:58+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -1632,7 +1593,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v4.1.0",
+            "version": "v4.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
