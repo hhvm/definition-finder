@@ -8,6 +8,8 @@
  *
  */
 
+use function Facebook\FBExpect\expect;
+
 class NoNamespaceHackTest extends AbstractHackTest {
   <<__Override>>
   protected function getFilename(): string {

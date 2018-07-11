@@ -41,8 +41,8 @@ EOF
     expect($p->getFunctionNames())->toBeSame(vec['foo']);
     $rt = $p->getFunction('foo')->getReturnType();
 
-    $this->assertSame('callable', $rt?->getTypeName());
-    $this->assertSame('(function():void)', $rt?->getTypeText());
+    expect($rt?->getTypeName())->toBeSame('callable');
+    expect($rt?->getTypeText())->toBeSame('(function():void)');
   }
 
   public function testReturnsGenericCallable(): void {
@@ -51,8 +51,8 @@ EOF
     expect($p->getFunctionNames())->toBeSame(vec['foo']);
 
     $rt = $p->getFunction('foo')->getReturnType();
-    $this->assertSame('callable', $rt?->getTypeName());
-    $this->assertSame('(function():vec<string>)', $rt?->getTypeText());
+    expect($rt?->getTypeName())->toBeSame('callable');
+    expect($rt?->getTypeText())->toBeSame('(function():vec<string>)');
   }
 
   public function testAsParameterType(): void {
@@ -86,6 +86,6 @@ EOF
 
   public function testAsRVal(): void {
     $p = FileParser::fromData('<?php $f = function(){};');
-    $this->assertEmpty($p->getFunctionNames());
+    expect($p->getFunctionNames())->toBeEmpty();
   }
 }

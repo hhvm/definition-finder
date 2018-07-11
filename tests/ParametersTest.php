@@ -29,11 +29,11 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
     $params = $function->getParameters();
 
-    $this->assertSame(2, \count($params));
-    $this->assertSame('bar', $params[0]->getName());
-    $this->assertSame('baz', $params[1]->getName());
-    $this->assertNull($params[0]->getTypehint());
-    $this->assertNull($params[1]->getTypehint());
+    expect(\count($params))->toBeSame(2);
+    expect($params[0]->getName())->toBeSame('bar');
+    expect($params[1]->getName())->toBeSame('baz');
+    expect($params[0]->getTypehint())->toBeNull();
+    expect($params[1]->getTypehint())->toBeNull();
   }
 
   public function testWithSimpleType(): void {
@@ -43,12 +43,12 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
-    $this->assertSame(1, \count($params));
+    expect(\count($params))->toBeSame(1);
     $param = $params[0];
-    $this->assertSame('bar', $param->getName());
+    expect($param->getName())->toBeSame('bar');
     $typehint = $param->getTypehint();
-    $this->assertSame('string', $typehint?->getTypeName());
-    $this->assertEmpty($typehint?->getGenericTypes());
+    expect($typehint?->getTypeName())->toBeSame('string');
+    expect($typehint?->getGenericTypes())->toBeEmpty();
   }
 
   public function testWithDefault(): void {
@@ -77,7 +77,8 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
 
   public function testWithNullDefault(): void {
     $data = '<?hh function foo($bar, $baz = null) {}';
-    $parameters = FileParser::fromData($data)->getFunction('foo')->getParameters();
+    $parameters =
+      FileParser::fromData($data)->getFunction('foo')->getParameters();
     list($bar, $baz) = $parameters;
     expect($bar->getDefault())->toBeNull();
     $default = expect($baz->getDefault())->toNotBeNull();
@@ -163,10 +164,8 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     expect(Vec\map($function->getParameters(), $x ==> $x->getName()))->toBeSame(
       vec['bar'],
     );
-    $this->assertSame(
-      'Iterator',
-      $function->getParameters()[0]->getTypehint()?->getTypeName(),
-    );
+    expect($function->getParameters()[0]->getTypehint()?->getTypeName())
+      ->toBeSame('Iterator');
   }
 
   public function testWithNamespacedType(): void {
@@ -178,10 +177,8 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     expect(Vec\map($function->getParameters(), $x ==> $x->getName()))->toBeSame(
       vec['bar'],
     );
-    $this->assertSame(
-      'Foo\\Bar',
-      $function->getParameters()[0]->getTypehint()?->getTypeName(),
-    );
+    expect($function->getParameters()[0]->getTypehint()?->getTypeName())
+      ->toBeSame('Foo\\Bar');
   }
 
   public function testWithLegacyCallableType(): void {
@@ -193,10 +190,8 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     expect(Vec\map($function->getParameters(), $x ==> $x->getName()))->toBeSame(
       vec['bar'],
     );
-    $this->assertSame(
-      'callable',
-      $function->getParameters()[0]->getTypehint()?->getTypeName(),
-    );
+    expect($function->getParameters()[0]->getTypehint()?->getTypeName())
+      ->toBeSame('callable');
   }
 
   public function testWithByRefParam(): void {
@@ -245,7 +240,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     expect(Vec\map($function->getParameters(), $x ==> $x->getName()))->toBeSame(
       vec['bar'],
     );
-    $this->assertNull($function->getParameters()[0]->getTypehint());
+    expect($function->getParameters()[0]->getTypehint())->toBeNull();
   }
 
   public function testWithUntypedVariadicParam(): void {
@@ -298,8 +293,8 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $type = $parser->getFunction('foo')->getParameters()[0]->getTypehint();
 
-    $this->assertSame('callable', $type?->getTypeName());
-    $this->assertSame('(function(int):string)', $type?->getTypeText());
+    expect($type?->getTypeName())->toBeSame('callable');
+    expect($type?->getTypeText())->toBeSame('(function(int):string)');
   }
 
   public function testEmptyShapeTypehint(): void {
@@ -307,8 +302,8 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $type = $parser->getFunction('foo')->getParameters()[0]->getTypehint();
 
-    $this->assertSame('shape', $type?->getTypeName());
-    $this->assertSame('shape()', $type?->getTypeText());
+    expect($type?->getTypeName())->toBeSame('shape');
+    expect($type?->getTypeText())->toBeSame('shape()');
   }
 
   public function testNonNullableTypehint(): void {

@@ -191,28 +191,28 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
 
   public function testFunctionReturnTypes(): void {
     $type = $this->getFunction('returns_int')->getReturnType();
-    $this->assertSame('int', $type?->getTypeName());
-    $this->assertEmpty($type?->getGenericTypes());
+    expect($type?->getTypeName())->toBeSame('int');
+    expect($type?->getGenericTypes())->toBeEmpty();
 
     $type = $this->getFunction('returns_generic')->getReturnType();
-    $this->assertSame('Vector', $type?->getTypeName());
+    expect($type?->getTypeName())->toBeSame('Vector');
     $generics = $type?->getGenericTypes();
-    $this->assertSame(1, count($generics));
+    expect(count($generics))->toBeSame(1);
     $sub_type = $generics[0] ?? null;
-    $this->assertSame('int', $sub_type?->getTypeName());
-    $this->assertEmpty($sub_type?->getGenericTypes());
+    expect($sub_type?->getTypeName())->toBeSame('int');
+    expect($sub_type?->getGenericTypes())->toBeEmpty();
 
     $type = $this->getFunction('returns_nested_generic')->getReturnType();
-    $this->assertSame('Vector', $type?->getTypeName());
+    expect($type?->getTypeName())->toBeSame('Vector');
     $generics = $type?->getGenericTypes();
-    $this->assertSame(1, count($generics));
+    expect(count($generics))->toBeSame(1);
     $sub_type = $generics[0] ?? null;
-    $this->assertSame('Vector', $sub_type?->getTypeName());
+    expect($sub_type?->getTypeName())->toBeSame('Vector');
     $sub_generics = $sub_type?->getGenericTypes();
-    $this->assertSame(1, count($sub_generics));
+    expect(count($sub_generics))->toBeSame(1);
     $sub_sub_type = $sub_generics[0] ?? null;
-    $this->assertSame('int', $sub_sub_type?->getTypeName());
-    $this->assertEmpty($sub_sub_type?->getGenericTypes());
+    expect($sub_sub_type?->getTypeName())->toBeSame('int');
+    expect($sub_sub_type?->getGenericTypes())->toBeEmpty();
   }
 
   public function testAliasedTypehints(): void {
@@ -229,8 +229,8 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
     foreach ($data as $typeName => $fun) {
       $returnType = $fun->getReturnType();
       $paramType = ($fun->getParameters()[0] ?? null)?->getTypehint();
-      $this->assertSame($typeName, $returnType?->getTypeName());
-      $this->assertSame($typeName, $paramType?->getTypeName());
+      expect($returnType?->getTypeName())->toBeSame($typeName);
+      expect($paramType?->getTypeName())->toBeSame($typeName);
     }
   }
 

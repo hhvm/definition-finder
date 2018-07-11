@@ -21,21 +21,18 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
   protected function setUp(): void {
     $parser = FileParser::fromFile(__DIR__.'/data/class_contents.php');
     $this->class = $parser->getClasses()[0];
-    $this->assertSame(
+    expect($this->class->getName())->toBeSame(
       'Facebook\\DefinitionFinder\\Test\\ClassWithContents',
-      $this->class->getName(),
     );
   }
 
   public function testAnonymousClasses(): void {
     $parser = FileParser::fromFile(__DIR__.'/data/class_contents_php.php');
-    $this->assertEmpty(
-      $parser->getFunctions(),
+    expect($parser->getFunctions())->toBeEmpty(
       'Should be no functions - probably interpreting a method as a function',
     );
-    $this->assertSame(
+    expect(C\count($parser->getClasses()))->toBeSame(
       1,
-      C\count($parser->getClasses()),
       'The anonymous class should not be returned',
     );
     $class = $parser->getClass('ClassUsingAnonymousClass');
@@ -225,9 +222,9 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $constants = $parser->getClass('Foo')->getTypeConstants();
     $constant = C\onlyx($constants);
 
-    $this->assertSame('BAR', $constant->getName());
-    $this->assertFalse($constant->isAbstract());
-    $this->assertSame('int', $constant->getAliasedType()?->getTypeText());
+    expect($constant->getName())->toBeSame('BAR');
+    expect($constant->isAbstract())->toBeFalse();
+    expect($constant->getAliasedType()?->getTypeText())->toBeSame('int');
   }
 
   public function testClassAsTypeConstant(): void {
@@ -257,9 +254,9 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $constants = $parser->getClass('Foo')->getTypeConstants();
     $constant = C\onlyx($constants);
 
-    $this->assertSame('BAR', $constant->getName());
-    $this->assertFalse($constant->isAbstract());
-    $this->assertSame('int', $constant->getAliasedType()?->getTypeText());
+    expect($constant->getName())->toBeSame('BAR');
+    expect($constant->isAbstract())->toBeFalse();
+    expect($constant->getAliasedType()?->getTypeText())->toBeSame('int');
   }
 
   public function testAbstractConstant(): void {
@@ -267,9 +264,9 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $constant = C\onlyx($parser->getClass('Foo')->getConstants());
 
-    $this->assertSame('BAR', $constant->getName());
-    $this->assertTrue($constant->isAbstract());
-    $this->assertFalse($constant->hasValue());
+    expect($constant->getName())->toBeSame('BAR');
+    expect($constant->isAbstract())->toBeTrue();
+    expect($constant->hasValue())->toBeFalse();
   }
 
 
@@ -278,9 +275,9 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $constant = C\onlyx($parser->getClass('Foo')->getTypeConstants());
 
-    $this->assertSame('BAR', $constant->getName());
-    $this->assertTrue($constant->isAbstract());
-    $this->assertNull($constant->getAliasedType());
+    expect($constant->getName())->toBeSame('BAR');
+    expect($constant->isAbstract())->toBeTrue();
+    expect($constant->getAliasedType())->toBeNull();
   }
 
   public function testConstrainedAbstractTypeConstant(): void {
@@ -288,9 +285,9 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $constant = C\onlyx($parser->getClass('Foo')->getTypeConstants());
 
-    $this->assertSame('BAR', $constant->getName());
-    $this->assertTrue($constant->isAbstract());
-    $this->assertSame('Bar', $constant->getAliasedType()?->getTypeText());
+    expect($constant->getName())->toBeSame('BAR');
+    expect($constant->isAbstract())->toBeTrue();
+    expect($constant->getAliasedType()?->getTypeText())->toBeSame('Bar');
   }
 
   public function testTypeConstantAsProperty(): void {
@@ -298,8 +295,8 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $prop = C\onlyx($parser->getClass('Foo')->getProperties());
 
-    $this->assertSame('this::FOO', $prop->getTypehint()?->getTypeText());
-    $this->assertSame('foo', $prop->getName());
+    expect($prop->getTypehint()?->getTypeText())->toBeSame('this::FOO');
+    expect($prop->getName())->toBeSame('foo');
   }
 
   public function testTypeconstantAsReturnType(): void {
@@ -307,7 +304,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $method = C\onlyx($parser->getClass('Foo')->getMethods());
 
-    $this->assertSame('this::FOO', $method->getReturnType()?->getTypeText());
+    expect($method->getReturnType()?->getTypeText())->toBeSame('this::FOO');
   }
 
   public function testTypeconstantAsParameterType(): void {
@@ -316,8 +313,8 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $method = C\onlyx($parser->getClass('Foo')->getMethods());
     $param = C\onlyx($method->getParameters());
 
-    $this->assertSame('this::FOO', $param->getTypehint()?->getTypeText());
-    $this->assertSame('foo', $param->getName());
+    expect($param->getTypehint()?->getTypeText())->toBeSame('this::FOO');
+    expect($param->getName())->toBeSame('foo');
   }
 
   public static function namespacedReturns(
@@ -384,9 +381,8 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $method = C\onlyx($parser->getClass($className)->getMethods());
 
-    $this->assertSame(
+    expect($method->getReturnType()?->getTypeText())->toBeSame(
       $expectedTypehintText,
-      $method->getReturnType()?->getTypeText(),
     );
   }
 }

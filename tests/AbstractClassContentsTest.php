@@ -34,9 +34,8 @@ class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
 
   public function testMethodsAreAbstract(): void {
     $class = $this->classes[0] ?? null;
-    $this->assertSame(
+    expect($class?->getName())->toBeSame(
       'Facebook\\DefinitionFinder\\Test\\AbstractClassWithContents',
-      $class?->getName(),
     );
     expect(Vec\map($class?->getMethods() ?? vec[], $x ==> $x->isAbstract()))
       ->toBeSame(vec[false, true], 'isAbstract');

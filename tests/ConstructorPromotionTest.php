@@ -37,14 +37,14 @@ class Foo {
 
   public function testFoundMethods(): void {
     $meths = $this->class?->getMethods();
-    $this->assertSame(1, \count($meths));
+    expect(\count($meths))->toBeSame(1);
   }
 
   public function testConstructorParameters(): void {
     $meths = $this->class?->getMethods() ?? vec[];
     $constructors = Vec\filter($meths, $x ==> $x->getName() === '__construct');
     $constructor = $constructors[0] ?? null;
-    $this->assertNotNull($constructor, 'did not find constructor');
+    expect($constructor)->toNotBeNull('did not find constructor');
     assert($constructor instanceof ScannedMethod);
 
 

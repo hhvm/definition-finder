@@ -18,36 +18,36 @@ class RelationshipsTest extends \PHPUnit_Framework_TestCase {
   public function testClassExtends(): void {
     $data = '<?hh class Foo extends Bar {}';
     $def = FileParser::fromData($data)->getClass('Foo');
-    $this->assertSame('Bar', $def->getParentClassName());
-    $this->assertEmpty($def->getInterfaceNames());
+    expect($def->getParentClassName())->toBeSame('Bar');
+    expect($def->getInterfaceNames())->toBeEmpty();
   }
 
   public function testClassImplements(): void {
     $data = '<?hh class Foo implements Bar, Baz {}';
     $def = FileParser::fromData($data)->getClass('Foo');
     expect($def->getInterfaceNames())->toBeSame(vec['Bar', 'Baz']);
-    $this->assertNull($def->getParentClassName());
+    expect($def->getParentClassName())->toBeNull();
   }
 
   public function testInterfaceExtends(): void {
     $data = '<?hh interface Foo extends Bar, Baz {}';
     $def = FileParser::fromData($data)->getInterface('Foo');
     expect($def->getInterfaceNames())->toBeSame(vec['Bar', 'Baz']);
-    $this->assertNull($def->getParentClassName());
+    expect($def->getParentClassName())->toBeNull();
   }
 
   public function testClassExtendsAndImplements(): void {
     $data = '<?hh class Foo extends Bar implements Herp, Derp {}';
     $def = FileParser::fromData($data)->getClass('Foo');
-    $this->assertSame('Bar', $def->getParentClassName());
+    expect($def->getParentClassName())->toBeSame('Bar');
     expect($def->getInterfaceNames())->toBeSame(vec['Herp', 'Derp']);
   }
 
   public function testClassExtendsGeneric(): void {
     $data = '<?hh class Foo extends Bar<Baz> {}';
     $def = FileParser::fromData($data)->getClass('Foo');
-    $this->assertSame('Bar', $def->getParentClassName());
-    $this->assertSame('Bar<Baz>', $def->getParentClassInfo()?->getTypeText());
+    expect($def->getParentClassName())->toBeSame('Bar');
+    expect($def->getParentClassInfo()?->getTypeText())->toBeSame('Bar<Baz>');
   }
 
   public function testClassImplementsGenerics(): void {

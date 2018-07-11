@@ -11,6 +11,7 @@
 namespace Facebook\DefinitionFinder\Tests;
 
 use type Facebook\DefinitionFinder\FileParser;
+use function Facebook\FBExpect\expect;
 
 final class TypeHintTest extends \PHPUnit_Framework_TestCase {
   public function provideTypesInNamespace(): array<(string, string, string)> {
@@ -65,9 +66,9 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
       " \$_): void {}\n";
     $def = FileParser::fromData($code)->getFunction('MyNamespace\\main');
     $type = $def->getParameters()[0]->getTypehint();
-    $this->assertNotNull($type);
-    $this->assertSame($name, $type?->getTypeName(), 'type name differs');
-    $this->assertSame($text, $type?->getTypeText(), 'type text differs');
+    expect($type)->toNotBeNull();
+    expect($type?->getTypeName())->toBeSame($name, 'type name differs');
+    expect($type?->getTypeText())->toBeSame($text, 'type text differs');
   }
 
   public function provideNullableExamples(
@@ -99,9 +100,9 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
     $code = "<?hh \n"."function main(".$input." \$_): void {}\n";
     $def = FileParser::fromData($code)->getFunction('main');
     $type = $def->getParameters()[0]->getTypehint();
-    $this->assertNotNull($type);
-    $this->assertSame($nullable, $type?->isNullable(), 'nullability differs');
-    $this->assertSame($name, $type?->getTypeName(), 'type name differs');
-    $this->assertSame($text, $type?->getTypeText(), 'type text differs');
+    expect($type)->toNotBeNull();
+    expect($type?->isNullable())->toBeSame($nullable, 'nullability differs');
+    expect($type?->getTypeName())->toBeSame($name, 'type name differs');
+    expect($type?->getTypeText())->toBeSame($text, 'type text differs');
   }
 }

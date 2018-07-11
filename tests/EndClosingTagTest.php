@@ -8,6 +8,8 @@
  *
  */
 
+use function Facebook\FBExpect\expect;
+
 class EndClosingTagTest extends AbstractPHPTest {
   <<__Override>>
   protected function getFilename(): string {

@@ -28,8 +28,8 @@ final class XHPTest extends \PHPUnit_Framework_TestCase {
     $function = $parser->getFunction('foo');
     $ret = $function->getReturnType();
     $ret = expect($ret)->toNotBeNull();
-    $this->assertSame('xhp_foo__bar', $ret->getTypeName());
-    $this->assertTrue($ret->isNullable());
+    expect($ret->getTypeName())->toBeSame('xhp_foo__bar');
+    expect($ret->isNullable())->toBeTrue();
   }
 
   public function testXHPClassWithParent(): void {
@@ -38,9 +38,8 @@ final class XHPTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     expect($parser->getClassNames())->toContain('xhp_foo__bar');
 
-    $this->assertSame(
+    expect($parser->getClass('xhp_foo__bar')->getParentClassName())->toBeSame(
       'xhp_herp__derp',
-      $parser->getClass('xhp_foo__bar')->getParentClassName(),
     );
   }
 
@@ -70,9 +69,8 @@ EOF;
   public function testXHPClassNamesAreCorrect(): void {
     $parser = FileParser::fromData('<?hh class :foo:bar:baz:herp-derp {}');
 
-    $this->assertContains(
+    expect(C\onlyx($parser->getClassNames()))->toContain(
       /* UNSAFE_EXPR */ :foo:bar:baz:herp-derp::class,
-      C\onlyx($parser->getClassNames()),
     );
   }
 }
