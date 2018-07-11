@@ -21,7 +21,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
 
     // Check that it parses
     $parser = FileParser::fromData($data);
-    $this->assertNotNull($parser->getFunction('select'));
+    expect($parser->getFunction('select'))->toNotBeNull();
   }
 
   /** Things that are valid names, but have a weird token type */
@@ -45,7 +45,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $data = '<?php function foo(): '.$type.' {}';
     $parser = FileParser::fromData($data);
     $func = $parser->getFunction('foo');
-    $this->assertSame($type, $func->getReturnType()?->getTypeName());
+    expect($func->getReturnType()?->getTypeName())->toBeSame($type);
   }
 
   /** @dataProvider specialNameProvider */
@@ -53,8 +53,8 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $data = '<?php function '.$type.'(): void {}';
     $parser = FileParser::fromData($data);
     $func = $parser->getFunction($type);
-    $this->assertSame('void', $func->getReturnType()?->getTypeName());
-    $this->assertSame($type, $func->getName());
+    expect($func->getReturnType()?->getTypeName())->toBeSame('void');
+    expect($func->getName())->toBeSame($type);
   }
 
   /** @dataProvider specialNameProvider */
@@ -62,7 +62,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $data = '<?php class '.$type.' { }';
     $parser = FileParser::fromData($data);
     $class = $parser->getClass($type);
-    $this->assertNotNull($class);
+    expect($class)->toNotBeNull();
   }
 
   /** @dataProvider specialNameProvider */
@@ -70,7 +70,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $data = '<?php namespace '.$type.' { class Foo {} }';
     $parser = FileParser::fromData($data);
     $class = $parser->getClass($type."\\Foo");
-    $this->assertNotNull($class);
+    expect($class)->toNotBeNull();
   }
 
   /** @dataProvider specialNameProvider */
@@ -78,7 +78,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $data = '<?php use Foo\\'.$type.'; class Herp extends '.$type.' { }';
     $parser = FileParser::fromData($data);
     $class = $parser->getClass('Herp');
-    $this->assertNotNull($class);
+    expect($class)->toNotBeNull();
   }
 
   /** @dataProvider specialNameProvider */
@@ -86,7 +86,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $data = '<?php use Foo\\Bar as '.$type.'; class Herp extends '.$type.' { }';
     $parser = FileParser::fromData($data);
     $class = $parser->getClass('Herp');
-    $this->assertNotNull($class);
+    expect($class)->toNotBeNull();
   }
 
   /**
@@ -201,8 +201,8 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $php_class = FileParser::fromData($php)->getClass("Foo\\MyClass");
     $hack_class = FileParser::fromData($hack)->getClass("Foo\\MyClass");
 
-    $this->assertSame("Foo\\Collection", $php_class->getParentClassName());
-    $this->assertSame('Collection', $hack_class->getParentClassName());
+    expect($php_class->getParentClassName())->toBeSame("Foo\\Collection");
+    expect($hack_class->getParentClassName())->toBeSame('Collection');
   }
 
   public function testScalarParameterInNamespace(): void {
@@ -227,7 +227,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
-    $this->assertSame('this', $method->getReturnType()?->getTypeName());
+    expect($method->getReturnType()?->getTypeName())->toBeSame('this');
   }
 
   public function testReturnsClassGenericInNamespace(): void {
@@ -239,7 +239,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
-    $this->assertSame('T', $method->getReturnType()?->getTypeName());
+    expect($method->getReturnType()?->getTypeName())->toBeSame('T');
   }
 
   public function testReturnsNullableClassGenericInNamespace(): void {
@@ -251,8 +251,8 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
-    $this->assertSame('T', $method->getReturnType()?->getTypeName());
-    $this->assertTrue($method->getReturnType()?->isNullable());
+    expect($method->getReturnType()?->getTypeName())->toBeSame('T');
+    expect($method->getReturnType()?->isNullable())->toBeTrue();
   }
 
   public function testReturnsMethodGenericInNamespace(): void {
@@ -264,7 +264,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
-    $this->assertSame('T', $method->getReturnType()?->getTypeName());
+    expect($method->getReturnType()?->getTypeName())->toBeSame('T');
   }
 
   /**
@@ -281,14 +281,9 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
-    $this->assertSame(
-      'TClassGeneric',
-      $method->getReturnType()?->getTypeName(),
-    );
-    $this->assertSame(
-      'TFunctionGeneric',
-      $method->getParameters()[0]->getTypehint()?->getTypeName(),
-    );
+    expect($method->getReturnType()?->getTypeName())->toBeSame('TClassGeneric');
+    expect($method->getParameters()[0]->getTypehint()?->getTypeName())
+      ->toBeSame('TFunctionGeneric');
   }
 
   public function testTakesMethodGenericInNamespace(): void {
@@ -300,9 +295,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
-    $this->assertSame(
-      'T',
-      $method->getParameters()[0]->getTypehint()?->getTypeName(),
-    );
+    expect($method->getParameters()[0]->getTypehint()?->getTypeName())
+      ->toBeSame('T');
   }
 }

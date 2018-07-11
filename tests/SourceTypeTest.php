@@ -11,6 +11,7 @@
 namespace Facebook\DefinitionFinder\Tests;
 
 use type Facebook\DefinitionFinder\FileParser;
+use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\SourceType;
 
 class SourceTypeTest extends \PHPUnit_Framework_TestCase {
@@ -37,15 +38,15 @@ class SourceTypeTest extends \PHPUnit_Framework_TestCase {
   ): void {
     $code = $prefix."\nclass Foo {}";
     $parser = FileParser::fromData($code);
-    $this->assertSame($expected, $parser->getClass('Foo')->getSourceType());
+    expect($parser->getClass('Foo')->getSourceType())->toBeSame($expected);
   }
 
   public function testPlainTextFileParses(): void {
     $parser = FileParser::fromData('foo');
-    $this->assertEmpty($parser->getClasses());
-    $this->assertEmpty($parser->getFunctions());
-    $this->assertEmpty($parser->getTypes());
-    $this->assertEmpty($parser->getNewtypes());
-    $this->assertEmpty($parser->getConstants());
+    expect($parser->getClasses())->toBeEmpty();
+    expect($parser->getFunctions())->toBeEmpty();
+    expect($parser->getTypes())->toBeEmpty();
+    expect($parser->getNewtypes())->toBeEmpty();
+    expect($parser->getConstants())->toBeEmpty();
   }
 }

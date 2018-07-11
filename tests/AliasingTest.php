@@ -21,7 +21,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "use MyOtherNamespace\\Foo;\n".
       'class Bar extends Foo {}';
     $def = FileParser::fromData($code)->getClass('MyNamespace\\Bar');
-    $this->assertSame("MyOtherNamespace\\Foo", $def->getParentClassName());
+    expect($def->getParentClassName())->toBeSame("MyOtherNamespace\\Foo");
   }
 
   public function testMultiUse(): void {
@@ -29,7 +29,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "use Foo\\Bar, Herp\\Derp;\n".
       'class MyClass extends Bar implements Derp {}';
     $def = FileParser::fromData($code)->getClass('MyClass');
-    $this->assertSame("Foo\\Bar", $def->getParentClassName());
+    expect($def->getParentClassName())->toBeSame("Foo\\Bar");
     expect($def->getInterfaceNames())->toBeSame(vec["Herp\\Derp"]);
   }
 
@@ -39,7 +39,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "use MyOtherNamespace\\Foo as SuperClass;\n".
       'class Bar extends SuperClass {}';
     $def = FileParser::fromData($code)->getClass('MyNamespace\\Bar');
-    $this->assertSame("MyOtherNamespace\\Foo", $def->getParentClassName());
+    expect($def->getParentClassName())->toBeSame("MyOtherNamespace\\Foo");
   }
 
   public function testMultiUseWithClassAlias(): void {
@@ -47,7 +47,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "use Foo\\Bar as Baz, Herp\\Derp;\n".
       'class MyClass extends Baz implements Derp {}';
     $def = FileParser::fromData($code)->getClass('MyClass');
-    $this->assertSame("Foo\\Bar", $def->getParentClassName());
+    expect($def->getParentClassName())->toBeSame("Foo\\Bar");
     expect($def->getInterfaceNames())->toBeSame(vec["Herp\\Derp"]);
   }
 
@@ -57,7 +57,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "use MyOtherNamespace as OtherNS;\n".
       "class Bar extends OtherNS\\Foo{}";
     $def = FileParser::fromData($code)->getClass('MyNamespace\\Bar');
-    $this->assertSame("MyOtherNamespace\\Foo", $def->getParentClassName());
+    expect($def->getParentClassName())->toBeSame("MyOtherNamespace\\Foo");
   }
 
   public function testSimpleGroupUse(): void {
@@ -117,9 +117,8 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "use MyOtherNamespace\\Foo;\n".
       "function my_func(): Foo {}";
     $def = FileParser::fromData($code)->getFunction('MyNamespace\\my_func');
-    $this->assertSame(
+    expect($def->getReturnType()?->getTypeName())->toBeSame(
       "MyOtherNamespace\\Foo",
-      $def->getReturnType()?->getTypeName(),
     );
   }
 
@@ -129,10 +128,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "use function MyOtherNamespace\\Foo;\n".
       "function my_func(): Foo {}";
     $def = FileParser::fromData($code)->getFunction('MyNamespace\\my_func');
-    $this->assertSame(
-      "MyNamespace\\Foo",
-      $def->getReturnType()?->getTypeName(),
-    );
+    expect($def->getReturnType()?->getTypeName())->toBeSame("MyNamespace\\Foo");
   }
 
   public function testConstUseIsNotTypeAlias(): void {
@@ -141,10 +137,7 @@ final class AliasingTest extends \PHPUnit_Framework_TestCase {
       "use const MyOtherNamespace\\Foo;\n".
       "function my_func(): Foo {}";
     $def = FileParser::fromData($code)->getFunction('MyNamespace\\my_func');
-    $this->assertSame(
-      "MyNamespace\\Foo",
-      $def->getReturnType()?->getTypeName(),
-    );
+    expect($def->getReturnType()?->getTypeName())->toBeSame("MyNamespace\\Foo");
   }
 
   public function testFunctionAndConstGroupUseIsNotTypeAlias(): void {

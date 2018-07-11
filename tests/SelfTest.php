@@ -11,6 +11,7 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\FileParser;
+use function Facebook\FBExpect\expect;
 
 class SelfTest extends \PHPUnit_Framework_TestCase {
 
@@ -28,6 +29,6 @@ class SelfTest extends \PHPUnit_Framework_TestCase {
    */
   public function testSelf(string $_, string $filename): void {
     $parser = FileParser::fromFile($filename);
-    $this->assertNotNull($parser);
+    expect($parser)->toNotBeNull();
   }
 }

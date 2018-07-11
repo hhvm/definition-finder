@@ -38,7 +38,7 @@ final class CurlyTest extends PHPUnit_Framework_TestCase {
         break;
       }
     }
-    $this->assertTrue($matched, 'no T_CURLY_OPEN in data file');
+    expect($matched)->toBeTrue('no T_CURLY_OPEN in data file');
   }
 
   // Actually testing the tokenizer hasn't changed
@@ -51,7 +51,7 @@ final class CurlyTest extends PHPUnit_Framework_TestCase {
         break;
       }
     }
-    $this->assertTrue($matched, 'no T_DOLLAR_OPEN_CURLY_BRACES in data file');
+    expect($matched)->toBeTrue('no T_DOLLAR_OPEN_CURLY_BRACES in data file');
   }
 
   // Actually testing the tokenizer hasn't changed
@@ -61,8 +61,7 @@ final class CurlyTest extends PHPUnit_Framework_TestCase {
       if (!is_array($token)) {
         continue;
       }
-      $this->assertTrue(
-        $token[1] !== '}',
+      expect($token[1] !== '}')->toBeTrue(
         sprintf(
           'Got a token of type %d (%s) containing "}"',
           $token[0],

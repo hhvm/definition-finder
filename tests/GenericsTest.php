@@ -138,9 +138,8 @@ class GenericsTest extends \PHPUnit_Framework_TestCase {
     $parser = FileParser::fromData($data);
     $function = $parser->getFunction('foo');
     $generics = $function->getGenericTypes();
-    $this->assertSame(
+    expect($generics[0]->getConstraints()[0]['type']->getTypeText())->toBeSame(
       'shape()',
-      $generics[0]->getConstraints()[0]['type']->getTypeText(),
     );
   }
 

@@ -38,37 +38,37 @@ class DocCommentTest extends \PHPUnit_Framework_TestCase {
 
   public function testClassWithDoc(): void {
     $def = $this->getDef('ClassWithDocComment');
-    $this->assertSame('/** class doc */', $def->getDocComment());
+    expect($def->getDocComment())->toBeSame('/** class doc */');
   }
 
   public function testClassWithoutDoc(): void {
     $def = $this->getDef('ClassWithoutDocComment');
-    $this->assertNull($def->getDocComment());
+    expect($def->getDocComment())->toBeNull();
   }
 
   public function testFunctionWithDoc(): void {
     $def = $this->getDef('function_with_doc_comment');
-    $this->assertSame('/** function doc */', $def->getDocComment());
+    expect($def->getDocComment())->toBeSame('/** function doc */');
   }
 
   public function testFunctionWithoutDoc(): void {
     $def = $this->getDef('function_without_doc_comment');
-    $this->assertNull($def->getDocComment());
+    expect($def->getDocComment())->toBeNull();
   }
 
   public function testTypeWithDoc(): void {
     $def = $this->getDef('TypeWithDocComment');
-    $this->assertSame('/** type doc */', $def->getDocComment());
+    expect($def->getDocComment())->toBeSame('/** type doc */');
   }
 
   public function testNewtypeWithDoc(): void {
     $def = $this->getDef('NewtypeWithDocComment');
-    $this->assertSame('/** newtype doc */', $def->getDocComment());
+    expect($def->getDocComment())->toBeSame('/** newtype doc */');
   }
 
   public function testEnumWithDoc(): void {
     $def = $this->getDef('EnumWithDocComment');
-    $this->assertSame('/** enum doc */', $def->getDocComment());
+    expect($def->getDocComment())->toBeSame('/** enum doc */');
   }
 
   public function testParameterWithDoc(): void {

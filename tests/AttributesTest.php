@@ -64,7 +64,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
     $class = $this->findClass('ClassWithIntAttribute');
     expect($class->getAttributes())->toBeSame(dict['Herp' => vec[123]]);
     // Check it's an int, not a string
-    $this->assertSame(123, $class->getAttributes()['Herp'][0]);
+    expect($class->getAttributes()['Herp'][0])->toBeSame(123);
   }
 
   public function testFunctionHasAttributes(): void {
@@ -76,7 +76,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
     $data = '<?hh function foo() { 1 << 3; }';
     $parser = FileParser::fromData($data);
     $fun = $parser->getFunction('foo');
-    $this->assertEmpty($fun->getAttributes());
+    expect($fun->getAttributes())->toBeEmpty();
   }
 
   public function testPseudmainContainingBitShift(): void {

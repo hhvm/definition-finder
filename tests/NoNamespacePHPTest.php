@@ -8,6 +8,8 @@
  *
  */
 
+use function Facebook\FBExpect\expect;
+
 class NoNamespacePHPTest extends AbstractPHPTest {
   <<__Override>>
   protected function getFilename(): string {
