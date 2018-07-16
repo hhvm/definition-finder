@@ -1,4 +1,4 @@
-ignored_paths = [ "vendor/.+/tests/.+" ]
+ignored_paths = [ "vendor/.+/tests/.+", "tests/data/.+" ]
 assume_php=false
 forward_compatibility_level=20180704
 disallow_elvis_space=true
