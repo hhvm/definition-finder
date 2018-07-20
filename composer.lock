@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b73644ef4a14ae00776ef4aeeef99e53",
+    "content-hash": "fd8ffd3f6388d3b8e203c8ae374e57b4",
     "packages": [
         {
             "name": "facebook/hh-clilib",
@@ -76,16 +76,16 @@
         },
         {
             "name": "hhvm/hhast",
-            "version": "v3.27.1",
+            "version": "v3.27.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hhvm/hhast.git",
-                "reference": "8cd58881ccecaf81a0c330dd204f4e0089ef9104"
+                "reference": "19b1fda576b0ff9323d997c7e837c919027ef921"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hhvm/hhast/zipball/8cd58881ccecaf81a0c330dd204f4e0089ef9104",
-                "reference": "8cd58881ccecaf81a0c330dd204f4e0089ef9104",
+                "url": "https://api.github.com/repos/hhvm/hhast/zipball/19b1fda576b0ff9323d997c7e837c919027ef921",
+                "reference": "19b1fda576b0ff9323d997c7e837c919027ef921",
                 "shasum": ""
             },
             "require": {
@@ -110,7 +110,7 @@
             "license": [
                 "MIT"
             ],
-            "time": "2018-06-28T15:01:11+00:00"
+            "time": "2018-07-17T15:35:27+00:00"
         },
         {
             "name": "hhvm/hhvm-autoload",
