@@ -9,7 +9,7 @@
  */
 
 use function Facebook\FBExpect\expect;
-use type \Facebook\DefinitionFinder\FileParser;
+use type Facebook\DefinitionFinder\FileParser;
 
 // Usually, '{' becomes '{' - however, when used for
 // string interpolation, you get a T_CURLY_OPEN for "{$foo}" or

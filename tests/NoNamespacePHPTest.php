@@ -8,7 +8,6 @@
  *
  */
 
-use function Facebook\FBExpect\expect;
 
 class NoNamespacePHPTest extends AbstractPHPTest {
   <<__Override>>

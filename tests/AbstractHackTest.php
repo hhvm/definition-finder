@@ -12,7 +12,6 @@ use type Facebook\DefinitionFinder\{
   FileParser,
   ScannedClassish,
   ScannedFunction,
-  ScannedFunctionish,
   ScannedMethod,
 };
 use function Facebook\FBExpect\expect;

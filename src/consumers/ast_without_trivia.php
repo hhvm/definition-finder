@@ -11,7 +11,6 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{C, Vec};
 
 function ast_without_trivia<T as HHAST\EditableNode>(
   T $node,

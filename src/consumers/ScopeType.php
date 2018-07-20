@@ -10,7 +10,6 @@
 
 namespace Facebook\DefinitionFinder;
 
-use namespace Facebook\HHAST;
 
 enum ScopeType: string {
   FILE_SCOPE = 'file';

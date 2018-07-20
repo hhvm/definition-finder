@@ -11,7 +11,6 @@
 namespace Facebook\DefinitionFinder\Expression;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\Str;
 
 final class DecimalLiteralExpression extends Expression<int> {
   const type TNode = HHAST\DecimalLiteralToken;

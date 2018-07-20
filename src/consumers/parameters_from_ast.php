@@ -11,7 +11,6 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\Vec;
 
 function parameters_from_ast(
   ConsumerContext $context,

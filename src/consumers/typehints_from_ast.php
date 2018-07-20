@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{Dict, Vec};
+use namespace HH\Lib\Vec;
 
 function typehints_from_ast(
   ConsumerContext $context,

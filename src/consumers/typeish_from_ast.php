@@ -11,7 +11,6 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{C, Vec};
 
 function typeish_from_ast<T as ScannedTypeish>(
   ConsumerContext $context,

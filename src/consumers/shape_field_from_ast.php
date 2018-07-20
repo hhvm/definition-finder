@@ -11,7 +11,6 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\Keyset;
 
 function shape_field_from_ast(
   ConsumerContext $context,

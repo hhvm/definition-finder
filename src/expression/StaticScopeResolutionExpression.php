@@ -11,7 +11,6 @@
 namespace Facebook\DefinitionFinder\Expression;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\Str;
 
 /** Support for `classname<T>` */
 final class StaticScopeResolutionExpression extends Expression<string> {

@@ -11,7 +11,6 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\Vec;
 
 function parameter_info_from_decorated_expression(
   HHAST\DecoratedExpression $de,

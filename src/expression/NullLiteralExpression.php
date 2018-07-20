@@ -11,7 +11,6 @@
 namespace Facebook\DefinitionFinder\Expression;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\Math;
 
 final class NullLiteralExpression extends Expression<mixed> {
   const type TNode = HHAST\NullLiteralToken;

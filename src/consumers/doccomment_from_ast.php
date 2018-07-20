@@ -14,7 +14,7 @@ use namespace Facebook\HHAST;
 use namespace HH\Lib\{C, Str, Vec};
 
 function doccomment_from_ast(
-  ScannedDefinition::TContext $context,
+  ScannedDefinition::TContext $_context,
   HHAST\EditableNode $node,
 ): ?string {
   if ($node->isMissing()) {

@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{C, Str, Dict};
+use namespace HH\Lib\{C, Str};
 
 function context_with_group_use_declarations(
   ConsumerContext $context,

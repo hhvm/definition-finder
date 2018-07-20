@@ -8,7 +8,6 @@
  *
  */
 
-use function Facebook\FBExpect\expect;
 
 class MixedPHPAndHTMLTest extends AbstractPHPTest {
   <<__Override>>

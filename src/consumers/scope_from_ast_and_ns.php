@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
 use namespace Facebook\TypeAssert;
-use namespace HH\Lib\{C, Dict, Str, Vec};
+use namespace HH\Lib\Vec;
 
 function scope_from_ast_and_ns(
   ConsumerContext $context,

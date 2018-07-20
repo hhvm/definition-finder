@@ -11,7 +11,6 @@
 namespace Facebook\DefinitionFinder\Expression;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\Vec;
 
 final class StaticFieldInitializerExpression extends Expression<(arraykey, mixed)> {
   const type TNode = HHAST\FieldInitializer;

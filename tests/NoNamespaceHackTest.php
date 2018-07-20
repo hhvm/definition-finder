@@ -8,7 +8,6 @@
  *
  */
 
-use function Facebook\FBExpect\expect;
 
 class NoNamespaceHackTest extends AbstractHackTest {
   <<__Override>>

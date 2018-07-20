@@ -9,7 +9,7 @@
  */
 
 use function Facebook\FBExpect\expect;
-use type \Facebook\DefinitionFinder\FileParser;
+use type Facebook\DefinitionFinder\FileParser;
 use namespace HH\Lib\Vec;
 
 /**

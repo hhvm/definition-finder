@@ -11,7 +11,7 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{C, Str};
+use namespace HH\Lib\C;
 
 function constant_from_define_ast(
   ConsumerContext $context,

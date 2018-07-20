@@ -9,7 +9,7 @@
  */
 
 use function Facebook\FBExpect\expect;
-use type \Facebook\DefinitionFinder\FileParser;
+use type Facebook\DefinitionFinder\FileParser;
 
 /**
  * 'function' is a valid keyword in several contexts other than when definining

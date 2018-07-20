@@ -10,7 +10,6 @@
 
 namespace Facebook\DefinitionFinder;
 
-use namespace Facebook\HHAST;
 use namespace HH\Lib\{C, Str};
 
 function used_name_in_context(

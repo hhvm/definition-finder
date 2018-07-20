@@ -10,12 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use type Facebook\DefinitionFinder\{
-  FileParser,
-  ScannedClassish,
-  ScannedMethod,
-  ScannedTypehint,
-};
+use type Facebook\DefinitionFinder\FileParser;
 use namespace HH\Lib\{C, Vec};
 use function Facebook\DefinitionFinder\{ast_without_trivia, nullthrows};
 use function Facebook\FBExpect\expect;

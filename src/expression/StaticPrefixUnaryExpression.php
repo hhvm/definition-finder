@@ -11,7 +11,6 @@
 namespace Facebook\DefinitionFinder\Expression;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{Dict, Vec};
 
 final class StaticPrefixUnaryExpression extends Expression<mixed> {
   const type TNode = HHAST\PrefixUnaryExpression;
