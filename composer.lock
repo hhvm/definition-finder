@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fd8ffd3f6388d3b8e203c8ae374e57b4",
+    "content-hash": "7105f0bbc6ccd453a6f434f4d80b483b",
     "packages": [
         {
             "name": "facebook/hh-clilib",
-            "version": "v1.1.2",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hhvm/hh-clilib.git",
-                "reference": "2772c82a8f5fc715d5a2fbe801563f36fdda9943"
+                "reference": "d8d19b4f230b6f02c6fc2be16ec1fb19c3fcbc0e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hhvm/hh-clilib/zipball/2772c82a8f5fc715d5a2fbe801563f36fdda9943",
-                "reference": "2772c82a8f5fc715d5a2fbe801563f36fdda9943",
+                "url": "https://api.github.com/repos/hhvm/hh-clilib/zipball/d8d19b4f230b6f02c6fc2be16ec1fb19c3fcbc0e",
+                "reference": "d8d19b4f230b6f02c6fc2be16ec1fb19c3fcbc0e",
                 "shasum": ""
             },
             "require": {
@@ -35,32 +35,32 @@
             "license": [
                 "MIT"
             ],
-            "time": "2018-06-20T03:25:12+00:00"
+            "time": "2018-08-27T20:03:09+00:00"
         },
         {
             "name": "hhvm/hhast",
-            "version": "v3.27.4",
+            "version": "v3.28.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hhvm/hhast.git",
-                "reference": "6427a690f8436bf697972dd88e91705cbdce7fbd"
+                "reference": "ef96527025803cb41ab13f657651cef3ff5bfb8f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hhvm/hhast/zipball/6427a690f8436bf697972dd88e91705cbdce7fbd",
-                "reference": "6427a690f8436bf697972dd88e91705cbdce7fbd",
+                "url": "https://api.github.com/repos/hhvm/hhast/zipball/ef96527025803cb41ab13f657651cef3ff5bfb8f",
+                "reference": "ef96527025803cb41ab13f657651cef3ff5bfb8f",
                 "shasum": ""
             },
             "require": {
                 "facebook/hh-clilib": "^1.1.1",
-                "hhvm": "^3.26.0",
+                "hhvm": "^3.28.0",
                 "hhvm/hsl": "^1.0.0|^3.26.0",
                 "hhvm/type-assert": "^3.1"
             },
             "require-dev": {
                 "91carriage/phpunit-hhi": "^5.7",
                 "facebook/fbexpect": "^1.1.0",
-                "facebook/hack-codegen": "~3.0.3",
+                "facebook/hack-codegen": "~3.2.1",
                 "hhvm/hhvm-autoload": "^1.5",
                 "phpunit/phpunit": "^5.7"
             },
@@ -73,7 +73,7 @@
             "license": [
                 "MIT"
             ],
-            "time": "2018-08-06T23:04:30+00:00"
+            "time": "2018-08-29T18:15:15+00:00"
         },
         {
             "name": "hhvm/hhvm-autoload",
@@ -1568,16 +1568,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v4.1.3",
+            "version": "v4.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "46bc69aa91fc4ab78a96ce67873a6b0c148fd48c"
+                "reference": "b832cc289608b6d305f62149df91529a2ab3c314"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/46bc69aa91fc4ab78a96ce67873a6b0c148fd48c",
-                "reference": "46bc69aa91fc4ab78a96ce67873a6b0c148fd48c",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/b832cc289608b6d305f62149df91529a2ab3c314",
+                "reference": "b832cc289608b6d305f62149df91529a2ab3c314",
                 "shasum": ""
             },
             "require": {
@@ -1623,7 +1623,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2018-07-26T11:24:31+00:00"
+            "time": "2018-08-18T16:52:46+00:00"
         },
         {
             "name": "webmozart/assert",

@@ -145,7 +145,7 @@ function typehint_from_ast(
       vec[],
       false,
       Vec\map(
-        _Private\items_of_type($node->getFields(), HHAST\FieldSpecifier::class),
+        $node->getFields()?->getItems() ?? vec[],
         $field ==> shape_field_from_ast($context, $field),
       ),
     );

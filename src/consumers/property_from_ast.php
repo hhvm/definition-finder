@@ -21,8 +21,8 @@ function properties_from_ast(
   $doc = doccomment_from_ast($context['definitionContext'], $outer);
 
   $modifiers = $outer->getModifiers();
-  if ($modifiers instanceof HHAST\EditableList) {
-    $modifiers = _Private\items_of_type($modifiers, HHAST\EditableToken::class);
+  if ($modifiers is HHAST\EditableList<_>) {
+    $modifiers = $modifiers->getItemsOfType(HHAST\EditableToken::class);
   } else {
     $modifiers = vec[$modifiers];
   }
@@ -41,10 +41,7 @@ function properties_from_ast(
   $type = typehint_from_ast($context, $outer->getType());
 
   return Vec\map(
-    _Private\items_of_type(
-      $outer->getDeclarators(),
-      HHAST\PropertyDeclarator::class,
-    ),
+    $outer->getDeclarators()->getItems(),
     $inner ==> new ScannedProperty(
       $inner,
       Str\strip_prefix($inner->getName()->getText(), '$'),

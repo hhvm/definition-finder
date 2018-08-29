@@ -18,10 +18,7 @@ function constants_from_ast(
   HHAST\ConstDeclaration $decl,
 ): vec<ScannedConstant> {
   return Vec\map(
-    _Private\items_of_type(
-      $decl->getDeclarators(),
-      HHAST\ConstantDeclarator::class,
-    ),
+    $decl->getDeclarators()->getItems(),
     $inner ==> constant_from_ast($context, $decl, $inner),
   );
 }

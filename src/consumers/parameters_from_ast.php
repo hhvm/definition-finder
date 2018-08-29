@@ -49,7 +49,7 @@ function parameters_from_ast(
       $item instanceof HHAST\ParameterDeclaration,
       "Got non-decl child: %s: %s\n%s",
       \get_class($item),
-      $item->getCode(),
+      $item?->getCode(),
       $header->getCode(),
     );
     $out[] = parameter_from_ast($context, $item, $next_doccomment);

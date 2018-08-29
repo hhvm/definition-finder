@@ -19,7 +19,7 @@ function attributes_from_ast(
   if ($node === null) {
     return dict[];
   }
-  return _Private\items_of_type($node->getAttributes(), HHAST\Attribute::class)
+  return $node->getAttributes()->getItems()
     |> Dict\pull(
       $$,
       $attr ==> Vec\map(

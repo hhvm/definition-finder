@@ -15,19 +15,19 @@ use namespace HH\Lib\{C, Vec};
 
 function scope_from_ast(
   ConsumerContext $context,
-  ?HHAST\EditableList $ast,
+  ?HHAST\EditableList<HHAST\EditableNode> $ast,
 ): ScannedScope {
   if ($ast === null) {
     $ast = new HHAST\EditableList(vec[]);
   }
 
-  $namespaces = _Private\items_of_type($ast, HHAST\NamespaceDeclaration::class);
+  $namespaces = $ast->getItemsOfType(HHAST\NamespaceDeclaration::class);
 
   if (C\is_empty($namespaces)) {
     return scope_from_ast_and_ns($context, $ast, $context['namespace']);
   }
 
-  $items = _Private\items_of_type($ast, HHAST\EditableNode::class);
+  $items = $ast->getItems();
   $offsets = Vec\map(
     $namespaces,
     $ns ==> nullthrows(C\find_key($items, $item ==> $item === $ns)),
@@ -41,7 +41,7 @@ function scope_from_ast(
       $scopes[] = scope_from_ast_and_ns(
         $context,
         $body->getDeclarations(),
-        $ns->hasName() ? name_from_ast($ns->getName()) : null,
+        $ns->hasName() ? name_from_ast($ns->getNamex()) : null,
       );
       continue;
     }
@@ -59,7 +59,7 @@ function scope_from_ast(
     $scopes[] = scope_from_ast_and_ns(
       $context,
       new HHAST\EditableList($ns_items),
-      name_from_ast($ns->getName()),
+      name_from_ast($ns->getNamex()),
     );
   }
 

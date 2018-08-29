@@ -16,7 +16,7 @@ use namespace HH\Lib\Vec;
 
 function scope_from_ast_and_ns(
   ConsumerContext $context,
-  ?HHAST\EditableList $ast,
+  ?HHAST\EditableList<HHAST\EditableNode> $ast,
   ?string $ns,
 ): ScannedScope {
   if ($ast === null) {
@@ -27,14 +27,14 @@ function scope_from_ast_and_ns(
   $context = $context
     |> context_with_use_declarations(
       $$,
-      _Private\items_of_type($ast, HHAST\NamespaceUseDeclaration::class),
+      $ast->getItemsOfType(HHAST\NamespaceUseDeclaration::class),
     )
     |> context_with_group_use_declarations(
       $$,
-      _Private\items_of_type($ast, HHAST\NamespaceGroupUseDeclaration::class),
+      $ast->getItemsOfType(HHAST\NamespaceGroupUseDeclaration::class),
     );
 
-  $classish = _Private\items_of_type($ast, HHAST\ClassishDeclaration::class);
+  $classish = $ast->getItemsOfType(HHAST\ClassishDeclaration::class);
   return new ScannedScope(
     $ast,
     $context['definitionContext'],
@@ -51,20 +51,20 @@ function scope_from_ast_and_ns(
       $node ==> classish_from_ast($context, ScannedTrait::class, $node),
     )),
     /* functions = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\FunctionDeclaration::class),
+      $ast->getItemsOfType(HHAST\FunctionDeclaration::class),
       $node ==> function_from_ast($context, $node),
     ),
     /* methods = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\MethodishDeclaration::class),
+      $ast->getItemsOfType(HHAST\MethodishDeclaration::class),
       $node ==> method_from_ast($context, $node),
     ),
     /* trait use statements = */ Vec\concat(
       Vec\map(
-        _Private\items_of_type($ast, HHAST\TraitUse::class),
+        $ast->getItemsOfType(HHAST\TraitUse::class),
         $node ==> $node->getNames()->getItemsOfType(HHAST\EditableNode::class),
       ),
       Vec\map(
-        _Private\items_of_type($ast, HHAST\TraitUseConflictResolution::class),
+        $ast->getItemsOfType(HHAST\TraitUseConflictResolution::class),
         $node ==> $node->getNames()->getItemsOfType(HHAST\EditableNode::class),
       ),
     )
@@ -72,17 +72,17 @@ function scope_from_ast_and_ns(
     |> Vec\map($$, $node ==> typehint_from_ast($context, $node))
     |> Vec\filter_nulls($$),
     /* properties = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\PropertyDeclaration::class),
+      $ast->getItemsOfType(HHAST\PropertyDeclaration::class),
       $node ==> properties_from_ast($context, $node),
     )
     |> Vec\flatten($$),
     /* constants = */ Vec\concat(
       Vec\map(
-        _Private\items_of_type($ast, HHAST\ConstDeclaration::class),
+        $ast->getItemsOfType(HHAST\ConstDeclaration::class),
         $node ==> constants_from_ast($context, $node),
       )
       |> Vec\flatten($$),
-      _Private\items_of_type($ast, HHAST\ExpressionStatement::class)
+      $ast->getItemsOfType(HHAST\ExpressionStatement::class)
         |> Vec\map($$, $s ==> $s->getExpression())
         |> Vec\filter($$, $e ==> $e instanceof HHAST\DefineExpression)
         |> Vec\map(
@@ -93,20 +93,20 @@ function scope_from_ast_and_ns(
         |> Vec\filter_nulls($$),
     ),
     /* type constants = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\TypeConstDeclaration::class),
+      $ast->getItemsOfType(HHAST\TypeConstDeclaration::class),
       $node ==> type_constant_from_ast($context, $node),
     ),
     /* enums = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\EnumDeclaration::class),
+      $ast->getItemsOfType(HHAST\EnumDeclaration::class),
       $node ==> enum_from_ast($context, $node),
     ),
     /* types = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\AliasDeclaration::class),
+      $ast->getItemsOfType(HHAST\AliasDeclaration::class),
       $node ==> typeish_from_ast($context, ScannedType::class, $node),
     )
     |> Vec\filter_nulls($$),
     /* newtypes = */ Vec\map(
-      _Private\items_of_type($ast, HHAST\AliasDeclaration::class),
+      $ast->getItemsOfType(HHAST\AliasDeclaration::class),
       $node ==> typeish_from_ast($context, ScannedNewtype::class, $node),
     )
       |> Vec\filter_nulls($$),

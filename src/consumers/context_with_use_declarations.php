@@ -25,10 +25,9 @@ function context_with_use_declarations(
     if ($kind instanceof HHAST\FunctionToken) {
       continue;
     }
-    $clauses = _Private\items_of_type(
-      $use->getClauses(),
-      HHAST\NamespaceUseClause::class,
-    );
+
+    $clauses = $use->getClauses()->getItems();
+
     foreach ($clauses as $node) {
       $name = name_from_ast($node->getName());
       $as =

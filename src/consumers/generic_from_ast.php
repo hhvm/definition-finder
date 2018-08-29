@@ -32,7 +32,7 @@ function generic_from_ast(
     $constraints = vec[];
   } else {
     $constraints = Vec\map(
-      _Private\items_of_type($constraints, HHAST\TypeConstraint::class),
+      $constraints->getItemsOfType(HHAST\TypeConstraint::class),
       $c ==> {
         $kw = $c->getKeyword();
         if ($kw instanceof HHAST\AsToken) {

@@ -26,10 +26,7 @@ function context_with_group_use_declarations(
       continue;
     }
 
-    $clauses = _Private\items_of_type(
-      $use->getClauses(),
-      HHAST\NamespaceUseClause::class,
-    );
+    $clauses = $use->getClauses()->getItems();
     $prefix = name_from_ast($use->getPrefix());
     foreach ($clauses as $clause) {
       if ($clause->getClauseKind()) {

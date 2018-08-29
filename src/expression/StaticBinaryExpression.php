@@ -23,7 +23,7 @@ final class StaticBinaryExpression extends Expression<mixed> {
     if ($left === null) {
       return null;
     }
-    $right = StaticExpression::match($node->getRightOperand());
+    $right = StaticExpression::match($node->getRightOperandx());
     if ($right === null) {
       return null;
     }

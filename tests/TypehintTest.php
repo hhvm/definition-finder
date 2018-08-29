@@ -54,7 +54,8 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
     ];
   }
 
-  /** @dataProvider provideTypesInNamespace*/ public function testNamespacedType(
+  /** @dataProvider provideTypesInNamespace */
+  public function testNamespacedType(
     string $input,
     string $name,
     string $text,

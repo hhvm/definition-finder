@@ -9,7 +9,7 @@
     "hhvm/hhvm-autoload": "^1.6",
     "hhvm/hsl": "^3.26.0",
     "hhvm/type-assert": "^3.2",
-    "hhvm/hhast": "^3.27.1"
+    "hhvm/hhast": "^3.28.1"
   },
   "require-dev": {
     "phpunit/phpunit": "~5.1",

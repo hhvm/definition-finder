@@ -14,13 +14,12 @@ use namespace Facebook\HHAST;
 use namespace HH\Lib\Vec;
 
 final class StaticListExpression extends Expression<vec<mixed>> {
-  const type TNode = HHAST\EditableList;
+  const type TNode = HHAST\EditableList<HHAST\EditableNode>;
   <<__Override>>
   protected static function matchImpl(
-    HHAST\EditableList $n,
+    HHAST\EditableList<HHAST\EditableNode> $n,
   ): ?Expression<vec<mixed>> {
-    $items = $n->getItemsOfType(HHAST\EditableNode::class)
-      |> Vec\map($$, $item ==> StaticExpression::match($item));
+    $items = Vec\map($n->getItems(), $item ==> StaticExpression::match($item));
     $out = vec[];
     foreach ($items as $item) {
       if ($item === null) {
