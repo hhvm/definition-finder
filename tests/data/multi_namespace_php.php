@@ -8,14 +8,20 @@
  *
  */
 
+// Only valid in HNI files
+function no_namespace_block() {}
+
 namespace Foo {
   class Bar { }
+  function myfunc() {}
 }
 
 namespace Herp {
   class Derp { }
+  function myfunc() {}
 }
 
 namespace {
   class EmptyNamespace { }
+  function myfunc() {}
 }

@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
 use namespace Facebook\TypeAssert;
-use namespace HH\Lib\Vec;
+use namespace HH\Lib\{C, Vec};
 
 function scope_from_ast_and_ns(
   ConsumerContext $context,
@@ -24,6 +24,14 @@ function scope_from_ast_and_ns(
   }
 
   $context['namespace'] = $ns;
+
+  $items = $ast->getItems();
+  $break = C\find_key($items, $i ==> $i is HHAST\NamespaceDeclaration);
+  if ($break !== null) {
+    $items = Vec\take($items, $break);
+  }
+  $ast = new HHAST\EditableList($items);
+
   $context = $context
     |> context_with_use_declarations(
       $$,

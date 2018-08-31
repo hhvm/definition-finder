@@ -23,8 +23,10 @@ function scope_from_ast(
 
   $namespaces = $ast->getItemsOfType(HHAST\NamespaceDeclaration::class);
 
+  $scopes = vec[];
+  $scopes[] = scope_from_ast_and_ns($context, $ast, $context['namespace']);
   if (C\is_empty($namespaces)) {
-    return scope_from_ast_and_ns($context, $ast, $context['namespace']);
+    return $scopes[0];
   }
 
   $items = $ast->getItems();
@@ -34,7 +36,6 @@ function scope_from_ast(
   );
   $count = C\count($namespaces);
 
-  $scopes = vec[];
   foreach ($namespaces as $i => $ns) {
     $body = $ns->getBody();
     if ($body instanceof HHAST\NamespaceBody) {
@@ -54,7 +55,7 @@ function scope_from_ast(
     $offset = $offsets[$i];
     $next_offset = $offsets[$i + 1] ?? null;
     $length = ($next_offset === null) ? null : ($next_offset - $offset);
-    $ns_items = Vec\slice($items, $offset, $length);
+    $ns_items = Vec\slice($items, $offset + 1, $length);
 
     $scopes[] = scope_from_ast_and_ns(
       $context,

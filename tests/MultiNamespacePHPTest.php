@@ -12,7 +12,8 @@ use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\FileParser;
 
 final class MultiNamespacePHPTest extends PHPUnit_Framework_TestCase {
-  private ?FileParser $parser;
+  <<__LateInit>>
+  private FileParser $parser;
 
   <<__Override>>
   protected function setUp(): void {
@@ -21,8 +22,15 @@ final class MultiNamespacePHPTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testClasses(): void {
-    expect($this->parser?->getClassNames())->toBeSame(
+    expect($this->parser->getClassNames())->toBeSame(
       vec['Foo\\Bar', 'Herp\\Derp', 'EmptyNamespace'],
+    );
+  }
+
+  public function testContentOutsideOfNamespaceBlock(): void {
+    // only valid in HNI files
+    expect($this->parser->getFunctionNames())->toBeSame(
+      vec['no_namespace_block', "Foo\\myfunc", "Herp\\myfunc", 'myfunc'],
     );
   }
 
