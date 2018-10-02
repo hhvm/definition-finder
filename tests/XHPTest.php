@@ -14,7 +14,7 @@ use type Facebook\DefinitionFinder\FileParser;
 use function Facebook\FBExpect\expect;
 use namespace HH\Lib\C;
 
-final class XHPTest extends \PHPUnit_Framework_TestCase {
+final class XHPTest extends \Facebook\HackTest\HackTest {
   public function testXHPRootClass(): void {
     $data = '<?hh class :foo:bar {}';
 

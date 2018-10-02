@@ -14,7 +14,7 @@ use type Facebook\DefinitionFinder\FileParser;
 use namespace HH\Lib\Vec;
 use function Facebook\FBExpect\expect;
 
-final class StyleIssuesTest extends \PHPUnit_Framework_TestCase {
+final class StyleIssuesTest extends \Facebook\HackTest\HackTest {
   public function testFunctionWithWhitespaceBeforeParamsList(): void {
     $data = '<?hh function foo ($bar) {};';
     $parser = FileParser::fromData($data);

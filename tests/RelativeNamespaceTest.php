@@ -16,7 +16,7 @@ use namespace HH\Lib\Vec;
  * `namespace\foo` means 'foo in the current namespace - see
  * http://php.net/manual/en/language.namespaces.nsconstants.php example 4
  */
-final class RelativeNamespaceTest extends PHPUnit_Framework_TestCase {
+final class RelativeNamespaceTest extends Facebook\HackTest\HackTest {
   public function testFunctionBodyUsesRelativeNamespace(): void {
     $code = '<?php function foo() { namespace\bar(); } function baz() {}';
     $fp = FileParser::fromData($code);

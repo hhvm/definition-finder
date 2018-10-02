@@ -14,7 +14,7 @@ use type Facebook\DefinitionFinder\FileParser;
 use function Facebook\FBExpect\expect;
 use namespace HH\Lib\Vec;
 
-final class AliasingTest extends \PHPUnit_Framework_TestCase {
+final class AliasingTest extends \Facebook\HackTest\HackTest {
   public function testSimpleUse(): void {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".

@@ -15,12 +15,12 @@ use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\{FileParser, ScannedClassish};
 use namespace HH\Lib\Vec;
 
-class AbstractClassContentsTest extends \PHPUnit_Framework_TestCase {
+class AbstractClassContentsTest extends \Facebook\HackTest\HackTest {
   private ?ScannedClassish $class;
   private ?vec<ScannedClassish> $classes;
 
   <<__Override>>
-  protected function setUp(): void {
+  public async function beforeEachTestAsync(): Awaitable<void> {
     $parser = FileParser::fromFile(__DIR__.'/data/abstract_class_contents.php');
     $this->classes = $parser->getClasses();
   }

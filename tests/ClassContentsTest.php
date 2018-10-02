@@ -14,11 +14,11 @@ use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\{FileParser, ScannedClassish};
 use namespace HH\Lib\{C, Vec};
 
-class ClassContentsTest extends \PHPUnit_Framework_TestCase {
+class ClassContentsTest extends \Facebook\HackTest\HackTest {
   private ?ScannedClassish $class;
 
   <<__Override>>
-  protected function setUp(): void {
+  public async function beforeEachTestAsync(): Awaitable<void> {
     $parser = FileParser::fromFile(__DIR__.'/data/class_contents.php');
     $this->class = $parser->getClasses()[0];
     expect($this->class->getName())->toBeSame(
@@ -196,7 +196,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     ];
   }
 
-  /** @dataProvider staticPropertyProvider */
+  <<DataProvider('staticPropertyProvider')>>
   public function testStaticProperty(
     string $_,
     string $code,
@@ -364,9 +364,7 @@ class ClassContentsTest extends \PHPUnit_Framework_TestCase {
     ];
   }
 
-  /**
-   * @dataProvider namespacedReturns
-   */
+  <<DataProvider('namespacedReturns')>>
   public function testNamespacedTypeconstantAsParameterType(
     string $namespace,
     string $returnText,

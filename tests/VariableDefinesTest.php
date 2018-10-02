@@ -13,7 +13,7 @@ namespace Facebook\DefinitionFinder\Test;
 use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\FileParser;
 
-class VariableDefinesTest extends \PHPUnit_Framework_TestCase {
+class VariableDefinesTest extends \Facebook\HackTest\HackTest {
   public function testVariableDefine(): void {
     $data = '<?php define($foo, $bar)';
     $parser = FileParser::fromData($data);

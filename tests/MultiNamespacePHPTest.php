@@ -11,12 +11,12 @@
 use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\FileParser;
 
-final class MultiNamespacePHPTest extends PHPUnit_Framework_TestCase {
+final class MultiNamespacePHPTest extends Facebook\HackTest\HackTest {
   <<__LateInit>>
   private FileParser $parser;
 
   <<__Override>>
-  protected function setUp(): void {
+  public async function beforeEachTestAsync(): Awaitable<void> {
     $this->parser =
       FileParser::fromFile(__DIR__.'/data/multi_namespace_php.php');
   }

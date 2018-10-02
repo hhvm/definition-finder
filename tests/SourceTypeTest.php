@@ -14,7 +14,7 @@ use type Facebook\DefinitionFinder\FileParser;
 use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\SourceType;
 
-class SourceTypeTest extends \PHPUnit_Framework_TestCase {
+class SourceTypeTest extends \Facebook\HackTest\HackTest {
 
   public function getExamples(): array<(string, SourceType)> {
     return [
@@ -29,9 +29,7 @@ class SourceTypeTest extends \PHPUnit_Framework_TestCase {
     ];
   }
 
-  /**
-   * @dataProvider getExamples
-   */
+  <<DataProvider('getExamples')>>
   public function testHasExpectedType(
     string $prefix,
     SourceType $expected,

@@ -15,11 +15,11 @@ use type Facebook\DefinitionFinder\FileParser;
 use type Facebook\DefinitionFinder\ScannedClassish;
 use namespace HH\Lib\Vec;
 
-class FinalTest extends \PHPUnit_Framework_TestCase {
+class FinalTest extends \Facebook\HackTest\HackTest {
   private ?vec<ScannedClassish> $classes;
 
   <<__Override>>
-  protected function setUp(): void {
+  public async function beforeEachTestAsync(): Awaitable<void> {
     $parser = FileParser::fromFile(__DIR__.'/data/finals.php');
     $this->classes = $parser->getClasses();
   }

@@ -13,7 +13,7 @@ namespace Facebook\DefinitionFinder\Tests;
 use type Facebook\DefinitionFinder\TreeParser;
 use function Facebook\FBExpect\expect;
 
-final class TreeTest extends \PHPUnit_Framework_TestCase {
+final class TreeTest extends \Facebook\HackTest\HackTest {
   public function testTreeDefs(): void {
     $parser = \HH\Asio\join(TreeParser::fromPathAsync(__DIR__.'/data/'));
     // From multiple files

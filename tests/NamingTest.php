@@ -14,7 +14,7 @@ use type Facebook\DefinitionFinder\FileParser;
 use namespace HH\Lib\{C, Vec};
 use function Facebook\FBExpect\expect;
 
-class NamingTest extends \PHPUnit_Framework_TestCase {
+class NamingTest extends \Facebook\HackTest\HackTest {
   public function testFunctionCalledSelect(): void {
     // 'select' is a T_SELECT, not a T_STRING
     $data = '<?hh function select() {}';
@@ -26,7 +26,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
 
   /** Things that are valid names, but have a weird token type */
   public function specialNameProvider(): array<array<string>> {
-    $this->markTestIncomplete("https://github.com/facebook/hhvm/issues/8240");
+    static::markTestIncomplete("https://github.com/facebook/hhvm/issues/8240");
     return [
       ['dict'], // HHVM >= 3.13
       ['vec'], // HHVM >= 3.14
@@ -40,7 +40,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     ];
   }
 
-  /** @dataProvider specialNameProvider */
+  <<DataProvider('specialNameProvider')>>
   public function testSpecialReturnType(string $type): void {
     $data = '<?php function foo(): '.$type.' {}';
     $parser = FileParser::fromData($data);
@@ -48,7 +48,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     expect($func->getReturnType()?->getTypeName())->toBeSame($type);
   }
 
-  /** @dataProvider specialNameProvider */
+  <<DataProvider('specialNameProvider')>>
   public function testSpecialNameAsFuncName(string $type): void {
     $data = '<?php function '.$type.'(): void {}';
     $parser = FileParser::fromData($data);
@@ -57,7 +57,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     expect($func->getName())->toBeSame($type);
   }
 
-  /** @dataProvider specialNameProvider */
+  <<DataProvider('specialNameProvider')>>
   public function testSpecialNameAsClassName(string $type): void {
     $data = '<?php class '.$type.' { }';
     $parser = FileParser::fromData($data);
@@ -65,7 +65,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     expect($class)->toNotBeNull();
   }
 
-  /** @dataProvider specialNameProvider */
+  <<DataProvider('specialNameProvider')>>
   public function testSpecialNameAsNamespaceName(string $type): void {
     $data = '<?php namespace '.$type.' { class Foo {} }';
     $parser = FileParser::fromData($data);
@@ -73,7 +73,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     expect($class)->toNotBeNull();
   }
 
-  /** @dataProvider specialNameProvider */
+  <<DataProvider('specialNameProvider')>>
   public function testSpecialNameAsUsedName(string $type): void {
     $data = '<?php use Foo\\'.$type.'; class Herp extends '.$type.' { }';
     $parser = FileParser::fromData($data);
@@ -81,7 +81,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     expect($class)->toNotBeNull();
   }
 
-  /** @dataProvider specialNameProvider */
+  <<DataProvider('specialNameProvider')>>
   public function testSpecialNameAsUsedAsName(string $type): void {
     $data = '<?php use Foo\\Bar as '.$type.'; class Herp extends '.$type.' { }';
     $parser = FileParser::fromData($data);
@@ -89,9 +89,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     expect($class)->toNotBeNull();
   }
 
-  /**
-  * @dataProvider specialNameProvider
-  */
+  <<DataProvider('specialNameProvider')>>
   public function testSpecialNameAsUsedAsConstName(string $type): void {
     $data = '<?php const '.$type.' = FOO;';
     $parser = FileParser::fromData($data);
@@ -99,9 +97,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     expect($constants)->toContain($type);
   }
 
-  /**
-  * @dataProvider specialNameProvider
-  */
+  <<DataProvider('specialNameProvider')>>
   public function testSpecialNameAsUsedAsClassConstName(string $type): void {
     $data = '<?php class Foo { const int '.$type.' = FOO; }';
     $parser = FileParser::fromData($data);
@@ -110,9 +106,7 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
     expect($constant->getTypehint()?->getTypeText())->toBeSame('int');
   }
 
-  /**
-  * @dataProvider specialNameProvider
-  */
+  <<DataProvider('specialNameProvider')>>
   public function testSpecialNameAsUsedAsClassConstDefault(string $type): void {
     $data = '<?php class Foo { const int BAR = Baz::'.$type.'; }';
     $parser = FileParser::fromData($data);
@@ -139,8 +133,8 @@ class NamingTest extends \PHPUnit_Framework_TestCase {
   /** We need to be able to understand these definitions in the main HHI
    * files.
    *
-   * @dataProvider magicConstantsProvider
    */
+  <<DataProvider('magicConstantsProvider')>>
   public function testMagicConstantDefinition(
     string $type,
     string $name,

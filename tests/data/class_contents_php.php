@@ -22,4 +22,5 @@ class ClassUsingAnonymousClass {
 
 	public function methodTwo() {
 		return false;
-	}
+  }
+}

@@ -14,7 +14,7 @@ use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\FileParser;
 use namespace HH\Lib\{C, Vec};
 
-class RelationshipsTest extends \PHPUnit_Framework_TestCase {
+class RelationshipsTest extends \Facebook\HackTest\HackTest {
   public function testClassExtends(): void {
     $data = '<?hh class Foo extends Bar {}';
     $def = FileParser::fromData($data)->getClass('Foo');

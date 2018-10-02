@@ -11,14 +11,14 @@
 use type Facebook\DefinitionFinder\FileParser;
 use function Facebook\FBExpect\expect;
 
-abstract class AbstractPHPTest extends PHPUnit_Framework_TestCase {
+abstract class AbstractPHPTest extends Facebook\HackTest\HackTest {
   private ?FileParser $parser;
 
   abstract protected function getFilename(): string;
   abstract protected function getPrefix(): string;
 
   <<__Override>>
-  protected function setUp(): void {
+  public async function beforeEachTestAsync(): Awaitable<void> {
     $this->parser = FileParser::fromFile(__DIR__.'/data/'.$this->getFilename());
   }
 

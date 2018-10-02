@@ -17,7 +17,7 @@ use type Facebook\DefinitionFinder\{
 use function Facebook\FBExpect\expect;
 use namespace HH\Lib\{C, Vec};
 
-abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
+abstract class AbstractHackTest extends Facebook\HackTest\HackTest {
   private ?FileParser $parser;
 
   abstract protected function getFilename(): string;
@@ -25,7 +25,7 @@ abstract class AbstractHackTest extends PHPUnit_Framework_TestCase {
   abstract protected function getSuffixForRootDefinitions(): string;
 
   <<__Override>>
-  protected function setUp(): void {
+  public async function beforeEachTestAsync(): Awaitable<void> {
     $this->parser = FileParser::fromFile(__DIR__.'/data/'.$this->getFilename());
   }
 

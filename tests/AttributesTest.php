@@ -20,12 +20,12 @@ use type Facebook\DefinitionFinder\{
 use namespace HH\Lib\Vec;
 use function Facebook\FBExpect\expect;
 
-class AttributesTest extends \PHPUnit_Framework_TestCase {
+class AttributesTest extends \Facebook\HackTest\HackTest {
   private vec<ScannedClassish> $classes = vec[];
   private vec<ScannedFunction> $functions = vec[];
 
   <<__Override>>
-  protected function setUp(): void {
+  public async function beforeEachTestAsync(): Awaitable<void> {
     $parser = FileParser::fromFile(__DIR__.'/data/attributes.php');
     $this->classes = $parser->getClasses();
     $this->functions = $parser->getFunctions();
@@ -138,9 +138,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
-  /**
-   * @dataProvider attributeExpressions
-   */
+  <<DataProvider('attributeExpressions')>>
   public function testAttributeExpression(
     string $source,
     mixed $expected,

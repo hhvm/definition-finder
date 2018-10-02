@@ -14,7 +14,7 @@ use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\{FileParser, RelationshipToken};
 use namespace HH\Lib\{C, Vec};
 
-class GenericsTest extends \PHPUnit_Framework_TestCase {
+class GenericsTest extends \Facebook\HackTest\HackTest {
   public function testClassHasGenerics(): void {
     $data = '<?hh class Foo<Tk, Tv> {}';
     $parser = FileParser::fromData($data);

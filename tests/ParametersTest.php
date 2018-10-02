@@ -15,7 +15,7 @@ use namespace HH\Lib\{C, Vec};
 use function Facebook\DefinitionFinder\{ast_without_trivia, nullthrows};
 use function Facebook\FBExpect\expect;
 
-class ParameterTest extends \PHPUnit_Framework_TestCase {
+final class ParametersTest extends \Facebook\HackTest\HackTest {
   public function testWithoutTypes(): void {
     $data = '<?hh function foo($bar, $baz) {}';
 
@@ -89,9 +89,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     ];
   }
 
-  /**
-   * @dataProvider getUnusualDefaults
-   */
+  <<DataProvider('getUnusualDefaults')>>
   public function testWithUnusualDefault(string $in, string $expected): void {
     $data = '<?hh function foo($bar, $baz = '.$in.') {}';
     $parser = FileParser::fromData($data);
@@ -118,9 +116,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase {
     ];
   }
 
-  /**
-   * @dataProvider getInOutExamples
-   */
+  <<DataProvider('getInOutExamples')>>
   public function testInOut(string $code, ?string $type, bool $inout): void {
     $parser = FileParser::fromData($code);
     $function = $parser->getFunction('foo');

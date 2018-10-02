@@ -15,7 +15,7 @@ use type Facebook\DefinitionFinder\FileParser;
  * 'function' is a valid keyword in several contexts other than when definining
  * a function; make sure they're not considered a function.
  */
-final class FunctionNotDefinitionTest extends PHPUnit_Framework_TestCase {
+final class FunctionNotDefinitionTest extends Facebook\HackTest\HackTest {
   public function testActuallyAFunction(): void {
     $p = FileParser::fromData('<?hh function foo();');
     expect($p->getFunctionNames())->toBeSame(vec['foo']);

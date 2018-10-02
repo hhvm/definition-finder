@@ -13,7 +13,7 @@ namespace Facebook\DefinitionFinder\Tests;
 use type Facebook\DefinitionFinder\FileParser;
 use function Facebook\FBExpect\expect;
 
-final class TypeHintTest extends \PHPUnit_Framework_TestCase {
+final class TypehintTest extends \Facebook\HackTest\HackTest {
   public function provideTypesInNamespace(): array<(string, string, string)> {
     return [
       // Unusual syntax
@@ -54,7 +54,7 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
     ];
   }
 
-  /** @dataProvider provideTypesInNamespace */
+  <<DataProvider('provideTypesInNamespace')>>
   public function testNamespacedType(
     string $input,
     string $name,
@@ -91,7 +91,7 @@ final class TypeHintTest extends \PHPUnit_Framework_TestCase {
     ];
   }
 
-  /** @dataProvider provideNullableExamples */
+  <<DataProvider('provideNullableExamples')>>
   public function testNullables(
     string $input,
     bool $nullable,

@@ -19,7 +19,7 @@ use type Facebook\DefinitionFinder\FileParser;
 // there is no such thing as T_CURLY_CLOSE or T_DOLLAR_CLOSE_CURLY_BRACES.
 //
 // This test makes sure that this doesn't get confused.
-final class CurlyTest extends PHPUnit_Framework_TestCase {
+final class CurlyTest extends Facebook\HackTest\HackTest {
   const string DATA_FILE = __DIR__.'/data/curly_then_function.php';
 
   public function testDefinitions(): void {

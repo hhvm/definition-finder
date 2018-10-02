@@ -14,10 +14,10 @@ use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\{FileParser, ScannedClassish, ScannedMethod};
 use namespace HH\Lib\Vec;
 
-class ConstructorPromotionTest extends \PHPUnit_Framework_TestCase {
+class ConstructorPromotionTest extends \Facebook\HackTest\HackTest {
   private ?ScannedClassish $class;
   <<__Override>>
-  public function setUp(): void {
+  public async function beforeEachTestAsync(): Awaitable<void> {
     $data = '<?hh
 
 class Foo {

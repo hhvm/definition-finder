@@ -17,11 +17,11 @@ use type Facebook\DefinitionFinder\ScannedFunction;
 
 use namespace HH\Lib\Vec;
 
-class DocCommentTest extends \PHPUnit_Framework_TestCase {
+class DocCommentTest extends \Facebook\HackTest\HackTest {
   private Map<string, ScannedDefinition> $defs = Map {};
 
   <<__Override>>
-  protected function setUp(): void {
+  public async function beforeEachTestAsync(): Awaitable<void> {
     $parser = FileParser::fromFile(__DIR__.'/data/doc_comments.php');
     $this->addDefs($parser->getClasses());
     $this->addDefs($parser->getFunctions());

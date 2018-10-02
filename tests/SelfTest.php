@@ -13,7 +13,7 @@ namespace Facebook\DefinitionFinder\Test;
 use type Facebook\DefinitionFinder\FileParser;
 use function Facebook\FBExpect\expect;
 
-class SelfTest extends \PHPUnit_Framework_TestCase {
+class SelfTest extends \Facebook\HackTest\HackTest {
 
   public function filenameProvider(): array<array<string>> {
     return \array_map(
@@ -23,10 +23,10 @@ class SelfTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @dataProvider filenameProvider
    *
    * Bogus first argument to make test failure messages more useful
    */
+  <<DataProvider('filenameProvider')>>
   public function testSelf(string $_, string $filename): void {
     $parser = FileParser::fromFile($filename);
     expect($parser)->toNotBeNull();

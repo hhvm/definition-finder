@@ -13,7 +13,7 @@ namespace Facebook\DefinitionFinder\Test;
 use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\FileParser;
 
-final class HaltCompilerTest extends \PHPUnit_Framework_TestCase {
+final class HaltCompilerTest extends \Facebook\HackTest\HackTest {
   public function testDoesNotRaiseErrorAfterHaltCompiler(): void {
     $code = '<?hh function foo(){}; __halt_compiler(); function bar(;';
     $parser = FileParser::fromData($code);

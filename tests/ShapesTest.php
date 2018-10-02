@@ -19,7 +19,7 @@ use type Facebook\DefinitionFinder\{
 };
 use namespace HH\Lib\{C, Vec};
 
-final class ShapesTest extends \PHPUnit_Framework_TestCase {
+final class ShapesTest extends \Facebook\HackTest\HackTest {
   private function getTypeAlias(): ScannedType {
     return FileParser::fromFile(__DIR__.'/data/shapes.php')
       ->getType('MyExampleShape');
