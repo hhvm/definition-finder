@@ -26,7 +26,6 @@ class NamingTest extends \Facebook\HackTest\HackTest {
 
   /** Things that are valid names, but have a weird token type */
   public function specialNameProvider(): array<array<string>> {
-    static::markTestIncomplete("https://github.com/facebook/hhvm/issues/8240");
     return [
       ['dict'], // HHVM >= 3.13
       ['vec'], // HHVM >= 3.14
@@ -113,7 +112,7 @@ class NamingTest extends \Facebook\HackTest\HackTest {
     $constant = C\firstx($parser->getClass('Foo')->getConstants());
     expect($constant->getName())->toBeSame('BAR');
     expect($constant->getTypehint()?->getTypeName())->toBeSame('int');
-    expect($constant->getValue())->toBeSame('Baz::'.$type);
+    expect($constant->getValue()->getAST()->getCode())->toBeSame('Baz::'.$type);
   }
 
   public function magicConstantsProvider(): array<(string, string, string)> {
