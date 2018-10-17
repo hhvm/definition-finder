@@ -40,7 +40,9 @@ function classish_from_ast<T as ScannedClassish>(
   }
 
   $name = $node->getName();
-  if ($name instanceof HHAST\XHPClassNameToken) {
+  if ($name === null) {
+    return null;
+  } else if ($name instanceof HHAST\XHPClassNameToken) {
     $name = decl_name_in_context($context, mangle_xhp_name_token($name));
   } else {
     $name = decl_name_in_context($context, $name->getText());

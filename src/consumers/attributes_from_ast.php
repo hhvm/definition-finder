@@ -23,9 +23,9 @@ function attributes_from_ast(
     |> Dict\pull(
       $$,
       $attr ==> Vec\map(
-        $attr->getValues()?->getItemsOfType(HHAST\EditableNode::class) ?? vec[],
+        $attr->getArgumentList()?->getItems() ?? vec[],
         $child ==> nullthrows(value_from_ast($child))->getStaticValue(),
       ),
-      $attr ==> name_from_ast($attr->getName()),
+      $attr ==> name_from_ast($attr->getType()),
     );
 }
