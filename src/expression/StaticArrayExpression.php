@@ -32,10 +32,10 @@ final class StaticArrayExpression extends Expression<mixed> {
       $pair = StaticElementInitializerExpression::match($m);
       if ($pair) {
         list($key, $value) = $pair->getValue();
-        if (is_int($key)) {
+        if ($key is int) {
           /* HH_IGNORE_ERROR[4110] PHP-compatible array craziness */
           $ret[$key] = $value;
-        } else if (is_string($key)) {
+        } else if ($key is string) {
           /* HH_IGNORE_ERROR[4110] PHP-compatible array craziness */
           $ret[$key] = $value;
         } else {

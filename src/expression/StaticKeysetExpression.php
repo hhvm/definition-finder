@@ -30,11 +30,11 @@ final class StaticKeysetExpression extends Expression<keyset<arraykey>> {
 
     $members = keyset[];
     foreach ($in as $item) {
-      if (is_int($item)) {
+      if ($item is int) {
         $members[] = $item;
         continue;
       }
-      if (is_string($item)) {
+      if ($item is string) {
         $members[] = $item;
         continue;
       }

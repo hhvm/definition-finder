@@ -22,10 +22,10 @@ final class StaticFieldInitializerExpression extends Expression<(arraykey, mixed
     $value = StaticExpression::match($node->getValue())?->getValue();
     $key = StaticExpression::match($node->getName())?->getValue();
 
-    if (is_string($key)) {
+    if ($key is string) {
       return new self(tuple($key, $value));
     }
-    if (is_int($key)) {
+    if ($key is int) {
       return new self(tuple($key, $value));
     }
     return null;

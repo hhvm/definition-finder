@@ -22,10 +22,10 @@ final class StaticElementInitializerExpression extends Expression<(arraykey, mix
     $value = StaticExpression::match($node->getValue())?->getValue();
     $key = StaticExpression::match($node->getKey())?->getValue();
 
-    if (is_string($key)) {
+    if ($key is string) {
       return new self(tuple($key, $value));
     }
-    if (is_int($key)) {
+    if ($key is int) {
       return new self(tuple($key, $value));
     }
     return null;
