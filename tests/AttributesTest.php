@@ -18,6 +18,7 @@ use type Facebook\DefinitionFinder\{
 };
 
 use namespace HH\Lib\Vec;
+use type Facebook\HackTest\DataProvider;
 use function Facebook\FBExpect\expect;
 
 class AttributesTest extends \Facebook\HackTest\HackTest {

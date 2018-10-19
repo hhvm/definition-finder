@@ -11,6 +11,7 @@
 namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\FileParser;
+use type Facebook\HackTest\DataProvider;
 use function Facebook\FBExpect\expect;
 
 class SelfTest extends \Facebook\HackTest\HackTest {

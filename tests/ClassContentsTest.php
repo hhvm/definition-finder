@@ -12,6 +12,7 @@ namespace Facebook\DefinitionFinder\Test;
 
 use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\{FileParser, ScannedClassish};
+use type Facebook\HackTest\DataProvider;
 use namespace HH\Lib\{C, Vec};
 
 class ClassContentsTest extends \Facebook\HackTest\HackTest {

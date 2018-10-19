@@ -10,6 +10,7 @@
 
 namespace Facebook\DefinitionFinder\Tests;
 
+use type Facebook\HackTest\DataProvider;
 use type Facebook\DefinitionFinder\FileParser;
 use function Facebook\FBExpect\expect;
 

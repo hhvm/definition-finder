@@ -10,11 +10,11 @@
     }
   },
   "require": {
-    "hhvm": "^3.26.0",
+    "hhvm": "^3.29.0",
     "hhvm/hhvm-autoload": "^1.6",
     "hhvm/hsl": "^3.26.0",
     "hhvm/type-assert": "^3.2",
-    "hhvm/hhast": "^3.28.1"
+    "hhvm/hhast": "^3.29.0"
   },
   "require-dev": {
     "facebook/fbexpect": "^2.0.0",
