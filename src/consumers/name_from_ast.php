@@ -27,6 +27,10 @@ function name_from_ast(HHAST\EditableNode $node): string {
       |> Str\join($$, "\\");
   }
 
+  if ($node instanceof HHAST\SimpleTypeSpecifier) {
+    return name_from_ast($node->getSpecifier());
+  }
+
   invariant_violation(
     "Expected EditableToken or QualifiedName, got %s",
     \get_class($node),
