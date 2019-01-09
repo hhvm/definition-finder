@@ -34,7 +34,7 @@ final class TreeParser extends BaseParser {
         continue;
       }
       $ext = $info->getExtension();
-      if ($ext !== 'php' && $ext !== 'hh' && $ext !== 'xhp') {
+      if ($ext !== 'php' && $ext !== 'hh' && $ext !== 'xhp' && $ext !== 'hack' && $ext !== 'hck') {
         continue;
       }
       $parsers[] = FileParser::fromFileAsync($info->getPathname());
