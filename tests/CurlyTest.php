@@ -27,47 +27,4 @@ final class CurlyTest extends Facebook\HackTest\HackTest {
     expect($p->getClassNames())->toBeSame(vec['Foo']);
     expect($p->getFunctionNames())->toBeSame(vec['my_func']);
   }
-
-  // Actually testing the tokenizer hasn't changed
-  public function testContainsTCurlyOpen(): void {
-    $matched = false;
-    $tokens = token_get_all(file_get_contents(self::DATA_FILE));
-    foreach ($tokens as $token) {
-      if (is_array($token) && $token[0] === T_CURLY_OPEN) {
-        $matched = true;
-        break;
-      }
-    }
-    expect($matched)->toBeTrue('no T_CURLY_OPEN in data file');
-  }
-
-  // Actually testing the tokenizer hasn't changed
-  public function testContainsTDollarOpenCurlyBraces(): void {
-    $matched = false;
-    $tokens = token_get_all(file_get_contents(self::DATA_FILE));
-    foreach ($tokens as $token) {
-      if (is_array($token) && $token[0] === T_DOLLAR_OPEN_CURLY_BRACES) {
-        $matched = true;
-        break;
-      }
-    }
-    expect($matched)->toBeTrue('no T_DOLLAR_OPEN_CURLY_BRACES in data file');
-  }
-
-  // Actually testing the tokenizer hasn't changed
-  public function testDoesNotContainTCurlyClose(): void {
-    $tokens = token_get_all(file_get_contents(self::DATA_FILE));
-    foreach ($tokens as $token) {
-      if (!is_array($token)) {
-        continue;
-      }
-      expect($token[1] !== '}')->toBeTrue(
-        sprintf(
-          'Got a token of type %d (%s) containing "}"',
-          $token[0],
-          token_name($token[0]),
-        ),
-      );
-    }
-  }
 }

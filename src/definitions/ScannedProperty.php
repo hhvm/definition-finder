@@ -39,15 +39,15 @@ final class ScannedProperty
   }
 
   public function isPublic(): bool {
-    return $this->visibility === \T_PUBLIC;
+    return $this->visibility === VisibilityToken::T_PUBLIC;
   }
 
   public function isProtected(): bool {
-    return $this->visibility === \T_PROTECTED;
+    return $this->visibility === VisibilityToken::T_PROTECTED;
   }
 
   public function isPrivate(): bool {
-    return $this->visibility === \T_PRIVATE;
+    return $this->visibility === VisibilityToken::T_PRIVATE;
   }
 
   public function isStatic(): bool {

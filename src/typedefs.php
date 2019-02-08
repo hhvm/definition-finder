@@ -16,9 +16,9 @@ namespace Facebook\DefinitionFinder;
 type AttributeMap = dict<string, vec<mixed>>;
 
 enum VisibilityToken: int {
-  T_PUBLIC = \T_PUBLIC;
-  T_PRIVATE = \T_PRIVATE;
-  T_PROTECTED = \T_PROTECTED;
+  T_PUBLIC = 0;
+  T_PRIVATE = 1;
+  T_PROTECTED = 2;
 }
 
 enum OptionalityToken: int {
