@@ -62,8 +62,6 @@ function generic_function<Tk, Tv>(): void {
 function constrained_generic_function<Tk as arraykey, Tv>(): void {
 }
 
-function &byref_return_function() { }
-
 function returns_int(): int { return 123; }
 
 function returns_generic(): Vector<int> { return Vector { 123 }; }

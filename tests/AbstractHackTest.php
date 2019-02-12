@@ -98,7 +98,6 @@ abstract class AbstractHackTest extends Facebook\HackTest\HackTest {
         $this->getPrefix().'simple_function',
         $this->getPrefix().'generic_function',
         $this->getPrefix().'constrained_generic_function',
-        $this->getPrefix().'byref_return_function',
         $this->getPrefix().'returns_int',
         $this->getPrefix().'returns_generic',
         $this->getPrefix().'returns_nested_generic',
