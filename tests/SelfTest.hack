@@ -18,7 +18,7 @@ class SelfTest extends \Facebook\HackTest\HackTest {
   public function filenameProvider(): array<array<string>> {
     return \array_map(
       $filename ==> [\basename($filename), $filename],
-      \glob(\dirname(__DIR__).'/src/**/*.php'),
+      \glob(\dirname(__DIR__).'/src/**/*.hack'),
     );
   }
 
