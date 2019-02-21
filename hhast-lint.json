@@ -1,13 +1,13 @@
 {
   "roots": [ "src/", "tests/" ],
   "builtinLinters": "all",
-  "namespaceAliases": {
-    "HHAST": "Facebook\\HHAST\\Linters"
-   },
   "overrides": [
     {
       "patterns": [ "tests/data/*" ],
-      "disableAllLinters": true
+      "builtinLinters": "none",
+      "extraLinters": [
+        "Facebook\\HHAST\\Linters\\LicenseHeaderLinter"
+      ]
     }
   ]
 }
