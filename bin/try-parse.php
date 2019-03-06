@@ -1,5 +1,5 @@
 #!/usr/bin/env hhvm
-<?hh
+<?hh // partial
 /*
  *  Copyright (c) 2015-present, Facebook, Inc.
  *  All rights reserved.
