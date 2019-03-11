@@ -10,7 +10,6 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace Facebook\TypeAssert;
 use namespace HH\Lib\{C, Vec};
 
 function scope_from_ast_and_ns(
@@ -83,22 +82,11 @@ function scope_from_ast_and_ns(
       $node ==> properties_from_ast($context, $node),
     )
     |> Vec\flatten($$),
-    /* constants = */ Vec\concat(
-      Vec\map(
-        $ast->getItemsOfType(HHAST\ConstDeclaration::class),
-        $node ==> constants_from_ast($context, $node),
-      )
-      |> Vec\flatten($$),
-      $ast->getItemsOfType(HHAST\ExpressionStatement::class)
-        |> Vec\map($$, $s ==> $s->getExpression())
-        |> Vec\filter($$, $e ==> $e instanceof HHAST\DefineExpression)
-        |> Vec\map(
-          $$,
-          $e ==> TypeAssert\instance_of(HHAST\DefineExpression::class, $e),
-        )
-        |> Vec\map($$, $e ==> constant_from_define_ast($context, $e))
-        |> Vec\filter_nulls($$),
-    ),
+    /* constants = */ Vec\map(
+      $ast->getItemsOfType(HHAST\ConstDeclaration::class),
+      $node ==> constants_from_ast($context, $node),
+    )
+    |> Vec\flatten($$),
     /* type constants = */ Vec\map(
       $ast->getItemsOfType(HHAST\TypeConstDeclaration::class),
       $node ==> type_constant_from_ast($context, $node),

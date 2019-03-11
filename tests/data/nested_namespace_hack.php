@@ -99,10 +99,6 @@ function aliased_no_as(Bar $aliased): Bar {
 const MY_CONST = 456;
 const int MY_TYPED_CONST = 123;
 
-define('MY_OLD_STYLE_CONST_FROM_NESTED_NS', 789);
-define("MY_OTHER_OLD_STYLE_CONST_FROM_NESTED_NS", 'herp');
-define(NOW_IM_JUST_MESSING_WITH_YOU_FROM_NESTED_NS, 'derp');
-
 type MyType = int;
 type MyGenericType<T> = string;
 newtype MyNewtype = string;

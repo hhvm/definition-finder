@@ -115,10 +115,6 @@ abstract class AbstractHackTest extends Facebook\HackTest\HackTest {
       vec[
         $this->getPrefix().'MY_CONST',
         $this->getPrefix().'MY_TYPED_CONST',
-        // define() puts constants into the root namespace
-        'MY_OLD_STYLE_CONST'.$this->getSuffixForRootDefinitions(),
-        'MY_OTHER_OLD_STYLE_CONST'.$this->getSuffixForRootDefinitions(),
-        'NOW_IM_JUST_MESSING_WITH_YOU'.$this->getSuffixForRootDefinitions(),
       ],
     );
     expect(
@@ -126,7 +122,7 @@ abstract class AbstractHackTest extends Facebook\HackTest\HackTest {
         $this->parser?->getConstants() ?? vec[],
         $x ==> $x->getValue()->getStaticValue(),
       ),
-    )->toBeSame(vec[456, 123, 789, 'herp', 'derp']);
+    )->toBeSame(vec[456, 123]);
   }
 
   public function testClassGenerics(): void {
