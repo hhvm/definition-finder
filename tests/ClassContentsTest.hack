@@ -26,21 +26,6 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testAnonymousClasses(): void {
-    $parser = FileParser::fromFile(__DIR__.'/data/class_contents_php.php');
-    expect($parser->getFunctions())->toBeEmpty(
-      'Should be no functions - probably interpreting a method as a function',
-    );
-    expect(C\count($parser->getClasses()))->toBeSame(
-      1,
-      'The anonymous class should not be returned',
-    );
-    $class = $parser->getClass('ClassUsingAnonymousClass');
-    expect(Vec\map($class->getMethods(), $it ==> $it->getName()))->toBeSame(
-      vec['methodOne', 'methodTwo'],
-    );
-  }
-
   public function testNamespaceName(): void {
     expect($this->class?->getNamespaceName())->toBeSame(
       'Facebook\DefinitionFinder\Test',
