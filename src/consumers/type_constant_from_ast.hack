@@ -16,10 +16,11 @@ function type_constant_from_ast(
   HHAST\TypeConstDeclaration $node,
 ): ScannedTypeConstant {
   $is_abstract = $node->getAbstract() instanceof HHAST\AbstractToken;
+  $name = $node->getName();
   return (
     new ScannedTypeConstant(
       $node,
-      name_from_ast($node->getName()),
+      name_from_ast($node->getName() ?? HHAST\Missing()),
       context_with_node_position($context, $node)['definitionContext'],
       /* docblock = */ null,
       typehint_from_ast(
