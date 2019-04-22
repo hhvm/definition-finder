@@ -3,3 +3,4 @@ vendor/
 *.swo
 *.orig
 *.rej
+composer.lock
