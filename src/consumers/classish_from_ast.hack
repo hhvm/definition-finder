@@ -48,7 +48,9 @@ function classish_from_ast<T as ScannedClassish>(
   }
 
   $modifiers = $node->getModifiers() ?? new HHAST\EditableList(vec[]);
-  $has_modifier = $m ==> !C\is_empty($modifiers->getItemsOfType($m));
+  $has_modifier = (
+    classname<HHAST\EditableNode> $m
+  ) ==> !C\is_empty($modifiers->getItemsOfType($m));
 
   $generics = generics_from_ast($context, $node->getTypeParameters());
   $context['genericTypeNames'] = Keyset\union(
