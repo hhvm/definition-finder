@@ -22,7 +22,7 @@ function parameter_info_from_decorated_expression(
       $inner instanceof HHAST\VariableToken,
       "Don't know how to handle %s ('%s')",
       \get_class($inner),
-      $inner?->getCode() ?? '',
+      $inner->getCode() ?? '',
     );
     $ret = shape(
       'name' => $inner,
