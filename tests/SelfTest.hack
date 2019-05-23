@@ -27,8 +27,8 @@ class SelfTest extends \Facebook\HackTest\HackTest {
    * Bogus first argument to make test failure messages more useful
    */
   <<DataProvider('filenameProvider')>>
-  public function testSelf(string $_, string $filename): void {
-    $parser = FileParser::fromFile($filename);
+  public async function testSelf(string $_, string $filename): Awaitable<void> {
+    $parser = await FileParser::fromFileAsync($filename);
     expect($parser)->toNotBeNull();
   }
 }

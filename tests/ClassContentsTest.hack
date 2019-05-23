@@ -19,14 +19,14 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
 
   <<__Override>>
   public async function beforeEachTestAsync(): Awaitable<void> {
-    $parser = FileParser::fromFile(__DIR__.'/data/class_contents.php');
+    $parser = await FileParser::fromFileAsync(__DIR__.'/data/class_contents.php');
     $this->class = $parser->getClasses()[0];
     expect($this->class->getName())->toBeSame(
       'Facebook\\DefinitionFinder\\Test\\ClassWithContents',
     );
   }
 
-  public function testNamespaceName(): void {
+  public async function testNamespaceName(): Awaitable<void> {
     expect($this->class?->getNamespaceName())->toBeSame(
       'Facebook\DefinitionFinder\Test',
     );
@@ -38,7 +38,7 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     )->toBeSame(vec['', '', '', '']);
   }
 
-  public function testShortName(): void {
+  public async function testShortName(): Awaitable<void> {
     expect($this->class?->getShortName())->toBeSame('ClassWithContents');
     expect(
       Vec\map($this->class?->getMethods() ?? vec[], $x ==> $x->getShortName()),
@@ -52,7 +52,7 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testMethodNames(): void {
+  public async function testMethodNames(): Awaitable<void> {
     expect(Vec\map($this->class?->getMethods() ?? vec[], $x ==> $x->getName()))
       ->toBeSame(
         vec[
@@ -64,7 +64,7 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
       );
   }
 
-  public function testMethodVisibility(): void {
+  public async function testMethodVisibility(): Awaitable<void> {
     expect(Vec\map($this->class?->getMethods() ?? vec[], $x ==> $x->isPublic()))
       ->toBeSame(vec[true, false, false, true], 'isPublic');
     expect(
@@ -75,7 +75,7 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     )->toBeSame(vec[false, false, true, false], 'isPrivate');
   }
 
-  public function testHackConstants(): void {
+  public async function testHackConstants(): Awaitable<void> {
     $constants = $this->class?->getConstants();
     expect(Vec\map($constants ?? vec[], $x ==> $x->getName()))->toBeSame(
       vec['FOO', 'BAR'],
@@ -94,8 +94,8 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testPHPConstants(): void {
-    $parser = FileParser::fromFile(__DIR__.'/data/php_class_contents.php');
+  public async function testPHPConstants(): Awaitable<void> {
+    $parser = await FileParser::fromFileAsync(__DIR__.'/data/php_class_contents.php');
     $class = $parser->getClass('Foo');
     $constants = $class->getConstants();
 
@@ -113,8 +113,8 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
   }
 
   /** Omitting public/protected/private is permitted in PHP */
-  public function testDefaultMethodVisibility(): void {
-    $parser = FileParser::fromFile(__DIR__.'/data/php_class_contents.php');
+  public async function testDefaultMethodVisibility(): Awaitable<void> {
+    $parser = await FileParser::fromFileAsync(__DIR__.'/data/php_class_contents.php');
     $funcs = $parser->getClass('Foo')->getMethods();
 
     expect(Vec\map($funcs, $x ==> $x->getName()))->toBeSame(
@@ -129,32 +129,32 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testMethodsAreStatic(): void {
+  public async function testMethodsAreStatic(): Awaitable<void> {
     expect(Vec\map($this->class?->getMethods() ?? vec[], $x ==> $x->isStatic()))
       ->toBeSame(vec[false, false, false, true], 'isPublic');
   }
 
-  public function testPropertyNames(): void {
+  public async function testPropertyNames(): Awaitable<void> {
     expect(
       Vec\map($this->class?->getProperties() ?? vec[], $x ==> $x->getName()),
     )->toBeSame(vec['foo', 'herp']);
   }
 
-  public function testPropertyVisibility(): void {
+  public async function testPropertyVisibility(): Awaitable<void> {
     expect(
       Vec\map($this->class?->getProperties() ?? vec[], $x ==> $x->isPublic()),
     )->toBeSame(vec[false, true]);
   }
 
-  public function testPropertyTypes(): void {
+  public async function testPropertyTypes(): Awaitable<void> {
     expect(
       $this->class?->getProperties()
         |> Vec\map($$ ?? vec[], $x ==> $x->getTypehint()?->getTypeName()),
     )->toBeSame(vec['bool', 'string']);
   }
 
-  public function testTypelessProperty(): void {
-    $parser = FileParser::fromFile(__DIR__.'/data/php_class_contents.php');
+  public async function testTypelessProperty(): Awaitable<void> {
+    $parser = await FileParser::fromFileAsync(__DIR__.'/data/php_class_contents.php');
     $props = $parser->getClass('Foo')->getProperties();
 
     expect(Vec\map($props, $x ==> $x->getName()))->toBeSame(
@@ -182,12 +182,12 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
   }
 
   <<DataProvider('staticPropertyProvider')>>
-  public function testStaticProperty(
+  public async function testStaticProperty(
     string $_,
     string $code,
     ?string $type,
-  ): void {
-    $parser = FileParser::fromData($code);
+  ): Awaitable<void> {
+    $parser = (await FileParser::fromDataAsync($code));
     $class = $parser->getClass('Foo');
     $props = $class->getProperties();
 
@@ -201,9 +201,9 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     expect(Vec\map($props, $x ==> $x->isStatic()))->toBeSame(vec[true]);
   }
 
-  public function testTypeConstant(): void {
+  public async function testTypeConstant(): Awaitable<void> {
     $data = '<?hh class Foo { const type BAR = int; }';
-    $parser = FileParser::fromData($data);
+    $parser = (await FileParser::fromDataAsync($data));
     $constants = $parser->getClass('Foo')->getTypeConstants();
     $constant = C\onlyx($constants);
 
@@ -212,14 +212,14 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     expect($constant->getAliasedType()?->getTypeText())->toBeSame('int');
   }
 
-  public function testClassAsTypeConstant(): void {
+  public async function testClassAsTypeConstant(): Awaitable<void> {
     $data = "<?hh\n".
       "class Foo { const type BAR = int; }\n".
       "class Bar {\n".
       "  const type FOO = Foo;\n".
-      "  function foo(self::FOO::BAR \$baz): void {}\n".
+      "  function foo(self::FOO::BAR \$baz): Awaitable<void> {}\n".
       "}";
-    $parser = FileParser::fromData($data);
+    $parser = (await FileParser::fromDataAsync($data));
     $class = $parser->getClass('Bar');
     expect(
       Vec\map(
@@ -232,10 +232,10 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     )->toBeSame(vec[vec['self::FOO::BAR']]);
   }
 
-  public function testConstraintedTypeConstant(): void {
+  public async function testConstraintedTypeConstant(): Awaitable<void> {
     // I'm not aware of a use for this, but HHVM allows and tests for it
     $data = '<?hh class Foo { const type BAR as int = int; }';
-    $parser = FileParser::fromData($data);
+    $parser = (await FileParser::fromDataAsync($data));
     $constants = $parser->getClass('Foo')->getTypeConstants();
     $constant = C\onlyx($constants);
 
@@ -244,9 +244,9 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     expect($constant->getAliasedType()?->getTypeText())->toBeSame('int');
   }
 
-  public function testAbstractConstant(): void {
+  public async function testAbstractConstant(): Awaitable<void> {
     $data = '<?hh abstract class Foo { abstract const string BAR; }';
-    $parser = FileParser::fromData($data);
+    $parser = (await FileParser::fromDataAsync($data));
     $constant = C\onlyx($parser->getClass('Foo')->getConstants());
 
     expect($constant->getName())->toBeSame('BAR');
@@ -255,9 +255,9 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
   }
 
 
-  public function testAbstractTypeConstant(): void {
+  public async function testAbstractTypeConstant(): Awaitable<void> {
     $data = '<?hh abstract class Foo { abstract const type BAR; }';
-    $parser = FileParser::fromData($data);
+    $parser = (await FileParser::fromDataAsync($data));
     $constant = C\onlyx($parser->getClass('Foo')->getTypeConstants());
 
     expect($constant->getName())->toBeSame('BAR');
@@ -265,9 +265,9 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     expect($constant->getAliasedType())->toBeNull();
   }
 
-  public function testConstrainedAbstractTypeConstant(): void {
+  public async function testConstrainedAbstractTypeConstant(): Awaitable<void> {
     $data = '<?hh abstract class Foo { abstract const type BAR as Bar; }';
-    $parser = FileParser::fromData($data);
+    $parser = (await FileParser::fromDataAsync($data));
     $constant = C\onlyx($parser->getClass('Foo')->getTypeConstants());
 
     expect($constant->getName())->toBeSame('BAR');
@@ -275,26 +275,26 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     expect($constant->getAliasedType()?->getTypeText())->toBeSame('Bar');
   }
 
-  public function testTypeConstantAsProperty(): void {
+  public async function testTypeConstantAsProperty(): Awaitable<void> {
     $data = '<?hh class Foo { public this::FOO $foo; }';
-    $parser = FileParser::fromData($data);
+    $parser = (await FileParser::fromDataAsync($data));
     $prop = C\onlyx($parser->getClass('Foo')->getProperties());
 
     expect($prop->getTypehint()?->getTypeText())->toBeSame('this::FOO');
     expect($prop->getName())->toBeSame('foo');
   }
 
-  public function testTypeconstantAsReturnType(): void {
-    $data = '<?hh class Foo { public function bar(): this::FOO {} }';
-    $parser = FileParser::fromData($data);
+  public async function testTypeconstantAsReturnType(): Awaitable<void> {
+    $data = '<?hh class Foo { public async function bar(): this::FOO {} }';
+    $parser = (await FileParser::fromDataAsync($data));
     $method = C\onlyx($parser->getClass('Foo')->getMethods());
 
     expect($method->getReturnType()?->getTypeText())->toBeSame('this::FOO');
   }
 
-  public function testTypeconstantAsParameterType(): void {
-    $data = '<?hh class Foo { public function bar(this::FOO $foo): void {} }';
-    $parser = FileParser::fromData($data);
+  public async function testTypeconstantAsParameterType(): Awaitable<void> {
+    $data = '<?hh class Foo { public async function bar(this::FOO $foo): Awaitable<void> {} }';
+    $parser = (await FileParser::fromDataAsync($data));
     $method = C\onlyx($parser->getClass('Foo')->getMethods());
     $param = C\onlyx($method->getParameters());
 
@@ -350,18 +350,18 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
   }
 
   <<DataProvider('namespacedReturns')>>
-  public function testNamespacedTypeconstantAsParameterType(
+  public async function testNamespacedTypeconstantAsParameterType(
     string $namespace,
     string $returnText,
     string $expectedTypehintText,
-  ): void {
+  ): Awaitable<void> {
     $data = \sprintf(
-      '<?hh %s class Foo { public function bar(): %s {} }',
+      '<?hh %s class Foo { public async function bar(): %s {} }',
       $namespace === '' ? '' : "namespace ".$namespace.";",
       $returnText,
     );
     $className = \ltrim($namespace.'\Foo', "\\");
-    $parser = FileParser::fromData($data);
+    $parser = (await FileParser::fromDataAsync($data));
     $method = C\onlyx($parser->getClass($className)->getMethods());
 
     expect($method->getReturnType()?->getTypeText())->toBeSame(

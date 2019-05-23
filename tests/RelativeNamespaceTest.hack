@@ -16,18 +16,18 @@ use namespace HH\Lib\Vec;
  * http://php.net/manual/en/language.namespaces.nsconstants.php example 4
  */
 final class RelativeNamespaceTest extends Facebook\HackTest\HackTest {
-  public function testFunctionBodyUsesRelativeNamespace(): void {
+  public async function testFunctionBodyUsesRelativeNamespace(): Awaitable<void> {
     $code = '<?php function foo() { namespace\bar(); } function baz() {}';
-    $fp = FileParser::fromData($code);
+    $fp = await FileParser::fromDataAsync($code);
     expect($fp->getFunctionNames())->toBeSame(vec['foo', 'baz']);
 
     expect(Vec\map($fp->getFunctions(), $f ==> $f->getNamespaceName()))
       ->toBeSame(vec['', '']);
   }
 
-  public function testPseudomainUsesRelativeNamespace(): void {
+  public async function testPseudomainUsesRelativeNamespace(): Awaitable<void> {
     $code = '<?php namespace\foo(); function bar() {}';
-    $fp = FileParser::fromData($code);
+    $fp = await FileParser::fromDataAsync($code);
     expect($fp->getFunctionNames())->toBeSame(vec['bar']);
 
     expect(Vec\map($fp->getFunctions(), $f ==> $f->getNamespaceName()))

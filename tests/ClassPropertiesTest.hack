@@ -19,7 +19,9 @@ class ClassPropertiesTest extends \Facebook\HackTest\HackTest {
 
   <<__Override>>
   public async function beforeEachTestAsync(): Awaitable<void> {
-    $parser = FileParser::fromFile(__DIR__.'/data/class_properties.php');
+    $parser = await FileParser::fromFileAsync(
+      __DIR__.'/data/class_properties.php',
+    );
     $this->classes = $parser->getClasses();
   }
 

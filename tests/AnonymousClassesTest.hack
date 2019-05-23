@@ -14,14 +14,15 @@ use function Facebook\FBExpect\expect;
 use namespace HH\Lib\Vec;
 
 final class AnonymousClassesTest extends \Facebook\HackTest\HackTest {
-  public function testParsesInFunction(): void {
-    $parser =
-      FileParser::fromData('<?php function foo() { return new class {}; }');
+  public async function testParsesInFunction(): Awaitable<void> {
+    $parser = await FileParser::fromDataAsync(
+      '<?php function foo() { return new class {}; }',
+    );
     expect($parser->getFunctionNames())->toBeSame(vec['foo']);
   }
 
-  public function testParsesInMethod(): void {
-    $parser = FileParser::fromData(
+  public async function testParsesInMethod(): Awaitable<void> {
+    $parser = await FileParser::fromDataAsync(
       '<?php class Foo { function bar() { return new class {}; } }',
     );
     $class = $parser->getClass('Foo');
@@ -29,7 +30,7 @@ final class AnonymousClassesTest extends \Facebook\HackTest\HackTest {
       ->toBeSame(vec['bar']);
   }
 
-  public function testMethodsNotPropagatedToContainer(): void {
+  public async function testMethodsNotPropagatedToContainer(): Awaitable<void> {
     $code = <<<EOF
 <?php
 class Foo {
@@ -41,7 +42,7 @@ class Foo {
   }
 }
 EOF;
-    $parser = FileParser::fromData($code);
+    $parser = (await FileParser::fromDataAsync($code));
     $class = $parser->getClass('Foo');
     expect(Vec\map($class->getMethods(), $method ==> $method->getName()))
       ->toBeSame(vec['bar']);

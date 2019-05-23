@@ -38,41 +38,22 @@ final class FileParser extends BaseParser {
 
   ///// Constructors /////
 
-  public static function fromFile(
-    string $filename,
-  ): this {
-    $ast = HHAST\from_file($filename);
-    invariant(
-      $ast instanceof HHAST\Script,
-      "Expected the top-level definition to be a Script, got a %s",
-      \get_class($ast),
-    );
-    return new self($filename, $ast);
-  }
-
   public static async function fromFileAsync(
     string $filename,
   ): Awaitable<this> {
-    $ast = await HHAST\from_file_async($filename);
-    invariant(
-      $ast instanceof HHAST\Script,
-      "Expected the top-level definition to be a Script, got a %s",
-      \get_class($ast),
-    );
+    $ast = await HHAST\from_file_async(HHAST\File::fromPath($filename));
     return new self($filename, $ast);
   }
 
-  public static function fromData(
+  public static async function fromDataAsync(
     string $data,
     ?string $filename = null,
-  ): this {
-    $ast = HHAST\from_code($data);
-    invariant(
-      $ast instanceof HHAST\Script,
-      "Expected top-level definition to be a Script, got a %s",
-      \get_class($ast),
+  ): Awaitable<this> {
+    $filename ??= '__DATA__';
+    $ast = await HHAST\from_file_async(
+      HHAST\File::fromPathAndContents($filename, $data),
     );
-    return new self($filename ?? '__DATA__', $ast);
+    return new self($filename, $ast);
   }
 
   ///// Accessors /////

@@ -23,12 +23,12 @@ final class SingleNamespaceHackTest extends \AbstractHackTest {
     return 'SingleNamespace\\';
   }
 
-  public function testConsistentNames(): void {
+  public async function testConsistentNames(): Awaitable<void> {
     $data = "<?hh\n".
       "class Herp extends Foo\Bar {}\n".
       "class Derp extends \Foo\Bar {}\n";
 
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $herp = $parser->getClass('Herp');
     $derp = $parser->getClass('Derp');
 

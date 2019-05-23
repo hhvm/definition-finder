@@ -19,7 +19,9 @@ class AbstractClassContentsTest extends \Facebook\HackTest\HackTest {
 
   <<__Override>>
   public async function beforeEachTestAsync(): Awaitable<void> {
-    $parser = FileParser::fromFile(__DIR__.'/data/abstract_class_contents.php');
+    $parser = await FileParser::fromFileAsync(
+      __DIR__.'/data/abstract_class_contents.php',
+    );
     $this->classes = $parser->getClasses();
   }
 

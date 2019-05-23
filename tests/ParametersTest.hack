@@ -16,10 +16,10 @@ use function Facebook\DefinitionFinder\{ast_without_trivia, nullthrows};
 use function Facebook\FBExpect\expect;
 
 final class ParametersTest extends \Facebook\HackTest\HackTest {
-  public function testWithoutTypes(): void {
+  public async function testWithoutTypes(): Awaitable<void> {
     $data = '<?hh function foo($bar, $baz) {}';
 
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -31,10 +31,10 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     expect($params[1]->getTypehint())->toBeNull();
   }
 
-  public function testWithSimpleType(): void {
+  public async function testWithSimpleType(): Awaitable<void> {
     $data = '<?hh function foo(string $bar) {}';
 
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -46,9 +46,9 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     expect($typehint?->getGenericTypes())->toBeEmpty();
   }
 
-  public function testWithDefault(): void {
+  public async function testWithDefault(): Awaitable<void> {
     $data = '<?hh function foo($bar, $baz = "herp") {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -70,10 +70,10 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     expect(C\lastx($params)->getDefault()?->getStaticValue())->toBeSame('herp');
   }
 
-  public function testWithNullDefault(): void {
+  public async function testWithNullDefault(): Awaitable<void> {
     $data = '<?hh function foo($bar, $baz = null) {}';
     $parameters =
-      FileParser::fromData($data)->getFunction('foo')->getParameters();
+      (await FileParser::fromDataAsync($data))->getFunction('foo')->getParameters();
     list($bar, $baz) = $parameters;
     expect($bar->getDefault())->toBeNull();
     $default = expect($baz->getDefault())->toNotBeNull();
@@ -90,9 +90,9 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
   }
 
   <<DataProvider('getUnusualDefaults')>>
-  public function testWithUnusualDefault(string $in, string $expected): void {
+  public async function testWithUnusualDefault(string $in, string $expected): Awaitable<void> {
     $data = '<?hh function foo($bar, $baz = '.$in.') {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
     expect(Vec\map($function->getParameters(), $p ==> $p->getName()))->toBeSame(
       vec['bar', 'baz'],
@@ -110,15 +110,15 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
 
   public function getInOutExamples(): array<(string, ?string, bool)> {
     return [
-      tuple('<?hh function foo(string $bar): void {}', 'string', false),
-      tuple('<?hh function foo(inout $bar): void {}', null, true),
-      tuple('<?hh function foo(inout string $bar): void {}', 'string', true),
+      tuple('<?hh function foo(string $bar): Awaitable<void> {}', 'string', false),
+      tuple('<?hh function foo(inout $bar): Awaitable<void> {}', null, true),
+      tuple('<?hh function foo(inout string $bar): Awaitable<void> {}', 'string', true),
     ];
   }
 
   <<DataProvider('getInOutExamples')>>
-  public function testInOut(string $code, ?string $type, bool $inout): void {
-    $parser = FileParser::fromData($code);
+  public async function testInOut(string $code, ?string $type, bool $inout): Awaitable<void> {
+    $parser = await FileParser::fromDataAsync($code);
     $function = $parser->getFunction('foo');
 
     $param = C\firstx($function->getParameters());
@@ -127,9 +127,9 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     expect($param->isInOut())->toBeSame($inout);
   }
 
-  public function testWithTypeAndDefault(): void {
+  public async function testWithTypeAndDefault(): Awaitable<void> {
     $data = '<?hh function foo(string $bar = "baz") {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -146,9 +146,9 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
       ->toBeSame(vec['"baz"']);
   }
 
-  public function testWithRootNamespacedType(): void {
+  public async function testWithRootNamespacedType(): Awaitable<void> {
     $data = '<?hh function foo(\Iterator $bar) {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -159,9 +159,9 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
       ->toBeSame('Iterator');
   }
 
-  public function testWithNamespacedType(): void {
+  public async function testWithNamespacedType(): Awaitable<void> {
     $data = '<?hh function foo(\Foo\Bar $bar) {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -172,9 +172,9 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
       ->toBeSame('Foo\\Bar');
   }
 
-  public function testWithLegacyCallableType(): void {
+  public async function testWithLegacyCallableType(): Awaitable<void> {
     $data = '<?hh function foo(callable $bar) {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -185,9 +185,9 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
       ->toBeSame('callable');
   }
 
-  public function testWithByRefParam(): void {
+  public async function testWithByRefParam(): Awaitable<void> {
     $data = '<?hh function foo(&$bar, $baz) {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -197,9 +197,9 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testWithTypedByRefParam(): void {
+  public async function testWithTypedByRefParam(): Awaitable<void> {
     $data = '<?hh function foo(string &$bar) {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
     $params = $function->getParameters();
@@ -210,9 +210,9 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testWithArrayParam(): void {
+  public async function testWithArrayParam(): Awaitable<void> {
     $data = '<?hh function foo(array $bar) {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
     expect(
@@ -223,9 +223,9 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     )->toBeSame(vec['array']);
   }
 
-  public function testWithCommentedParam(): void {
+  public async function testWithCommentedParam(): Awaitable<void> {
     $data = '<?hh function foo(/* foo */ $bar) {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
     expect(Vec\map($function->getParameters(), $x ==> $x->getName()))->toBeSame(
@@ -234,10 +234,10 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     expect($function->getParameters()[0]->getTypehint())->toBeNull();
   }
 
-  public function testWithUntypedVariadicParam(): void {
+  public async function testWithUntypedVariadicParam(): Awaitable<void> {
     $data = '<?hh function foo(string $bar, ...$baz) {}';
 
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
     $params = $function->getParameters();
 
@@ -251,10 +251,10 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
       ->toBeSame(vec['string', null]);
   }
 
-  public function testWithTypedVariadicParam(): void {
+  public async function testWithTypedVariadicParam(): Awaitable<void> {
     $data = '<?hh function foo(array<mixed> ...$bar) {}';
 
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
     $params = $function->getParameters();
 
@@ -266,10 +266,10 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
       ->toBeSame(vec['array<mixed>']);
   }
 
-  public function testWithUnnamedVariadic(): void {
+  public async function testWithUnnamedVariadic(): Awaitable<void> {
     $data = '<?hh function foo(string $bar, ...) {}';
 
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
     $params = $function->getParameters();
 
@@ -279,27 +279,27 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testWithHackCallableTypehint(): void {
+  public async function testWithHackCallableTypehint(): Awaitable<void> {
     $data = '<?hh function foo((function(int): string) $bar) {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $type = $parser->getFunction('foo')->getParameters()[0]->getTypehint();
 
     expect($type?->getTypeName())->toBeSame('callable');
     expect($type?->getTypeText())->toBeSame('(function(int):string)');
   }
 
-  public function testEmptyShapeTypehint(): void {
+  public async function testEmptyShapeTypehint(): Awaitable<void> {
     $data = '<?hh function foo(shape() $bar) {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $type = $parser->getFunction('foo')->getParameters()[0]->getTypehint();
 
     expect($type?->getTypeName())->toBeSame('shape');
     expect($type?->getTypeText())->toBeSame('shape()');
   }
 
-  public function testNonNullableTypehint(): void {
+  public async function testNonNullableTypehint(): Awaitable<void> {
     $data = '<?hh function foo(Herp $derp) {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $fun = $parser->getFunction('foo');
     expect(
       Vec\map($fun->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
@@ -309,9 +309,9 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     )->toBeSame(vec[false]);
   }
 
-  public function testNullableTypehint(): void {
+  public async function testNullableTypehint(): Awaitable<void> {
     $data = '<?hh function foo(?Herp $derp) {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $fun = $parser->getFunction('foo');
     expect(
       Vec\map($fun->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),

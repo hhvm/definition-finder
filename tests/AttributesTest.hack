@@ -26,72 +26,72 @@ class AttributesTest extends \Facebook\HackTest\HackTest {
 
   <<__Override>>
   public async function beforeEachTestAsync(): Awaitable<void> {
-    $parser = FileParser::fromFile(__DIR__.'/data/attributes.php');
+    $parser = await FileParser::fromFileAsync(__DIR__.'/data/attributes.php');
     $this->classes = $parser->getClasses();
     $this->functions = $parser->getFunctions();
   }
 
-  public function testSingleSimpleAttribute(): void {
+  public async function testSingleSimpleAttribute(): Awaitable<void> {
     $class = $this->findClass('ClassWithSimpleAttribute');
     expect($class->getAttributes())->toBeSame(dict["Foo" => vec[]]);
   }
 
-  public function testMultipleSimpleAttributes(): void {
+  public async function testMultipleSimpleAttributes(): Awaitable<void> {
     $class = $this->findClass('ClassWithSimpleAttributes');
     expect($class->getAttributes())->toBeSame(
       dict["Foo" => vec[], "Bar" => vec[]],
     );
   }
 
-  public function testWithSingleStringAttribute(): void {
+  public async function testWithSingleStringAttribute(): Awaitable<void> {
     $class = $this->findClass('ClassWithStringAttribute');
     expect($class->getAttributes())->toBeSame(dict['Herp' => vec['derp']]);
   }
 
-  public function testWithFormattedAttributes(): void {
+  public async function testWithFormattedAttributes(): Awaitable<void> {
     $class = $this->findClass('ClassWithFormattedAttributes');
     expect($class->getAttributes())->toBeSame(
       dict['Foo' => vec[], 'Bar' => vec['herp', 'derp']],
     );
   }
 
-  public function testWithFormattedArrayAttribute(): void {
+  public async function testWithFormattedArrayAttribute(): Awaitable<void> {
     $class = $this->findClass('ClassWithFormattedArrayAttribute');
     expect($class->getAttributes())->toBeSame(dict['Bar' => vec[['herp']]]);
   }
 
-  public function testWithSingleIntAttribute(): void {
+  public async function testWithSingleIntAttribute(): Awaitable<void> {
     $class = $this->findClass('ClassWithIntAttribute');
     expect($class->getAttributes())->toBeSame(dict['Herp' => vec[123]]);
     // Check it's an int, not a string
     expect($class->getAttributes()['Herp'][0])->toBeSame(123);
   }
 
-  public function testFunctionHasAttributes(): void {
+  public async function testFunctionHasAttributes(): Awaitable<void> {
     $func = $this->findScanned($this->functions, 'function_after_classes');
     expect($func->getAttributes())->toBeSame(dict['FunctionFoo' => vec[]]);
   }
 
-  public function testFunctionContainingBitShift(): void {
+  public async function testFunctionContainingBitShift(): Awaitable<void> {
     $data = '<?hh function foo() { 1 << 3; }';
-    $parser = FileParser::fromData($data);
+    $parser = (await FileParser::fromDataAsync($data));
     $fun = $parser->getFunction('foo');
     expect($fun->getAttributes())->toBeEmpty();
   }
 
-  public function testPseudmainContainingBitShift(): void {
+  public async function testPseudmainContainingBitShift(): Awaitable<void> {
     $data = '<?hh print 1 << 3;';
-    $parser = FileParser::fromData($data);
+    $parser = (await FileParser::fromDataAsync($data));
   }
 
-  public function testFunctionAttrsDontPolluteClass(): void {
+  public async function testFunctionAttrsDontPolluteClass(): Awaitable<void> {
     $class = $this->findClass('ClassAfterFunction');
     expect($class->getAttributes())->toBeSame(dict['ClassFoo' => vec[]]);
   }
 
-  public function testParameterHasAttribute(): void {
+  public async function testParameterHasAttribute(): Awaitable<void> {
     $data = '<?hh function foo(<<Bar>> $baz) {}';
-    $parser = FileParser::fromData($data);
+    $parser = (await FileParser::fromDataAsync($data));
     $fun = $parser->getFunction('foo');
     $params = $fun->getParameters();
     expect(Vec\map($params, $x ==> $x->getName()))->toBeSame(vec['baz']);
@@ -139,12 +139,12 @@ class AttributesTest extends \Facebook\HackTest\HackTest {
   }
 
   <<DataProvider('attributeExpressions')>>
-  public function testAttributeExpression(
+  public async function testAttributeExpression(
     string $source,
     mixed $expected,
-  ): void {
+  ): Awaitable<void> {
     $data = '<?hh <<MyAttr('.$source.')>> function foo(){}';
-    $parser = FileParser::fromData($data, $source);
+    $parser = await FileParser::fromDataAsync($data, $source);
     $fun = $parser->getFunction('foo');
     expect($fun->getAttributes())
       ->toBeSame(dict['MyAttr' => vec[$expected]]);

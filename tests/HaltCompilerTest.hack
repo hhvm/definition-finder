@@ -13,16 +13,16 @@ use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\FileParser;
 
 final class HaltCompilerTest extends \Facebook\HackTest\HackTest {
-  public function testDoesNotRaiseErrorAfterHaltCompiler(): void {
+  public async function testDoesNotRaiseErrorAfterHaltCompiler(): Awaitable<void> {
     $code = '<?hh function foo(){}; __halt_compiler(); function bar(;';
-    $parser = FileParser::fromData($code);
+    $parser = await FileParser::fromDataAsync($code);
     expect($parser->getFunctionNames())->toBeSame(vec['foo']);
   }
 
-  public function testDoesNotParseDefinitionsAfterHaltCompiler(): void {
+  public async function testDoesNotParseDefinitionsAfterHaltCompiler(): Awaitable<void> {
     $code =
-      '<?hh function foo(){}; __halt_compiler(); function bar(): void {};';
-    $parser = FileParser::fromData($code);
+      '<?hh function foo(){}; __halt_compiler(); function bar(): Awaitable<void> {};';
+    $parser = await FileParser::fromDataAsync($code);
     expect($parser->getFunctionNames())->toBeSame(vec['foo']);
   }
 }

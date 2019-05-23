@@ -30,7 +30,7 @@ class Foo {
 }
 ';
 
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $this->class = $parser->getClass('Foo');
   }
 

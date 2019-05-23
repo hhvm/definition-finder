@@ -19,46 +19,49 @@ use type Facebook\DefinitionFinder\{
 use namespace HH\Lib\{C, Vec};
 
 final class ShapesTest extends \Facebook\HackTest\HackTest {
-  private function getTypeAlias(): ScannedType {
-    return FileParser::fromFile(__DIR__.'/data/shapes.php')
+  private async function getTypeAliasAsync(): Awaitable<ScannedType> {
+    return (await FileParser::fromFileAsync(__DIR__.'/data/shapes.php'))
       ->getType('MyExampleShape');
   }
 
-  private function getShape(): ScannedTypehint {
-    return $this->getTypeAlias()->getAliasedType();
+  private async function getShapeAsync(): Awaitable<ScannedTypehint> {
+    return (await $this->getTypeAliasAsync())->getAliasedType();
   }
 
-  private function getFields(): vec<ScannedShapeField> {
-    return $this->getShape()->getShapeFields();
+  private async function getFieldsAsync(): Awaitable<vec<ScannedShapeField>> {
+    return (await $this->getShapeAsync())->getShapeFields();
   }
 
-  public function testFieldNames(): void {
-    expect(Vec\map($this->getFields(), $f ==> $f->getName()->getStaticValue()))
+  public async function testFieldNames(): Awaitable<void> {
+    expect(Vec\map(
+      (await $this->getFieldsAsync()),
+      $f ==> $f->getName()->getStaticValue(),
+    ))
       ->toBeSame(vec['foo', 'bar']);
   }
 
-  public function testOptionality(): void {
-    expect(Vec\map($this->getFields(), $f ==> $f->isOptional()))->toBeSame(
-      vec[false, true],
-    );
+  public async function testOptionality(): Awaitable<void> {
+    expect(Vec\map((await $this->getFieldsAsync()), $f ==> $f->isOptional()))
+      ->toBeSame(vec[false, true]);
   }
 
-  public function testDocComments(): void {
-    expect($this->getTypeAlias()->getDocComment())->toBeSame(
+  public async function testDocComments(): Awaitable<void> {
+    expect((await $this->getTypeAliasAsync())->getDocComment())->toBeSame(
       "/** A shape used for testing */",
     );
-    expect(Vec\map($this->getFields(), $f ==> $f->getDocComment()))->toBeSame(
-      vec['/** The foo */', '/** The bar */'],
-    );
+    expect(Vec\map((await $this->getFieldsAsync()), $f ==> $f->getDocComment()))
+      ->toBeSame(vec['/** The foo */', '/** The bar */']);
   }
 
-  public function testBasicFieldTypes(): void {
-    expect(C\firstx($this->getFields())->getValueType()->getTypeText())
+  public async function testBasicFieldTypes(): Awaitable<void> {
+    expect(
+      C\firstx((await $this->getFieldsAsync()))->getValueType()->getTypeText(),
+    )
       ->toBeSame('string');
   }
 
-  public function testNestedShapes(): void {
-    $inner = C\lastx($this->getFields())->getValueType();
+  public async function testNestedShapes(): Awaitable<void> {
+    $inner = C\lastx((await $this->getFieldsAsync()))->getValueType();
     expect($inner->getTypeName())->toBeSame('shape');
 
     $fields = $inner->getShapeFields();
