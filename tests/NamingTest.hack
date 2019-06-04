@@ -35,13 +35,12 @@ class NamingTest extends \Facebook\HackTest\HackTest {
       ['Attribute'],
       ['varray'], // HHVM >= 3.19
       ['darray'], // HHVM >= 3.19
-      ['inout'], // HHVM >= 3.21
     ];
   }
 
   <<DataProvider('specialNameProvider')>>
   public async function testSpecialReturnType(string $type): Awaitable<void> {
-    $data = '<?php function foo(): '.$type.' {}';
+    $data = '<?hh function foo(): '.$type.' {}';
     $parser = await FileParser::fromDataAsync($data);
     $func = $parser->getFunction('foo');
     expect($func->getReturnType()?->getTypeName())->toBeSame($type);
@@ -51,7 +50,7 @@ class NamingTest extends \Facebook\HackTest\HackTest {
   public async function testSpecialNameAsFuncName(
     string $type,
   ): Awaitable<void> {
-    $data = '<?php function '.$type.'(): void {}';
+    $data = '<?hh function '.$type.'(): void {}';
     $parser = await FileParser::fromDataAsync($data);
     $func = $parser->getFunction($type);
     expect($func->getReturnType()?->getTypeName())->toBeSame('void');
@@ -62,7 +61,7 @@ class NamingTest extends \Facebook\HackTest\HackTest {
   public async function testSpecialNameAsClassName(
     string $type,
   ): Awaitable<void> {
-    $data = '<?php class '.$type.' { }';
+    $data = '<?hh class '.$type.' { }';
     $parser = await FileParser::fromDataAsync($data);
     $class = $parser->getClass($type);
     expect($class)->toNotBeNull();
@@ -72,7 +71,7 @@ class NamingTest extends \Facebook\HackTest\HackTest {
   public async function testSpecialNameAsNamespaceName(
     string $type,
   ): Awaitable<void> {
-    $data = '<?php namespace '.$type.' { class Foo {} }';
+    $data = '<?hh namespace '.$type.' { class Foo {} }';
     $parser = await FileParser::fromDataAsync($data);
     $class = $parser->getClass($type."\\Foo");
     expect($class)->toNotBeNull();
@@ -82,7 +81,7 @@ class NamingTest extends \Facebook\HackTest\HackTest {
   public async function testSpecialNameAsUsedName(
     string $type,
   ): Awaitable<void> {
-    $data = '<?php use Foo\\'.$type.'; class Herp extends '.$type.' { }';
+    $data = '<?hh use Foo\\'.$type.'; class Herp extends '.$type.' { }';
     $parser = await FileParser::fromDataAsync($data);
     $class = $parser->getClass('Herp');
     expect($class)->toNotBeNull();
@@ -92,7 +91,7 @@ class NamingTest extends \Facebook\HackTest\HackTest {
   public async function testSpecialNameAsUsedAsName(
     string $type,
   ): Awaitable<void> {
-    $data = '<?php use Foo\\Bar as '.$type.'; class Herp extends '.$type.' { }';
+    $data = '<?hh use Foo\\Bar as '.$type.'; class Herp extends '.$type.' { }';
     $parser = await FileParser::fromDataAsync($data);
     $class = $parser->getClass('Herp');
     expect($class)->toNotBeNull();
@@ -102,7 +101,7 @@ class NamingTest extends \Facebook\HackTest\HackTest {
   public async function testSpecialNameAsUsedAsConstName(
     string $type,
   ): Awaitable<void> {
-    $data = '<?php const '.$type.' = FOO;';
+    $data = '<?hh const '.$type.' = FOO;';
     $parser = await FileParser::fromDataAsync($data);
     $constants = $parser->getConstantNames();
     expect($constants)->toContain($type);
@@ -112,7 +111,7 @@ class NamingTest extends \Facebook\HackTest\HackTest {
   public async function testSpecialNameAsUsedAsClassConstName(
     string $type,
   ): Awaitable<void> {
-    $data = '<?php class Foo { const int '.$type.' = FOO; }';
+    $data = '<?hh class Foo { const int '.$type.' = FOO; }';
     $parser = await FileParser::fromDataAsync($data);
     $constant = C\firstx($parser->getClass('Foo')->getConstants());
     expect($constant->getName())->toBeSame($type);
@@ -123,7 +122,7 @@ class NamingTest extends \Facebook\HackTest\HackTest {
   public async function testSpecialNameAsUsedAsClassConstDefault(
     string $type,
   ): Awaitable<void> {
-    $data = '<?php class Foo { const int BAR = Baz::'.$type.'; }';
+    $data = '<?hh class Foo { const int BAR = Baz::'.$type.'; }';
     $parser = await FileParser::fromDataAsync($data);
     $constant = C\firstx($parser->getClass('Foo')->getConstants());
     expect($constant->getName())->toBeSame('BAR');
@@ -194,7 +193,7 @@ class NamingTest extends \Facebook\HackTest\HackTest {
 
   /** The noramlization blacklist shouldn't apply to things we define */
   public async function testNamespacedClassCalledCollection(): Awaitable<void> {
-    $data = '<?php namespace Foo\Bar; class Collection {}';
+    $data = '<?hh namespace Foo\Bar; class Collection {}';
 
     expect((await FileParser::fromDataAsync($data))->getClassNames())->toBeSame(
       vec['Foo\Bar\Collection'],
@@ -220,7 +219,7 @@ class NamingTest extends \Facebook\HackTest\HackTest {
   public async function testScalarParameterInNamespace(): Awaitable<void> {
     // This is correct for PHP7, not for PHP5 though. If you're using Hack,
     // you're more likely to be using scalar typehints than not.
-    $php = '<?php namespace Foo; function myfunc(): string {}';
+    $php = '<?hh namespace Foo; function myfunc(): string {}';
     $hack = '<?hh namespace Foo; function myfunc(): string {}';
 
     $php_func = (await FileParser::fromDataAsync($php))->getFunction(
