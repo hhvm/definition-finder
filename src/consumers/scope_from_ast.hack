@@ -20,7 +20,7 @@ function scope_from_ast(
     $ast = new HHAST\NodeList(vec[]);
   }
 
-  $namespaces = $ast->getChildrenOfItemsOfType(HHAST\NamespaceDeclaration::class);
+  $namespaces = vec($ast->getChildrenOfType(HHAST\NamespaceDeclaration::class));
 
   $scopes = vec[];
   $scopes[] = scope_from_ast_and_ns($context, $ast, $context['namespace']);
@@ -28,7 +28,7 @@ function scope_from_ast(
     return $scopes[0];
   }
 
-  $items = $ast->getChildrenOfItems();
+  $items = $ast->getChildren();
   $offsets = Vec\map(
     $namespaces,
     $ns ==> nullthrows(C\find_key($items, $item ==> $item === $ns)),

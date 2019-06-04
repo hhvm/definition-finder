@@ -31,8 +31,8 @@ function generic_from_ast(
     $constraints = vec[];
   } else {
     $constraints = Vec\map(
-      $constraints->getChildrenOfItemsOfType(HHAST\TypeConstraint::class),
-      $c ==> {
+      $constraints->getChildren(),
+      (HHAST\TypeConstraint $c) ==> {
         $kw = $c->getKeyword();
         if ($kw instanceof HHAST\AsToken) {
           $r = RelationshipToken::SUBTYPE;

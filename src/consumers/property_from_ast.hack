@@ -21,7 +21,7 @@ function properties_from_ast(
 
   $modifiers = $outer->getModifiers();
   if ($modifiers is HHAST\NodeList<_>) {
-    $modifiers = $modifiers->getChildrenOfItemsOfType(HHAST\Token::class);
+    $modifiers = $modifiers->getChildrenOfType(HHAST\Token::class);
   } else {
     $modifiers = vec[$modifiers];
   }

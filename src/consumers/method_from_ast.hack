@@ -20,7 +20,7 @@ function method_from_ast(
 
   $header = $node->getFunctionDeclHeader();
   $modifiers = $header->getModifiers() ?? (new HHAST\NodeList(vec[]));
-  $has_modifier = $m ==> !C\is_empty($modifiers->getChildrenOfItemsOfType($m));
+  $has_modifier = $m ==> !C\is_empty($modifiers->getChildrenOfType($m));
 
   $generics = generics_from_ast($context, $header->getTypeParameterList());
   $context['genericTypeNames'] = Keyset\union(

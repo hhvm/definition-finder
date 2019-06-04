@@ -23,7 +23,7 @@ function scope_from_ast_and_ns(
 
   $context['namespace'] = $ns;
 
-  $items = $ast->getChildrenOfItems();
+  $items = $ast->getChildren();
   $break = C\find_key($items, $i ==> $i is HHAST\NamespaceDeclaration);
   if ($break !== null) {
     $items = Vec\take($items, $break);
