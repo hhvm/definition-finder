@@ -20,7 +20,7 @@ final class StaticDictExpression extends Expression<dict<arraykey, mixed>> {
     this::TNode $node,
   ): ?Expression<dict<arraykey, mixed>> {
     return Vec\map(
-      $node->getMembers()?->getItemsOfType(HHAST\EditableNode::class) ?? vec[],
+      $node->getMembers()?->getChildrenOfItemsOfType(HHAST\Node::class) ?? vec[],
       $m ==> StaticElementInitializerExpression::match($m),
     )
       |> Vec\filter_nulls($$)

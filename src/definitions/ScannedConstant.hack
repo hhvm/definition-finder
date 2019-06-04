@@ -13,7 +13,7 @@ use namespace Facebook\HHAST;
 
 final class ScannedConstant extends ScannedDefinition {
   public function __construct(
-    HHAST\EditableNode $node,
+    HHAST\Node $node,
     string $name,
     self::TContext $context,
     ?string $docblock,

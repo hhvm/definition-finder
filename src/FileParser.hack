@@ -65,7 +65,7 @@ final class FileParser extends BaseParser {
   ///// Implementation /////
   private static function getScopeContext(
     string $file,
-    HHAST\EditableNode $ast,
+    HHAST\Node $ast,
   ): ScannedScope::TContext {
     $suffix = C\first($ast->getDescendantsOfType(HHAST\MarkupSuffix::class));
     $name = $suffix?->getName()?->getText();

@@ -13,12 +13,12 @@ use namespace Facebook\HHAST;
 
 final class ScannedExpression {
   public function __construct(
-    private HHAST\EditableNode $ast,
+    private HHAST\Node $ast,
     private Option<mixed> $staticValue,
   ) {
   }
 
-  public function getAST(): HHAST\EditableNode {
+  public function getAST(): HHAST\Node {
     return $this->ast;
   }
 

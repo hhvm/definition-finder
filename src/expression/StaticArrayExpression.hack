@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder\Expression;
 use namespace Facebook\HHAST;
 
 final class StaticArrayExpression extends Expression<mixed> {
-  const type TNode = HHAST\EditableNode;
+  const type TNode = HHAST\Node;
 
   <<__Override>>
   protected static function matchImpl(
@@ -25,7 +25,7 @@ final class StaticArrayExpression extends Expression<mixed> {
     } else {
       return null;
     }
-    $members = $members?->getItemsOfType(HHAST\EditableNode::class) ?? vec[];
+    $members = $members?->getChildrenOfItemsOfType(HHAST\Node::class) ?? vec[];
     $ret = array();
     foreach ($members as $m) {
       $pair = StaticElementInitializerExpression::match($m);

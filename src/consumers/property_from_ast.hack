@@ -20,12 +20,12 @@ function properties_from_ast(
   $doc = doccomment_from_ast($context['definitionContext'], $outer);
 
   $modifiers = $outer->getModifiers();
-  if ($modifiers is HHAST\EditableList<_>) {
-    $modifiers = $modifiers->getItemsOfType(HHAST\EditableToken::class);
+  if ($modifiers is HHAST\NodeList<_>) {
+    $modifiers = $modifiers->getChildrenOfItemsOfType(HHAST\Token::class);
   } else {
     $modifiers = vec[$modifiers];
   }
-  $has_modifier = (classname<HHAST\EditableToken> $class) ==>
+  $has_modifier = (classname<HHAST\Token> $class) ==>
     C\any($modifiers, $m ==> $m instanceof $class);
   $is_static = $has_modifier(HHAST\StaticToken::class)
     ? StaticityToken::IS_STATIC
@@ -40,7 +40,7 @@ function properties_from_ast(
   $type = typehint_from_ast($context, $outer->getType());
 
   return Vec\map(
-    $outer->getDeclarators()->getItems(),
+    $outer->getDeclarators()->getChildrenOfItems(),
     $inner ==> new ScannedProperty(
       $inner,
       Str\strip_prefix($inner->getName()->getText(), '$'),

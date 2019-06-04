@@ -13,7 +13,7 @@ use namespace Facebook\HHAST;
 
 function context_with_node_position(
   ConsumerContext $context,
-  HHAST\EditableNode $node,
+  HHAST\Node $node,
 ): ConsumerContext {
   $pos = HHAST\find_position($context['ast'], $node);
   $context['definitionContext']['position'] = shape(

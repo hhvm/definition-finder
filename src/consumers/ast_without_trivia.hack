@@ -11,11 +11,11 @@ namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
 
-function ast_without_trivia<T as HHAST\EditableNode>(
+function ast_without_trivia<T as HHAST\Node>(
   T $node,
 ): T {
   return $node->rewriteDescendants(
     ($inner, $_) ==>
-      $inner instanceof HHAST\EditableTrivia ? HHAST\Missing() : $inner,
+      $inner instanceof HHAST\Trivia ? HHAST\Missing() : $inner,
   );
 }

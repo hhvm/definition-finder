@@ -14,7 +14,7 @@ use namespace Facebook\HHAST;
 <<__ConsistentConstruct, __Sealed(ScannedType::class, ScannedNewtype::class)>>
 abstract class ScannedTypeish extends ScannedDefinition {
   public function __construct(
-    HHAST\EditableNode $ast,
+    HHAST\Node $ast,
     string $name,
     self::TContext $context,
     dict<string, vec<mixed>> $attributes,

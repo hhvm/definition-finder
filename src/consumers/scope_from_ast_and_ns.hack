@@ -14,33 +14,33 @@ use namespace HH\Lib\{C, Vec};
 
 function scope_from_ast_and_ns(
   ConsumerContext $context,
-  ?HHAST\EditableList<HHAST\EditableNode> $ast,
+  ?HHAST\NodeList<HHAST\Node> $ast,
   ?string $ns,
 ): ScannedScope {
   if ($ast === null) {
-    $ast = new HHAST\EditableList(vec[]);
+    $ast = new HHAST\NodeList(vec[]);
   }
 
   $context['namespace'] = $ns;
 
-  $items = $ast->getItems();
+  $items = $ast->getChildrenOfItems();
   $break = C\find_key($items, $i ==> $i is HHAST\NamespaceDeclaration);
   if ($break !== null) {
     $items = Vec\take($items, $break);
   }
-  $ast = new HHAST\EditableList($items);
+  $ast = new HHAST\NodeList($items);
 
   $context = $context
     |> context_with_use_declarations(
       $$,
-      $ast->getItemsOfType(HHAST\NamespaceUseDeclaration::class),
+      $ast->getChildrenOfItemsOfType(HHAST\NamespaceUseDeclaration::class),
     )
     |> context_with_group_use_declarations(
       $$,
-      $ast->getItemsOfType(HHAST\NamespaceGroupUseDeclaration::class),
+      $ast->getChildrenOfItemsOfType(HHAST\NamespaceGroupUseDeclaration::class),
     );
 
-  $classish = $ast->getItemsOfType(HHAST\ClassishDeclaration::class);
+  $classish = $ast->getChildrenOfItemsOfType(HHAST\ClassishDeclaration::class);
   return new ScannedScope(
     $ast,
     $context['definitionContext'],
@@ -57,51 +57,51 @@ function scope_from_ast_and_ns(
       $node ==> classish_from_ast($context, ScannedTrait::class, $node),
     )),
     /* functions = */ Vec\map(
-      $ast->getItemsOfType(HHAST\FunctionDeclaration::class),
+      $ast->getChildrenOfItemsOfType(HHAST\FunctionDeclaration::class),
       $node ==> function_from_ast($context, $node),
     ),
     /* methods = */ Vec\map(
-      $ast->getItemsOfType(HHAST\MethodishDeclaration::class),
+      $ast->getChildrenOfItemsOfType(HHAST\MethodishDeclaration::class),
       $node ==> method_from_ast($context, $node),
     ),
     /* trait use statements = */ Vec\concat(
       Vec\map(
-        $ast->getItemsOfType(HHAST\TraitUse::class),
-        $node ==> $node->getNames()->getItemsOfType(HHAST\EditableNode::class),
+        $ast->getChildrenOfItemsOfType(HHAST\TraitUse::class),
+        $node ==> $node->getNames()->getChildrenOfItemsOfType(HHAST\Node::class),
       ),
       Vec\map(
-        $ast->getItemsOfType(HHAST\TraitUseConflictResolution::class),
-        $node ==> $node->getNames()->getItemsOfType(HHAST\EditableNode::class),
+        $ast->getChildrenOfItemsOfType(HHAST\TraitUseConflictResolution::class),
+        $node ==> $node->getNames()->getChildrenOfItemsOfType(HHAST\Node::class),
       ),
     )
     |> Vec\flatten($$)
     |> Vec\map($$, $node ==> typehint_from_ast($context, $node))
     |> Vec\filter_nulls($$),
     /* properties = */ Vec\map(
-      $ast->getItemsOfType(HHAST\PropertyDeclaration::class),
+      $ast->getChildrenOfItemsOfType(HHAST\PropertyDeclaration::class),
       $node ==> properties_from_ast($context, $node),
     )
     |> Vec\flatten($$),
     /* constants = */ Vec\map(
-      $ast->getItemsOfType(HHAST\ConstDeclaration::class),
+      $ast->getChildrenOfItemsOfType(HHAST\ConstDeclaration::class),
       $node ==> constants_from_ast($context, $node),
     )
     |> Vec\flatten($$),
     /* type constants = */ Vec\map(
-      $ast->getItemsOfType(HHAST\TypeConstDeclaration::class),
+      $ast->getChildrenOfItemsOfType(HHAST\TypeConstDeclaration::class),
       $node ==> type_constant_from_ast($context, $node),
     ),
     /* enums = */ Vec\map(
-      $ast->getItemsOfType(HHAST\EnumDeclaration::class),
+      $ast->getChildrenOfItemsOfType(HHAST\EnumDeclaration::class),
       $node ==> enum_from_ast($context, $node),
     ),
     /* types = */ Vec\map(
-      $ast->getItemsOfType(HHAST\AliasDeclaration::class),
+      $ast->getChildrenOfItemsOfType(HHAST\AliasDeclaration::class),
       $node ==> typeish_from_ast($context, ScannedType::class, $node),
     )
     |> Vec\filter_nulls($$),
     /* newtypes = */ Vec\map(
-      $ast->getItemsOfType(HHAST\AliasDeclaration::class),
+      $ast->getChildrenOfItemsOfType(HHAST\AliasDeclaration::class),
       $node ==> typeish_from_ast($context, ScannedNewtype::class, $node),
     )
       |> Vec\filter_nulls($$),

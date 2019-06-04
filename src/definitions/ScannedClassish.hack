@@ -21,7 +21,7 @@ abstract class ScannedClassish
   implements HasScannedGenerics {
 
   public function __construct(
-    HHAST\EditableNode $ast,
+    HHAST\Node $ast,
     string $name,
     self::TContext $context,
     dict<string, vec<mixed>> $attributes,

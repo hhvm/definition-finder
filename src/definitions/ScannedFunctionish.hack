@@ -14,7 +14,7 @@ use namespace Facebook\HHAST;
 abstract class ScannedFunctionish extends ScannedDefinition
   implements HasScannedGenerics {
   public function __construct(
-    HHAST\EditableNode $ast,
+    HHAST\Node $ast,
     string $name,
     self::TContext $context,
     dict<string, vec<mixed>> $attributes,

@@ -18,11 +18,11 @@ function attributes_from_ast(
   if ($node === null) {
     return dict[];
   }
-  return $node->getAttributes()->getItems()
+  return $node->getAttributes()->getChildrenOfItems()
     |> Dict\pull(
       $$,
       $attr ==> Vec\map(
-        $attr->getArgumentList()?->getItems() ?? vec[],
+        $attr->getArgumentList()?->getChildrenOfItems() ?? vec[],
         $child ==> nullthrows(value_from_ast($child))->getStaticValue(),
       ),
       $attr ==> name_from_ast($attr->getType()),

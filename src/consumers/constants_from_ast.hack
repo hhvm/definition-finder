@@ -17,7 +17,7 @@ function constants_from_ast(
   HHAST\ConstDeclaration $decl,
 ): vec<ScannedConstant> {
   return Vec\map(
-    $decl->getDeclarators()->getItems(),
+    $decl->getDeclarators()->getChildrenOfItems(),
     $inner ==> constant_from_ast($context, $decl, $inner),
   );
 }
