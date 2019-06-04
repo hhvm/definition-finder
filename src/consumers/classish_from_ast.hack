@@ -48,7 +48,9 @@ function classish_from_ast<T as ScannedClassish>(
   }
 
   $modifiers = $node->getModifiers() ?? new HHAST\NodeList(vec[]);
-  $has_modifier = $m ==> !C\is_empty($modifiers->getChildrenOfType($m));
+  $has_modifier = (
+    classname<HHAST\Node> $m
+  ) ==> !C\is_empty($modifiers->getChildrenOfType($m));
 
   $generics = generics_from_ast($context, $node->getTypeParameters());
   $context['genericTypeNames'] = Keyset\union(
