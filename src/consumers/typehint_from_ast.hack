@@ -14,7 +14,7 @@ use namespace HH\Lib\{C, Vec};
 
 function typehint_from_ast(
   ConsumerContext $context,
-  ?HHAST\EditableNode $node,
+  ?HHAST\Node $node,
 ): ?ScannedTypehint {
   if ($node === null) {
     return null;
@@ -28,7 +28,7 @@ function typehint_from_ast(
     $name = used_name_in_context($context, mangle_xhp_name_token($node));
     return new ScannedTypehint($node, $name, $name, vec[], false, null);
   }
-  if ($node instanceof HHAST\EditableToken) {
+  if ($node instanceof HHAST\Token) {
     $name = used_name_in_context($context, name_from_ast($node));
     return new ScannedTypehint($node, $name, $name, vec[], false, null);
   }
@@ -61,7 +61,7 @@ function typehint_from_ast(
       invariant($item instanceof HHAST\ListItem, "List with non-item children");
       $parameters[$key] = $item->withSeparator(HHAST\Missing());
       $normalized = $normalized->withParameterList(
-        new HHAST\EditableList(vec($parameters)),
+        new HHAST\NodeList(vec($parameters)),
       );
     }
     return new ScannedTypehint(
@@ -144,7 +144,7 @@ function typehint_from_ast(
       vec[],
       false,
       Vec\map(
-        $node->getFields()?->getItems() ?? vec[],
+        $node->getFields()?->getChildrenOfItems() ?? vec[],
         $field ==> shape_field_from_ast($context, $field),
       ),
     );
@@ -201,6 +201,9 @@ function typehint_from_ast(
       false,
       null,
     );
+  }
+  if ($node instanceof HHAST\ListItem) {
+    return typehint_from_ast($context, $node->getItemx());
   }
 
   invariant_violation('Unhandled type: %s', \get_class($node));

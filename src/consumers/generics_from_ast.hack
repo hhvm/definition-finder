@@ -20,7 +20,7 @@ function generics_from_ast(
     return vec[];
   }
   return Vec\map(
-    $node->getParameters()->getItems(),
+    $node->getParameters()->getChildrenOfItems(),
     $p ==> generic_from_ast($context, $p),
   );
 }

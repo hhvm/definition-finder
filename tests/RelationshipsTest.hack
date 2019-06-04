@@ -14,52 +14,52 @@ use type Facebook\DefinitionFinder\FileParser;
 use namespace HH\Lib\{C, Vec};
 
 class RelationshipsTest extends \Facebook\HackTest\HackTest {
-  public function testClassExtends(): void {
+  public async function testClassExtends(): Awaitable<void> {
     $data = '<?hh class Foo extends Bar {}';
-    $def = FileParser::fromData($data)->getClass('Foo');
+    $def = (await FileParser::fromDataAsync($data))->getClass('Foo');
     expect($def->getParentClassName())->toBeSame('Bar');
     expect($def->getInterfaceNames())->toBeEmpty();
   }
 
-  public function testClassImplements(): void {
+  public async function testClassImplements(): Awaitable<void> {
     $data = '<?hh class Foo implements Bar, Baz {}';
-    $def = FileParser::fromData($data)->getClass('Foo');
+    $def = (await FileParser::fromDataAsync($data))->getClass('Foo');
     expect($def->getInterfaceNames())->toBeSame(vec['Bar', 'Baz']);
     expect($def->getParentClassName())->toBeNull();
   }
 
-  public function testInterfaceExtends(): void {
+  public async function testInterfaceExtends(): Awaitable<void> {
     $data = '<?hh interface Foo extends Bar, Baz {}';
-    $def = FileParser::fromData($data)->getInterface('Foo');
+    $def = (await FileParser::fromDataAsync($data))->getInterface('Foo');
     expect($def->getInterfaceNames())->toBeSame(vec['Bar', 'Baz']);
     expect($def->getParentClassName())->toBeNull();
   }
 
-  public function testClassExtendsAndImplements(): void {
+  public async function testClassExtendsAndImplements(): Awaitable<void> {
     $data = '<?hh class Foo extends Bar implements Herp, Derp {}';
-    $def = FileParser::fromData($data)->getClass('Foo');
+    $def = (await FileParser::fromDataAsync($data))->getClass('Foo');
     expect($def->getParentClassName())->toBeSame('Bar');
     expect($def->getInterfaceNames())->toBeSame(vec['Herp', 'Derp']);
   }
 
-  public function testClassExtendsGeneric(): void {
+  public async function testClassExtendsGeneric(): Awaitable<void> {
     $data = '<?hh class Foo extends Bar<Baz> {}';
-    $def = FileParser::fromData($data)->getClass('Foo');
+    $def = (await FileParser::fromDataAsync($data))->getClass('Foo');
     expect($def->getParentClassName())->toBeSame('Bar');
     expect($def->getParentClassInfo()?->getTypeText())->toBeSame('Bar<Baz>');
   }
 
-  public function testClassImplementsGenerics(): void {
+  public async function testClassImplementsGenerics(): Awaitable<void> {
     $data = '<?hh class Foo implements KeyedIterable<Tk,Tv> {}';
-    $def = FileParser::fromData($data)->getClass('Foo');
+    $def = (await FileParser::fromDataAsync($data))->getClass('Foo');
     expect($def->getInterfaceNames())->toBeSame(vec['KeyedIterable']);
     expect(Vec\map($def->getInterfaceInfo(), $x ==> $x->getTypeText()))
       ->toBeSame(vec['KeyedIterable<Tk,Tv>']);
   }
 
-  public function testClassImplementsNestedGenerics(): void {
+  public async function testClassImplementsNestedGenerics(): Awaitable<void> {
     $data = '<?hh class VectorIterable<Tv> implements Iterable<vec<Tv>> {}';
-    $def = FileParser::fromData($data)->getClass('VectorIterable');
+    $def = (await FileParser::fromDataAsync($data))->getClass('VectorIterable');
     expect($def->getInterfaceNames())->toBeSame(vec['Iterable']);
     expect(
       Vec\map(
@@ -71,25 +71,25 @@ class RelationshipsTest extends \Facebook\HackTest\HackTest {
       ->toBeSame(vec['Iterable<vec<Tv>>']);
   }
 
-  public function testTraitImplements(): void {
+  public async function testTraitImplements(): Awaitable<void> {
     $data = '<?hh interface IFoo {}; trait TFoo implements IFoo {}';
-    $def = FileParser::fromData($data)->getTrait('TFoo');
+    $def = (await FileParser::fromDataAsync($data))->getTrait('TFoo');
     expect($def->getInterfaceNames())->toBeSame(vec['IFoo']);
   }
 
-  public function testUsesTraits(): void {
+  public async function testUsesTraits(): Awaitable<void> {
     $data = '<?hh class Foo { use Herp; use Derp; }';
-    $def = FileParser::fromData($data)->getClass('Foo');
+    $def = (await FileParser::fromDataAsync($data))->getClass('Foo');
     expect($def->getTraitNames())->toBeSame(vec['Herp', 'Derp']);
   }
 
-  public function testUsesMultipleTraitsInSingleStatement(): void {
+  public async function testUsesMultipleTraitsInSingleStatement(): Awaitable<void> {
     $data = '<?hh class Foo { use Herp, Derp; }';
-    $def = FileParser::fromData($data)->getClass('Foo');
+    $def = (await FileParser::fromDataAsync($data))->getClass('Foo');
     expect($def->getTraitNames())->toBeSame(vec['Herp', 'Derp']);
   }
 
-  public function testUseTraitWithConflictResolution(): void {
+  public async function testUseTraitWithConflictResolution(): Awaitable<void> {
     $data = "<?php\n".
       "class MyClass {\n".
       "  use Foo, Bar {\n".
@@ -97,22 +97,22 @@ class RelationshipsTest extends \Facebook\HackTest\HackTest {
       "    Bar::herp as derp;\n".
       "  };\n".
       "}";
-    $def = FileParser::fromData($data)->getClass('MyClass');
+    $def = (await FileParser::fromDataAsync($data))->getClass('MyClass');
     expect($def->getTraitNames())->toBeSame(vec['Foo', 'Bar']);
   }
 
-  public function testUsesTraitsInNamespace(): void {
+  public async function testUsesTraitsInNamespace(): Awaitable<void> {
     $data =
       "<?hh\n"."namespace MyNamespace;".'class Foo { use Herp; use Derp; }';
-    $def = FileParser::fromData($data)->getClass('MyNamespace\\Foo');
+    $def = (await FileParser::fromDataAsync($data))->getClass('MyNamespace\\Foo');
     expect($def->getTraitNames())->toBeSame(
       vec['MyNamespace\\Herp', 'MyNamespace\\Derp'],
     );
   }
 
-  public function testUsesGenericTrait(): void {
+  public async function testUsesGenericTrait(): Awaitable<void> {
     $data = '<?hh class Foo { use Herp<string>; }';
-    $def = FileParser::fromData($data)->getClass('Foo');
+    $def = (await FileParser::fromDataAsync($data))->getClass('Foo');
     $traits = $def->getTraitGenerics();
     expect(C\count($traits))->toBeSame(1);
     expect(C\first_key($traits))->toBeSame('Herp');

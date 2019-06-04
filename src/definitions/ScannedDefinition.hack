@@ -21,7 +21,7 @@ abstract class ScannedDefinition {
   private string $shortName;
 
   public function __construct(
-    private HHAST\EditableNode $ast,
+    private HHAST\Node $ast,
     private string $name,
     private self::TContext $context,
     private dict<string, vec<mixed>> $attributes,
@@ -34,7 +34,7 @@ abstract class ScannedDefinition {
     }
   }
 
-  final public function getAST(): HHAST\EditableNode {
+  final public function getAST(): HHAST\Node {
     return $this->ast;
   }
 

@@ -14,13 +14,13 @@ use namespace HH\Lib\{C, Vec};
 
 function scope_from_ast(
   ConsumerContext $context,
-  ?HHAST\EditableList<HHAST\EditableNode> $ast,
+  ?HHAST\NodeList<HHAST\Node> $ast,
 ): ScannedScope {
   if ($ast === null) {
-    $ast = new HHAST\EditableList(vec[]);
+    $ast = new HHAST\NodeList(vec[]);
   }
 
-  $namespaces = $ast->getItemsOfType(HHAST\NamespaceDeclaration::class);
+  $namespaces = vec($ast->getChildrenOfType(HHAST\NamespaceDeclaration::class));
 
   $scopes = vec[];
   $scopes[] = scope_from_ast_and_ns($context, $ast, $context['namespace']);
@@ -28,7 +28,7 @@ function scope_from_ast(
     return $scopes[0];
   }
 
-  $items = $ast->getItems();
+  $items = $ast->getChildren();
   $offsets = Vec\map(
     $namespaces,
     $ns ==> nullthrows(C\find_key($items, $item ==> $item === $ns)),
@@ -58,7 +58,7 @@ function scope_from_ast(
 
     $scopes[] = scope_from_ast_and_ns(
       $context,
-      new HHAST\EditableList($ns_items),
+      new HHAST\NodeList($ns_items),
       name_from_ast($ns->getNamex()),
     );
   }

@@ -12,8 +12,8 @@ namespace Facebook\DefinitionFinder;
 use namespace Facebook\HHAST;
 use namespace HH\Lib\{Str, Vec};
 
-function name_from_ast(HHAST\EditableNode $node): string {
-  if ($node instanceof HHAST\EditableToken) {
+function name_from_ast(HHAST\Node $node): string {
+  if ($node instanceof HHAST\Token) {
     return $node->getText();
   }
   if ($node instanceof HHAST\QualifiedName) {
@@ -21,7 +21,7 @@ function name_from_ast(HHAST\EditableNode $node): string {
     // lists.
     //
     // If there's a leading `\` in the name, the first item is empty.
-    return $node->getParts()->getItems()
+    return $node->getParts()->getChildrenOfItems()
       |> Vec\map($$, $x ==> $x?->getText() ?? '')
       |> Str\join($$, "\\");
   }
@@ -31,7 +31,7 @@ function name_from_ast(HHAST\EditableNode $node): string {
   }
 
   invariant_violation(
-    "Expected EditableToken or QualifiedName, got %s",
+    "Expected Token or QualifiedName, got %s",
     \get_class($node),
   );
 }

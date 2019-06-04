@@ -14,7 +14,7 @@ use namespace HH\Lib\Vec;
 
 function typehints_from_ast(
   ConsumerContext $context,
-  ?HHAST\EditableList<HHAST\EditableNode> $node,
+  ?HHAST\NodeList<HHAST\Node> $node,
 ): vec<ScannedTypehint> {
   if ($node === null) {
     return vec[];

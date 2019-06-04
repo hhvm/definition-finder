@@ -13,7 +13,7 @@ use namespace Facebook\HHAST;
 
 final class ScannedShapeField {
   public function __construct(
-    private HHAST\EditableNode $ast,
+    private HHAST\Node $ast,
     private ScannedExpression $name,
     ScannedDefinition::TContext $context,
     private ?string $docComment,
@@ -25,7 +25,7 @@ final class ScannedShapeField {
     }
   }
 
-  public function getAST(): HHAST\EditableNode {
+  public function getAST(): HHAST\Node {
     return $this->ast;
   }
 

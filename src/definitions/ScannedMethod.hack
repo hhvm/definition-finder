@@ -14,7 +14,7 @@ use namespace Facebook\HHAST;
 final class ScannedMethod extends ScannedFunctionish
   implements HasScannedVisibility {
   public function __construct(
-    HHAST\EditableNode $ast,
+    HHAST\Node $ast,
     string $name,
     self::TContext $context,
     dict<string, vec<mixed>> $attributes,

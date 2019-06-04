@@ -30,17 +30,17 @@ class SourceTypeTest extends \Facebook\HackTest\HackTest {
   }
 
   <<DataProvider('getExamples')>>
-  public function testHasExpectedType(
+  public async function testHasExpectedType(
     string $prefix,
     SourceType $expected,
-  ): void {
+  ): Awaitable<void> {
     $code = $prefix."\nclass Foo {}";
-    $parser = FileParser::fromData($code);
+    $parser = await FileParser::fromDataAsync($code);
     expect($parser->getClass('Foo')->getSourceType())->toBeSame($expected);
   }
 
-  public function testPlainTextFileParses(): void {
-    $parser = FileParser::fromData('foo');
+  public async function testPlainTextFileParses(): Awaitable<void> {
+    $parser = await FileParser::fromDataAsync('foo');
     expect($parser->getClasses())->toBeEmpty();
     expect($parser->getFunctions())->toBeEmpty();
     expect($parser->getTypes())->toBeEmpty();

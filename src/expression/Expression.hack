@@ -13,13 +13,13 @@ use namespace Facebook\HHAST;
 use namespace Facebook\TypeAssert;
 
 abstract class Expression<+TValue> {
-  abstract const type TNode as HHAST\EditableNode;
+  abstract const type TNode as HHAST\Node;
 
   final protected function __construct(private TValue $value) {
   }
 
   final public static function match(
-    HHAST\EditableNode $node,
+    HHAST\Node $node,
   ): ?Expression<TValue> {
     $ts = type_structure(static::class, 'TNode');
     try {

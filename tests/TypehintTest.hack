@@ -55,17 +55,17 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
   }
 
   <<DataProvider('provideTypesInNamespace')>>
-  public function testNamespacedType(
+  public async function testNamespacedType(
     string $input,
     string $name,
     string $text,
-  ): void {
+  ): Awaitable<void> {
     $code = "<?hh \n".
       "namespace MyNamespace;\n".
       "function main(".
       $input.
-      " \$_): void {}\n";
-    $def = FileParser::fromData($code)->getFunction('MyNamespace\\main');
+      " \$_): Awaitable<void> {}\n";
+    $def = (await FileParser::fromDataAsync($code))->getFunction('MyNamespace\\main');
     $type = $def->getParameters()[0]->getTypehint();
     expect($type)->toNotBeNull();
     expect($type?->getTypeName())->toBeSame($name, 'type name differs');
@@ -92,14 +92,14 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
   }
 
   <<DataProvider('provideNullableExamples')>>
-  public function testNullables(
+  public async function testNullables(
     string $input,
     bool $nullable,
     string $name,
     string $text,
-  ): void {
-    $code = "<?hh \n"."function main(".$input." \$_): void {}\n";
-    $def = FileParser::fromData($code)->getFunction('main');
+  ): Awaitable<void> {
+    $code = "<?hh \n"."function main(".$input." \$_): Awaitable<void> {}\n";
+    $def = (await FileParser::fromDataAsync($code))->getFunction('main');
     $type = $def->getParameters()[0]->getTypehint();
     expect($type)->toNotBeNull();
     expect($type?->isNullable())->toBeSame($nullable, 'nullability differs');

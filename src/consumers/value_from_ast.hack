@@ -12,7 +12,7 @@ namespace Facebook\DefinitionFinder;
 use namespace Facebook\HHAST;
 
 function value_from_ast(
-  ?HHAST\EditableNode $node,
+  ?HHAST\Node $node,
 ): ?ScannedExpression {
   if ($node === null) {
     return null;

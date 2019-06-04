@@ -21,8 +21,8 @@ use type Facebook\DefinitionFinder\FileParser;
 final class CurlyTest extends Facebook\HackTest\HackTest {
   const string DATA_FILE = __DIR__.'/data/curly_then_function.php';
 
-  public function testDefinitions(): void {
-    $p = FileParser::fromFile(self::DATA_FILE);
+  public async function testDefinitions(): Awaitable<void> {
+    $p = await FileParser::fromFileAsync(self::DATA_FILE);
     expect($p->getClassNames())->toBeSame(vec['Foo']);
     expect($p->getFunctionNames())->toBeSame(vec['my_func']);
   }

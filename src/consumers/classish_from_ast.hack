@@ -47,10 +47,10 @@ function classish_from_ast<T as ScannedClassish>(
     $name = decl_name_in_context($context, $name->getText());
   }
 
-  $modifiers = $node->getModifiers() ?? new HHAST\EditableList(vec[]);
+  $modifiers = $node->getModifiers() ?? new HHAST\NodeList(vec[]);
   $has_modifier = (
-    classname<HHAST\EditableNode> $m
-  ) ==> !C\is_empty($modifiers->getItemsOfType($m));
+    classname<HHAST\Node> $m
+  ) ==> !C\is_empty($modifiers->getChildrenOfType($m));
 
   $generics = generics_from_ast($context, $node->getTypeParameters());
   $context['genericTypeNames'] = Keyset\union(
@@ -62,7 +62,7 @@ function classish_from_ast<T as ScannedClassish>(
   $parent = null;
   $interfaces = vec[];
   if ($extends) {
-    $extends = $extends->getItemsOfType(HHAST\EditableNode::class)
+    $extends = $extends->getChildrenOfItemsOfType(HHAST\Node::class)
       |> Vec\map($$, $super ==> typehint_from_ast($context, $super))
       |> Vec\filter_nulls($$);
     if ($def_class === ScannedClass::class) {
@@ -80,7 +80,7 @@ function classish_from_ast<T as ScannedClassish>(
 
   $implements = $node->getImplementsList();
   if ($implements) {
-    $interfaces = $implements->getItemsOfType(HHAST\EditableNode::class)
+    $interfaces = $implements->getChildrenOfItemsOfType(HHAST\Node::class)
       |> Vec\map($$, $super ==> typehint_from_ast($context, $super))
       |> Vec\filter_nulls($$);
   }

@@ -14,91 +14,105 @@ use function Facebook\FBExpect\expect;
 use namespace HH\Lib\Vec;
 
 final class AliasingTest extends \Facebook\HackTest\HackTest {
-  public function testSimpleUse(): void {
+  public async function testSimpleUse(): Awaitable<void> {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\Foo;\n".
       'class Bar extends Foo {}';
-    $def = FileParser::fromData($code)->getClass('MyNamespace\\Bar');
+    $def = (await FileParser::fromDataAsync($code))->getClass(
+      'MyNamespace\\Bar',
+    );
     expect($def->getParentClassName())->toBeSame("MyOtherNamespace\\Foo");
   }
 
-  public function testMultiUse(): void {
+  public async function testMultiUse(): Awaitable<void> {
     $code = "<?hh\n".
       "use Foo\\Bar, Herp\\Derp;\n".
       'class MyClass extends Bar implements Derp {}';
-    $def = FileParser::fromData($code)->getClass('MyClass');
+    $def = (await FileParser::fromDataAsync($code))->getClass('MyClass');
     expect($def->getParentClassName())->toBeSame("Foo\\Bar");
     expect($def->getInterfaceNames())->toBeSame(vec["Herp\\Derp"]);
   }
 
-  public function testUseWithClassAlias(): void {
+  public async function testUseWithClassAlias(): Awaitable<void> {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\Foo as SuperClass;\n".
       'class Bar extends SuperClass {}';
-    $def = FileParser::fromData($code)->getClass('MyNamespace\\Bar');
+    $def = (await FileParser::fromDataAsync($code))->getClass(
+      'MyNamespace\\Bar',
+    );
     expect($def->getParentClassName())->toBeSame("MyOtherNamespace\\Foo");
   }
 
-  public function testMultiUseWithClassAlias(): void {
+  public async function testMultiUseWithClassAlias(): Awaitable<void> {
     $code = "<?hh\n".
       "use Foo\\Bar as Baz, Herp\\Derp;\n".
       'class MyClass extends Baz implements Derp {}';
-    $def = FileParser::fromData($code)->getClass('MyClass');
+    $def = (await FileParser::fromDataAsync($code))->getClass('MyClass');
     expect($def->getParentClassName())->toBeSame("Foo\\Bar");
     expect($def->getInterfaceNames())->toBeSame(vec["Herp\\Derp"]);
   }
 
-  public function testUseWithNSAlias(): void {
+  public async function testUseWithNSAlias(): Awaitable<void> {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace as OtherNS;\n".
       "class Bar extends OtherNS\\Foo{}";
-    $def = FileParser::fromData($code)->getClass('MyNamespace\\Bar');
+    $def = (await FileParser::fromDataAsync($code))->getClass(
+      'MyNamespace\\Bar',
+    );
     expect($def->getParentClassName())->toBeSame("MyOtherNamespace\\Foo");
   }
 
-  public function testSimpleGroupUse(): void {
+  public async function testSimpleGroupUse(): Awaitable<void> {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\{Foo, Bar};\n".
       "class MyClass implements Foo, Bar{}";
-    $def = FileParser::fromData($code)->getClass('MyNamespace\\MyClass');
+    $def = (await FileParser::fromDataAsync($code))->getClass(
+      'MyNamespace\\MyClass',
+    );
     expect($def->getInterfaceNames())->toBeSame(
       vec['MyOtherNamespace\\Foo', 'MyOtherNamespace\\Bar'],
     );
   }
 
-  public function testGroupUseWithTrailingComma(): void {
+  public async function testGroupUseWithTrailingComma(): Awaitable<void> {
     // Not allowed by typechecker, but allowed by HHVM
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\{Foo, Bar,};\n".
       "class MyClass implements Foo, Bar{}";
-    $def = FileParser::fromData($code)->getClass('MyNamespace\\MyClass');
+    $def = (await FileParser::fromDataAsync($code))->getClass(
+      'MyNamespace\\MyClass',
+    );
     expect($def->getInterfaceNames())->toBeSame(
       vec['MyOtherNamespace\\Foo', 'MyOtherNamespace\\Bar'],
     );
   }
 
-  public function testGroupUseWithAlias(): void {
+  public async function testGroupUseWithAlias(): Awaitable<void> {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\{Foo as Herp, Bar as Derp};\n".
       "class MyClass implements Herp, Derp {}";
-    $def = FileParser::fromData($code)->getClass('MyNamespace\\MyClass');
+    $def = (await FileParser::fromDataAsync($code))->getClass(
+      'MyNamespace\\MyClass',
+    );
     expect($def->getInterfaceNames())->toBeSame(
       vec['MyOtherNamespace\\Foo', 'MyOtherNamespace\\Bar'],
     );
   }
 
-  public function testGroupUseWithSubNamespace(): void {
+  public async function testGroupUseWithSubNamespace(): Awaitable<void> {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\{Foo, Bar\Baz};\n".
       "function my_func(Foo \$foo, Bar \$bar, Baz \$baz) {}";
-    $def = FileParser::fromData($code)->getFunction('MyNamespace\\my_func');
+    $def = (await FileParser::fromDataAsync($code))->getFunction(
+      'MyNamespace\\my_func',
+    );
     expect(
       Vec\map($def->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     )->toBeSame(
@@ -110,41 +124,50 @@ final class AliasingTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testFunctionReturnsAlias(): void {
+  public async function testFunctionReturnsAlias(): Awaitable<void> {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\Foo;\n".
       "function my_func(): Foo {}";
-    $def = FileParser::fromData($code)->getFunction('MyNamespace\\my_func');
+    $def = (await FileParser::fromDataAsync($code))->getFunction(
+      'MyNamespace\\my_func',
+    );
     expect($def->getReturnType()?->getTypeName())->toBeSame(
       "MyOtherNamespace\\Foo",
     );
   }
 
-  public function testFunctionUseIsNotTypeAlias(): void {
+  public async function testFunctionUseIsNotTypeAlias(): Awaitable<void> {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use function MyOtherNamespace\\Foo;\n".
       "function my_func(): Foo {}";
-    $def = FileParser::fromData($code)->getFunction('MyNamespace\\my_func');
+    $def = (await FileParser::fromDataAsync($code))->getFunction(
+      'MyNamespace\\my_func',
+    );
     expect($def->getReturnType()?->getTypeName())->toBeSame("MyNamespace\\Foo");
   }
 
-  public function testConstUseIsNotTypeAlias(): void {
+  public async function testConstUseIsNotTypeAlias(): Awaitable<void> {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use const MyOtherNamespace\\Foo;\n".
       "function my_func(): Foo {}";
-    $def = FileParser::fromData($code)->getFunction('MyNamespace\\my_func');
+    $def = (await FileParser::fromDataAsync($code))->getFunction(
+      'MyNamespace\\my_func',
+    );
     expect($def->getReturnType()?->getTypeName())->toBeSame("MyNamespace\\Foo");
   }
 
-  public function testFunctionAndConstGroupUseIsNotTypeAlias(): void {
+  public async function testFunctionAndConstGroupUseIsNotTypeAlias(
+  ): Awaitable<void> {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\{function Foo, const Bar, Baz};\n".
       "function my_func(Foo \$foo, Bar \$bar, Baz \$baz) {}";
-    $def = FileParser::fromData($code)->getFunction('MyNamespace\\my_func');
+    $def = (await FileParser::fromDataAsync($code))->getFunction(
+      'MyNamespace\\my_func',
+    );
     expect(
       Vec\map($def->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     )->toBeSame(
@@ -156,29 +179,31 @@ final class AliasingTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testUseNamespace(): void {
-    $def = FileParser::fromFile(__DIR__.'/data/alias_use_namespace.php')
+  public async function testUseNamespace(): Awaitable<void> {
+    $def = (
+      await FileParser::fromFileAsync(__DIR__.'/data/alias_use_namespace.php')
+    )
       ->getFunction('main');
     expect(
       Vec\map($def->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     )->toBeSame(vec["Bar\\Derp", "Foo\\Derp"]);
   }
 
-  public function testGroupUseNamespace(): void {
+  public async function testGroupUseNamespace(): Awaitable<void> {
     $code = "<?hh\n".
       "use namespace Prefixes\{Foo, Herp};\n".
-      "function my_func(Foo\Bar \$_, Herp\Derp \$_): void {}";
-    $def = FileParser::fromData($code)->getFunction('my_func');
+      "function my_func(Foo\Bar \$_, Herp\Derp \$_): Awaitable<void> {}";
+    $def = (await FileParser::fromDataAsync($code))->getFunction('my_func');
     expect(
       Vec\map($def->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     )->toBeSame(vec["Prefixes\\Foo\\Bar", "Prefixes\\Herp\\Derp"]);
   }
 
-  public function testUseConflictingHSLNamespace(): void {
+  public async function testUseConflictingHSLNamespace(): Awaitable<void> {
     $code = "<?hh\n".
       "use namespace HH\Lib\{Dict, Keyset, Vec};".
-      "function my_func(Dict\A \$_, Keyset\A \$_, Vec\A \$_): void {}";
-    $def = FileParser::fromData($code)->getFunction('my_func');
+      "function my_func(Dict\A \$_, Keyset\A \$_, Vec\A \$_): Awaitable<void> {}";
+    $def = (await FileParser::fromDataAsync($code))->getFunction('my_func');
     expect(
       Vec\map($def->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     )->toBeSame(
@@ -190,20 +215,21 @@ final class AliasingTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testUseType(): void {
-    $code =
-      "<?hh\n"."use type Foo\\Bar;\n"."function my_func(Bar \$_): void {}";
-    $def = FileParser::fromData($code)->getFunction('my_func');
+  public async function testUseType(): Awaitable<void> {
+    $code = "<?hh\n".
+      "use type Foo\\Bar;\n".
+      "function my_func(Bar \$_): Awaitable<void> {}";
+    $def = (await FileParser::fromDataAsync($code))->getFunction('my_func');
     expect(
       Vec\map($def->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     )->toBeSame(vec["Foo\\Bar"]);
   }
 
-  public function testGroupUseType(): void {
+  public async function testGroupUseType(): Awaitable<void> {
     $code = "<?hh\n".
       "use type Foo\\{Bar, Baz};\n".
-      "function my_func(Bar \$_, Baz \$_): void {}";
-    $def = FileParser::fromData($code)->getFunction('my_func');
+      "function my_func(Bar \$_, Baz \$_): Awaitable<void> {}";
+    $def = (await FileParser::fromDataAsync($code))->getFunction('my_func');
     expect(
       Vec\map($def->getParameters(), $p ==> $p->getTypehint()?->getTypeName()),
     )->toBeSame(vec["Foo\\Bar", "Foo\\Baz"]);

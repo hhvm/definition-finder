@@ -25,7 +25,9 @@ abstract class AbstractHackTest extends Facebook\HackTest\HackTest {
 
   <<__Override>>
   public async function beforeEachTestAsync(): Awaitable<void> {
-    $this->parser = FileParser::fromFile(__DIR__.'/data/'.$this->getFilename());
+    $this->parser = await FileParser::fromFileAsync(
+      __DIR__.'/data/'.$this->getFilename(),
+    );
   }
 
   public function testClasses(): void {

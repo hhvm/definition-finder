@@ -14,9 +14,9 @@ use type Facebook\DefinitionFinder\{FileParser, RelationshipToken};
 use namespace HH\Lib\{C, Vec};
 
 class GenericsTest extends \Facebook\HackTest\HackTest {
-  public function testClassHasGenerics(): void {
+  public async function testClassHasGenerics(): Awaitable<void> {
     $data = '<?hh class Foo<Tk, Tv> {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $class = $parser->getClass('Foo');
 
     expect(Vec\map($class->getGenericTypes(), $x ==> $x->getName()))->toBeSame(
@@ -28,9 +28,9 @@ class GenericsTest extends \Facebook\HackTest\HackTest {
     )->toBeSame(vec[0, 0]);
   }
 
-  public function testFunctionHasGenerics(): void {
+  public async function testFunctionHasGenerics(): Awaitable<void> {
     $data = '<?hh function foo<Tk, Tv>(){}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
     expect(Vec\map($function->getGenericTypes(), $x ==> $x->getName()))
@@ -44,9 +44,9 @@ class GenericsTest extends \Facebook\HackTest\HackTest {
     )->toBeSame(vec[0, 0]);
   }
 
-  public function testConstrainedGenerics(): void {
+  public async function testConstrainedGenerics(): Awaitable<void> {
     $data = '<?hh class Foo<T1 as Bar, T2 super Baz> {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $class = $parser->getClass('Foo');
 
     expect(
@@ -63,9 +63,9 @@ class GenericsTest extends \Facebook\HackTest\HackTest {
     )->toBeSame(vec[RelationshipToken::SUBTYPE, RelationshipToken::SUPERTYPE]);
   }
 
-  public function testGenericsWithMultipleConstraints(): void {
+  public async function testGenericsWithMultipleConstraints(): Awaitable<void> {
     $data = '<?hh class Foo<T super Herp as Derp> {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $constraints = Vec\map(
       $parser->getClass('Foo')->getGenericTypes()[0]->getConstraints(),
       $c ==> {
@@ -81,9 +81,9 @@ class GenericsTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testNamespacedConstrainedGenerics(): void {
+  public async function testNamespacedConstrainedGenerics(): Awaitable<void> {
     $data = '<?hh class Foo<T as \Bar\Baz> {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $class = $parser->getClass('Foo');
 
     expect(
@@ -94,9 +94,9 @@ class GenericsTest extends \Facebook\HackTest\HackTest {
     )->toBeSame(vec['Bar\Baz']);
   }
 
-  public function testVariance(): void {
+  public async function testVariance(): Awaitable<void> {
     $data = '<?hh class Foo<-Ta, Tb, +Tc> {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $class = $parser->getClass('Foo');
     $generics = $class->getGenericTypes();
 
@@ -114,27 +114,27 @@ class GenericsTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testVectorLikeArrayParam(): void {
-    $data = '<?hh function foo(array<SomeClass> $param): void {}';
-    $parser = FileParser::fromData($data);
+  public async function testVectorLikeArrayParam(): Awaitable<void> {
+    $data = '<?hh function foo(array<SomeClass> $param): Awaitable<void> {}';
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
   }
 
-  public function testVectorLikeArrayOfPrimitivesParam(): void {
-    $data = '<?hh function foo(array<string> $param): void {}';
-    $parser = FileParser::fromData($data);
+  public async function testVectorLikeArrayOfPrimitivesParam(): Awaitable<void> {
+    $data = '<?hh function foo(array<string> $param): Awaitable<void> {}';
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
   }
 
-  public function testMapLikeArrayParam(): void {
-    $data = '<?hh function foo(array<string, PharFileInfo> $list): void {}';
-    $parser = FileParser::fromData($data);
+  public async function testMapLikeArrayParam(): Awaitable<void> {
+    $data = '<?hh function foo(array<string, PharFileInfo> $list): Awaitable<void> {}';
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
   }
 
-  public function testInlineShapeConstraint(): void {
-    $data = '<?hh function foo<T as shape()>(): void {}';
-    $parser = FileParser::fromData($data);
+  public async function testInlineShapeConstraint(): Awaitable<void> {
+    $data = '<?hh function foo<T as shape()>(): Awaitable<void> {}';
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
     $generics = $function->getGenericTypes();
     expect($generics[0]->getConstraints()[0]['type']->getTypeText())->toBeSame(
@@ -142,9 +142,9 @@ class GenericsTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testGenericWithTrailingComma(): void {
-    $data = '<?hh function foo(ImmMap<string,string,> $bar): void {}';
-    $parser = FileParser::fromData($data);
+  public async function testGenericWithTrailingComma(): Awaitable<void> {
+    $data = '<?hh function foo(ImmMap<string,string,> $bar): Awaitable<void> {}';
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
     $param_types = Vec\map(
       $function->getParameters(),

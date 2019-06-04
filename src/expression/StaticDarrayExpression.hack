@@ -19,7 +19,7 @@ final class StaticDarrayExpression extends Expression<darray<arraykey, mixed>> {
     this::TNode $node,
   ): ?Expression<darray<arraykey, mixed>> {
     $members = $node->getMembers();
-    $members = $members?->getItemsOfType(HHAST\EditableNode::class) ?? vec[];
+    $members = $members?->getChildrenOfItemsOfType(HHAST\Node::class) ?? vec[];
     $ret = darray[];
     foreach ($members as $m) {
       $pair = StaticElementInitializerExpression::match($m);

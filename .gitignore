@@ -3,4 +3,5 @@ vendor/
 *.swo
 *.orig
 *.rej
+.*.hhast.*cache
 composer.lock

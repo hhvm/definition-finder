@@ -14,7 +14,7 @@ use namespace HH\Lib\{C, Str};
 
 function context_with_group_use_declarations(
   ConsumerContext $context,
-  vec<HHAST\NamespaceGroupUseDeclaration> $uses,
+  Container<HHAST\NamespaceGroupUseDeclaration> $uses,
 ): ConsumerContext {
   foreach ($uses as $use) {
     $kind = $use->getKind();
@@ -25,7 +25,7 @@ function context_with_group_use_declarations(
       continue;
     }
 
-    $clauses = $use->getClauses()->getItems();
+    $clauses = $use->getClauses()->getChildrenOfItems();
     $prefix = name_from_ast($use->getPrefix());
     foreach ($clauses as $clause) {
       if ($clause->getClauseKind()) {

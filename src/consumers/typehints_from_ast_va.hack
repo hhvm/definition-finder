@@ -14,7 +14,7 @@ use namespace HH\Lib\Vec;
 
 function typehints_from_ast_va(
   ConsumerContext $context,
-  ?HHAST\EditableNode ...$nodes
+  ?HHAST\Node ...$nodes
 ): vec<ScannedTypehint> {
   return $nodes
     |> Vec\map($$, $c ==> $c instanceof HHAST\ListItem ? $c->getItem() : $c)

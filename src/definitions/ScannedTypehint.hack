@@ -15,7 +15,7 @@ use namespace HH\Lib\{C, Str, Vec};
 /** Represents a parameter, property, constant, or return type hint */
 final class ScannedTypehint {
   public function __construct(
-    private HHAST\EditableNode $ast,
+    private HHAST\Node $ast,
     private string $typeName,
     private string $typeTextBase,
     private vec<ScannedTypehint> $generics,
@@ -24,7 +24,7 @@ final class ScannedTypehint {
   ) {
   }
 
-  public function getAST(): HHAST\EditableNode {
+  public function getAST(): HHAST\Node {
     return $this->ast;
   }
 

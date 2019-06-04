@@ -13,7 +13,7 @@ use namespace Facebook\HHAST;
 
 final class ScannedParameter extends ScannedDefinition {
   public function __construct(
-    HHAST\EditableNode $ast,
+    HHAST\Node $ast,
     string $name,
     self::TContext $context,
     dict<string, vec<mixed>> $attributes,

@@ -15,12 +15,12 @@ use namespace HH\Lib\{C, Vec};
 use function Facebook\FBExpect\expect;
 
 class NamingTest extends \Facebook\HackTest\HackTest {
-  public function testFunctionCalledSelect(): void {
+  public async function testFunctionCalledSelect(): Awaitable<void> {
     // 'select' is a T_SELECT, not a T_STRING
     $data = '<?hh function select() {}';
 
     // Check that it parses
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     expect($parser->getFunction('select'))->toNotBeNull();
   }
 
@@ -35,80 +35,95 @@ class NamingTest extends \Facebook\HackTest\HackTest {
       ['Attribute'],
       ['varray'], // HHVM >= 3.19
       ['darray'], // HHVM >= 3.19
-      ['inout'], // HHVM >= 3.21
     ];
   }
 
   <<DataProvider('specialNameProvider')>>
-  public function testSpecialReturnType(string $type): void {
-    $data = '<?php function foo(): '.$type.' {}';
-    $parser = FileParser::fromData($data);
+  public async function testSpecialReturnType(string $type): Awaitable<void> {
+    $data = '<?hh function foo(): '.$type.' {}';
+    $parser = await FileParser::fromDataAsync($data);
     $func = $parser->getFunction('foo');
     expect($func->getReturnType()?->getTypeName())->toBeSame($type);
   }
 
   <<DataProvider('specialNameProvider')>>
-  public function testSpecialNameAsFuncName(string $type): void {
-    $data = '<?php function '.$type.'(): void {}';
-    $parser = FileParser::fromData($data);
+  public async function testSpecialNameAsFuncName(
+    string $type,
+  ): Awaitable<void> {
+    $data = '<?hh function '.$type.'(): void {}';
+    $parser = await FileParser::fromDataAsync($data);
     $func = $parser->getFunction($type);
     expect($func->getReturnType()?->getTypeName())->toBeSame('void');
     expect($func->getName())->toBeSame($type);
   }
 
   <<DataProvider('specialNameProvider')>>
-  public function testSpecialNameAsClassName(string $type): void {
-    $data = '<?php class '.$type.' { }';
-    $parser = FileParser::fromData($data);
+  public async function testSpecialNameAsClassName(
+    string $type,
+  ): Awaitable<void> {
+    $data = '<?hh class '.$type.' { }';
+    $parser = await FileParser::fromDataAsync($data);
     $class = $parser->getClass($type);
     expect($class)->toNotBeNull();
   }
 
   <<DataProvider('specialNameProvider')>>
-  public function testSpecialNameAsNamespaceName(string $type): void {
-    $data = '<?php namespace '.$type.' { class Foo {} }';
-    $parser = FileParser::fromData($data);
+  public async function testSpecialNameAsNamespaceName(
+    string $type,
+  ): Awaitable<void> {
+    $data = '<?hh namespace '.$type.' { class Foo {} }';
+    $parser = await FileParser::fromDataAsync($data);
     $class = $parser->getClass($type."\\Foo");
     expect($class)->toNotBeNull();
   }
 
   <<DataProvider('specialNameProvider')>>
-  public function testSpecialNameAsUsedName(string $type): void {
-    $data = '<?php use Foo\\'.$type.'; class Herp extends '.$type.' { }';
-    $parser = FileParser::fromData($data);
+  public async function testSpecialNameAsUsedName(
+    string $type,
+  ): Awaitable<void> {
+    $data = '<?hh use Foo\\'.$type.'; class Herp extends '.$type.' { }';
+    $parser = await FileParser::fromDataAsync($data);
     $class = $parser->getClass('Herp');
     expect($class)->toNotBeNull();
   }
 
   <<DataProvider('specialNameProvider')>>
-  public function testSpecialNameAsUsedAsName(string $type): void {
-    $data = '<?php use Foo\\Bar as '.$type.'; class Herp extends '.$type.' { }';
-    $parser = FileParser::fromData($data);
+  public async function testSpecialNameAsUsedAsName(
+    string $type,
+  ): Awaitable<void> {
+    $data = '<?hh use Foo\\Bar as '.$type.'; class Herp extends '.$type.' { }';
+    $parser = await FileParser::fromDataAsync($data);
     $class = $parser->getClass('Herp');
     expect($class)->toNotBeNull();
   }
 
   <<DataProvider('specialNameProvider')>>
-  public function testSpecialNameAsUsedAsConstName(string $type): void {
-    $data = '<?php const '.$type.' = FOO;';
-    $parser = FileParser::fromData($data);
+  public async function testSpecialNameAsUsedAsConstName(
+    string $type,
+  ): Awaitable<void> {
+    $data = '<?hh const '.$type.' = FOO;';
+    $parser = await FileParser::fromDataAsync($data);
     $constants = $parser->getConstantNames();
     expect($constants)->toContain($type);
   }
 
   <<DataProvider('specialNameProvider')>>
-  public function testSpecialNameAsUsedAsClassConstName(string $type): void {
-    $data = '<?php class Foo { const int '.$type.' = FOO; }';
-    $parser = FileParser::fromData($data);
+  public async function testSpecialNameAsUsedAsClassConstName(
+    string $type,
+  ): Awaitable<void> {
+    $data = '<?hh class Foo { const int '.$type.' = FOO; }';
+    $parser = await FileParser::fromDataAsync($data);
     $constant = C\firstx($parser->getClass('Foo')->getConstants());
     expect($constant->getName())->toBeSame($type);
     expect($constant->getTypehint()?->getTypeText())->toBeSame('int');
   }
 
   <<DataProvider('specialNameProvider')>>
-  public function testSpecialNameAsUsedAsClassConstDefault(string $type): void {
-    $data = '<?php class Foo { const int BAR = Baz::'.$type.'; }';
-    $parser = FileParser::fromData($data);
+  public async function testSpecialNameAsUsedAsClassConstDefault(
+    string $type,
+  ): Awaitable<void> {
+    $data = '<?hh class Foo { const int BAR = Baz::'.$type.'; }';
+    $parser = await FileParser::fromDataAsync($data);
     $constant = C\firstx($parser->getClass('Foo')->getConstants());
     expect($constant->getName())->toBeSame('BAR');
     expect($constant->getTypehint()?->getTypeName())->toBeSame('int');
@@ -134,13 +149,13 @@ class NamingTest extends \Facebook\HackTest\HackTest {
    *
    */
   <<DataProvider('magicConstantsProvider')>>
-  public function testMagicConstantDefinition(
+  public async function testMagicConstantDefinition(
     string $type,
     string $name,
     string $value,
-  ): void {
+  ): Awaitable<void> {
     $code = "<?hh // decl\nconst ".$type.' '.$name.' = '.$value.';';
-    $const = FileParser::fromData($code)->getConstants()
+    $const = (await FileParser::fromDataAsync($code))->getConstants()
       |> C\find($$, $c ==> $c->getName() === $name);
     $const = expect($const)->toNotBeNull('const %s was not defined', $name);
     expect($const->getTypehint()?->getTypeText())
@@ -150,111 +165,119 @@ class NamingTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testConstantCalledOn(): void {
+  public async function testConstantCalledOn(): Awaitable<void> {
     $data = '<?hh class Foo { const ON = 0; }';
 
     expect(
-      FileParser::fromData($data)
+      (await FileParser::fromDataAsync($data))
         ->getClass('Foo')
         ->getConstants()
         |> Vec\map($$, $x ==> $x->getName()),
     )->toBeSame(vec['ON']);
   }
 
-  public function testClassMagicConstant(): void {
+  public async function testClassMagicConstant(): Awaitable<void> {
     $data = "<?hh Foo::class;\nclass Foo{}";
 
     // This could throw because the ; comes after the keyword class
-    expect(FileParser::fromData($data)->getClass('Foo')->getName())->toBeSame(
-      'Foo',
-    );
+    expect((await FileParser::fromDataAsync($data))->getClass('Foo')->getName())
+      ->toBeSame('Foo');
   }
 
-  public function testClassConstant(): void {
+  public async function testClassConstant(): Awaitable<void> {
     $data = "<?hh Herp::DERP;\nclass Foo{}";
 
-    expect(FileParser::fromData($data)->getClass('Foo')->getName())->toBeSame(
-      'Foo',
-    );
+    expect((await FileParser::fromDataAsync($data))->getClass('Foo')->getName())
+      ->toBeSame('Foo');
   }
 
   /** The noramlization blacklist shouldn't apply to things we define */
-  public function testNamespacedClassCalledCollection(): void {
-    $data = '<?php namespace Foo\Bar; class Collection {}';
+  public async function testNamespacedClassCalledCollection(): Awaitable<void> {
+    $data = '<?hh namespace Foo\Bar; class Collection {}';
 
-    expect(FileParser::fromData($data)->getClassNames())->toBeSame(
+    expect((await FileParser::fromDataAsync($data))->getClassNames())->toBeSame(
       vec['Foo\Bar\Collection'],
     );
   }
 
-  public function testNamespaceResolutionDependingOnSourceType(): void {
+  public async function testNamespaceResolutionDependingOnSourceType(
+  ): Awaitable<void> {
     $php = "<?php namespace Foo; class MyClass extends Collection {}";
     $hack = "<?hh namespace Foo; class MyClass extends Collection {}";
 
-    $php_class = FileParser::fromData($php)->getClass("Foo\\MyClass");
-    $hack_class = FileParser::fromData($hack)->getClass("Foo\\MyClass");
+    $php_class = (await FileParser::fromDataAsync($php))->getClass(
+      "Foo\\MyClass",
+    );
+    $hack_class = (await FileParser::fromDataAsync($hack))->getClass(
+      "Foo\\MyClass",
+    );
 
     expect($php_class->getParentClassName())->toBeSame("Foo\\Collection");
     expect($hack_class->getParentClassName())->toBeSame('Collection');
   }
 
-  public function testScalarParameterInNamespace(): void {
+  public async function testScalarParameterInNamespace(): Awaitable<void> {
     // This is correct for PHP7, not for PHP5 though. If you're using Hack,
     // you're more likely to be using scalar typehints than not.
-    $php = '<?php namespace Foo; function myfunc(): string {}';
+    $php = '<?hh namespace Foo; function myfunc(): string {}';
     $hack = '<?hh namespace Foo; function myfunc(): string {}';
 
-    $php_func = FileParser::fromData($php)->getFunction("Foo\\myfunc");
-    $hack_func = FileParser::fromData($hack)->getFunction("Foo\\myfunc");
+    $php_func = (await FileParser::fromDataAsync($php))->getFunction(
+      "Foo\\myfunc",
+    );
+    $hack_func = (await FileParser::fromDataAsync($hack))->getFunction(
+      "Foo\\myfunc",
+    );
 
     expect($php_func->getReturnType()?->getTypeName())->toBeSame('string');
     expect($hack_func->getReturnType()?->getTypeName())->toBeSame('string');
   }
 
-  public function testReturnsThisInNamespace(): void {
+  public async function testReturnsThisInNamespace(): Awaitable<void> {
     $code = "<?hh\n".
       "namespace Foo;\n".
       "class MyClass {\n".
       "  function foo(): this { }\n".
       "}";
-    $parser = FileParser::fromData($code);
+    $parser = await FileParser::fromDataAsync($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
     expect($method->getReturnType()?->getTypeName())->toBeSame('this');
   }
 
-  public function testReturnsClassGenericInNamespace(): void {
+  public async function testReturnsClassGenericInNamespace(): Awaitable<void> {
     $code = "<?hh\n".
       "namespace Foo;\n".
       "class MyClass<T> {\n".
       "  function foo(): T { }\n".
       "}";
-    $parser = FileParser::fromData($code);
+    $parser = await FileParser::fromDataAsync($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
     expect($method->getReturnType()?->getTypeName())->toBeSame('T');
   }
 
-  public function testReturnsNullableClassGenericInNamespace(): void {
+  public async function testReturnsNullableClassGenericInNamespace(
+  ): Awaitable<void> {
     $code = "<?hh\n".
       "namespace Foo;\n".
       "class MyClass<T> {\n".
       "  function foo(): ?T { }\n".
       "}";
-    $parser = FileParser::fromData($code);
+    $parser = await FileParser::fromDataAsync($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
     expect($method->getReturnType()?->getTypeName())->toBeSame('T');
     expect($method->getReturnType()?->isNullable())->toBeTrue();
   }
 
-  public function testReturnsMethodGenericInNamespace(): void {
+  public async function testReturnsMethodGenericInNamespace(): Awaitable<void> {
     $code = "<?hh\n".
       "namespace Foo;\n".
       "class MyClass {\n".
       "  function foo<T>(): T { }\n".
       "}";
-    $parser = FileParser::fromData($code);
+    $parser = await FileParser::fromDataAsync($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
     expect($method->getReturnType()?->getTypeName())->toBeSame('T');
@@ -264,14 +287,15 @@ class NamingTest extends \Facebook\HackTest\HackTest {
    * Make sure that method generics are added to class generics, instead of
    * replacing them.
    */
-  public function testClassGenericsInMethodWithGenerics(): void {
+  public async function testClassGenericsInMethodWithGenerics(
+  ): Awaitable<void> {
     $code = "<?hh\n".
       "namespace Foo;\n".
       "class MyClass<TClassGeneric> {\n".
       "  function foo<TFunctionGeneric>(\n".
       "    TFunctionGeneric \$p,\n".
       "  ): TClassGeneric {}";
-    $parser = FileParser::fromData($code);
+    $parser = await FileParser::fromDataAsync($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
     expect($method->getReturnType()?->getTypeName())->toBeSame('TClassGeneric');
@@ -279,13 +303,13 @@ class NamingTest extends \Facebook\HackTest\HackTest {
       ->toBeSame('TFunctionGeneric');
   }
 
-  public function testTakesMethodGenericInNamespace(): void {
+  public async function testTakesMethodGenericInNamespace(): Awaitable<void> {
     $code = "<?hh\n".
       "namespace Foo;\n".
       "class MyClass {\n".
-      "  function foo<T>(T \$bar): void { }\n".
+      "  function foo<T>(T \$bar): Awaitable<void> { }\n".
       "}";
-    $parser = FileParser::fromData($code);
+    $parser = await FileParser::fromDataAsync($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];
     expect($method->getParameters()[0]->getTypehint()?->getTypeName())

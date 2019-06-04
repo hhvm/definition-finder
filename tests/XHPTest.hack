@@ -14,16 +14,16 @@ use function Facebook\FBExpect\expect;
 use namespace HH\Lib\C;
 
 final class XHPTest extends \Facebook\HackTest\HackTest {
-  public function testXHPRootClass(): void {
+  public async function testXHPRootClass(): Awaitable<void> {
     $data = '<?hh class :foo:bar {}';
 
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     expect($parser->getClassNames())->toContain('xhp_foo__bar');
   }
 
-  public function testNullableXHPReturn(): void {
+  public async function testNullableXHPReturn(): Awaitable<void> {
     $data = '<?hh function foo(): ?:foo:bar {}';
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
     $ret = $function->getReturnType();
     $ret = expect($ret)->toNotBeNull();
@@ -31,10 +31,10 @@ final class XHPTest extends \Facebook\HackTest\HackTest {
     expect($ret->isNullable())->toBeTrue();
   }
 
-  public function testXHPClassWithParent(): void {
+  public async function testXHPClassWithParent(): Awaitable<void> {
     $data = '<?hh class :foo:bar extends :herp:derp {}';
 
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     expect($parser->getClassNames())->toContain('xhp_foo__bar');
 
     expect($parser->getClass('xhp_foo__bar')->getParentClassName())->toBeSame(
@@ -42,16 +42,16 @@ final class XHPTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function testXHPEnumAttributeParses(): void {
+  public async function testXHPEnumAttributeParses(): Awaitable<void> {
     // XHP Attributes are not reported, but shouldn't cause parse errors
     $data =
       '<?hh class :foo:bar { attribute enum { "herp", "derp" } myattr @required; }';
 
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     expect($parser->getClassNames())->toContain('xhp_foo__bar');
   }
 
-  public function testXHPEnumAttributesParse(): void {
+  public async function testXHPEnumAttributesParse(): Awaitable<void> {
     // StatementConsumer was getting confused by the brace
     $data = <<<EOF
 <?hh class :example {
@@ -61,12 +61,12 @@ final class XHPTest extends \Facebook\HackTest\HackTest {
 }
 EOF;
 
-    $parser = FileParser::fromData($data);
+    $parser = await FileParser::fromDataAsync($data);
     expect($parser->getClassNames())->toContain('xhp_example');
   }
 
-  public function testXHPClassNamesAreCorrect(): void {
-    $parser = FileParser::fromData('<?hh class :foo:bar:baz:herp-derp {}');
+  public async function testXHPClassNamesAreCorrect(): Awaitable<void> {
+    $parser = await FileParser::fromDataAsync('<?hh class :foo:bar:baz:herp-derp {}');
 
     expect(C\onlyx($parser->getClassNames()))->toContain(
       /* UNSAFE_EXPR */ :foo:bar:baz:herp-derp::class,

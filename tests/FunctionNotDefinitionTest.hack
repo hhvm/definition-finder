@@ -15,24 +15,28 @@ use type Facebook\DefinitionFinder\FileParser;
  * a function; make sure they're not considered a function.
  */
 final class FunctionNotDefinitionTest extends Facebook\HackTest\HackTest {
-  public function testActuallyAFunction(): void {
-    $p = FileParser::fromData('<?hh function foo();');
+  public async function testActuallyAFunction(): Awaitable<void> {
+    $p = await FileParser::fromDataAsync('<?hh function foo();');
     expect($p->getFunctionNames())->toBeSame(vec['foo']);
   }
 
-  public function testFunctionTypeAlias(): void {
-    $p = FileParser::fromData('<?hh newtype Foo = (function(int): void);');
+  public async function testFunctionTypeAlias(): Awaitable<void> {
+    $p = await FileParser::fromDataAsync(
+      '<?hh newtype Foo = (function(int): Awaitable<void>);',
+    );
     expect($p->getFunctionNames())->toBeSame(vec[]);
     expect($p->getNewtypeNames())->toBeSame(vec['Foo']);
 
     // Add extra whitespace
-    $p = FileParser::fromData('<?hh newtype Foo = (function (int): void);');
+    $p = await FileParser::fromDataAsync(
+      '<?hh newtype Foo = (function (int): Awaitable<void>);',
+    );
     expect($p->getFunctionNames())->toBeSame(vec[]);
     expect($p->getNewtypeNames())->toBeSame(vec['Foo']);
   }
 
-  public function testFunctionReturnType(): void {
-    $p = FileParser::fromData(<<<EOF
+  public async function testFunctionReturnType(): Awaitable<void> {
+    $p = await FileParser::fromDataAsync(<<<EOF
 <?hh
 function foo(\$bar): (function():void) { return \$bar; }
 EOF
@@ -44,9 +48,9 @@ EOF
     expect($rt?->getTypeText())->toBeSame('(function():void)');
   }
 
-  public function testReturnsGenericCallable(): void {
+  public async function testReturnsGenericCallable(): Awaitable<void> {
     $code = '<?hh function foo(): (function():vec<string>) { }';
-    $p = FileParser::fromData($code);
+    $p = (await FileParser::fromDataAsync($code));
     expect($p->getFunctionNames())->toBeSame(vec['foo']);
 
     $rt = $p->getFunction('foo')->getReturnType();
@@ -54,15 +58,15 @@ EOF
     expect($rt?->getTypeText())->toBeSame('(function():vec<string>)');
   }
 
-  public function testAsParameterType(): void {
-    $p = FileParser::fromData(
+  public async function testAsParameterType(): Awaitable<void> {
+    $p = await FileParser::fromDataAsync(
       '<?hh function foo((function():void) $callback) { }',
     );
     expect($p->getFunctionNames())->toBeSame(vec['foo']);
   }
 
-  public function testUsingAnonymousFunctions(): void {
-    $p = FileParser::fromData(<<<EOF
+  public async function testUsingAnonymousFunctions(): Awaitable<void> {
+    $p = await FileParser::fromDataAsync(<<<EOF
 <?hh
 function foo() {
   \$x = function() { return 'bar'; };
@@ -73,8 +77,8 @@ EOF
     expect($p->getFunctionNames())->toBeSame(vec['foo']);
   }
 
-  public function testAsParameter(): void {
-    $p = FileParser::fromData(<<<EOF
+  public async function testAsParameter(): Awaitable<void> {
+    $p = await FileParser::fromDataAsync(<<<EOF
 <?php
 spl_autoload_register(function(\$class) { });
 function foo() { }
@@ -83,8 +87,8 @@ EOF
     expect($p->getFunctionNames())->toBeSame(vec['foo']);
   }
 
-  public function testAsRVal(): void {
-    $p = FileParser::fromData('<?php $f = function(){};');
+  public async function testAsRVal(): Awaitable<void> {
+    $p = await FileParser::fromDataAsync('<?php $f = function(){};');
     expect($p->getFunctionNames())->toBeEmpty();
   }
 }
