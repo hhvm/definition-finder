@@ -22,10 +22,10 @@ function doccomment_from_ast(
   $leading = $node->getFirstToken()?->getLeading() ?? HHAST\Missing();
   if ($leading->isMissing() && $node instanceof HHAST\NodeList) {
     $maybe_doc_comments =
-      $node->getChildrenOfItemsOfType(HHAST\DelimitedComment::class);
+      $node->getChildrenOfType(HHAST\DelimitedComment::class);
   } else if ($leading instanceof HHAST\NodeList) {
     $maybe_doc_comments =
-      $leading->getChildrenOfItemsOfType(HHAST\DelimitedComment::class);
+      $leading->getChildrenOfType(HHAST\DelimitedComment::class);
   } else if ($leading instanceof HHAST\DelimitedComment) {
     $maybe_doc_comments = vec[$leading];
   } else {

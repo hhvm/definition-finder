@@ -202,6 +202,9 @@ function typehint_from_ast(
       null,
     );
   }
+  if ($node instanceof HHAST\ListItem) {
+    return typehint_from_ast($context, $node->getItemx());
+  }
 
   invariant_violation('Unhandled type: %s', \get_class($node));
 }

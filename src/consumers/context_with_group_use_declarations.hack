@@ -14,7 +14,7 @@ use namespace HH\Lib\{C, Str};
 
 function context_with_group_use_declarations(
   ConsumerContext $context,
-  vec<HHAST\NamespaceGroupUseDeclaration> $uses,
+  Container<HHAST\NamespaceGroupUseDeclaration> $uses,
 ): ConsumerContext {
   foreach ($uses as $use) {
     $kind = $use->getKind();
