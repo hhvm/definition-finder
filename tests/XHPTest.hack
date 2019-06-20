@@ -69,7 +69,7 @@ EOF;
     $parser = await FileParser::fromDataAsync('<?hh class :foo:bar:baz:herp-derp {}');
 
     expect(C\onlyx($parser->getClassNames()))->toContain(
-      /* UNSAFE_EXPR */ :foo:bar:baz:herp-derp::class,
+      /* HH_FIXME[2049] */ :foo:bar:baz:herp-derp::class,
     );
   }
 }

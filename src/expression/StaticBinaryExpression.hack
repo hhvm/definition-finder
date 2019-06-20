@@ -38,52 +38,52 @@ final class StaticBinaryExpression extends Expression<mixed> {
       return new self($left !== $right);
     }
     if ($op instanceof HHAST\PercentToken) {
-      return new self(/* UNSAFE_EXPR */ $left % $right);
+      return new self(/* HH_FIXME[4110] */ $left % $right);
     }
     if ($op instanceof HHAST\AmpersandToken) {
-      return new self(/* UNSAFE_EXPR */ $left & $right);
+      return new self(/* HH_FIXME[4110] */ $left & $right);
     }
     if ($op instanceof HHAST\AmpersandAmpersandToken) {
-      return new self(/* UNSAFE_EXPR */ $left && $right);
+      return new self($left && $right);
     }
     if ($op instanceof HHAST\StarToken) {
-      return new self(/* UNSAFE_EXPR */ $left * $right);
+      return new self(/* HH_FIXME[4110] */ $left * $right);
     }
     if ($op instanceof HHAST\StarStarToken) {
-      return new self(/* UNSAFE_EXPR */ $left ** $right);
+      return new self(/* HH_FIXME[4110] */ $left ** $right);
     }
     if ($op instanceof HHAST\PlusToken) {
-      return new self(/* UNSAFE_EXPR */ $left + $right);
+      return new self(/* HH_FIXME[4110] */ $left + $right);
     }
     if ($op instanceof HHAST\MinusToken) {
-      return new self(/* UNSAFE_EXPR */ $left - $right);
+      return new self(/* HH_FIXME[4110] */ $left - $right);
     }
     if ($op instanceof HHAST\DotToken) {
       return new self((string)$left.(string)$right);
     }
     if ($op instanceof HHAST\SlashToken) {
-      return new self(/* UNSAFE_EXPR */ $left / $right);
+      return new self(/* HH_FIXME[4110] */ $left / $right);
     }
     if ($op instanceof HHAST\LessThanToken) {
-      return new self(/* UNSAFE_EXPR */ $left < $right);
+      return new self(/* HH_FIXME[4240] */ $left < $right);
     }
     if ($op instanceof HHAST\LessThanEqualToken) {
-      return new self(/* UNSAFE_EXPR */ $left <= $right);
+      return new self(/* HH_FIXME[4240] */ $left <= $right);
     }
     if ($op instanceof HHAST\GreaterThanToken) {
-      return new self(/* UNSAFE_EXPR */ $left > $right);
+      return new self(/* HH_FIXME[4240] */ $left > $right);
     }
     if ($op instanceof HHAST\GreaterThanEqualToken) {
-      return new self(/* UNSAFE_EXPR */ $left >= $right);
+      return new self(/* HH_FIXME[4240] */ $left >= $right);
     }
     if ($op instanceof /* sic */ HHAST\CaratToken) {
-      return new self(/* UNSAFE_EXPR */ $left ^ $right);
+      return new self(/* HH_FIXME[4110] */ $left ^ $right);
     }
     if ($op instanceof /* sic */ HHAST\BarToken) {
-      return new self(/* UNSAFE_EXPR */ $left | $right);
+      return new self(/* HH_FIXME[4110] */ $left | $right);
     }
     if ($op instanceof /* sic */ HHAST\BarBarToken) {
-      return new self(/* UNSAFE_EXPR */ $left || $right);
+      return new self($left || $right);
     }
 
     return null;
