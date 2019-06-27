@@ -14,7 +14,7 @@
     "hhvm/hhvm-autoload": "^2.0",
     "hhvm/hsl": "^4.0",
     "hhvm/type-assert": "^3.2",
-    "hhvm/hhast": "^4.8"
+    "hhvm/hhast": "^4.11"
   },
   "require-dev": {
     "facebook/fbexpect": "^2.0.0",

@@ -12,13 +12,17 @@ namespace Facebook\DefinitionFinder\Expression;
 use namespace Facebook\HHAST;
 
 final class NameExpression extends Expression<mixed> {
-  const type TNode = HHAST\NameToken;
+  const type TNode = HHAST\NameExpression;
 
   <<__Override>>
   protected static function matchImpl(
     this::TNode $node,
   ): ?Expression<mixed> {
-    $text = $node->getText();
+    $inner = $node->getWrappedNode();
+    if (!$inner is HHAST\NameToken) {
+      return null;
+    }
+    $text = $inner->getText();
     if ($text === 'INF') {
       return new self(\INF);
     }
