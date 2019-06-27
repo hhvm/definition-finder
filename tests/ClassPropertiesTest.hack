@@ -9,8 +9,7 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
-use type Facebook\DefinitionFinder\FileParser;
-use type Facebook\DefinitionFinder\ScannedClassish;
+use type Facebook\DefinitionFinder\{FileParser, ScannedClassish};
 use function Facebook\FBExpect\expect;
 use namespace HH\Lib\Vec;
 

@@ -10,8 +10,7 @@
 namespace Facebook\DefinitionFinder\Tests;
 
 use function Facebook\FBExpect\expect;
-use type Facebook\DefinitionFinder\FileParser;
-use type Facebook\DefinitionFinder\SourceType;
+use type Facebook\DefinitionFinder\{FileParser, SourceType};
 use type Facebook\HackTest\DataProvider;
 
 class SourceTypeTest extends \Facebook\HackTest\HackTest {

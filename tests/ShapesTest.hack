@@ -12,8 +12,8 @@ namespace Facebook\DefinitionFinder\Test;
 use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\{
   FileParser,
-  ScannedType,
   ScannedShapeField,
+  ScannedType,
   ScannedTypehint,
 };
 use namespace HH\Lib\{C, Vec};

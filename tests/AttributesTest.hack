@@ -11,8 +11,8 @@ namespace Facebook\DefinitionFinder\Test;
 
 use type Facebook\DefinitionFinder\{
   FileParser,
-  ScannedDefinition,
   ScannedClassish,
+  ScannedDefinition,
   ScannedFunction,
 };
 

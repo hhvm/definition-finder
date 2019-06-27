@@ -9,8 +9,7 @@
 
 namespace Facebook\DefinitionFinder\Expression;
 
-use namespace Facebook\HHAST;
-use namespace Facebook\TypeAssert;
+use namespace Facebook\{HHAST, TypeAssert};
 
 abstract class Expression<+TValue> {
   abstract const type TNode as HHAST\Node;
