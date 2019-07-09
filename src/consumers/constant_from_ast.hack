@@ -10,6 +10,7 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
+use namespace HH\Lib\C;
 
 function constant_from_ast(
   ConsumerContext $context,
@@ -22,10 +23,13 @@ function constant_from_ast(
       decl_name_in_context($context, name_from_ast($inner->getName())),
       context_with_node_position($context, $inner)['definitionContext'],
       doccomment_from_ast($context['definitionContext'], $inner) ??
-      doccomment_from_ast($context['definitionContext'], $outer),
+        doccomment_from_ast($context['definitionContext'], $outer),
       value_from_ast($inner->getInitializer()?->getValue()),
       typehint_from_ast($context, $outer->getTypeSpecifier()),
-      $outer->getAbstract() instanceof HHAST\AbstractToken
+      C\any(
+        $outer->getModifiers()?->getChildren() ?? vec[],
+        $m ==> $m instanceof HHAST\AbstractToken,
+      )
         ? AbstractnessToken::IS_ABSTRACT
         : AbstractnessToken::NOT_ABSTRACT,
     )

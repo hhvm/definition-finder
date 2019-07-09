@@ -10,12 +10,16 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
+use namespace HH\Lib\C;
 
 function type_constant_from_ast(
   ConsumerContext $context,
   HHAST\TypeConstDeclaration $node,
 ): ScannedTypeConstant {
-  $is_abstract = $node->getAbstract() instanceof HHAST\AbstractToken;
+  $is_abstract = C\any(
+    $node->getModifiers()?->getChildren() ?? vec[],
+    $t ==> $t instanceof HHAST\AbstractToken,
+  );
   $name = $node->getName();
   return (
     new ScannedTypeConstant(
