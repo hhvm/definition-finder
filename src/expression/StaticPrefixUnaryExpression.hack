@@ -25,13 +25,13 @@ final class StaticPrefixUnaryExpression extends Expression<mixed> {
     $value = $value->getValue();
 
     $op = $node->getOperator();
-    if ($op instanceof HHAST\ExclamationToken) {
+    if ($op is HHAST\ExclamationToken) {
       return new self(!(bool)$value);
     }
-    if ($op instanceof HHAST\PlusToken) {
+    if ($op is HHAST\PlusToken) {
       return new self((int)$value);
     }
-    if ($op instanceof HHAST\MinusToken) {
+    if ($op is HHAST\MinusToken) {
       return new self(-(int)$value);
     }
 

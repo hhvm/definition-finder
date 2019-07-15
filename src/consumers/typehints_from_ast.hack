@@ -20,7 +20,7 @@ function typehints_from_ast(
     return vec[];
   }
   return $node->getChildren()
-    |> Vec\map($$, $c ==> $c instanceof HHAST\ListItem ? $c->getItem() : $c)
+    |> Vec\map($$, $c ==> $c is HHAST\ListItem<_> ? $c->getItem() : $c)
     |> Vec\map($$, $c ==> typehint_from_ast($context, $c))
     |> Vec\filter_nulls($$);
 }

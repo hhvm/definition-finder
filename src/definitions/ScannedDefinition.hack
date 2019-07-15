@@ -21,7 +21,7 @@ abstract class ScannedDefinition {
   private string $shortName;
 
   public function __construct(
-    private HHAST\Node $ast,
+    private ?HHAST\Node $ast,
     private string $name,
     private self::TContext $context,
     private dict<string, vec<mixed>> $attributes,
@@ -29,13 +29,17 @@ abstract class ScannedDefinition {
   ) {
     list($this->namespace, $this->shortName) = $this->breakName($name);
 
-    if ($docComment === null && !$ast->isMissing()) {
+    if ($docComment === null) {
       $this->docComment = doccomment_from_ast($context, $ast);
     }
   }
 
-  final public function getAST(): HHAST\Node {
+  final public function getAST(): ?HHAST\Node {
     return $this->ast;
+  }
+
+  final public function getASTx(): HHAST\Node {
+    return $this->ast as nonnull;
   }
 
   abstract public static function getType(): ?DefinitionType;

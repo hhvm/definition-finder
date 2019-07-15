@@ -47,7 +47,7 @@ final class TreeParser extends BaseParser {
     );
 
     return new self(merge_scopes(
-      HHAST\Missing(),
+      null,
       shape(
         'filename' => '__TREE__',
         'sourceType' => SourceType::MULTIPLE_FILES,

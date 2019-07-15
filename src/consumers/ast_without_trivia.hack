@@ -16,6 +16,6 @@ function ast_without_trivia<T as HHAST\Node>(
 ): T {
   return $node->rewriteDescendants(
     ($inner, $_) ==>
-      $inner instanceof HHAST\Trivia ? HHAST\Missing() : $inner,
+      $inner is HHAST\Trivia ? null : $inner,
   );
 }

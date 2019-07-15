@@ -13,10 +13,10 @@ use namespace Facebook\HHAST;
 use namespace HH\Lib\{Str, Vec};
 
 function name_from_ast(HHAST\Node $node): string {
-  if ($node instanceof HHAST\Token) {
+  if ($node is HHAST\Token) {
     return $node->getText();
   }
-  if ($node instanceof HHAST\QualifiedName) {
+  if ($node is HHAST\QualifiedName) {
     // Join with `\` as the `\` is an item separator, not an actual item in the
     // lists.
     //
@@ -26,7 +26,7 @@ function name_from_ast(HHAST\Node $node): string {
       |> Str\join($$, "\\");
   }
 
-  if ($node instanceof HHAST\SimpleTypeSpecifier) {
+  if ($node is HHAST\SimpleTypeSpecifier) {
     return name_from_ast($node->getSpecifier());
   }
 

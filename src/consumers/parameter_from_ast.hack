@@ -19,9 +19,9 @@ function parameter_from_ast(
 ): ScannedParameter {
   $variadic = false;
   $name = $node->getName();
-  if ($name instanceof HHAST\VariableToken) {
+  if ($name is HHAST\VariableToken) {
     $info = shape('name' => $name, 'byref' => false, 'variadic' => false);
-  } else if ($name instanceof HHAST\DecoratedExpression) {
+  } else if ($name is HHAST\DecoratedExpression) {
     $info = parameter_info_from_decorated_expression($name);
   } else {
     invariant_violation(
@@ -31,11 +31,11 @@ function parameter_from_ast(
   }
 
   $v = $node->getVisibility();
-  if ($v instanceof HHAST\PrivateToken) {
+  if ($v is HHAST\PrivateToken) {
     $visibility = VisibilityToken::T_PRIVATE;
-  } else if ($v instanceof HHAST\ProtectedToken) {
+  } else if ($v is HHAST\ProtectedToken) {
     $visibility = VisibilityToken::T_PROTECTED;
-  } else if ($v instanceof HHAST\PublicToken) {
+  } else if ($v is HHAST\PublicToken) {
     $visibility = VisibilityToken::T_PUBLIC;
   } else {
     $visibility = null;
@@ -49,7 +49,7 @@ function parameter_from_ast(
     $doccomment,
     typehint_from_ast($context, $node->getType()),
     $info['byref'],
-    $node->getCallConvention() instanceof HHAST\InoutToken,
+    $node->getCallConvention() is HHAST\InoutToken,
     $info['variadic'],
     value_from_ast($node->getDefaultValue()?->getValue()),
     $visibility,

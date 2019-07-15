@@ -14,7 +14,7 @@ use namespace Facebook\HHAST;
 final class ScannedScope extends ScannedDefinition {
 
   public function __construct(
-    HHAST\Node $ast,
+    ?HHAST\Node $ast,
     self::TContext $context,
     private vec<ScannedClass> $classes,
     private vec<ScannedInterface> $interfaces,

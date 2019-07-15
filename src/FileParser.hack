@@ -41,7 +41,11 @@ final class FileParser extends BaseParser {
   public static async function fromFileAsync(
     string $filename,
   ): Awaitable<this> {
-    $ast = await HHAST\from_file_async(HHAST\File::fromPath($filename));
+    try {
+      $ast = await HHAST\from_file_async(HHAST\File::fromPath($filename));
+    } catch (HHAST\ASTDeserializationError $_) {
+      return new self($filename, new HHAST\Script(new HHAST\NodeList(vec[])));
+    }
     return new self($filename, $ast);
   }
 
@@ -50,9 +54,13 @@ final class FileParser extends BaseParser {
     ?string $filename = null,
   ): Awaitable<this> {
     $filename ??= '__DATA__';
-    $ast = await HHAST\from_file_async(
-      HHAST\File::fromPathAndContents($filename, $data),
-    );
+    try {
+      $ast = await HHAST\from_file_async(
+        HHAST\File::fromPathAndContents($filename, $data),
+      );
+    } catch (HHAST\ASTDeserializationError $_) {
+      return new self($filename, new HHAST\Script(new HHAST\NodeList(vec[])));
+    }
     return new self($filename, $ast);
   }
 

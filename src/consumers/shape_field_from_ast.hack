@@ -22,7 +22,7 @@ function shape_field_from_ast(
     nullthrows(value_from_ast($node->getName())),
     $context['definitionContext'],
     /* doccomment = */ null,
-    $node->getQuestion() instanceof HHAST\QuestionToken
+    $node->getQuestion() is HHAST\QuestionToken
       ? OptionalityToken::IS_OPTIONAL
       : OptionalityToken::IS_REQUIRED,
     nullthrows(typehint_from_ast($context, $node->getType())),

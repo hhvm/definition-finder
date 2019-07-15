@@ -20,17 +20,17 @@ function classish_from_ast<T as ScannedClassish>(
   $context = context_with_node_position($context, $node);
   switch ($def_class) {
     case ScannedClass::class:
-      if (!$node->getKeyword() instanceof HHAST\ClassToken) {
+      if (!$node->getKeyword() is HHAST\ClassToken) {
         return null;
       }
       break;
     case ScannedInterface::class:
-      if (!$node->getKeyword() instanceof HHAST\InterfaceToken) {
+      if (!$node->getKeyword() is HHAST\InterfaceToken) {
         return null;
       }
       break;
     case ScannedTrait::class:
-      if (!$node->getKeyword() instanceof HHAST\TraitToken) {
+      if (!$node->getKeyword() is HHAST\TraitToken) {
         return null;
       }
       break;
@@ -41,7 +41,7 @@ function classish_from_ast<T as ScannedClassish>(
   $name = $node->getName();
   if ($name === null) {
     return null;
-  } else if ($name instanceof HHAST\XHPClassNameToken) {
+  } else if ($name is HHAST\XHPClassNameToken) {
     $name = decl_name_in_context($context, mangle_xhp_name_token($name));
   } else {
     $name = decl_name_in_context($context, $name->getText());
@@ -99,7 +99,7 @@ function classish_from_ast<T as ScannedClassish>(
       |> Vec\map(
         $$,
         $p ==> new ScannedProperty(
-          $p->getAST(),
+          $p->getASTx(),
           $p->getName(),
           $p->getContext(),
           $p->getAttributes(),

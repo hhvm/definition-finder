@@ -18,13 +18,13 @@ function type_constant_from_ast(
 ): ScannedTypeConstant {
   $is_abstract = C\any(
     $node->getModifiers()?->getChildren() ?? vec[],
-    $t ==> $t instanceof HHAST\AbstractToken,
+    $t ==> $t is HHAST\AbstractToken,
   );
   $name = $node->getName();
   return (
     new ScannedTypeConstant(
       $node,
-      name_from_ast($node->getName() ?? HHAST\Missing()),
+      name_from_ast($node->getName()),
       context_with_node_position($context, $node)['definitionContext'],
       /* docblock = */ null,
       typehint_from_ast(

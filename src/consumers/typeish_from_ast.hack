@@ -18,12 +18,12 @@ function typeish_from_ast<T as ScannedTypeish>(
 ): ?T {
   switch ($def_class) {
     case ScannedType::class:
-      if (!$node->getKeyword() instanceof HHAST\TypeToken) {
+      if (!$node->getKeyword() is HHAST\TypeToken) {
         return null;
       }
       break;
     case ScannedNewtype::class:
-      if (!$node->getKeyword() instanceof HHAST\NewtypeToken) {
+      if (!$node->getKeyword() is HHAST\NewtypeToken) {
         return null;
       }
       break;

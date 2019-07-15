@@ -18,10 +18,10 @@ function context_with_use_declarations(
 ): ConsumerContext {
   foreach ($uses as $use) {
     $kind = $use->getKind();
-    if ($kind instanceof HHAST\ConstToken) {
+    if ($kind is HHAST\ConstToken) {
       continue;
     }
-    if ($kind instanceof HHAST\FunctionToken) {
+    if ($kind is HHAST\FunctionToken) {
       continue;
     }
 
@@ -33,11 +33,11 @@ function context_with_use_declarations(
         name_from_ast($node->hasAlias() ? $node->getAliasx() : $node->getName())
         |> Str\split($$, "\\")
         |> C\lastx($$);
-      if ($kind instanceof HHAST\TypeToken) {
+      if ($kind is HHAST\TypeToken) {
         $context['usedTypes'][$as] = $name;
         continue;
       }
-      if ($kind instanceof HHAST\NamespaceToken) {
+      if ($kind is HHAST\NamespaceToken) {
         $context['usedNamespaces'][$as] = $name;
         continue;
       }

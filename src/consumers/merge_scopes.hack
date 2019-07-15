@@ -13,7 +13,7 @@ use namespace Facebook\HHAST;
 use namespace HH\Lib\{C, Vec};
 
 function merge_scopes(
-  HHAST\Node $ast,
+  ?HHAST\Node $ast,
   ScannedDefinition::TContext $context,
   vec<ScannedScope> $scopes,
 ): ScannedScope {

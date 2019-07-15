@@ -19,7 +19,7 @@ final class StaticScopeResolutionExpression extends Expression<string> {
     HHAST\ScopeResolutionExpression $n,
   ): ?Expression<string> {
     $name = $n->getName();
-    if (!$name instanceof HHAST\ClassToken) {
+    if (!$name is HHAST\ClassToken) {
       return null;
     }
     $name = \Facebook\DefinitionFinder\name_from_ast($n->getQualifier());

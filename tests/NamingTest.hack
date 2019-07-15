@@ -294,7 +294,8 @@ class NamingTest extends \Facebook\HackTest\HackTest {
       "class MyClass<TClassGeneric> {\n".
       "  function foo<TFunctionGeneric>(\n".
       "    TFunctionGeneric \$p,\n".
-      "  ): TClassGeneric {}";
+      "  ): TClassGeneric {}\n".
+      "}\n";
     $parser = await FileParser::fromDataAsync($code);
     $class = $parser->getClass("Foo\\MyClass");
     $method = $class->getMethods()[0];

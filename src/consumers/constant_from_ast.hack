@@ -28,7 +28,7 @@ function constant_from_ast(
       typehint_from_ast($context, $outer->getTypeSpecifier()),
       C\any(
         $outer->getModifiers()?->getChildren() ?? vec[],
-        $m ==> $m instanceof HHAST\AbstractToken,
+        $m ==> $m is HHAST\AbstractToken,
       )
         ? AbstractnessToken::IS_ABSTRACT
         : AbstractnessToken::NOT_ABSTRACT,

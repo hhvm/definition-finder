@@ -18,9 +18,9 @@ final class StaticArrayExpression extends Expression<mixed> {
   protected static function matchImpl(
     this::TNode $node,
   ): ?Expression<mixed> {
-    if ($node instanceof HHAST\ArrayCreationExpression) {
+    if ($node is HHAST\ArrayCreationExpression) {
       $members = $node->getMembers();
-    } else if ($node instanceof HHAST\ArrayIntrinsicExpression) {
+    } else if ($node is HHAST\ArrayIntrinsicExpression) {
       $members = $node->getMembers();
     } else {
       return null;

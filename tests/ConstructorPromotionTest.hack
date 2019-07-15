@@ -44,7 +44,7 @@ class Foo {
     $constructors = Vec\filter($meths, $x ==> $x->getName() === '__construct');
     $constructor = $constructors[0] ?? null;
     expect($constructor)->toNotBeNull('did not find constructor');
-    assert($constructor instanceof ScannedMethod);
+    assert($constructor is ScannedMethod);
 
 
     $params = $constructor->getParameters();

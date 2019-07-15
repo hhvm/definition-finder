@@ -26,9 +26,9 @@ function parameters_from_ast(
   );
   $out = vec[];
   foreach ($params->getChildren() as $node) {
-    invariant($node instanceof HHAST\ListItem, "Got non-listitem child");
+    invariant($node is HHAST\ListItem<_>, "Got non-listitem child");
     $item = $node->getItem();
-    if ($item instanceof HHAST\VariadicParameter) {
+    if ($item is HHAST\VariadicParameter) {
       $out[] = new ScannedParameter(
         $item,
         '',
@@ -45,7 +45,7 @@ function parameters_from_ast(
       continue;
     }
     invariant(
-      $item instanceof HHAST\ParameterDeclaration,
+      $item is HHAST\ParameterDeclaration,
       "Got non-decl child: %s: %s\n%s",
       \get_class($item),
       $item->getCode(),
@@ -54,7 +54,7 @@ function parameters_from_ast(
     $out[] = parameter_from_ast($context, $item, $next_doccomment);
     $next_doccomment = doccomment_from_ast(
       $context['definitionContext'],
-      $node->getSeparator()?->getTrailing() ?? HHAST\Missing(),
+      $node->getSeparator()?->getTrailing(),
     );
   }
   return $out;

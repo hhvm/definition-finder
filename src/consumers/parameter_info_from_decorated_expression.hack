@@ -15,11 +15,11 @@ function parameter_info_from_decorated_expression(
   HHAST\DecoratedExpression $de,
 ): shape('name' => HHAST\VariableToken, 'byref' => bool, 'variadic' => bool) {
   $inner = $de->getExpression();
-  if ($inner instanceof HHAST\DecoratedExpression) {
+  if ($inner is HHAST\DecoratedExpression) {
     $ret = parameter_info_from_decorated_expression($inner);
   } else {
     invariant(
-      $inner instanceof HHAST\VariableToken,
+      $inner is HHAST\VariableToken,
       "Don't know how to handle %s ('%s')",
       \get_class($inner),
       $inner->getCode() ?? '',
@@ -32,9 +32,9 @@ function parameter_info_from_decorated_expression(
   }
 
   $d = $de->getDecorator();
-  if ($d instanceof HHAST\DotDotDotToken) {
+  if ($d is HHAST\DotDotDotToken) {
     $ret['variadic'] = true;
-  } else if ($d instanceof HHAST\AmpersandToken) {
+  } else if ($d is HHAST\AmpersandToken) {
     $ret['byref'] = true;
   } else {
     invariant_violation(

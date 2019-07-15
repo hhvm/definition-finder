@@ -30,59 +30,59 @@ final class StaticBinaryExpression extends Expression<mixed> {
     $right = $right->getValue();
 
     $op = $node->getOperator();
-    if ($op instanceof HHAST\ExclamationEqualToken) {
+    if ($op is HHAST\ExclamationEqualToken) {
       /* HHAST_IGNORE_ALL[NoPHPEquality] cant suppress more specifically */
       return new self($left != $right);
     }
-    if ($op instanceof HHAST\ExclamationEqualEqualToken) {
+    if ($op is HHAST\ExclamationEqualEqualToken) {
       return new self($left !== $right);
     }
-    if ($op instanceof HHAST\PercentToken) {
+    if ($op is HHAST\PercentToken) {
       return new self(/* HH_FIXME[4110] */ $left % $right);
     }
-    if ($op instanceof HHAST\AmpersandToken) {
+    if ($op is HHAST\AmpersandToken) {
       return new self(/* HH_FIXME[4110] */ $left & $right);
     }
-    if ($op instanceof HHAST\AmpersandAmpersandToken) {
+    if ($op is HHAST\AmpersandAmpersandToken) {
       return new self($left && $right);
     }
-    if ($op instanceof HHAST\StarToken) {
+    if ($op is HHAST\StarToken) {
       return new self(/* HH_FIXME[4110] */ $left * $right);
     }
-    if ($op instanceof HHAST\StarStarToken) {
+    if ($op is HHAST\StarStarToken) {
       return new self(/* HH_FIXME[4110] */ $left ** $right);
     }
-    if ($op instanceof HHAST\PlusToken) {
+    if ($op is HHAST\PlusToken) {
       return new self(/* HH_FIXME[4110] */ $left + $right);
     }
-    if ($op instanceof HHAST\MinusToken) {
+    if ($op is HHAST\MinusToken) {
       return new self(/* HH_FIXME[4110] */ $left - $right);
     }
-    if ($op instanceof HHAST\DotToken) {
+    if ($op is HHAST\DotToken) {
       return new self((string)$left.(string)$right);
     }
-    if ($op instanceof HHAST\SlashToken) {
+    if ($op is HHAST\SlashToken) {
       return new self(/* HH_FIXME[4110] */ $left / $right);
     }
-    if ($op instanceof HHAST\LessThanToken) {
+    if ($op is HHAST\LessThanToken) {
       return new self(/* HH_FIXME[4240] */ $left < $right);
     }
-    if ($op instanceof HHAST\LessThanEqualToken) {
+    if ($op is HHAST\LessThanEqualToken) {
       return new self(/* HH_FIXME[4240] */ $left <= $right);
     }
-    if ($op instanceof HHAST\GreaterThanToken) {
+    if ($op is HHAST\GreaterThanToken) {
       return new self(/* HH_FIXME[4240] */ $left > $right);
     }
-    if ($op instanceof HHAST\GreaterThanEqualToken) {
+    if ($op is HHAST\GreaterThanEqualToken) {
       return new self(/* HH_FIXME[4240] */ $left >= $right);
     }
-    if ($op instanceof /* sic */ HHAST\CaratToken) {
+    if ($op is /* sic */ HHAST\CaratToken) {
       return new self(/* HH_FIXME[4110] */ $left ^ $right);
     }
-    if ($op instanceof /* sic */ HHAST\BarToken) {
+    if ($op is /* sic */ HHAST\BarToken) {
       return new self(/* HH_FIXME[4110] */ $left | $right);
     }
-    if ($op instanceof /* sic */ HHAST\BarBarToken) {
+    if ($op is /* sic */ HHAST\BarBarToken) {
       return new self($left || $right);
     }
 

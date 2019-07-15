@@ -17,9 +17,9 @@ function generic_from_ast(
   HHAST\TypeParameter $node,
 ): ScannedGeneric {
   $v = $node->getVariance();
-  if ($v instanceof HHAST\PlusToken) {
+  if ($v is HHAST\PlusToken) {
     $variance = VarianceToken::COVARIANT;
-  } else if ($v instanceof HHAST\MinusToken) {
+  } else if ($v is HHAST\MinusToken) {
     $variance = VarianceToken::CONTRAVARIANT;
   } else {
     invariant($v === null, 'unknown variance');
@@ -34,11 +34,11 @@ function generic_from_ast(
       $constraints->getChildren(),
       (HHAST\TypeConstraint $c) ==> {
         $kw = $c->getKeyword();
-        if ($kw instanceof HHAST\AsToken) {
+        if ($kw is HHAST\AsToken) {
           $r = RelationshipToken::SUBTYPE;
         } else {
           invariant(
-            $kw instanceof HHAST\SuperToken,
+            $kw is HHAST\SuperToken,
             'unexpected relationship token: %s',
             $kw->getCode(),
           );

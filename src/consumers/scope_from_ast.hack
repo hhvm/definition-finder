@@ -37,7 +37,7 @@ function scope_from_ast(
 
   foreach ($namespaces as $i => $ns) {
     $body = $ns->getBody();
-    if ($body instanceof HHAST\NamespaceBody) {
+    if ($body is HHAST\NamespaceBody) {
       $scopes[] = scope_from_ast_and_ns(
         $context,
         $body->getDeclarations(),
@@ -47,7 +47,7 @@ function scope_from_ast(
     }
 
     invariant(
-      $body === null || $body instanceof HHAST\NamespaceEmptyBody,
+      $body === null || $body is HHAST\NamespaceEmptyBody,
       "Expected a NamespaceBody or NamespaceEmptyBody",
     );
 

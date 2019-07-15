@@ -14,20 +14,18 @@ use namespace HH\Lib\{C, Str, Vec};
 
 function doccomment_from_ast(
   ScannedDefinition::TContext $_context,
-  HHAST\Node $node,
+  ?HHAST\Node $node,
 ): ?string {
-  if ($node->isMissing()) {
+  if ($node === null) {
     return null;
   }
-  $leading = $node->getFirstToken()?->getLeading() ?? HHAST\Missing();
-  if ($leading->isMissing() && $node instanceof HHAST\NodeList) {
+  $leading = $node->getFirstToken()?->getLeading();
+  if ($leading === null && $node is HHAST\NodeList<_>) {
     $maybe_doc_comments =
       $node->getChildrenOfType(HHAST\DelimitedComment::class);
-  } else if ($leading instanceof HHAST\NodeList) {
+  } else if ($leading is HHAST\NodeList<_>) {
     $maybe_doc_comments =
       $leading->getChildrenOfType(HHAST\DelimitedComment::class);
-  } else if ($leading instanceof HHAST\DelimitedComment) {
-    $maybe_doc_comments = vec[$leading];
   } else {
     return null;
   }

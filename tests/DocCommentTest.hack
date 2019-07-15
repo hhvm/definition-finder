@@ -70,7 +70,7 @@ class DocCommentTest extends \Facebook\HackTest\HackTest {
 
   public function testParameterWithDoc(): void {
     $fun = $this->getDef('param_with_doc_comment');
-    assert($fun instanceof ScannedFunction);
+    assert($fun is ScannedFunction);
     $params = $fun->getParameters();
     expect(Vec\map($params, $x ==> $x->getName()))->toBeSame(
       vec['commented', 'uncommented'],
