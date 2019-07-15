@@ -9,7 +9,6 @@
 
 namespace Facebook\DefinitionFinder;
 
-use namespace Facebook\HHAST;
 use namespace HH\Lib\Vec;
 
 final class TreeParser extends BaseParser {
