@@ -10,8 +10,6 @@
 
 namespace Facebook\DefinitionFinder;
 
-require_once (__DIR__.'/../vendor/hh_autoload.php');
-
 use namespace HH\Lib\{Str, Vec};
 
 async function try_parse_async(string $path): Awaitable<void> {
@@ -35,10 +33,12 @@ async function try_parse_async(string $path): Awaitable<void> {
       }
     }
     $json = \exec(
-      'hh_parse --full-fidelity-json '.\escapeshellarg($path).' 2>/dev/null'
+      'hh_parse --full-fidelity-json '.\escapeshellarg($path).' 2>/dev/null',
     );
     $json = Str\trim($json);
-    if (\json_decode($json) === null && \json_last_error() === \JSON_ERROR_DEPTH) {
+    if (
+      \json_decode($json) === null && \json_last_error() === \JSON_ERROR_DEPTH
+    ) {
       print $line."JSON TOO DEEP";
       return;
     }
@@ -48,8 +48,12 @@ async function try_parse_async(string $path): Awaitable<void> {
   print $line."OK\n";
 }
 
-$files = array_slice($argv, 1);
-
-\HH\Asio\join(
-  Vec\map_async($files, async $file ==> await try_parse_async($file)),
-);
+<<__EntryPoint>>
+async function try_parse_main_async(): Awaitable<void> {
+  require_once(__DIR__.'/../vendor/hh_autoload.php');
+  $files = Vec\drop(\HH\global_get('argv') as Traversable<_>, 1);
+  await Vec\map_async(
+    $files,
+    async $file ==> await try_parse_async($file as string),
+  );
+}

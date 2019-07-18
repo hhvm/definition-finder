@@ -6,7 +6,7 @@
       "patterns": [ "tests/data/*" ],
       "builtinLinters": "none",
       "extraLinters": [
-        "Facebook\\HHAST\\LicenseHeaderLinter"
+        "Facebook\\HHAST\\Linters\\LicenseHeaderLinter"
       ]
     }
   ]

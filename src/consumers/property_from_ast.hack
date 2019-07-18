@@ -26,7 +26,7 @@ function properties_from_ast(
     $modifiers = vec[$modifiers];
   }
   $has_modifier = (classname<HHAST\Token> $class) ==>
-    C\any($modifiers, $m ==> $m instanceof $class);
+    C\any($modifiers, $m ==> \is_a($m, $class));
   $is_static = $has_modifier(HHAST\StaticToken::class)
     ? StaticityToken::IS_STATIC
     : StaticityToken::NOT_STATIC;
