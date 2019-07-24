@@ -13,7 +13,7 @@ use namespace Facebook\HHAST;
 use namespace HH\Lib\{Dict, Vec};
 
 function attributes_from_ast(
-  ?HHAST\AttributeSpecification $node,
+  ?HHAST\OldAttributeSpecification $node,
 ): dict<string, vec<mixed>> {
   if ($node === null) {
     return dict[];
