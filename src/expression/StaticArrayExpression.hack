@@ -36,6 +36,7 @@ final class StaticArrayExpression extends Expression<mixed> {
           $ret[$key] = $value;
         } else if ($key is string) {
           /* HH_IGNORE_ERROR[4110] PHP-compatible array craziness */
+          /* HH_IGNORE_ERROR[4324] PHP-compatible array craziness */
           $ret[$key] = $value;
         } else {
           return null;
