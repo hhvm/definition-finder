@@ -81,7 +81,7 @@ class AttributesTest extends \Facebook\HackTest\HackTest {
 
   public async function testPseudmainContainingBitShift(): Awaitable<void> {
     $data = '<?hh print 1 << 3;';
-    $parser = (await FileParser::fromDataAsync($data));
+    await FileParser::fromDataAsync($data);
   }
 
   public async function testFunctionAttrsDontPolluteClass(): Awaitable<void> {

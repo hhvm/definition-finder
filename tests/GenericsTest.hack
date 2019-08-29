@@ -117,19 +117,19 @@ class GenericsTest extends \Facebook\HackTest\HackTest {
   public async function testVectorLikeArrayParam(): Awaitable<void> {
     $data = '<?hh function foo(array<SomeClass> $param): Awaitable<void> {}';
     $parser = await FileParser::fromDataAsync($data);
-    $function = $parser->getFunction('foo');
+    $parser->getFunction('foo');
   }
 
   public async function testVectorLikeArrayOfPrimitivesParam(): Awaitable<void> {
     $data = '<?hh function foo(array<string> $param): Awaitable<void> {}';
     $parser = await FileParser::fromDataAsync($data);
-    $function = $parser->getFunction('foo');
+    $parser->getFunction('foo');
   }
 
   public async function testMapLikeArrayParam(): Awaitable<void> {
     $data = '<?hh function foo(array<string, PharFileInfo> $list): Awaitable<void> {}';
     $parser = await FileParser::fromDataAsync($data);
-    $function = $parser->getFunction('foo');
+    $parser->getFunction('foo');
   }
 
   public async function testInlineShapeConstraint(): Awaitable<void> {

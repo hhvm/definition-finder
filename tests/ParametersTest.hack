@@ -151,7 +151,6 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
-    $params = $function->getParameters();
     expect(Vec\map($function->getParameters(), $x ==> $x->getName()))->toBeSame(
       vec['bar'],
     );
@@ -164,7 +163,6 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
-    $params = $function->getParameters();
     expect(Vec\map($function->getParameters(), $x ==> $x->getName()))->toBeSame(
       vec['bar'],
     );
@@ -177,7 +175,6 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     $parser = await FileParser::fromDataAsync($data);
     $function = $parser->getFunction('foo');
 
-    $params = $function->getParameters();
     expect(Vec\map($function->getParameters(), $x ==> $x->getName()))->toBeSame(
       vec['bar'],
     );

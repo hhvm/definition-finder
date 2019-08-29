@@ -33,7 +33,6 @@ function scope_from_ast(
     $namespaces,
     $ns ==> nullthrows(C\find_key($items, $item ==> $item === $ns)),
   );
-  $count = C\count($namespaces);
 
   foreach ($namespaces as $i => $ns) {
     $body = $ns->getBody();

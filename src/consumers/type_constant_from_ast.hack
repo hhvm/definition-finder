@@ -20,7 +20,6 @@ function type_constant_from_ast(
     $node->getModifiers()?->getChildren() ?? vec[],
     $t ==> $t is HHAST\AbstractToken,
   );
-  $name = $node->getName();
   return (
     new ScannedTypeConstant(
       $node,

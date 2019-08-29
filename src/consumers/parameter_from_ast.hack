@@ -17,7 +17,6 @@ function parameter_from_ast(
   HHAST\ParameterDeclaration $node,
   ?string $doccomment,
 ): ScannedParameter {
-  $variadic = false;
   $name = $node->getName();
   if ($name is HHAST\VariableToken) {
     $info = shape('name' => $name, 'byref' => false, 'variadic' => false);
