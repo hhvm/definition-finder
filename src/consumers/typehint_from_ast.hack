@@ -66,7 +66,7 @@ function typehint_from_ast(
             : tuple(null, typehint_from_ast($context, $item) as nonnull),
         ),
         // return type
-        typehint_from_ast($context, $node->getReturnType()),
+        typehint_from_ast($context, $node->getReturnType()) as nonnull,
       ),
     );
   }

@@ -20,7 +20,7 @@ final class ScannedTypehint {
     private vec<ScannedTypehint> $generics,
     private bool $nullable,
     private ?vec<ScannedShapeField> $shapeFields,
-    private ?(vec<(?HHAST\InoutToken, ScannedTypehint)>, ?ScannedTypehint)
+    private ?(vec<(?HHAST\InoutToken, ScannedTypehint)>, ScannedTypehint)
       $functionTypehints,
   ) {
   }
@@ -56,7 +56,7 @@ final class ScannedTypehint {
   }
 
   public function getFunctionTypehints(
-  ): ?(vec<(?HHAST\InoutToken, ScannedTypehint)>, ?ScannedTypehint) {
+  ): ?(vec<(?HHAST\InoutToken, ScannedTypehint)>, ScannedTypehint) {
     return $this->functionTypehints;
   }
 
@@ -110,7 +110,7 @@ final class ScannedTypehint {
 
   private static function getFunctionTypeText(
     vec<(?HHAST\InoutToken, ScannedTypehint)> $parameter_types,
-    ?ScannedTypehint $return_type,
+    ScannedTypehint $return_type,
   ): string {
     return Str\format(
       '(function(%s)%s)',
