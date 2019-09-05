@@ -18,7 +18,4 @@ type ConsumerContext = shape(
   'scopeType' => ScopeType,
   'ast' => HHAST\Script,
   'namespace' => ?string,
-  'usedTypes' => dict<string, string>,
-  'usedNamespaces' => dict<string, string>,
-  'genericTypeNames' => keyset<string>,
 );

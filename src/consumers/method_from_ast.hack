@@ -10,7 +10,7 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{C, Keyset};
+use namespace HH\Lib\C;
 
 function method_from_ast(
   ConsumerContext $context,
@@ -25,10 +25,6 @@ function method_from_ast(
   ) ==> !C\is_empty($modifiers->getChildrenOfType($m));
 
   $generics = generics_from_ast($context, $header->getTypeParameterList());
-  $context['genericTypeNames'] = Keyset\union(
-    $context['genericTypeNames'],
-    Keyset\map($generics, $g ==> $g->getName()),
-  );
 
   return new ScannedMethod(
     $node,

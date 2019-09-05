@@ -22,16 +22,25 @@ function typehint_from_ast(
 
   // Special cases
   if ($node is HHAST\XHPClassNameToken) {
-    $name = used_name_in_context($context, mangle_xhp_name_token($node));
+    $name = HHAST\resolve_type(
+      mangle_xhp_name_token($node),
+      $context['ast'],
+      $node,
+    )['name'];
+    return new ScannedTypehint($node, $name, vec[], false, null, null);
+  }
+  if ($node is HHAST\NameToken || $node is HHAST\QualifiedName) {
+    $name = HHAST\resolve_type(
+      name_from_ast($node),
+      $context['ast'],
+      $node,
+    )['name'];
     return new ScannedTypehint($node, $name, vec[], false, null, null);
   }
   if ($node is HHAST\Token) {
-    $name = used_name_in_context($context, name_from_ast($node));
+    // Any other tokens (string, void, etc.) don't need to be resolved.
+    $name = name_from_ast($node);
     return new ScannedTypehint($node, $name, vec[], false, null, null);
-  }
-  if ($node is HHAST\QualifiedName) {
-    $str = used_name_in_context($context, name_from_ast($node));
-    return new ScannedTypehint($node, $str, vec[], false, null, null);
   }
 
   // This list is taken from the docblock of

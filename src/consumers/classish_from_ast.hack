@@ -10,7 +10,7 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{C, Keyset, Vec};
+use namespace HH\Lib\{C, Vec};
 
 function classish_from_ast<T as ScannedClassish>(
   ConsumerContext $context,
@@ -53,10 +53,6 @@ function classish_from_ast<T as ScannedClassish>(
   ) ==> !C\is_empty($modifiers->getChildrenOfType($m));
 
   $generics = generics_from_ast($context, $node->getTypeParameters());
-  $context['genericTypeNames'] = Keyset\union(
-    $context['genericTypeNames'],
-    Keyset\map($generics, $g ==> $g->getName()),
-  );
 
   $extends = $node->getExtendsList();
   $parent = null;

@@ -30,16 +30,6 @@ function scope_from_ast_and_ns(
   }
   $ast = new HHAST\NodeList<HHAST\Node>($items);
 
-  $context = $context
-    |> context_with_use_declarations(
-      $$,
-      $ast->getChildrenOfType(HHAST\NamespaceUseDeclaration::class),
-    )
-    |> context_with_group_use_declarations(
-      $$,
-      $ast->getChildrenOfType(HHAST\NamespaceGroupUseDeclaration::class),
-    );
-
   $classish = $ast->getChildrenOfType(HHAST\ClassishDeclaration::class);
   return new ScannedScope(
     $ast,
