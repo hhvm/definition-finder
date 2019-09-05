@@ -10,7 +10,7 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{C, Vec};
+use namespace HH\Lib\Vec;
 
 function typehint_from_ast(
   ConsumerContext $context,
@@ -23,15 +23,15 @@ function typehint_from_ast(
   // Special cases
   if ($node is HHAST\XHPClassNameToken) {
     $name = used_name_in_context($context, mangle_xhp_name_token($node));
-    return new ScannedTypehint($node, $name, $name, vec[], false, null);
+    return new ScannedTypehint($node, $name, vec[], false, null, null);
   }
   if ($node is HHAST\Token) {
     $name = used_name_in_context($context, name_from_ast($node));
-    return new ScannedTypehint($node, $name, $name, vec[], false, null);
+    return new ScannedTypehint($node, $name, vec[], false, null, null);
   }
   if ($node is HHAST\QualifiedName) {
     $str = used_name_in_context($context, name_from_ast($node));
-    return new ScannedTypehint($node, $str, $str, vec[], false, null);
+    return new ScannedTypehint($node, $str, vec[], false, null, null);
   }
 
   // This list is taken from the docblock of
@@ -41,42 +41,42 @@ function typehint_from_ast(
     return new ScannedTypehint(
       $node,
       'classname',
-      'classname',
       typehints_from_ast_va($context, $node->getType()),
       /* nullable = */ false,
       /* shape fields = */ null,
+      /* function typehints = */ null,
     );
   }
   if ($node is HHAST\ClosureTypeSpecifier) {
-    $normalized = ast_without_trivia($node);
-    // Remove trailing comma
-    $parameters = $normalized->getParameterList();
-    if ($parameters !== null) {
-      $parameters = $parameters->getChildren();
-      $key = C\last_keyx($parameters);
-      $item = $parameters[$key];
-      invariant($item is HHAST\ListItem<_>, "List with non-item children");
-      $parameters[$key] = $item->withSeparator(null);
-      $normalized = $normalized->withParameterList(
-        new HHAST\NodeList(vec($parameters)),
-      );
-    }
     return new ScannedTypehint(
       $node,
       'callable',
-      $normalized->getCode(),
       vec[],
       false,
       null,
+      tuple(
+        // parameters
+        Vec\map(
+          $node->getParameterList()?->getChildrenOfItems() ?? vec[],
+          $item ==> $item is HHAST\ClosureParameterTypeSpecifier
+            ? tuple(
+                $item->getCallConvention(),
+                typehint_from_ast($context, $item->getType()) as nonnull,
+              )
+            : tuple(null, typehint_from_ast($context, $item) as nonnull),
+        ),
+        // return type
+        typehint_from_ast($context, $node->getReturnType()),
+      ),
     );
   }
   if ($node is HHAST\DarrayTypeSpecifier) {
     return new ScannedTypehint(
       $node,
       'darray',
-      'darray',
       typehints_from_ast_va($context, $node->getKey(), $node->getValue()),
       false,
+      null,
       null,
     );
   }
@@ -84,9 +84,9 @@ function typehint_from_ast(
     return new ScannedTypehint(
       $node,
       'dict',
-      'dict',
       typehints_from_ast($context, $node->getMembers()),
       false,
+      null,
       null,
     );
   }
@@ -94,9 +94,9 @@ function typehint_from_ast(
     return new ScannedTypehint(
       $node,
       $node->getClassType()->getCode(),
-      $node->getClassType()->getCode(),
       typehints_from_ast($context, $node->getArgumentList()->getTypes()),
       false,
+      null,
       null,
     );
   }
@@ -104,10 +104,10 @@ function typehint_from_ast(
     return new ScannedTypehint(
       $node,
       'keyset',
-      'keyset',
       // https://github.com/hhvm/hhast/issues/95
       typehints_from_ast_va($context, $node->getTypeUNTYPED()),
       false,
+      null,
       null,
     );
   }
@@ -115,9 +115,9 @@ function typehint_from_ast(
     return new ScannedTypehint(
       $node,
       'array',
-      'array',
       typehints_from_ast_va($context, $node->getKey(), $node->getValue()),
       false,
+      null,
       null,
     );
   }
@@ -127,23 +127,23 @@ function typehint_from_ast(
     return new ScannedTypehint(
       $node,
       $inner->getTypeName(),
-      $inner->getTypeTextBase(),
       $inner->getGenericTypes(),
       /* nullable = */ true,
-      /* shape fields = */ null,
+      $inner->isShape() ? $inner->getShapeFields() : null,
+      $inner->getFunctionTypehints(),
     );
   }
   if ($node is HHAST\ShapeTypeSpecifier) {
     return new ScannedTypehint(
       $node,
       'shape',
-      ast_without_trivia($node)->getCode(),
       vec[],
       false,
       Vec\map(
         $node->getFields()?->getChildrenOfItems() ?? vec[],
         $field ==> shape_field_from_ast($context, $field),
       ),
+      null,
     );
   }
   if ($node is HHAST\SimpleTypeSpecifier) {
@@ -157,9 +157,9 @@ function typehint_from_ast(
     return new ScannedTypehint(
       $node,
       'tuple',
-      'tuple',
       typehints_from_ast($context, $node->getTypes()),
       false,
+      null,
       null,
     );
   }
@@ -167,15 +167,15 @@ function typehint_from_ast(
     $left = nullthrows(typehint_from_ast($context, $node->getLeftType()))
       ->getTypeText();
     $str = $left.'::'.$node->getRightType()->getText();
-    return new ScannedTypehint($node, $str, $str, vec[], false, null);
+    return new ScannedTypehint($node, $str, vec[], false, null, null);
   }
   if ($node is HHAST\VarrayTypeSpecifier) {
     return new ScannedTypehint(
       $node,
       'varray',
-      'varray',
       typehints_from_ast_va($context, $node->getType()),
       false,
+      null,
       null,
     );
   }
@@ -183,9 +183,9 @@ function typehint_from_ast(
     return new ScannedTypehint(
       $node,
       'array',
-      'array',
       typehints_from_ast_va($context, $node->getType()),
       false,
+      null,
       null,
     );
   }
@@ -193,9 +193,9 @@ function typehint_from_ast(
     return new ScannedTypehint(
       $node,
       'vec',
-      'vec',
       typehints_from_ast_va($context, $node->getType()),
       false,
+      null,
       null,
     );
   }

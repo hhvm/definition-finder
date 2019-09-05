@@ -22,7 +22,25 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
       tuple('(string, string,)', 'tuple', '(string,string)'),
       tuple('(function(): void)', 'callable', '(function():void)'),
       tuple('(function(string,): int)', 'callable', '(function(string):int)'),
-      tuple('(function(a,b): int)', 'callable', '(function(a,b):int)'),
+      tuple(
+        '(function(a,b): int)',
+        'callable',
+        '(function(MyNamespace\\a,MyNamespace\\b):int)',
+      ),
+
+      // Shape with a namespaced field
+      tuple(
+        'shape("foo" => string, "bar" => Baz)',
+        'shape',
+        'shape("foo"=>string,"bar"=>MyNamespace\\Baz)',
+      ),
+
+      // Function with an inout param
+      tuple(
+        '(function(inout Foo): Bar)',
+        'callable',
+        '(function(inout MyNamespace\\Foo):MyNamespace\\Bar)',
+      ),
 
       // Autoimports
       tuple('void', 'void', 'void'),
@@ -50,7 +68,11 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
       tuple('?(string, string)', 'tuple', '?(string,string)'),
       tuple('?(function(): void)', 'callable', '?(function():void)'),
       tuple('?(function(string,): int)', 'callable', '?(function(string):int)'),
-      tuple('?(function(a,b): int)', 'callable', '?(function(a,b):int)'),
+      tuple(
+        '?(function(a,b): int)',
+        'callable',
+        '?(function(MyNamespace\\a,MyNamespace\\b):int)',
+      ),
     ];
   }
 
