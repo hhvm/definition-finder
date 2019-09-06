@@ -10,17 +10,18 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\{C, Str, Vec};
+use namespace HH\Lib\{Str, Vec};
 
 /** Represents a parameter, property, constant, or return type hint */
 final class ScannedTypehint {
   public function __construct(
     private HHAST\Node $ast,
     private string $typeName,
-    private string $typeTextBase,
     private vec<ScannedTypehint> $generics,
     private bool $nullable,
     private ?vec<ScannedShapeField> $shapeFields,
+    private ?(vec<(?HHAST\InoutToken, ScannedTypehint)>, ScannedTypehint)
+      $functionTypehints,
   ) {
   }
 
@@ -44,51 +45,38 @@ final class ScannedTypehint {
     return $this->generics;
   }
 
-  /** Implementation detail.
-   *
-   * The value here is undefined, but required to manually create/merge
-   * instances of ScannedTypehint.
-   *
-   * Example usage:
-   *
-   * ```
-   * function merge_typehints(
-   *   ScannedTypehint $a,
-   *   ScannedTypehint $b,
-   * ): ScannedTypehint {
-   *   if (Str\starts_with($a, "HH\")) {
-   *     $name = $a->getTypeName();
-   *     $base = $a->getTypeTextBase();
-   *   } else {
-   *     $name = $b->getTypeName();
-   *     $base = $b->getTypeTextBase();
-   *   }
-   *   return new ScannedTypehint(
-   *     $name,
-   *     $base,
-   *     merge_generics($a, $b),
-   *     $a->isNullable() || $b->isNullable(),
-   *   );
-   * }
-   * ```
-   */
-  public function getTypeTextBase(): string {
-    return $this->typeTextBase;
+  public function isShape(): bool {
+    return $this->shapeFields !== null;
+  }
+
+  public function getShapeFields(): vec<ScannedShapeField> {
+    $fields = $this->shapeFields;
+    invariant($fields !== null, "Called getShapeFields, but not a shape");
+    return $fields;
+  }
+
+  public function getFunctionTypehints(
+  ): ?(vec<(?HHAST\InoutToken, ScannedTypehint)>, ScannedTypehint) {
+    return $this->functionTypehints;
   }
 
   public function getTypeText(): string {
     $base = $this->isNullable() ? '?' : '';
-    $base .= $this->typeTextBase;
 
-    if (\strpbrk($base, '<>')) {
-      invariant(
-        C\is_empty($this->getGenericTypes()),
-        'Typename "%s" contains <> and has generics',
-        $base,
-      );
-      // Invalid in most cases, but valid for eg `(function():vec<string>)`
-      return $base;
+    if ($this->shapeFields is nonnull) {
+      return $base.self::getShapeTypeText($this->shapeFields);
+    } else if ($this->functionTypehints is nonnull) {
+      return $base.self::getFunctionTypeText(...$this->functionTypehints);
     }
+
+    $base .= $this->typeName;
+
+    invariant(
+      \strpbrk($base, '<>') === false,
+      'Typename "%s" contains <>, which should have been parsed and removed.',
+      $base,
+    );
+
     $generics = $this->getGenericTypes();
     if ($generics) {
       $sub = $generics
@@ -105,13 +93,37 @@ final class ScannedTypehint {
     return $base;
   }
 
-  public function isShape(): bool {
-    return $this->shapeFields !== null;
+  private static function getShapeTypeText(
+    vec<ScannedShapeField> $fields,
+  ): string {
+    return Vec\map(
+      $fields,
+      $field ==> Str\format(
+        '%s=>%s',
+        $field->getName()->getAST() |> ast_without_trivia($$)->getCode(),
+        $field->getValueType()->getTypeText(),
+      ),
+    )
+      |> Str\join($$, ',')
+      |> 'shape('.$$.')';
   }
 
-  public function getShapeFields(): vec<ScannedShapeField> {
-    $fields = $this->shapeFields;
-    invariant($fields !== null, "Called getShapeFields, but not a shape");
-    return $fields;
+  private static function getFunctionTypeText(
+    vec<(?HHAST\InoutToken, ScannedTypehint)> $parameter_types,
+    ScannedTypehint $return_type,
+  ): string {
+    return Str\format(
+      '(function(%s)%s)',
+      Vec\map(
+        $parameter_types,
+        $inout_and_type ==> {
+          list($inout, $type) = $inout_and_type;
+          return ($inout is nonnull ? $inout->getText().' ' : '').
+            $type->getTypeText();
+        },
+      )
+        |> Str\join($$, ','),
+      $return_type is nonnull ? ':'.$return_type->getTypeText() : '',
+    );
   }
 }
