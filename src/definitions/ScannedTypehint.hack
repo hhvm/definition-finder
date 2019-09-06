@@ -65,27 +65,71 @@ final class ScannedTypehint {
     return $this->functionTypehints;
   }
 
-  public function getTypeText(): string {
+  public function getTypeText(
+    string $relative_to_namespace = '',
+    bool $strip_autoimported_namespace = false,
+  ): string {
     $base = $this->isNullable() ? '?' : '';
 
     if ($this->shapeFields is nonnull) {
-      return $base.self::getShapeTypeText($this->shapeFields);
+      return $base.
+        self::getShapeTypeText(
+          $relative_to_namespace,
+          $strip_autoimported_namespace,
+          $this->shapeFields,
+        );
     } else if ($this->functionTypehints is nonnull) {
-      return $base.self::getFunctionTypeText(...$this->functionTypehints);
+      return $base.
+        self::getFunctionTypeText(
+          $relative_to_namespace,
+          $strip_autoimported_namespace,
+          ...$this->functionTypehints
+        );
     }
 
-    $base .= $this->typeName;
+    $type_name = $this->typeName;
 
     invariant(
-      \strpbrk($base, '<>') === false,
+      \strpbrk($type_name, '<>') === false,
       'Typename "%s" contains <>, which should have been parsed and removed.',
-      $base,
+      $type_name,
     );
+
+    switch ($this->kind) {
+      case HHAST\ResolvedTypeKind::CALLABLE:
+      case HHAST\ResolvedTypeKind::GENERIC_PARAMETER:
+        break;
+      case HHAST\ResolvedTypeKind::QUALIFIED_AUTOIMPORTED_TYPE:
+        if ($strip_autoimported_namespace) {
+          $type_name = Str\strip_prefix($type_name, 'HH\\');
+        }
+        break;
+      case HHAST\ResolvedTypeKind::QUALIFIED_TYPE:
+        if ($relative_to_namespace !== '') {
+          if (Str\starts_with($type_name, $relative_to_namespace.'\\')) {
+            $type_name = Str\strip_prefix(
+              $type_name,
+              $relative_to_namespace.'\\',
+            );
+          } else {
+            $type_name = '\\'.$type_name;
+          }
+        }
+        break;
+    }
+
+    $base .= $type_name;
 
     $generics = $this->getGenericTypes();
     if ($generics) {
       $sub = $generics
-        |> Vec\map($$, $g ==> $g->getTypeText())
+        |> Vec\map(
+          $$,
+          $g ==> $g->getTypeText(
+            $relative_to_namespace,
+            $strip_autoimported_namespace,
+          ),
+        )
         |> Str\join($$, ',');
       if ($base === 'tuple') {
         return '('.$sub.')';
@@ -99,6 +143,8 @@ final class ScannedTypehint {
   }
 
   private static function getShapeTypeText(
+    string $relative_to_namespace,
+    bool $strip_autoimported_namespace,
     vec<ScannedShapeField> $fields,
   ): string {
     return Vec\map(
@@ -106,7 +152,8 @@ final class ScannedTypehint {
       $field ==> Str\format(
         '%s=>%s',
         $field->getName()->getAST() |> ast_without_trivia($$)->getCode(),
-        $field->getValueType()->getTypeText(),
+        $field->getValueType()
+          ->getTypeText($relative_to_namespace, $strip_autoimported_namespace),
       ),
     )
       |> Str\join($$, ',')
@@ -114,6 +161,8 @@ final class ScannedTypehint {
   }
 
   private static function getFunctionTypeText(
+    string $relative_to_namespace,
+    bool $strip_autoimported_namespace,
     vec<(?HHAST\InoutToken, ScannedTypehint)> $parameter_types,
     ScannedTypehint $return_type,
   ): string {
@@ -124,11 +173,17 @@ final class ScannedTypehint {
         $inout_and_type ==> {
           list($inout, $type) = $inout_and_type;
           return ($inout is nonnull ? $inout->getText().' ' : '').
-            $type->getTypeText();
+            $type->getTypeText(
+              $relative_to_namespace,
+              $strip_autoimported_namespace,
+            );
         },
       )
         |> Str\join($$, ','),
-      $return_type is nonnull ? ':'.$return_type->getTypeText() : '',
+      ':'.$return_type->getTypeText(
+        $relative_to_namespace,
+        $strip_autoimported_namespace,
+      ),
     );
   }
 }

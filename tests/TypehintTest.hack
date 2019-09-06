@@ -128,4 +128,45 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
     expect($type?->getTypeName())->toBeSame($name, 'type name differs');
     expect($type?->getTypeText())->toBeSame($text, 'type text differs');
   }
+
+  public function provideRelativeToNamespaceExamples(
+  ): vec<(string, string, bool, string)> {
+    return vec[
+      tuple('Vector<int>', '', false, 'HH\\Vector<int>'),
+      tuple('Vector<int>', '', true, 'Vector<int>'),
+      tuple('Vector<int>', 'Foo', true, 'Vector<int>'),
+      tuple('callable', 'Foo', false, 'callable'),
+      tuple('Herp\\Derp', '', true, 'Foo\\Bar\\Herp\\Derp'),
+      tuple('Herp\\Derp', 'Foo', true, 'Bar\\Herp\\Derp'),
+      tuple('Herp\\Derp', 'Foo\\Bar', true, 'Herp\\Derp'),
+      tuple('Herp\\Derp', 'Foo\\Bar\\Herp', true, 'Derp'),
+      tuple('\\Herp\\Derp', '', true, 'Herp\\Derp'),
+      tuple('\\Herp\\Derp', 'Foo', true, '\\Herp\\Derp'),
+      tuple('\\Herp\\Derp', 'Herp', true, 'Derp'),
+    ];
+  }
+
+  <<DataProvider('provideRelativeToNamespaceExamples')>>
+  public async function testRelativeToNamespace(
+    string $type,
+    string $relative_to_namespace,
+    bool $strip_autoimported_namespace,
+    string $expected,
+  ): Awaitable<void> {
+    // Provided typehint is nested inside a function inside a shape inside a
+    // generic type, to verify that all rules are correctly applied recursively.
+    $prefix = 'vec<shape(\'field\'=>(function():';
+    $suffix = '))>';
+    $code = '
+      namespace Foo\\Bar;
+      function main('.$prefix.$type.$suffix.' $_): void {}
+    ';
+    $def = (await FileParser::fromDataAsync($code))
+      ->getFunction('Foo\\Bar\\main');
+    $type = $def->getParameters()[0]->getTypehint();
+    expect($type?->getTypeText(
+      $relative_to_namespace,
+      $strip_autoimported_namespace,
+    ))->toBeSame($prefix.$expected.$suffix);
+  }
 }
