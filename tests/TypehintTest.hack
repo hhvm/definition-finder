@@ -45,7 +45,7 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
       // Autoimports
       tuple('void', 'void', 'void'),
       tuple('dict<int, string>', 'dict', 'dict<int,string>'),
-      tuple('Vector<string>', 'Vector', 'Vector<string>'),
+      tuple('Vector<string>', 'HH\\Vector', 'HH\\Vector<string>'),
       tuple('callable', 'callable', 'callable'),
 
       // Special

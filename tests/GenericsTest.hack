@@ -150,6 +150,6 @@ class GenericsTest extends \Facebook\HackTest\HackTest {
       $function->getParameters(),
       $param ==> $param->getTypehint()?->getTypeText(),
     );
-    expect($param_types)->toBeSame(vec['ImmMap<string,string>']);
+    expect($param_types)->toBeSame(vec['HH\\ImmMap<string,string>']);
   }
 }

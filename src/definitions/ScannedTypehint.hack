@@ -16,6 +16,7 @@ use namespace HH\Lib\{Str, Vec};
 final class ScannedTypehint {
   public function __construct(
     private HHAST\Node $ast,
+    private ?HHAST\ResolvedTypeKind $kind,
     private string $typeName,
     private vec<ScannedTypehint> $generics,
     private bool $nullable,
@@ -27,6 +28,10 @@ final class ScannedTypehint {
 
   public function getAST(): HHAST\Node {
     return $this->ast;
+  }
+
+  public function getKind(): ?HHAST\ResolvedTypeKind {
+    return $this->kind;
   }
 
   public function getTypeName(): string {
