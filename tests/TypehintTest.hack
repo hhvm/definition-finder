@@ -17,34 +17,34 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
   public function provideTypesInNamespace(): array<(string, string, string)> {
     return [
       // Unusual syntax
-      tuple('shape("foo" => string)', 'shape', 'shape("foo"=>string)'),
-      tuple('(string, string)', 'tuple', '(string,string)'),
-      tuple('(string, string,)', 'tuple', '(string,string)'),
-      tuple('(function(): void)', 'callable', '(function():void)'),
-      tuple('(function(string,): int)', 'callable', '(function(string):int)'),
+      tuple('shape("foo" => string)', 'shape', 'shape("foo" => string)'),
+      tuple('(string, string)', 'tuple', '(string, string)'),
+      tuple('(string, string,)', 'tuple', '(string, string)'),
+      tuple('(function(): void)', 'callable', '(function(): void)'),
+      tuple('(function(string,): int)', 'callable', '(function(string): int)'),
       tuple(
         '(function(a,b): int)',
         'callable',
-        '(function(MyNamespace\\a,MyNamespace\\b):int)',
+        '(function(MyNamespace\\a, MyNamespace\\b): int)',
       ),
 
       // Shape with a namespaced field
       tuple(
         'shape("foo" => string, "bar" => Baz)',
         'shape',
-        'shape("foo"=>string,"bar"=>MyNamespace\\Baz)',
+        'shape("foo" => string, "bar" => MyNamespace\\Baz)',
       ),
 
       // Function with an inout param
       tuple(
         '(function(inout Foo): Bar)',
         'callable',
-        '(function(inout MyNamespace\\Foo):MyNamespace\\Bar)',
+        '(function(inout MyNamespace\\Foo): MyNamespace\\Bar)',
       ),
 
       // Autoimports
       tuple('void', 'void', 'void'),
-      tuple('dict<int, string>', 'dict', 'dict<int,string>'),
+      tuple('dict<int, string>', 'dict', 'dict<int, string>'),
       tuple('Vector<string>', 'HH\\Vector', 'HH\\Vector<string>'),
       tuple('Vector<string>', Vector::class, Vector::class.'<string>'),
       tuple('callable', 'callable', 'callable'),
@@ -64,15 +64,19 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
 
       // Nullables
       tuple('?Foo', 'MyNamespace\\Foo', '?MyNamespace\\Foo'),
-      tuple('?dict<int, string>', 'dict', '?dict<int,string>'),
-      tuple('?shape("foo" => string)', 'shape', '?shape("foo"=>string)'),
-      tuple('?(string, string)', 'tuple', '?(string,string)'),
-      tuple('?(function(): void)', 'callable', '?(function():void)'),
-      tuple('?(function(string,): int)', 'callable', '?(function(string):int)'),
+      tuple('?dict<int, string>', 'dict', '?dict<int, string>'),
+      tuple('?shape("foo" => string)', 'shape', '?shape("foo" => string)'),
+      tuple('?(string, string)', 'tuple', '?(string, string)'),
+      tuple('?(function(): void)', 'callable', '?(function(): void)'),
+      tuple(
+        '?(function(string,): int)',
+        'callable',
+        '?(function(string): int)',
+      ),
       tuple(
         '?(function(a,b): int)',
         'callable',
-        '?(function(MyNamespace\\a,MyNamespace\\b):int)',
+        '?(function(MyNamespace\\a, MyNamespace\\b): int)',
       ),
     ];
   }
@@ -100,17 +104,27 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
     return [
       tuple('Foo', false, 'Foo', 'Foo'),
       tuple('?Foo', true, 'Foo', '?Foo'),
-      tuple('(function():?string)', false, 'callable', '(function():?string)'),
-      tuple('?(function():?string)', true, 'callable', '?(function():?string)'),
-      tuple('shape("foo" => ?string)', false, 'shape', 'shape("foo"=>?string)'),
+      tuple('(function():?string)', false, 'callable', '(function(): ?string)'),
+      tuple(
+        '?(function():?string)',
+        true,
+        'callable',
+        '?(function(): ?string)',
+      ),
+      tuple(
+        'shape("foo" => ?string)',
+        false,
+        'shape',
+        'shape("foo" => ?string)',
+      ),
       tuple(
         '?shape("foo" => ?string)',
         true,
         'shape',
-        '?shape("foo"=>?string)',
+        '?shape("foo" => ?string)',
       ),
-      tuple('(?string, string)', false, 'tuple', '(?string,string)'),
-      tuple('?(?string, string)', true, 'tuple', '?(?string,string)'),
+      tuple('(?string, string)', false, 'tuple', '(?string, string)'),
+      tuple('?(?string, string)', true, 'tuple', '?(?string, string)'),
     ];
   }
 
@@ -202,7 +216,7 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
   ): Awaitable<void> {
     // Provided typehint is nested inside a function inside a shape inside a
     // generic type, to verify that all rules are correctly applied recursively.
-    $prefix = 'vec<shape(\'field\'=>(function():';
+    $prefix = 'vec<shape(\'field\' => (function(): ';
     $suffix = '))>';
     $code = '
       namespace Foo\\Bar;

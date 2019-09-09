@@ -45,7 +45,7 @@ EOF
     $rt = $p->getFunction('foo')->getReturnType();
 
     expect($rt?->getTypeName())->toBeSame('callable');
-    expect($rt?->getTypeText())->toBeSame('(function():void)');
+    expect($rt?->getTypeText())->toBeSame('(function(): void)');
   }
 
   public async function testReturnsGenericCallable(): Awaitable<void> {
@@ -55,7 +55,7 @@ EOF
 
     $rt = $p->getFunction('foo')->getReturnType();
     expect($rt?->getTypeName())->toBeSame('callable');
-    expect($rt?->getTypeText())->toBeSame('(function():vec<string>)');
+    expect($rt?->getTypeText())->toBeSame('(function(): vec<string>)');
   }
 
   public async function testAsParameterType(): Awaitable<void> {

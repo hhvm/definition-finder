@@ -55,7 +55,7 @@ class RelationshipsTest extends \Facebook\HackTest\HackTest {
     expect($def->getInterfaceNames())->toBeSame(vec['HH\\KeyedIterable']);
     expect($def->getInterfaceNames())->toBeSame(vec[KeyedIterable::class]);
     expect(Vec\map($def->getInterfaceInfo(), $x ==> $x->getTypeText()))
-      ->toBeSame(vec['HH\\KeyedIterable<Tk,Tv>']);
+      ->toBeSame(vec['HH\\KeyedIterable<Tk, Tv>']);
   }
 
   public async function testClassImplementsNestedGenerics(): Awaitable<void> {

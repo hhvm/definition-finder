@@ -131,7 +131,7 @@ final class ScannedTypehint {
     if ($generics) {
       $sub = $generics
         |> Vec\map($$, $g ==> $g->getTypeText($relative_to_namespace, $options))
-        |> Str\join($$, ',');
+        |> Str\join($$, ', ');
       if ($base === 'tuple') {
         return '('.$sub.')';
       } else if ($base === '?tuple') {
@@ -151,12 +151,12 @@ final class ScannedTypehint {
     return Vec\map(
       $fields,
       $field ==> Str\format(
-        '%s=>%s',
+        '%s => %s',
         $field->getName()->getAST() |> ast_without_trivia($$)->getCode(),
         $field->getValueType()->getTypeText($relative_to_namespace, $options),
       ),
     )
-      |> Str\join($$, ',')
+      |> Str\join($$, ', ')
       |> 'shape('.$$.')';
   }
 
@@ -176,8 +176,8 @@ final class ScannedTypehint {
             $type->getTypeText($relative_to_namespace, $options);
         },
       )
-        |> Str\join($$, ','),
-      ':'.$return_type->getTypeText($relative_to_namespace, $options),
+        |> Str\join($$, ', '),
+      ': '.$return_type->getTypeText($relative_to_namespace, $options),
     );
   }
 }

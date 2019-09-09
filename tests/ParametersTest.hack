@@ -282,7 +282,7 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     $type = $parser->getFunction('foo')->getParameters()[0]->getTypehint();
 
     expect($type?->getTypeName())->toBeSame('callable');
-    expect($type?->getTypeText())->toBeSame('(function(int):string)');
+    expect($type?->getTypeText())->toBeSame('(function(int): string)');
   }
 
   public async function testEmptyShapeTypehint(): Awaitable<void> {
