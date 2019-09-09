@@ -46,6 +46,7 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
       tuple('void', 'void', 'void'),
       tuple('dict<int, string>', 'dict', 'dict<int,string>'),
       tuple('Vector<string>', 'HH\\Vector', 'HH\\Vector<string>'),
+      tuple('Vector<string>', Vector::class, Vector::class.'<string>'),
       tuple('callable', 'callable', 'callable'),
 
       // Special
@@ -133,6 +134,7 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
   ): vec<(string, string, int, string)> {
     return vec[
       tuple('Vector<int>', '', 0, 'HH\\Vector<int>'),
+      tuple('Vector<int>', '', 0, Vector::class.'<int>'),
       tuple(
         'Vector<int>',
         '',
