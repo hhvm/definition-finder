@@ -9,28 +9,28 @@
 
 namespace Facebook\DefinitionFinder;
 
-use namespace Facebook\HHAST;
 use namespace HH\Lib\{Str, Vec};
+use type Facebook\HHAST\{InoutToken, Node, ResolvedTypeKind};
 
 /** Represents a parameter, property, constant, or return type hint */
 final class ScannedTypehint {
   public function __construct(
-    private HHAST\Node $ast,
-    private ?HHAST\ResolvedTypeKind $kind,
+    private Node $ast,
+    private ?ResolvedTypeKind $kind,
     private string $typeName,
     private vec<ScannedTypehint> $generics,
     private bool $nullable,
     private ?vec<ScannedShapeField> $shapeFields,
-    private ?(vec<(?HHAST\InoutToken, ScannedTypehint)>, ScannedTypehint)
+    private ?(vec<(?InoutToken, ScannedTypehint)>, ScannedTypehint)
       $functionTypehints,
   ) {
   }
 
-  public function getAST(): HHAST\Node {
+  public function getAST(): Node {
     return $this->ast;
   }
 
-  public function getKind(): ?HHAST\ResolvedTypeKind {
+  public function getKind(): ?ResolvedTypeKind {
     return $this->kind;
   }
 
@@ -61,7 +61,7 @@ final class ScannedTypehint {
   }
 
   public function getFunctionTypehints(
-  ): ?(vec<(?HHAST\InoutToken, ScannedTypehint)>, ScannedTypehint) {
+  ): ?(vec<(?InoutToken, ScannedTypehint)>, ScannedTypehint) {
     return $this->functionTypehints;
   }
 
@@ -103,15 +103,15 @@ final class ScannedTypehint {
     );
 
     switch ($this->kind) {
-      case HHAST\ResolvedTypeKind::CALLABLE:
-      case HHAST\ResolvedTypeKind::GENERIC_PARAMETER:
+      case ResolvedTypeKind::CALLABLE:
+      case ResolvedTypeKind::GENERIC_PARAMETER:
         break;
-      case HHAST\ResolvedTypeKind::QUALIFIED_AUTOIMPORTED_TYPE:
+      case ResolvedTypeKind::QUALIFIED_AUTOIMPORTED_TYPE:
         if ($options & TypeTextOptions::STRIP_AUTOIMPORTED_NAMESPACE) {
           $type_name = Str\strip_prefix($type_name, 'HH\\');
         }
         break;
-      case HHAST\ResolvedTypeKind::QUALIFIED_TYPE:
+      case ResolvedTypeKind::QUALIFIED_TYPE:
         if ($relative_to_namespace !== '') {
           if (Str\starts_with($type_name, $relative_to_namespace.'\\')) {
             $type_name = Str\strip_prefix(
@@ -163,7 +163,7 @@ final class ScannedTypehint {
   private static function getFunctionTypeText(
     string $relative_to_namespace,
     int $options,
-    vec<(?HHAST\InoutToken, ScannedTypehint)> $parameter_types,
+    vec<(?InoutToken, ScannedTypehint)> $parameter_types,
     ScannedTypehint $return_type,
   ): string {
     return Str\format(
