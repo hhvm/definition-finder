@@ -52,15 +52,15 @@ class RelationshipsTest extends \Facebook\HackTest\HackTest {
   public async function testClassImplementsGenerics(): Awaitable<void> {
     $data = '<?hh class Foo implements KeyedIterable<Tk,Tv> {}';
     $def = (await FileParser::fromDataAsync($data))->getClass('Foo');
-    expect($def->getInterfaceNames())->toBeSame(vec['KeyedIterable']);
+    expect($def->getInterfaceNames())->toBeSame(vec['HH\\KeyedIterable']);
     expect(Vec\map($def->getInterfaceInfo(), $x ==> $x->getTypeText()))
-      ->toBeSame(vec['KeyedIterable<Tk,Tv>']);
+      ->toBeSame(vec['HH\\KeyedIterable<Tk,Tv>']);
   }
 
   public async function testClassImplementsNestedGenerics(): Awaitable<void> {
     $data = '<?hh class VectorIterable<Tv> implements Iterable<vec<Tv>> {}';
     $def = (await FileParser::fromDataAsync($data))->getClass('VectorIterable');
-    expect($def->getInterfaceNames())->toBeSame(vec['Iterable']);
+    expect($def->getInterfaceNames())->toBeSame(vec['HH\\Iterable']);
     expect(
       Vec\map(
         $def->getInterfaceInfo(),
@@ -68,7 +68,7 @@ class RelationshipsTest extends \Facebook\HackTest\HackTest {
       ),
     )->toBeSame(vec[vec['vec']]);
     expect(Vec\map($def->getInterfaceInfo(), $x ==> $x->getTypeText()))
-      ->toBeSame(vec['Iterable<vec<Tv>>']);
+      ->toBeSame(vec['HH\\Iterable<vec<Tv>>']);
   }
 
   public async function testTraitImplements(): Awaitable<void> {

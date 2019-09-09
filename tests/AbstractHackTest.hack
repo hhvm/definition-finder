@@ -190,7 +190,7 @@ abstract class AbstractHackTest extends Facebook\HackTest\HackTest {
     expect($type?->getGenericTypes())->toBeEmpty();
 
     $type = $this->getFunction('returns_generic')->getReturnType();
-    expect($type?->getTypeName())->toBeSame('Vector');
+    expect($type?->getTypeName())->toBeSame('HH\\Vector');
     $generics = $type?->getGenericTypes();
     expect(count($generics))->toBeSame(1);
     $sub_type = $generics[0] ?? null;
@@ -198,11 +198,11 @@ abstract class AbstractHackTest extends Facebook\HackTest\HackTest {
     expect($sub_type?->getGenericTypes())->toBeEmpty();
 
     $type = $this->getFunction('returns_nested_generic')->getReturnType();
-    expect($type?->getTypeName())->toBeSame('Vector');
+    expect($type?->getTypeName())->toBeSame('HH\\Vector');
     $generics = $type?->getGenericTypes();
     expect(count($generics))->toBeSame(1);
     $sub_type = $generics[0] ?? null;
-    expect($sub_type?->getTypeName())->toBeSame('Vector');
+    expect($sub_type?->getTypeName())->toBeSame('HH\\Vector');
     $sub_generics = $sub_type?->getGenericTypes();
     expect(count($sub_generics))->toBeSame(1);
     $sub_sub_type = $sub_generics[0] ?? null;
