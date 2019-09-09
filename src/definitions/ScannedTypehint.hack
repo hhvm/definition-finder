@@ -65,9 +65,16 @@ final class ScannedTypehint {
     return $this->functionTypehints;
   }
 
+  /**
+   * Returns the full typehint, including nested generic types/shape fields/etc.
+   * The specified options are applied recursively to all the nested types.
+   *
+   * @param string fully qualified namespace from which the type is referenced
+   * @param int bitwise OR of TypeTextOptions values
+   */
   public function getTypeText(
     string $relative_to_namespace = '',
-    bool $strip_autoimported_namespace = false,
+    int /* TypeTextOptions */ $options = 0,
   ): string {
     $base = $this->isNullable() ? '?' : '';
 
@@ -75,14 +82,14 @@ final class ScannedTypehint {
       return $base.
         self::getShapeTypeText(
           $relative_to_namespace,
-          $strip_autoimported_namespace,
+          $options,
           $this->shapeFields,
         );
     } else if ($this->functionTypehints is nonnull) {
       return $base.
         self::getFunctionTypeText(
           $relative_to_namespace,
-          $strip_autoimported_namespace,
+          $options,
           ...$this->functionTypehints
         );
     }
@@ -100,7 +107,7 @@ final class ScannedTypehint {
       case HHAST\ResolvedTypeKind::GENERIC_PARAMETER:
         break;
       case HHAST\ResolvedTypeKind::QUALIFIED_AUTOIMPORTED_TYPE:
-        if ($strip_autoimported_namespace) {
+        if ($options & TypeTextOptions::STRIP_AUTOIMPORTED_NAMESPACE) {
           $type_name = Str\strip_prefix($type_name, 'HH\\');
         }
         break;
@@ -123,13 +130,7 @@ final class ScannedTypehint {
     $generics = $this->getGenericTypes();
     if ($generics) {
       $sub = $generics
-        |> Vec\map(
-          $$,
-          $g ==> $g->getTypeText(
-            $relative_to_namespace,
-            $strip_autoimported_namespace,
-          ),
-        )
+        |> Vec\map($$, $g ==> $g->getTypeText($relative_to_namespace, $options))
         |> Str\join($$, ',');
       if ($base === 'tuple') {
         return '('.$sub.')';
@@ -144,7 +145,7 @@ final class ScannedTypehint {
 
   private static function getShapeTypeText(
     string $relative_to_namespace,
-    bool $strip_autoimported_namespace,
+    int $options,
     vec<ScannedShapeField> $fields,
   ): string {
     return Vec\map(
@@ -152,8 +153,7 @@ final class ScannedTypehint {
       $field ==> Str\format(
         '%s=>%s',
         $field->getName()->getAST() |> ast_without_trivia($$)->getCode(),
-        $field->getValueType()
-          ->getTypeText($relative_to_namespace, $strip_autoimported_namespace),
+        $field->getValueType()->getTypeText($relative_to_namespace, $options),
       ),
     )
       |> Str\join($$, ',')
@@ -162,7 +162,7 @@ final class ScannedTypehint {
 
   private static function getFunctionTypeText(
     string $relative_to_namespace,
-    bool $strip_autoimported_namespace,
+    int $options,
     vec<(?HHAST\InoutToken, ScannedTypehint)> $parameter_types,
     ScannedTypehint $return_type,
   ): string {
@@ -173,17 +173,11 @@ final class ScannedTypehint {
         $inout_and_type ==> {
           list($inout, $type) = $inout_and_type;
           return ($inout is nonnull ? $inout->getText().' ' : '').
-            $type->getTypeText(
-              $relative_to_namespace,
-              $strip_autoimported_namespace,
-            );
+            $type->getTypeText($relative_to_namespace, $options);
         },
       )
         |> Str\join($$, ','),
-      ':'.$return_type->getTypeText(
-        $relative_to_namespace,
-        $strip_autoimported_namespace,
-      ),
+      ':'.$return_type->getTypeText($relative_to_namespace, $options),
     );
   }
 }
