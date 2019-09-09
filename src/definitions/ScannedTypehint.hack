@@ -10,7 +10,7 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace HH\Lib\{Str, Vec};
-use type Facebook\HHAST\{InoutToken, Node, ResolvedTypeKind};
+use type Facebook\HHAST\{DotDotDotToken, InoutToken, Node, ResolvedTypeKind};
 
 /** Represents a parameter, property, constant, or return type hint */
 final class ScannedTypehint {
@@ -21,8 +21,10 @@ final class ScannedTypehint {
     private vec<ScannedTypehint> $generics,
     private bool $nullable,
     private ?vec<ScannedShapeField> $shapeFields,
-    private ?(vec<(?InoutToken, ScannedTypehint)>, ScannedTypehint)
-      $functionTypehints,
+    private ?(
+      vec<(?InoutToken, ScannedTypehint, ?DotDotDotToken)>,
+      ScannedTypehint,
+    ) $functionTypehints,
   ) {
   }
 
@@ -61,7 +63,7 @@ final class ScannedTypehint {
   }
 
   public function getFunctionTypehints(
-  ): ?(vec<(?InoutToken, ScannedTypehint)>, ScannedTypehint) {
+  ): ?(vec<(?InoutToken, ScannedTypehint, ?DotDotDotToken)>, ScannedTypehint) {
     return $this->functionTypehints;
   }
 
@@ -163,17 +165,18 @@ final class ScannedTypehint {
   private static function getFunctionTypeText(
     string $relative_to_namespace,
     int $options,
-    vec<(?InoutToken, ScannedTypehint)> $parameter_types,
+    vec<(?InoutToken, ScannedTypehint, ?DotDotDotToken)> $parameter_types,
     ScannedTypehint $return_type,
   ): string {
     return Str\format(
       '(function(%s)%s)',
       Vec\map(
         $parameter_types,
-        $inout_and_type ==> {
-          list($inout, $type) = $inout_and_type;
+        $type_info ==> {
+          list($inout, $type, $ellipsis) = $type_info;
           return ($inout is nonnull ? $inout->getText().' ' : '').
-            $type->getTypeText($relative_to_namespace, $options);
+            $type->getTypeText($relative_to_namespace, $options).
+            ($ellipsis is nonnull ? ' '.$ellipsis->getText() : '');
         },
       )
         |> Str\join($$, ', '),

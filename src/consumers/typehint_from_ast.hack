@@ -85,12 +85,23 @@ function typehint_from_ast(
         // parameters
         Vec\map(
           $node->getParameterList()?->getChildrenOfItems() ?? vec[],
-          $item ==> $item is HHAST\ClosureParameterTypeSpecifier
-            ? tuple(
-                $item->getCallConvention(),
-                typehint_from_ast($context, $item->getType()) as nonnull,
-              )
-            : tuple(null, typehint_from_ast($context, $item) as nonnull),
+          $param_type ==> {
+            $inout = null;
+            if ($param_type is HHAST\ClosureParameterTypeSpecifier) {
+              $inout = $param_type->getCallConvention();
+              $param_type = $param_type->getType();
+            }
+            $ellipsis = null;
+            if ($param_type is HHAST\VariadicParameter) {
+              $ellipsis = $param_type->getEllipsis();
+              $param_type = $param_type->getType();
+            }
+            return tuple(
+              $inout,
+              typehint_from_ast($context, $param_type) as nonnull,
+              $ellipsis,
+            );
+          },
         ),
         // return type
         typehint_from_ast($context, $node->getReturnType()) as nonnull,
