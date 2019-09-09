@@ -216,6 +216,7 @@ class NamingTest extends \Facebook\HackTest\HackTest {
     // since HHVM no longer officially supports PHP.
     expect($php_class->getParentClassName())->toBeSame("HH\\Collection");
     expect($hack_class->getParentClassName())->toBeSame('HH\\Collection');
+    expect($hack_class->getParentClassName())->toBeSame(Collection::class);
   }
 
   public async function testScalarParameterInNamespace(): Awaitable<void> {

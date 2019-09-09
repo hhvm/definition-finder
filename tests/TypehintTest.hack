@@ -10,7 +10,7 @@
 namespace Facebook\DefinitionFinder\Tests;
 
 use type Facebook\HackTest\DataProvider;
-use type Facebook\DefinitionFinder\FileParser;
+use type Facebook\DefinitionFinder\{FileParser, TypeTextOptions};
 use function Facebook\FBExpect\expect;
 
 final class TypehintTest extends \Facebook\HackTest\HackTest {
@@ -46,6 +46,7 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
       tuple('void', 'void', 'void'),
       tuple('dict<int, string>', 'dict', 'dict<int,string>'),
       tuple('Vector<string>', 'HH\\Vector', 'HH\\Vector<string>'),
+      tuple('Vector<string>', Vector::class, Vector::class.'<string>'),
       tuple('callable', 'callable', 'callable'),
 
       // Special
@@ -127,5 +128,90 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
     expect($type?->isNullable())->toBeSame($nullable, 'nullability differs');
     expect($type?->getTypeName())->toBeSame($name, 'type name differs');
     expect($type?->getTypeText())->toBeSame($text, 'type text differs');
+  }
+
+  public function provideRelativeToNamespaceExamples(
+  ): vec<(string, string, int, string)> {
+    return vec[
+      tuple('Vector<int>', '', 0, 'HH\\Vector<int>'),
+      tuple('Vector<int>', '', 0, Vector::class.'<int>'),
+      tuple(
+        'Vector<int>',
+        '',
+        TypeTextOptions::STRIP_AUTOIMPORTED_NAMESPACE,
+        'Vector<int>',
+      ),
+      tuple(
+        'Vector<int>',
+        'Foo',
+        TypeTextOptions::STRIP_AUTOIMPORTED_NAMESPACE,
+        'Vector<int>',
+      ),
+      tuple('callable', 'Foo', 0, 'callable'),
+      tuple(
+        'Herp\\Derp',
+        '',
+        TypeTextOptions::STRIP_AUTOIMPORTED_NAMESPACE,
+        'Foo\\Bar\\Herp\\Derp',
+      ),
+      tuple(
+        'Herp\\Derp',
+        'Foo',
+        TypeTextOptions::STRIP_AUTOIMPORTED_NAMESPACE,
+        'Bar\\Herp\\Derp',
+      ),
+      tuple(
+        'Herp\\Derp',
+        'Foo\\Bar',
+        TypeTextOptions::STRIP_AUTOIMPORTED_NAMESPACE,
+        'Herp\\Derp',
+      ),
+      tuple(
+        'Herp\\Derp',
+        'Foo\\Bar\\Herp',
+        TypeTextOptions::STRIP_AUTOIMPORTED_NAMESPACE,
+        'Derp',
+      ),
+      tuple(
+        '\\Herp\\Derp',
+        '',
+        TypeTextOptions::STRIP_AUTOIMPORTED_NAMESPACE,
+        'Herp\\Derp',
+      ),
+      tuple(
+        '\\Herp\\Derp',
+        'Foo',
+        TypeTextOptions::STRIP_AUTOIMPORTED_NAMESPACE,
+        '\\Herp\\Derp',
+      ),
+      tuple(
+        '\\Herp\\Derp',
+        'Herp',
+        TypeTextOptions::STRIP_AUTOIMPORTED_NAMESPACE,
+        'Derp',
+      ),
+    ];
+  }
+
+  <<DataProvider('provideRelativeToNamespaceExamples')>>
+  public async function testRelativeToNamespace(
+    string $type,
+    string $relative_to_namespace,
+    int $options,
+    string $expected,
+  ): Awaitable<void> {
+    // Provided typehint is nested inside a function inside a shape inside a
+    // generic type, to verify that all rules are correctly applied recursively.
+    $prefix = 'vec<shape(\'field\'=>(function():';
+    $suffix = '))>';
+    $code = '
+      namespace Foo\\Bar;
+      function main('.$prefix.$type.$suffix.' $_): void {}
+    ';
+    $def = (await FileParser::fromDataAsync($code))
+      ->getFunction('Foo\\Bar\\main');
+    $type = $def->getParameters()[0]->getTypehint();
+    expect($type?->getTypeText($relative_to_namespace, $options))
+      ->toBeSame($prefix.$expected.$suffix);
   }
 }

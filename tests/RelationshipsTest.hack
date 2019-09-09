@@ -53,6 +53,7 @@ class RelationshipsTest extends \Facebook\HackTest\HackTest {
     $data = '<?hh class Foo implements KeyedIterable<Tk,Tv> {}';
     $def = (await FileParser::fromDataAsync($data))->getClass('Foo');
     expect($def->getInterfaceNames())->toBeSame(vec['HH\\KeyedIterable']);
+    expect($def->getInterfaceNames())->toBeSame(vec[KeyedIterable::class]);
     expect(Vec\map($def->getInterfaceInfo(), $x ==> $x->getTypeText()))
       ->toBeSame(vec['HH\\KeyedIterable<Tk,Tv>']);
   }

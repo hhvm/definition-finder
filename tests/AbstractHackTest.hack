@@ -191,6 +191,7 @@ abstract class AbstractHackTest extends Facebook\HackTest\HackTest {
 
     $type = $this->getFunction('returns_generic')->getReturnType();
     expect($type?->getTypeName())->toBeSame('HH\\Vector');
+    expect($type?->getTypeName())->toBeSame(Vector::class);
     $generics = $type?->getGenericTypes();
     expect(count($generics))->toBeSame(1);
     $sub_type = $generics[0] ?? null;
