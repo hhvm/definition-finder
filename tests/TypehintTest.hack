@@ -42,6 +42,13 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
         '(function(inout MyNamespace\\Foo): MyNamespace\\Bar)',
       ),
 
+      // Function with a variadic param
+      tuple(
+        '(function(int,Foo...):void)',
+        'callable',
+        '(function(int, MyNamespace\\Foo ...): void)',
+      ),
+
       // Autoimports
       tuple('void', 'void', 'void'),
       tuple('dict<int, string>', 'dict', 'dict<int, string>'),
