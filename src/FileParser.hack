@@ -19,9 +19,6 @@ final class FileParser extends BaseParser {
       'scopeType' => ScopeType::FILE_SCOPE,
       'ast' => $ast,
       'namespace' => null,
-      'usedTypes' => dict[],
-      'usedNamespaces' => dict[],
-      'genericTypeNames' => keyset[],
     );
     try {
       $this->defs = scope_from_ast($context, $ast->getDeclarations());

@@ -10,7 +10,6 @@
 namespace Facebook\DefinitionFinder;
 
 use namespace Facebook\HHAST;
-use namespace HH\Lib\Keyset;
 
 function function_from_ast(
   ConsumerContext $context,
@@ -20,10 +19,6 @@ function function_from_ast(
 
   $header = $node->getDeclarationHeader();
   $generics = generics_from_ast($context, $header->getTypeParameterList());
-  $context['genericTypeNames'] = Keyset\union(
-    $context['genericTypeNames'],
-    Keyset\map($generics, $g ==> $g->getName()),
-  );
 
   return new ScannedFunction(
     $node,
