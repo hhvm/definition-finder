@@ -25,15 +25,19 @@ async function try_parse_async(string $path): Awaitable<void> {
           \escapeshellarg(\PHP_BINARY),
           \escapeshellarg($path),
         ),
-        &$ret_code,
+        inout $ret_code,
       );
       if ($ret_code !== 0) {
         print $line."HHVM SYNTAX ERROR\n";
         return;
       }
     }
+    $_output_array = null;
+    $_exit_code = null;
     $json = \exec(
       'hh_parse --full-fidelity-json '.\escapeshellarg($path).' 2>/dev/null',
+      inout $_output_array,
+      inout $_exit_code,
     );
     $json = Str\trim($json);
     if (
