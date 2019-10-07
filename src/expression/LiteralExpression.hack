@@ -31,13 +31,19 @@ final class LiteralExpression extends Expression<mixed> {
       SingleQuotedStringLiteralExpression::class,
     ];
     $expr = $node->getExpression();
-    foreach ($classes as $class) {
-      $m = $class::match($expr);
-      if ($m !== null) {
-        return $m;
+    if ($expr is nonnull) {
+      foreach ($classes as $class) {
+        $m = $class::match($expr);
+        if ($m !== null) {
+          return $m;
+        }
       }
     }
-    invariant_violation("Unhandled literal expression: %s: %s\n", \get_class($expr), $node->getCode());
+    invariant_violation(
+      "Unhandled literal expression: %s: %s\n",
+      $expr is nonnull ? \get_class($expr) : 'null',
+      $node->getCode(),
+    );
     return null;
   }
 }
