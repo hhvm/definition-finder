@@ -68,7 +68,7 @@ EOF;
   public async function testXHPClassNamesAreCorrect(): Awaitable<void> {
     $parser = await FileParser::fromDataAsync('<?hh class :foo:bar:baz:herp-derp {}');
 
-    expect(C\onlyx($parser->getClassNames()))->toContain(
+    expect(C\onlyx($parser->getClassNames()))->toContainSubstring(
       /* HH_FIXME[2049] */ :foo:bar:baz:herp-derp::class,
     );
   }
