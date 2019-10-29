@@ -19,7 +19,6 @@ final class ScannedParameter extends ScannedDefinition {
     dict<string, vec<mixed>> $attributes,
     ?string $docComment,
     private ?ScannedTypehint $type,
-    private bool $byref,
     private bool $inout,
     private bool $variadic,
     private ?ScannedExpression $default,
@@ -35,10 +34,6 @@ final class ScannedParameter extends ScannedDefinition {
 
   public function getTypehint(): ?ScannedTypehint {
     return $this->type;
-  }
-
-  public function isPassedByReference(): bool {
-    return $this->byref;
   }
 
   public function isInOut(): bool {

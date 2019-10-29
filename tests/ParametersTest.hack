@@ -182,31 +182,6 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
       ->toBeSame('callable');
   }
 
-  public async function testWithByRefParam(): Awaitable<void> {
-    $data = '<?hh function foo(&$bar, $baz) {}';
-    $parser = await FileParser::fromDataAsync($data);
-    $function = $parser->getFunction('foo');
-
-    $params = $function->getParameters();
-    expect(Vec\map($params, $x ==> $x->getName()))->toBeSame(vec['bar', 'baz']);
-    expect(Vec\map($params, $x ==> $x->isPassedByReference()))->toBeSame(
-      vec[true, false],
-    );
-  }
-
-  public async function testWithTypedByRefParam(): Awaitable<void> {
-    $data = '<?hh function foo(string &$bar) {}';
-    $parser = await FileParser::fromDataAsync($data);
-    $function = $parser->getFunction('foo');
-
-    $params = $function->getParameters();
-    expect(Vec\map($params, $x ==> $x->getName()))->toBeSame(vec['bar']);
-    expect($params[0]->getTypehint()?->getTypeText())->toBeSame('string');
-    expect(Vec\map($params, $x ==> $x->isPassedByReference()))->toBeSame(
-      vec[true],
-    );
-  }
-
   public async function testWithArrayParam(): Awaitable<void> {
     $data = '<?hh function foo(array $bar) {}';
     $parser = await FileParser::fromDataAsync($data);

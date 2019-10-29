@@ -19,7 +19,7 @@ function parameter_from_ast(
 ): ScannedParameter {
   $name = $node->getName();
   if ($name is HHAST\VariableToken) {
-    $info = shape('name' => $name, 'byref' => false, 'variadic' => false);
+    $info = shape('name' => $name, 'variadic' => false);
   } else if ($name is HHAST\DecoratedExpression) {
     $info = parameter_info_from_decorated_expression($name);
   } else {
@@ -47,7 +47,6 @@ function parameter_from_ast(
     attributes_from_ast($node->getAttribute()),
     $doccomment,
     typehint_from_ast($context, $node->getType()),
-    $info['byref'],
     $node->getCallConvention() is HHAST\InoutToken,
     $info['variadic'],
     value_from_ast($node->getDefaultValue()?->getValue()),

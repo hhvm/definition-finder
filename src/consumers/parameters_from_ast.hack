@@ -35,12 +35,11 @@ function parameters_from_ast(
         context_with_node_position($context, $item)['definitionContext'],
         /* attributes = */ dict[],
         /* doccomment = */ null,
-        typehint_from_ast($context, $item->getType()), /* byref = */
-        false, /* inout = */
-        false, /* variadic = */
-        true, /* default = */
-        null, /* visibility = */
-        null,
+        typehint_from_ast($context, $item->getType()),
+        /* inout = */ false,
+        /* variadic = */ true,
+        /* default = */ null,
+        /* visibility = */ null,
       );
       continue;
     }
