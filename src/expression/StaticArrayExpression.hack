@@ -15,9 +15,7 @@ final class StaticArrayExpression extends Expression<mixed> {
   const type TNode = HHAST\Node;
 
   <<__Override>>
-  protected static function matchImpl(
-    this::TNode $node,
-  ): ?Expression<mixed> {
+  protected static function matchImpl(this::TNode $node): ?Expression<mixed> {
     if ($node is HHAST\ArrayCreationExpression) {
       $members = $node->getMembers();
     } else if ($node is HHAST\ArrayIntrinsicExpression) {
@@ -26,23 +24,19 @@ final class StaticArrayExpression extends Expression<mixed> {
       return null;
     }
     $members = $members?->getChildrenOfItemsOfType(HHAST\Node::class) ?? vec[];
-    $ret = array();
+    $ret = darray[];
     foreach ($members as $m) {
       $pair = StaticElementInitializerExpression::match($m);
       if ($pair) {
         list($key, $value) = $pair->getValue();
         if ($key is int) {
-          /* HH_IGNORE_ERROR[4110] PHP-compatible array craziness */
           $ret[$key] = $value;
         } else if ($key is string) {
-          /* HH_IGNORE_ERROR[4110] PHP-compatible array craziness */
-          /* HH_IGNORE_ERROR[4324] PHP-compatible array craziness */
           $ret[$key] = $value;
         } else {
           return null;
         }
       } else {
-        /* HH_IGNORE_ERROR[4110] PHP-compatible array craziness */
         /* HH_IGNORE_ERROR[4006] PHP-compatible array craziness */
         $ret[] = StaticExpression::match($m)?->getValue();
       }

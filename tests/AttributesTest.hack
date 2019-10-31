@@ -57,7 +57,7 @@ class AttributesTest extends \Facebook\HackTest\HackTest {
 
   public async function testWithFormattedArrayAttribute(): Awaitable<void> {
     $class = $this->findClass('ClassWithFormattedArrayAttribute');
-    expect($class->getAttributes())->toBeSame(dict['Bar' => vec[['herp']]]);
+    expect($class->getAttributes())->toBeSame(dict['Bar' => vec[varray['herp']]]);
   }
 
   public async function testWithSingleIntAttribute(): Awaitable<void> {
@@ -101,8 +101,8 @@ class AttributesTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function attributeExpressions(): array<(string, mixed)> {
-    return array(
+  public function attributeExpressions(): varray<(string, mixed)> {
+    return varray[
       tuple("'herp'.'derp'", 'herpderp'),
       tuple("Foo\\Bar::class", "Foo\\Bar"),
       tuple("true", true),
@@ -111,17 +111,17 @@ class AttributesTest extends \Facebook\HackTest\HackTest {
       tuple("INF", \INF),
       tuple("+123", 123),
       tuple("-123", -123),
-      tuple('array()', []),
-      tuple('[]', []),
-      tuple('array(123)', [123]),
-      tuple('array(123,)', [123]),
-      tuple('array(123,456)', [123, 456]),
-      tuple('array(123,456,)', [123, 456]),
+      tuple('array()', varray[]),
+      tuple('[]', varray[]),
+      tuple('array(123)', varray[123]),
+      tuple('array(123,)', varray[123]),
+      tuple('array(123,456)', varray[123, 456]),
+      tuple('array(123,456,)', varray[123, 456]),
       tuple('1.23', 1.23),
-      tuple('[123,456]', [123, 456]),
-      tuple('[123 , 456]', [123, 456]),
-      tuple('[123 => 456]', [123 => 456]),
-      tuple('shape()', []),
+      tuple('[123,456]', varray[123, 456]),
+      tuple('[123 , 456]', varray[123, 456]),
+      tuple('[123 => 456]', darray[123 => 456]),
+      tuple('shape()', varray[]),
       tuple(
         'shape("foo" => "bar", "herp" => 123)',
         shape('foo' => 'bar', 'herp' => 123),
@@ -135,7 +135,7 @@ class AttributesTest extends \Facebook\HackTest\HackTest {
       tuple('010', 8),
       tuple('0x10', 16),
       tuple('0b10', 2),
-    );
+    ];
   }
 
   <<DataProvider('attributeExpressions')>>

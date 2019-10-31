@@ -25,16 +25,16 @@ class NamingTest extends \Facebook\HackTest\HackTest {
   }
 
   /** Things that are valid names, but have a weird token type */
-  public function specialNameProvider(): array<array<string>> {
-    return [
-      ['dict'], // HHVM >= 3.13
-      ['vec'], // HHVM >= 3.14
-      ['keyset'], // HHVM >= 3.15
-      ['Category'],
-      ['Super'],
-      ['Attribute'],
-      ['varray'], // HHVM >= 3.19
-      ['darray'], // HHVM >= 3.19
+  public function specialNameProvider(): varray<varray<string>> {
+    return varray[
+      varray['dict'], // HHVM >= 3.13
+      varray['vec'], // HHVM >= 3.14
+      varray['keyset'], // HHVM >= 3.15
+      varray['Category'],
+      varray['Super'],
+      varray['Attribute'],
+      varray['varray'], // HHVM >= 3.19
+      varray['darray'], // HHVM >= 3.19
     ];
   }
 
@@ -131,7 +131,7 @@ class NamingTest extends \Facebook\HackTest\HackTest {
   }
 
   public function magicConstantsProvider(): array<(string, string, string)> {
-    return [
+    return varray[
       tuple('int', '__LINE__', '0'),
       tuple('string', '__CLASS__', "''"),
       tuple('string', '__TRAIT__', "''"),

@@ -163,17 +163,17 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     expect(Vec\map($props, $x ==> $x->getTypehint()))->toBeSame(vec[null]);
   }
 
-  public function staticPropertyProvider(): array<array<mixed>> {
-    return [
-      ['default', '<?php class Foo { static $bar; }', null],
-      ['public static', '<?php class Foo { public static $bar; }', null],
-      ['static public', '<?php class Foo { static public $bar; }', null],
-      [
+  public function staticPropertyProvider(): varray<varray<mixed>> {
+    return varray[
+      varray['default', '<?php class Foo { static $bar; }', null],
+      varray['public static', '<?php class Foo { public static $bar; }', null],
+      varray['static public', '<?php class Foo { static public $bar; }', null],
+      varray[
         'public static string',
         '<?hh class Foo { public static string $bar; }',
         'string',
       ],
-      [
+      varray[
         'static public string',
         '<?hh class Foo { static public string $bar; }',
         'string',
@@ -303,14 +303,14 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
   }
 
   public static function namespacedReturns(
-  ): array<
+  ): varray<
     shape(
       'namespace' => string,
       'return type text' => string,
       'expected return type text' => string,
     )
   > {
-    return [
+    return varray[
       shape(
         'namespace' => '',
         'return type text' => 'this::FOO',
