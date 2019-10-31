@@ -15,8 +15,8 @@ use type Facebook\HackTest\DataProvider;
 
 class SourceTypeTest extends \Facebook\HackTest\HackTest {
 
-  public function getExamples(): array<(string, SourceType)> {
-    return [
+  public function getExamples(): varray<(string, SourceType)> {
+    return varray[
       tuple('<?hh', SourceType::HACK_PARTIAL),
       tuple('<?hh // foo', SourceType::HACK_PARTIAL),
       tuple("<?hh\n// strict", SourceType::HACK_PARTIAL),
