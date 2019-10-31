@@ -9,3 +9,4 @@ user_attributes=
 disable_primitive_refinement=true
 disallow_stringish_magic=true
 disable_static_local_variables = true
+disallow_scrutinee_case_value_type_mismatch = true
