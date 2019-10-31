@@ -104,27 +104,29 @@ final class ScannedTypehint {
       $type_name,
     );
 
-    switch ($this->kind as nonnull) {
-      case ResolvedTypeKind::CALLABLE:
-      case ResolvedTypeKind::GENERIC_PARAMETER:
-        break;
-      case ResolvedTypeKind::QUALIFIED_AUTOIMPORTED_TYPE:
-        if ($options & TypeTextOptions::STRIP_AUTOIMPORTED_NAMESPACE) {
-          $type_name = Str\strip_prefix($type_name, 'HH\\');
-        }
-        break;
-      case ResolvedTypeKind::QUALIFIED_TYPE:
-        if ($relative_to_namespace !== '') {
-          if (Str\starts_with($type_name, $relative_to_namespace.'\\')) {
-            $type_name = Str\strip_prefix(
-              $type_name,
-              $relative_to_namespace.'\\',
-            );
-          } else {
-            $type_name = '\\'.$type_name;
+    if ($this->kind is nonnull) {
+      switch ($this->kind) {
+        case ResolvedTypeKind::CALLABLE:
+        case ResolvedTypeKind::GENERIC_PARAMETER:
+          break;
+        case ResolvedTypeKind::QUALIFIED_AUTOIMPORTED_TYPE:
+          if ($options & TypeTextOptions::STRIP_AUTOIMPORTED_NAMESPACE) {
+            $type_name = Str\strip_prefix($type_name, 'HH\\');
           }
-        }
-        break;
+          break;
+        case ResolvedTypeKind::QUALIFIED_TYPE:
+          if ($relative_to_namespace !== '') {
+            if (Str\starts_with($type_name, $relative_to_namespace.'\\')) {
+              $type_name = Str\strip_prefix(
+                $type_name,
+                $relative_to_namespace.'\\',
+              );
+            } else {
+              $type_name = '\\'.$type_name;
+            }
+          }
+          break;
+      }
     }
 
     $base .= $type_name;
