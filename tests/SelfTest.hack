@@ -15,9 +15,9 @@ use function Facebook\FBExpect\expect;
 
 class SelfTest extends \Facebook\HackTest\HackTest {
 
-  public function filenameProvider(): array<array<string>> {
+  public function filenameProvider(): varray<array<string>> {
     return \array_map(
-      $filename ==> [\basename($filename), $filename],
+      $filename ==> varray[\basename($filename), $filename],
       \glob(\dirname(__DIR__).'/src/**/*.hack'),
     );
   }
