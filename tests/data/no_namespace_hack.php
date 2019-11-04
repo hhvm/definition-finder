@@ -94,7 +94,7 @@ function aliased_no_as(Bar $aliased): Bar {
    return $aliased;
 }
 
-const MY_CONST = 456;
+const /* HH_IGNORE_ERROR[2001] intentional for testing */ MY_CONST = 456;
 const int MY_TYPED_CONST = 123;
 
 type MyType = int;

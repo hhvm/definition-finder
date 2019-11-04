@@ -66,10 +66,9 @@ EOF;
   }
 
   public async function testXHPClassNamesAreCorrect(): Awaitable<void> {
-    $parser = await FileParser::fromDataAsync('<?hh class :foo:bar:baz:herp-derp {}');
-
+    $parser = await FileParser::fromFileAsync(__DIR__.'/data/xhp.hack');
     expect(C\onlyx($parser->getClassNames()))->toContainSubstring(
-      /* HH_FIXME[2049] */ :foo:bar:baz:herp-derp::class,
+      \facebook_definition_finder_test_xhp_class_for_classname()
     );
   }
 }

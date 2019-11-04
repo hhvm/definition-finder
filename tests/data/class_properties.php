@@ -8,7 +8,7 @@
  *
  */
 
-namespace Facebook\DefinitionFinder\Test;
+namespace Facebook\DefinitionFinder\Test {
 
 class ClassWithProperties {
   private bool $foo = true;
@@ -18,6 +18,8 @@ class ClassWithProperties {
   public function varsArentProps(): void {
     $local = 'test';
   }
+}
+
 }
 
 namespace Facebook\DefinitionFinder\Test2 {

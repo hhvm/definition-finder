@@ -43,7 +43,18 @@ class ClassWithFormattedAttributes {}
 
 <<
 Bar(
-  ['herp']
+  vec['herp']
 )
 >>
 class ClassWithFormattedArrayAttribute {}
+
+// declarations for the test attributes used above
+abstract class TestAttribute {
+  public function __construct(mixed $a = null, mixed $b = null) {}
+}
+final class Foo extends TestAttribute implements \HH\ClassAttribute {}
+final class Bar extends TestAttribute implements \HH\ClassAttribute {}
+final class Herp extends TestAttribute implements \HH\ClassAttribute {}
+final class ClassFoo extends TestAttribute implements \HH\ClassAttribute {}
+final class FunctionFoo extends TestAttribute implements \HH\FunctionAttribute {
+}

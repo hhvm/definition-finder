@@ -57,7 +57,7 @@ class AttributesTest extends \Facebook\HackTest\HackTest {
 
   public async function testWithFormattedArrayAttribute(): Awaitable<void> {
     $class = $this->findClass('ClassWithFormattedArrayAttribute');
-    expect($class->getAttributes())->toBeSame(dict['Bar' => vec[varray['herp']]]);
+    expect($class->getAttributes())->toBeSame(dict['Bar' => vec[vec['herp']]]);
   }
 
   public async function testWithSingleIntAttribute(): Awaitable<void> {
