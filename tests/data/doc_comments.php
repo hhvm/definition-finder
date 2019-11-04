@@ -16,9 +16,9 @@ class ClassWithDocComment {}
 class ClassWithoutDocComment {}
 
 /** function doc */
-function function_with_doc_comment() {}
+function function_with_doc_comment(): void {}
 
-function function_without_doc_comment() {}
+function function_without_doc_comment(): void {}
 
 /** type doc */
 type TypeWithDocComment = string;
@@ -29,4 +29,8 @@ newtype NewtypeWithDocComment = string;
 /** enum doc */
 enum EnumWithDocComment: string {}
 
-function param_with_doc_comment(/** param doc */ $commented, $uncommented) {}
+function param_with_doc_comment(
+  /** param doc */
+  int $commented,
+  string $uncommented,
+): void {}
