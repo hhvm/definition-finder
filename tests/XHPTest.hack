@@ -66,10 +66,19 @@ EOF;
   }
 
   public async function testXHPClassNamesAreCorrect(): Awaitable<void> {
-    $parser = await FileParser::fromDataAsync('<?hh class :foo:bar:baz:herp-derp {}');
-
+    // must be the same namespace as this test, otherwise the ::class literal
+    // below resolves to a differently namespaced name (except on older versions
+    // of HHVM which don't handle namespaced XHP classes correctly)
+    $parser = await FileParser::fromDataAsync('
+      namespace Facebook\DefinitionFinder\Test {
+        class :foo:bar:baz:herp-derp {}
+      }
+    ');
     expect(C\onlyx($parser->getClassNames()))->toContainSubstring(
-      /* HH_FIXME[2049] */ :foo:bar:baz:herp-derp::class,
+      :foo:bar:baz:herp-derp::class,
     );
   }
 }
+
+// This is here so that we can use a ::class literal above without FIXMEs.
+final class :foo:bar:baz:herp-derp {}
