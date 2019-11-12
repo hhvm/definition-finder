@@ -18,7 +18,7 @@
   },
   "require-dev": {
     "facebook/fbexpect": "^2.6.1",
-    "hhvm/hacktest": "^1.0"
+    "hhvm/hacktest": "^2.0"
   },
   "autoload": {
     "classmap": [
