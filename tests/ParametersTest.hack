@@ -85,7 +85,7 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     return varray[
       tuple('true ? "herp" : "derp"', 'true?"herp":"derp"'),
       tuple('(FOO === true)? "herp" : "derp")', '(FOO===true)?"herp":"derp"'),
-      tuple('["herp", "derp"]', '["herp","derp"]'),
+      tuple('vec["herp", "derp"]', 'vec["herp","derp"]'),
     ];
   }
 
