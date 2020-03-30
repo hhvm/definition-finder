@@ -20,9 +20,9 @@ class SourceTypeTest extends \Facebook\HackTest\HackTest {
       tuple('<?hh', SourceType::HACK_PARTIAL),
       tuple('<?hh // foo', SourceType::HACK_PARTIAL),
       tuple("<?hh\n// strict", SourceType::HACK_PARTIAL),
-      tuple("<?hh // strict", SourceType::HACK_STRICT),
-      tuple("<?hh //strict", SourceType::HACK_STRICT),
-      tuple("<?hh // decl", SourceType::HACK_DECL),
+      tuple('<?hh // strict', SourceType::HACK_STRICT),
+      tuple('<?hh //strict', SourceType::HACK_STRICT),
+      tuple('<?hh // decl', SourceType::HACK_DECL),
     ];
   }
 

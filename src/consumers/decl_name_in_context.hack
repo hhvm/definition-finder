@@ -21,5 +21,5 @@ function decl_name_in_context(
   if ($ns === null || $ns === '') {
     return $name;
   }
-  return $ns."\\".$name;
+  return $ns.'\\'.$name;
 }

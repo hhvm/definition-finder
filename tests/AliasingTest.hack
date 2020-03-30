@@ -69,7 +69,7 @@ final class AliasingTest extends \Facebook\HackTest\HackTest {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\{Foo, Bar};\n".
-      "class MyClass implements Foo, Bar{}";
+      'class MyClass implements Foo, Bar{}';
     $def = (await FileParser::fromDataAsync($code))->getClass(
       'MyNamespace\\MyClass',
     );
@@ -83,7 +83,7 @@ final class AliasingTest extends \Facebook\HackTest\HackTest {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\{Foo, Bar,};\n".
-      "class MyClass implements Foo, Bar{}";
+      'class MyClass implements Foo, Bar{}';
     $def = (await FileParser::fromDataAsync($code))->getClass(
       'MyNamespace\\MyClass',
     );
@@ -96,7 +96,7 @@ final class AliasingTest extends \Facebook\HackTest\HackTest {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\{Foo as Herp, Bar as Derp};\n".
-      "class MyClass implements Herp, Derp {}";
+      'class MyClass implements Herp, Derp {}';
     $def = (await FileParser::fromDataAsync($code))->getClass(
       'MyNamespace\\MyClass',
     );
@@ -128,7 +128,7 @@ final class AliasingTest extends \Facebook\HackTest\HackTest {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use MyOtherNamespace\\Foo;\n".
-      "function my_func(): Foo {}";
+      'function my_func(): Foo {}';
     $def = (await FileParser::fromDataAsync($code))->getFunction(
       'MyNamespace\\my_func',
     );
@@ -141,7 +141,7 @@ final class AliasingTest extends \Facebook\HackTest\HackTest {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use function MyOtherNamespace\\Foo;\n".
-      "function my_func(): Foo {}";
+      'function my_func(): Foo {}';
     $def = (await FileParser::fromDataAsync($code))->getFunction(
       'MyNamespace\\my_func',
     );
@@ -152,7 +152,7 @@ final class AliasingTest extends \Facebook\HackTest\HackTest {
     $code = "<?hh\n".
       "namespace MyNamespace;\n".
       "use const MyOtherNamespace\\Foo;\n".
-      "function my_func(): Foo {}";
+      'function my_func(): Foo {}';
     $def = (await FileParser::fromDataAsync($code))->getFunction(
       'MyNamespace\\my_func',
     );
@@ -201,7 +201,7 @@ final class AliasingTest extends \Facebook\HackTest\HackTest {
 
   public async function testUseConflictingHSLNamespace(): Awaitable<void> {
     $code = "<?hh\n".
-      "use namespace HH\Lib\{Dict, Keyset, Vec};".
+      'use namespace HH\Lib\{Dict, Keyset, Vec};'.
       "function my_func(Dict\A \$_, Keyset\A \$_, Vec\A \$_): Awaitable<void> {}";
     $def = (await FileParser::fromDataAsync($code))->getFunction('my_func');
     expect(

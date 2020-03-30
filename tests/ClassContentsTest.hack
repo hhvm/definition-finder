@@ -218,7 +218,7 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
       "class Bar {\n".
       "  const type FOO = Foo;\n".
       "  function foo(self::FOO::BAR \$baz): Awaitable<void> {}\n".
-      "}";
+      '}';
     $parser = (await FileParser::fromDataAsync($data));
     $class = $parser->getClass('Bar');
     expect(
@@ -357,10 +357,10 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
   ): Awaitable<void> {
     $data = \sprintf(
       '<?hh %s class Foo { public async function bar(): %s {} }',
-      $namespace === '' ? '' : "namespace ".$namespace.";",
+      $namespace === '' ? '' : 'namespace '.$namespace.';',
       $returnText,
     );
-    $className = \ltrim($namespace.'\Foo', "\\");
+    $className = \ltrim($namespace.'\Foo', '\\');
     $parser = (await FileParser::fromDataAsync($data));
     $method = C\onlyx($parser->getClass($className)->getMethods());
 

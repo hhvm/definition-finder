@@ -97,14 +97,14 @@ class RelationshipsTest extends \Facebook\HackTest\HackTest {
       "    Foo::herp insteadof Bar;\n".
       "    Bar::herp as derp;\n".
       "  };\n".
-      "}";
+      '}';
     $def = (await FileParser::fromDataAsync($data))->getClass('MyClass');
     expect($def->getTraitNames())->toBeSame(vec['Foo', 'Bar']);
   }
 
   public async function testUsesTraitsInNamespace(): Awaitable<void> {
     $data =
-      "<?hh\n"."namespace MyNamespace;".'class Foo { use Herp; use Derp; }';
+      "<?hh\n".'namespace MyNamespace;'.'class Foo { use Herp; use Derp; }';
     $def = (await FileParser::fromDataAsync($data))->getClass('MyNamespace\\Foo');
     expect($def->getTraitNames())->toBeSame(
       vec['MyNamespace\\Herp', 'MyNamespace\\Derp'],

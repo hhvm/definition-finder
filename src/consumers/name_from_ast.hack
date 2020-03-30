@@ -23,7 +23,7 @@ function name_from_ast(HHAST\Node $node): string {
     // If there's a leading `\` in the name, the first item is empty.
     return $node->getParts()->getChildrenOfItems()
       |> Vec\map($$, $x ==> $x?->getText() ?? '')
-      |> Str\join($$, "\\");
+      |> Str\join($$, '\\');
   }
 
   if ($node is HHAST\SimpleTypeSpecifier) {
@@ -31,7 +31,7 @@ function name_from_ast(HHAST\Node $node): string {
   }
 
   invariant_violation(
-    "Expected Token or QualifiedName, got %s",
+    'Expected Token or QualifiedName, got %s',
     \get_class($node),
   );
 }

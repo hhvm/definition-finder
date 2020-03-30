@@ -17,7 +17,7 @@ class ParseException extends \Exception {
   ) {
     parent::__construct(
       \sprintf(
-        "%s:%d:%d %s",
+        '%s:%d:%d %s',
         $sourceFile,
         $pos['line'] ?? -1,
         $pos['character'] ?? -1,

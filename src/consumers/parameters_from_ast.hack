@@ -26,7 +26,7 @@ function parameters_from_ast(
   );
   $out = vec[];
   foreach ($params->getChildren() as $node) {
-    invariant($node is HHAST\ListItem<_>, "Got non-listitem child");
+    invariant($node is HHAST\ListItem<_>, 'Got non-listitem child');
     $item = $node->getItem();
     if ($item is HHAST\VariadicParameter) {
       $out[] = new ScannedParameter(

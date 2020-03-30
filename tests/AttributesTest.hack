@@ -33,13 +33,13 @@ class AttributesTest extends \Facebook\HackTest\HackTest {
 
   public async function testSingleSimpleAttribute(): Awaitable<void> {
     $class = $this->findClass('ClassWithSimpleAttribute');
-    expect($class->getAttributes())->toBeSame(dict["Foo" => vec[]]);
+    expect($class->getAttributes())->toBeSame(dict['Foo' => vec[]]);
   }
 
   public async function testMultipleSimpleAttributes(): Awaitable<void> {
     $class = $this->findClass('ClassWithSimpleAttributes');
     expect($class->getAttributes())->toBeSame(
-      dict["Foo" => vec[], "Bar" => vec[]],
+      dict['Foo' => vec[], 'Bar' => vec[]],
     );
   }
 
@@ -105,12 +105,12 @@ class AttributesTest extends \Facebook\HackTest\HackTest {
     return varray[
       tuple("'herp'.'derp'", 'herpderp'),
       tuple("Foo\\Bar::class", "Foo\\Bar"),
-      tuple("true", true),
-      tuple("false", false),
-      tuple("null", null),
-      tuple("INF", \INF),
-      tuple("+123", 123),
-      tuple("-123", -123),
+      tuple('true', true),
+      tuple('false', false),
+      tuple('null', null),
+      tuple('INF', \INF),
+      tuple('+123', 123),
+      tuple('-123', -123),
       tuple('array()', varray[]),
       tuple('array(123)', varray[123]),
       tuple('array(123,)', varray[123]),
@@ -129,8 +129,8 @@ class AttributesTest extends \Facebook\HackTest\HackTest {
       tuple("vec['foo']", vec['foo']),
       tuple('keyset[123]', keyset[123]),
       tuple("dict[123 => '456']", dict[123 => '456']),
-      tuple("\n<<<EOF\nHello!\nEOF\n", "Hello!"),
-      tuple("\n<<<'EOF'\nHello!\nEOF\n", "Hello!"),
+      tuple("\n<<<EOF\nHello!\nEOF\n", 'Hello!'),
+      tuple("\n<<<'EOF'\nHello!\nEOF\n", 'Hello!'),
       tuple('010', 8),
       tuple('0x10', 16),
       tuple('0b10', 2),

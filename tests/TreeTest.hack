@@ -14,10 +14,11 @@ use function Facebook\FBExpect\expect;
 
 final class TreeTest extends \Facebook\HackTest\HackTest {
   public function testTreeDefs(): void {
+    /* HHAST_IGNORE_ERROR[DontUseAsioJoin] */
     $parser = \HH\Asio\join(TreeParser::fromPathAsync(__DIR__.'/data/'));
     // From multiple files
     $classes = $parser->getClassNames();
-    expect($classes)->toContain("SingleNamespace\\SimpleClass");
+    expect($classes)->toContain('SingleNamespace\\SimpleClass');
     expect($classes)->toContain("Namespaces\\AreNestedNow\\SimpleClass");
   }
 }

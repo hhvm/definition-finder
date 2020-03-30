@@ -47,7 +47,7 @@ final class None<T> implements Option<T> {
   }
 
   public function getValue(): T {
-    invariant_violation("%s called on %s", __METHOD__, __CLASS__);
+    invariant_violation('%s called on %s', __METHOD__, __CLASS__);
   }
 }
 

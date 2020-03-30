@@ -202,14 +202,14 @@ class NamingTest extends \Facebook\HackTest\HackTest {
 
   public async function testNamespaceResolutionDependingOnSourceType(
   ): Awaitable<void> {
-    $php = "<?php namespace Foo; class MyClass extends Collection {}";
-    $hack = "<?hh namespace Foo; class MyClass extends Collection {}";
+    $php = '<?php namespace Foo; class MyClass extends Collection {}';
+    $hack = '<?hh namespace Foo; class MyClass extends Collection {}';
 
     $php_class = (await FileParser::fromDataAsync($php))->getClass(
-      "Foo\\MyClass",
+      'Foo\\MyClass',
     );
     $hack_class = (await FileParser::fromDataAsync($hack))->getClass(
-      "Foo\\MyClass",
+      'Foo\\MyClass',
     );
 
     // We used to distinguish between PHP and Hack files here, but not anymore,
@@ -226,10 +226,10 @@ class NamingTest extends \Facebook\HackTest\HackTest {
     $hack = '<?hh namespace Foo; function myfunc(): string {}';
 
     $php_func = (await FileParser::fromDataAsync($php))->getFunction(
-      "Foo\\myfunc",
+      'Foo\\myfunc',
     );
     $hack_func = (await FileParser::fromDataAsync($hack))->getFunction(
-      "Foo\\myfunc",
+      'Foo\\myfunc',
     );
 
     expect($php_func->getReturnType()?->getTypeName())->toBeSame('string');
@@ -241,9 +241,9 @@ class NamingTest extends \Facebook\HackTest\HackTest {
       "namespace Foo;\n".
       "class MyClass {\n".
       "  function foo(): this { }\n".
-      "}";
+      '}';
     $parser = await FileParser::fromDataAsync($code);
-    $class = $parser->getClass("Foo\\MyClass");
+    $class = $parser->getClass('Foo\\MyClass');
     $method = $class->getMethods()[0];
     expect($method->getReturnType()?->getTypeName())->toBeSame('this');
   }
@@ -253,9 +253,9 @@ class NamingTest extends \Facebook\HackTest\HackTest {
       "namespace Foo;\n".
       "class MyClass<T> {\n".
       "  function foo(): T { }\n".
-      "}";
+      '}';
     $parser = await FileParser::fromDataAsync($code);
-    $class = $parser->getClass("Foo\\MyClass");
+    $class = $parser->getClass('Foo\\MyClass');
     $method = $class->getMethods()[0];
     expect($method->getReturnType()?->getTypeName())->toBeSame('T');
   }
@@ -266,9 +266,9 @@ class NamingTest extends \Facebook\HackTest\HackTest {
       "namespace Foo;\n".
       "class MyClass<T> {\n".
       "  function foo(): ?T { }\n".
-      "}";
+      '}';
     $parser = await FileParser::fromDataAsync($code);
-    $class = $parser->getClass("Foo\\MyClass");
+    $class = $parser->getClass('Foo\\MyClass');
     $method = $class->getMethods()[0];
     expect($method->getReturnType()?->getTypeName())->toBeSame('T');
     expect($method->getReturnType()?->isNullable())->toBeTrue();
@@ -279,9 +279,9 @@ class NamingTest extends \Facebook\HackTest\HackTest {
       "namespace Foo;\n".
       "class MyClass {\n".
       "  function foo<T>(): T { }\n".
-      "}";
+      '}';
     $parser = await FileParser::fromDataAsync($code);
-    $class = $parser->getClass("Foo\\MyClass");
+    $class = $parser->getClass('Foo\\MyClass');
     $method = $class->getMethods()[0];
     expect($method->getReturnType()?->getTypeName())->toBeSame('T');
   }
@@ -300,7 +300,7 @@ class NamingTest extends \Facebook\HackTest\HackTest {
       "  ): TClassGeneric {}\n".
       "}\n";
     $parser = await FileParser::fromDataAsync($code);
-    $class = $parser->getClass("Foo\\MyClass");
+    $class = $parser->getClass('Foo\\MyClass');
     $method = $class->getMethods()[0];
     expect($method->getReturnType()?->getTypeName())->toBeSame('TClassGeneric');
     expect($method->getParameters()[0]->getTypehint()?->getTypeName())
@@ -312,9 +312,9 @@ class NamingTest extends \Facebook\HackTest\HackTest {
       "namespace Foo;\n".
       "class MyClass {\n".
       "  function foo<T>(T \$bar): Awaitable<void> { }\n".
-      "}";
+      '}';
     $parser = await FileParser::fromDataAsync($code);
-    $class = $parser->getClass("Foo\\MyClass");
+    $class = $parser->getClass('Foo\\MyClass');
     $method = $class->getMethods()[0];
     expect($method->getParameters()[0]->getTypehint()?->getTypeName())
       ->toBeSame('T');

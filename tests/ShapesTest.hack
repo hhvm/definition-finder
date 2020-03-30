@@ -47,7 +47,7 @@ final class ShapesTest extends \Facebook\HackTest\HackTest {
 
   public async function testDocComments(): Awaitable<void> {
     expect((await $this->getTypeAliasAsync())->getDocComment())->toBeSame(
-      "/** A shape used for testing */",
+      '/** A shape used for testing */',
     );
     expect(Vec\map((await $this->getFieldsAsync()), $f ==> $f->getDocComment()))
       ->toBeSame(vec['/** The foo */', '/** The bar */']);

@@ -58,7 +58,7 @@ final class ScannedTypehint {
 
   public function getShapeFields(): vec<ScannedShapeField> {
     $fields = $this->shapeFields;
-    invariant($fields !== null, "Called getShapeFields, but not a shape");
+    invariant($fields !== null, 'Called getShapeFields, but not a shape');
     return $fields;
   }
 

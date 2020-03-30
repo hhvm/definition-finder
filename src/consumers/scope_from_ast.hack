@@ -47,7 +47,7 @@ function scope_from_ast(
 
     invariant(
       $body === null || $body is HHAST\NamespaceEmptyBody,
-      "Expected a NamespaceBody or NamespaceEmptyBody",
+      'Expected a NamespaceBody or NamespaceEmptyBody',
     );
 
     $offset = $offsets[$i];

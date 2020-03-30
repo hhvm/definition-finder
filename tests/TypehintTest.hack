@@ -96,7 +96,7 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
   ): Awaitable<void> {
     $code = "<?hh \n".
       "namespace MyNamespace;\n".
-      "function main(".
+      'function main('.
       $input.
       " \$_): Awaitable<void> {}\n";
     $def = (await FileParser::fromDataAsync($code))->getFunction('MyNamespace\\main');
@@ -142,7 +142,7 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
     string $name,
     string $text,
   ): Awaitable<void> {
-    $code = "<?hh \n"."function main(".$input." \$_): Awaitable<void> {}\n";
+    $code = "<?hh \n".'function main('.$input." \$_): Awaitable<void> {}\n";
     $def = (await FileParser::fromDataAsync($code))->getFunction('main');
     $type = $def->getParameters()[0]->getTypehint();
     expect($type)->toNotBeNull();
