@@ -9,16 +9,17 @@
 
 namespace Facebook\DefinitionFinder\Test;
 
+use namespace HH\Lib\Vec;
 use type Facebook\DefinitionFinder\FileParser;
 use type Facebook\HackTest\DataProvider;
 use function Facebook\FBExpect\expect;
 
 class SelfTest extends \Facebook\HackTest\HackTest {
 
-  public function filenameProvider(): varray<array<string>> {
-    return \array_map(
-      $filename ==> varray[\basename($filename), $filename],
+  public function filenameProvider(): vec<(string, string)> {
+    return Vec\map(
       \glob(\dirname(__DIR__).'/src/**/*.hack'),
+      $filename ==> tuple(\basename($filename), $filename),
     );
   }
 

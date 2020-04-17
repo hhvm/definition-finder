@@ -81,8 +81,8 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     expect($default->getStaticValue())->toBeNull();
   }
 
-  public function getUnusualDefaults(): varray<(string, string)> {
-    return varray[
+  public function getUnusualDefaults(): vec<(string, string)> {
+    return vec[
       tuple('true ? "herp" : "derp"', 'true?"herp":"derp"'),
       tuple('(FOO === true)? "herp" : "derp")', '(FOO===true)?"herp":"derp"'),
       tuple('vec["herp", "derp"]', 'vec["herp","derp"]'),
@@ -108,8 +108,8 @@ final class ParametersTest extends \Facebook\HackTest\HackTest {
     )->toBeSame(vec[null, $expected]);
   }
 
-  public function getInOutExamples(): varray<(string, ?string, bool)> {
-    return varray[
+  public function getInOutExamples(): vec<(string, ?string, bool)> {
+    return vec[
       tuple('<?hh function foo(string $bar): Awaitable<void> {}', 'string', false),
       tuple('<?hh function foo(inout $bar): Awaitable<void> {}', null, true),
       tuple('<?hh function foo(inout string $bar): Awaitable<void> {}', 'string', true),

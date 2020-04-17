@@ -19,7 +19,9 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
 
   <<__Override>>
   public async function beforeEachTestAsync(): Awaitable<void> {
-    $parser = await FileParser::fromFileAsync(__DIR__.'/data/class_contents.php');
+    $parser = await FileParser::fromFileAsync(
+      __DIR__.'/data/class_contents.php',
+    );
     $this->class = $parser->getClasses()[0];
     expect($this->class->getName())->toBeSame(
       'Facebook\\DefinitionFinder\\Test\\ClassWithContents',
@@ -95,7 +97,9 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
   }
 
   public async function testPHPConstants(): Awaitable<void> {
-    $parser = await FileParser::fromFileAsync(__DIR__.'/data/php_class_contents.php');
+    $parser = await FileParser::fromFileAsync(
+      __DIR__.'/data/php_class_contents.php',
+    );
     $class = $parser->getClass('Foo');
     $constants = $class->getConstants();
 
@@ -114,7 +118,9 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
 
   /** Omitting public/protected/private is permitted in PHP */
   public async function testDefaultMethodVisibility(): Awaitable<void> {
-    $parser = await FileParser::fromFileAsync(__DIR__.'/data/php_class_contents.php');
+    $parser = await FileParser::fromFileAsync(
+      __DIR__.'/data/php_class_contents.php',
+    );
     $funcs = $parser->getClass('Foo')->getMethods();
 
     expect(Vec\map($funcs, $x ==> $x->getName()))->toBeSame(
@@ -154,7 +160,9 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
   }
 
   public async function testTypelessProperty(): Awaitable<void> {
-    $parser = await FileParser::fromFileAsync(__DIR__.'/data/php_class_contents.php');
+    $parser = await FileParser::fromFileAsync(
+      __DIR__.'/data/php_class_contents.php',
+    );
     $props = $parser->getClass('Foo')->getProperties();
 
     expect(Vec\map($props, $x ==> $x->getName()))->toBeSame(
@@ -163,21 +171,21 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     expect(Vec\map($props, $x ==> $x->getTypehint()))->toBeSame(vec[null]);
   }
 
-  public function staticPropertyProvider(): varray<varray<mixed>> {
-    return varray[
-      varray['default', '<?php class Foo { static $bar; }', null],
-      varray['public static', '<?php class Foo { public static $bar; }', null],
-      varray['static public', '<?php class Foo { static public $bar; }', null],
-      varray[
+  public function staticPropertyProvider(): vec<(string, string, ?string)> {
+    return vec[
+      tuple('default', '<?php class Foo { static $bar; }', null),
+      tuple('public static', '<?php class Foo { public static $bar; }', null),
+      tuple('static public', '<?php class Foo { static public $bar; }', null),
+      tuple(
         'public static string',
         '<?hh class Foo { public static string $bar; }',
         'string',
-      ],
-      varray[
+      ),
+      tuple(
         'static public string',
         '<?hh class Foo { static public string $bar; }',
         'string',
-      ],
+      ),
     ];
   }
 
@@ -293,7 +301,8 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
   }
 
   public async function testTypeconstantAsParameterType(): Awaitable<void> {
-    $data = '<?hh class Foo { public async function bar(this::FOO $foo): Awaitable<void> {} }';
+    $data =
+      '<?hh class Foo { public async function bar(this::FOO $foo): Awaitable<void> {} }';
     $parser = (await FileParser::fromDataAsync($data));
     $method = C\onlyx($parser->getClass('Foo')->getMethods());
     $param = C\onlyx($method->getParameters());
@@ -302,50 +311,16 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     expect($param->getName())->toBeSame('foo');
   }
 
-  public static function namespacedReturns(
-  ): varray<
-    shape(
-      'namespace' => string,
-      'return type text' => string,
-      'expected return type text' => string,
-    )
-  > {
-    return varray[
-      shape(
-        'namespace' => '',
-        'return type text' => 'this::FOO',
-        'expected return type text' => 'this::FOO',
-      ),
-      shape(
-        'namespace' => 'Bar',
-        'return type text' => 'this::FOO',
-        'expected return type text' => 'this::FOO',
-      ),
-      shape(
-        'namespace' => '',
-        'return type text' => 'Bar::FOO',
-        'expected return type text' => 'Bar::FOO',
-      ),
-      shape(
-        'namespace' => 'NS',
-        'return type text' => 'Bar::FOO',
-        'expected return type text' => 'NS\Bar::FOO',
-      ),
-      shape(
-        'namespace' => 'NS',
-        'return type text' => '\Bar::FOO',
-        'expected return type text' => 'Bar::FOO',
-      ),
-      shape(
-        'namespace' => 'NS',
-        'return type text' => 'Nested\Bar::FOO',
-        'expected return type text' => 'NS\Nested\Bar::FOO',
-      ),
-      shape(
-        'namespace' => 'NS',
-        'return type text' => '\Nested\Bar::FOO',
-        'expected return type text' => 'Nested\Bar::FOO',
-      ),
+  // vec<(namespace, return type text, expected return type text)>
+  public static function namespacedReturns(): vec<(string, string, string)> {
+    return vec[
+      tuple('', 'this::FOO', 'this::FOO'),
+      tuple('Bar', 'this::FOO', 'this::FOO'),
+      tuple('', 'Bar::FOO', 'Bar::FOO'),
+      tuple('NS', 'Bar::FOO', 'NS\Bar::FOO'),
+      tuple('NS', '\Bar::FOO', 'Bar::FOO'),
+      tuple('NS', 'Nested\Bar::FOO', 'NS\Nested\Bar::FOO'),
+      tuple('NS', '\Nested\Bar::FOO', 'Nested\Bar::FOO'),
     ];
   }
 

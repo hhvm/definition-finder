@@ -101,8 +101,8 @@ class AttributesTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public function attributeExpressions(): varray<(string, mixed)> {
-    return varray[
+  public function attributeExpressions(): vec<(string, mixed)> {
+    return vec[
       tuple("'herp'.'derp'", 'herpderp'),
       tuple("Foo\\Bar::class", "Foo\\Bar"),
       tuple('true', true),

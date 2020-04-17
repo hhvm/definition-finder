@@ -14,8 +14,8 @@ use type Facebook\DefinitionFinder\{FileParser, TypeTextOptions};
 use function Facebook\FBExpect\expect;
 
 final class TypehintTest extends \Facebook\HackTest\HackTest {
-  public function provideTypesInNamespace(): varray<(string, string, string)> {
-    return varray[
+  public function provideTypesInNamespace(): vec<(string, string, string)> {
+    return vec[
       // Unusual syntax
       tuple('shape("foo" => string)', 'shape', 'shape("foo" => string)'),
       tuple('(string, string)', 'tuple', '(string, string)'),
@@ -107,8 +107,8 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
   }
 
   public function provideNullableExamples(
-  ): varray<(string, bool, string, string)> {
-    return varray[
+  ): vec<(string, bool, string, string)> {
+    return vec[
       tuple('Foo', false, 'Foo', 'Foo'),
       tuple('?Foo', true, 'Foo', '?Foo'),
       tuple('(function():?string)', false, 'callable', '(function(): ?string)'),
