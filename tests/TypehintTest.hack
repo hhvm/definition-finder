@@ -245,6 +245,6 @@ CODE;
     $def = (await FileParser::fromDataAsync($code))->getFunction(
       'soft_int',
     );
-    expect($def->getReturnType()?->getTypeText())->toEqual('<<__Soft>> int');
+    expect($def->getReturnType()?->getTypeText())->toEqual('int');
   }
 }
