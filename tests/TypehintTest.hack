@@ -235,4 +235,16 @@ final class TypehintTest extends \Facebook\HackTest\HackTest {
     expect($type?->getTypeText($relative_to_namespace, $options))
       ->toBeSame($prefix.$expected.$suffix);
   }
+
+  public async function testSoftTypehint(): Awaitable<void> {
+    $code = <<<'CODE'
+function soft_int(): <<__Soft>> int {
+  return 0;
+}
+CODE;
+    $def = (await FileParser::fromDataAsync($code))->getFunction(
+      'soft_int',
+    );
+    expect($def->getReturnType()?->getTypeText())->toEqual('<<__Soft>> int');
+  }
 }
