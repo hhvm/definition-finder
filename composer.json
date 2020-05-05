@@ -19,16 +19,5 @@
   "require-dev": {
     "facebook/fbexpect": "^2.6.1",
     "hhvm/hacktest": "^2.0"
-  },
-  "autoload": {
-    "classmap": [
-      "src/"
-    ],
-    "files": [ "autoload_files.php" ]
-  },
-  "autoload-dev": {
-    "classmap": [
-      "tests/"
-    ]
   }
 }
