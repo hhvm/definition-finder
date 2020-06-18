@@ -198,6 +198,9 @@ function typehint_from_ast(
   if ($node is HHAST\SoftTypeSpecifier) {
     return typehint_from_ast($context, $node->getType());
   }
+  if ($node is HHAST\AttributizedSpecifier) {
+    return typehint_from_ast($context, $node->getType());
+  }
   // HHAST\NoReturnToken was handled at top
   if ($node is HHAST\TupleTypeSpecifier) {
     return new ScannedTypehint(
