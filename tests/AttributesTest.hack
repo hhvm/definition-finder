@@ -111,16 +111,16 @@ class AttributesTest extends \Facebook\HackTest\HackTest {
       tuple('INF', \INF),
       tuple('+123', 123),
       tuple('-123', -123),
-      tuple('array()', varray[]),
-      tuple('array(123)', varray[123]),
-      tuple('array(123,)', varray[123]),
-      tuple('array(123,456)', varray[123, 456]),
-      tuple('array(123,456,)', varray[123, 456]),
+      tuple('varray[]', varray[]),
+      tuple('varray[123]', varray[123]),
+      tuple('varray[123,]', varray[123]),
+      tuple('varray[123,456]', varray[123, 456]),
+      tuple('varray[123,456,]', varray[123, 456]),
       tuple('1.23', 1.23),
-      tuple('array(123,456)', varray[123, 456]),
-      tuple('array(123 , 456)', varray[123, 456]),
-      tuple('array(123 => 456)', darray[123 => 456]),
-      tuple('shape()', varray[]),
+      tuple('varray[123,456]', varray[123, 456]),
+      tuple('varray[123 , 456]', varray[123, 456]),
+      tuple('darray[123 => 456]', darray[123 => 456]),
+      tuple('shape()', darray[]),
       tuple(
         'shape("foo" => "bar", "herp" => 123)',
         shape('foo' => 'bar', 'herp' => 123),
@@ -146,7 +146,7 @@ class AttributesTest extends \Facebook\HackTest\HackTest {
     $parser = await FileParser::fromDataAsync($data, $source);
     $fun = $parser->getFunction('foo');
     expect($fun->getAttributes())
-      ->toBeSame(dict['MyAttr' => vec[$expected]]);
+      ->toEqual(dict['MyAttr' => vec[$expected]]);
   }
 
   private function findScanned<T as ScannedDefinition>(
