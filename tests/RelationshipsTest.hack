@@ -91,7 +91,7 @@ class RelationshipsTest extends \Facebook\HackTest\HackTest {
   }
 
   public async function testUseTraitWithConflictResolution(): Awaitable<void> {
-    $data = "<?php\n".
+    $data = "<?hh\n".
       "class MyClass {\n".
       "  use Foo, Bar {\n".
       "    Foo::herp insteadof Bar;\n".

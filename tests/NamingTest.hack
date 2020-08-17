@@ -202,19 +202,13 @@ class NamingTest extends \Facebook\HackTest\HackTest {
 
   public async function testNamespaceResolutionDependingOnSourceType(
   ): Awaitable<void> {
-    $php = '<?php namespace Foo; class MyClass extends Collection {}';
     $hack = '<?hh namespace Foo; class MyClass extends Collection {}';
-
-    $php_class = (await FileParser::fromDataAsync($php))->getClass(
-      'Foo\\MyClass',
-    );
     $hack_class = (await FileParser::fromDataAsync($hack))->getClass(
       'Foo\\MyClass',
     );
 
     // We used to distinguish between PHP and Hack files here, but not anymore,
     // since HHVM no longer officially supports PHP.
-    expect($php_class->getParentClassName())->toBeSame("HH\\Collection");
     expect($hack_class->getParentClassName())->toBeSame('HH\\Collection');
     expect($hack_class->getParentClassName())->toBeSame(Collection::class);
   }

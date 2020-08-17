@@ -96,11 +96,11 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     );
   }
 
-  public async function testPHPConstants(): Awaitable<void> {
+  public async function testTypelessConstants(): Awaitable<void> {
     $parser = await FileParser::fromFileAsync(
-      __DIR__.'/data/php_class_contents.php',
+      __DIR__.'/data/missing_stuff.php',
     );
-    $class = $parser->getClass('Foo');
+    $class = $parser->getClass('ClassWithMissingStuff');
     $constants = $class->getConstants();
 
     expect(Vec\map($constants, $x ==> $x->getName()))->toBeSame(
@@ -119,9 +119,9 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
   /** Omitting public/protected/private is permitted in PHP */
   public async function testDefaultMethodVisibility(): Awaitable<void> {
     $parser = await FileParser::fromFileAsync(
-      __DIR__.'/data/php_class_contents.php',
+      __DIR__.'/data/missing_stuff.php',
     );
-    $funcs = $parser->getClass('Foo')->getMethods();
+    $funcs = $parser->getClass('ClassWithMissingStuff')->getMethods();
 
     expect(Vec\map($funcs, $x ==> $x->getName()))->toBeSame(
       vec[
@@ -161,9 +161,9 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
 
   public async function testTypelessProperty(): Awaitable<void> {
     $parser = await FileParser::fromFileAsync(
-      __DIR__.'/data/php_class_contents.php',
+      __DIR__.'/data/missing_stuff.php',
     );
-    $props = $parser->getClass('Foo')->getProperties();
+    $props = $parser->getClass('ClassWithMissingStuff')->getProperties();
 
     expect(Vec\map($props, $x ==> $x->getName()))->toBeSame(
       vec['untypedProperty'],
@@ -173,9 +173,9 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
 
   public function staticPropertyProvider(): vec<(string, string, ?string)> {
     return vec[
-      tuple('default', '<?php class Foo { static $bar; }', null),
-      tuple('public static', '<?php class Foo { public static $bar; }', null),
-      tuple('static public', '<?php class Foo { static public $bar; }', null),
+      tuple('default', '<?hh class Foo { static $bar; }', null),
+      tuple('public static', '<?hh class Foo { public static $bar; }', null),
+      tuple('static public', '<?hh class Foo { static public $bar; }', null),
       tuple(
         'public static string',
         '<?hh class Foo { public static string $bar; }',

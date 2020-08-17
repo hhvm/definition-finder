@@ -12,7 +12,7 @@ use type Facebook\DefinitionFinder\FileParser;
 
 // Usually, '{' becomes '{' - however, when used for
 // string interpolation, you get a T_CURLY_OPEN for "{$foo}" or
-// T_DOLLAR_OPEN_CURLY_BRACES for "${foo}".
+// T_DOLLAR_OPEN_CURLY_BRACES for "${foo}" (no longer supported by HHVM).
 //
 // Interestingly enough, the matching '}' is still just '}' -
 // there is no such thing as T_CURLY_CLOSE or T_DOLLAR_CLOSE_CURLY_BRACES.
@@ -23,7 +23,9 @@ final class CurlyTest extends Facebook\HackTest\HackTest {
 
   public async function testDefinitions(): Awaitable<void> {
     $p = await FileParser::fromFileAsync(self::DATA_FILE);
-    expect($p->getClassNames())->toBeSame(vec['Foo']);
-    expect($p->getFunctionNames())->toBeSame(vec['my_func']);
+    expect($p->getClassNames())
+      ->toBeSame(vec['Facebook\\DefinitionFinder\\CurlyTest\\Foo']);
+    expect($p->getFunctionNames())
+      ->toBeSame(vec['Facebook\\DefinitionFinder\\CurlyTest\\my_func']);
   }
 }

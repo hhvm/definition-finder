@@ -1,4 +1,4 @@
-<?php
+<?hh
 /*
  *  Copyright (c) 2015-present, Facebook, Inc.
  *  All rights reserved.
@@ -8,14 +8,17 @@
  *
  */
 
+namespace Facebook\DefinitionFinder\CurlyTest;
+
 class Foo {
-  public function herp() {
-    throw new Exception("Foo ${bar} {$bar}");
+  public function herp(): noreturn {
+    $bar = 'Bar';
+    throw new \Exception("Foo {$bar}");
   }
 
-  public function derp() {
+  public function derp(): void {
   }
 }
 
-function my_func() {
+function my_func(): void {
 }

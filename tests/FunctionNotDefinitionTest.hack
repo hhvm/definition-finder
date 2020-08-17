@@ -79,7 +79,7 @@ EOF
 
   public async function testAsParameter(): Awaitable<void> {
     $p = await FileParser::fromDataAsync(<<<EOF
-<?php
+<?hh
 spl_autoload_register(function(\$class) { });
 function foo() { }
 EOF

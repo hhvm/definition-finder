@@ -1,4 +1,4 @@
-<?php
+<?hh
 /*
  *  Copyright (c) 2015-present, Facebook, Inc.
  *  All rights reserved.
@@ -10,8 +10,8 @@
 
 namespace Foo;
 
-function bar() {}
+function bar(): void {}
 
 namespace Herp;
 
-function derp() {}
+function derp(): void {}

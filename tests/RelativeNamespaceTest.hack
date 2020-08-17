@@ -17,7 +17,7 @@ use namespace HH\Lib\Vec;
  */
 final class RelativeNamespaceTest extends Facebook\HackTest\HackTest {
   public async function testFunctionBodyUsesRelativeNamespace(): Awaitable<void> {
-    $code = '<?php function foo() { namespace\bar(); } function baz() {}';
+    $code = '<?hh function foo() { namespace\bar(); } function baz() {}';
     $fp = await FileParser::fromDataAsync($code);
     expect($fp->getFunctionNames())->toBeSame(vec['foo', 'baz']);
 
@@ -26,7 +26,7 @@ final class RelativeNamespaceTest extends Facebook\HackTest\HackTest {
   }
 
   public async function testPseudomainUsesRelativeNamespace(): Awaitable<void> {
-    $code = '<?php namespace\foo(); function bar() {}';
+    $code = '<?hh namespace\foo(); function bar() {}';
     $fp = await FileParser::fromDataAsync($code);
     expect($fp->getFunctionNames())->toBeSame(vec['bar']);
 
