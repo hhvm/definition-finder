@@ -15,8 +15,7 @@ use namespace HH\Lib\Str;
 function mangle_xhp_name_token(
   HHAST\XHPClassNameToken $token,
 ): string {
-  return $token->getText()
-    |> Str\strip_prefix($$, ':')
-    |> Str\replace_every($$, dict[':' => '__', '-' => '_'])
-    |> 'xhp_'.$$;
+  // With disable_xhp_element_mangling=true (default), the only required change
+  // is the namespace separator.
+  return Str\replace($token->getText(), ':', '\\');
 }

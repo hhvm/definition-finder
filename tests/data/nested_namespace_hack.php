@@ -47,10 +47,10 @@ abstract class AbstractClass {
   abstract public function iAmAlsoNotAGlobalFunction(): void;
 }
 
-class :foo {
+xhp class herp {
 }
 
-class :foo:bar {
+xhp class herp:derp {
 }
 
 function simple_function(): void {
