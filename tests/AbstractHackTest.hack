@@ -39,8 +39,8 @@ abstract class AbstractHackTest extends Facebook\HackTest\HackTest {
         $this->getPrefix().'GenericAliasedConstraintClass',
         $this->getPrefix().'AbstractFinalClass',
         $this->getPrefix().'AbstractClass',
-        $this->getPrefix().'xhp_foo',
-        $this->getPrefix().'xhp_foo__bar',
+        $this->getPrefix().'herp',
+        $this->getPrefix().'herp\\derp',
       ],
     );
   }

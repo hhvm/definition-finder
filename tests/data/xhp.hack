@@ -7,15 +7,16 @@
  *
  */
 
-// in root namespace because namespaced XHP classes are not supported yet
+namespace Facebook\DefinitionFinder {
+  // For historical reasons, the new `xhp class` syntax allows declaring any
+  // part of the namespace inside the class name.
+  final xhp class test:xhp_class_for_classname {
+  }
+}
+
 namespace {
-
-final class :facebook:definition-finder:test:xhp-class-for-classname {
-}
-
-function facebook_definition_finder_test_xhp_class_for_classname(
-): classname<mixed> {
-  return :facebook:definition-finder:test:xhp-class-for-classname::class;
-}
-
+  function facebook_definition_finder_test_xhp_class_for_classname(
+  ): classname<mixed> {
+    return Facebook\DefinitionFinder\test\xhp_class_for_classname::class;
+  }
 }
