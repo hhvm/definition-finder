@@ -154,17 +154,6 @@ function typehint_from_ast(
       null,
     );
   }
-  if ($node is HHAST\MapArrayTypeSpecifier) {
-    return new ScannedTypehint(
-      $node,
-      null,
-      'array',
-      typehints_from_ast_va($context, $node->getKey(), $node->getValue()),
-      false,
-      null,
-      null,
-    );
-  }
   // HHAST\Missing was handled at top
   if ($node is HHAST\NullableTypeSpecifier) {
     $inner = nullthrows(typehint_from_ast($context, $node->getType()));
@@ -231,17 +220,6 @@ function typehint_from_ast(
       $node,
       null,
       'varray',
-      typehints_from_ast_va($context, $node->getType()),
-      false,
-      null,
-      null,
-    );
-  }
-  if ($node is HHAST\VectorArrayTypeSpecifier) {
-    return new ScannedTypehint(
-      $node,
-      null,
-      'array',
       typehints_from_ast_va($context, $node->getType()),
       false,
       null,
