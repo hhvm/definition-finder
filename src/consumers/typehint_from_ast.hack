@@ -237,6 +237,28 @@ function typehint_from_ast(
       null,
     );
   }
+  if ($node is HHAST\UnionTypeSpecifier) {
+    return new ScannedTypehint(
+      $node,
+      null,
+      ScannedTypehint::UNION,
+      typehints_from_ast($context, $node->getTypes() as HHAST\NodeList<_>),
+      false,
+      null,
+      null,
+    );
+  }
+  if ($node is HHAST\IntersectionTypeSpecifier) {
+    return new ScannedTypehint(
+      $node,
+      null,
+      ScannedTypehint::INTERSECTION,
+      typehints_from_ast($context, $node->getTypes() as HHAST\NodeList<_>),
+      false,
+      null,
+      null,
+    );
+  }
   if ($node is HHAST\ListItem<_>) {
     return typehint_from_ast($context, $node->getItem());
   }

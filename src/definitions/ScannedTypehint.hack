@@ -14,6 +14,10 @@ use type Facebook\HHAST\{DotDotDotToken, InoutToken, Node, ResolvedTypeKind};
 
 /** Represents a parameter, property, constant, or return type hint */
 final class ScannedTypehint {
+
+  const UNION = '[union]';
+  const INTERSECTION = '[intersection]';
+
   public function __construct(
     private Node $ast,
     private ?ResolvedTypeKind $kind,
@@ -129,19 +133,29 @@ final class ScannedTypehint {
       }
     }
 
-    $base .= $type_name;
-
+    $sub = null;
     $generics = $this->getGenericTypes();
     if ($generics) {
-      $sub = $generics
-        |> Vec\map($$, $g ==> $g->getTypeText($relative_to_namespace, $options))
-        |> Str\join($$, ', ');
-      if ($base === 'tuple') {
-        return '('.$sub.')';
-      } else if ($base === '?tuple') {
-        return '?('.$sub.')';
-      } else {
-        return $base.'<'.$sub.'>';
+      $sub = Vec\map(
+        $generics,
+        $g ==> $g->getTypeText($relative_to_namespace, $options),
+      );
+    }
+
+    if ($type_name === 'tuple') {
+      $sub = Str\join($sub as nonnull, ', ');
+      $base .= '('.$sub.')';
+    } else if ($type_name === self::UNION) {
+      $sub = Str\join($sub as nonnull, ' | ');
+      $base .= '('.$sub.')';
+    } else if ($type_name === self::INTERSECTION) {
+      $sub = Str\join($sub as nonnull, ' & ');
+      $base .= '('.$sub.')';
+    } else {
+      $base .= $type_name;
+      if ($sub is nonnull) {
+        $sub = Str\join($sub, ', ');
+        $base .= '<'.$sub.'>';
       }
     }
     return $base;
