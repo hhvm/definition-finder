@@ -129,7 +129,7 @@ abstract class AbstractHackTest extends Facebook\HackTest\HackTest {
 
   public function testClassGenerics(): void {
     $class = $this->parser?->getClass($this->getPrefix().'GenericClass');
-    assert($class !== null);
+    $class = expect($class)->toNotBeNull();
 
     expect(Vec\map($class->getGenericTypes(), $x ==> $x->getName()))->toBeSame(
       vec['Tk', 'Tv'],
@@ -142,7 +142,7 @@ abstract class AbstractHackTest extends Facebook\HackTest\HackTest {
     $class = $this
       ->parser
       ?->getClass($this->getPrefix().'GenericAliasedConstraintClass');
-    assert($class !== null);
+    $class = expect($class)->toNotBeNull();
 
     expect(Vec\map($class->getGenericTypes(), $x ==> $x->getName()))->toBeSame(
       vec['T'],
