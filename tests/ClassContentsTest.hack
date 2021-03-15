@@ -205,7 +205,6 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
       vec[$type],
     );
 
-
     expect(Vec\map($props, $x ==> $x->isStatic()))->toBeSame(vec[true]);
   }
 
@@ -261,7 +260,6 @@ class ClassContentsTest extends \Facebook\HackTest\HackTest {
     expect($constant->isAbstract())->toBeTrue();
     expect($constant->hasValue())->toBeFalse();
   }
-
 
   public async function testAbstractTypeConstant(): Awaitable<void> {
     $data = '<?hh abstract class Foo { abstract const type BAR; }';

@@ -9,7 +9,6 @@
 
 namespace Facebook\DefinitionFinder;
 
-
 enum ScopeType: string {
   FILE_SCOPE = 'file';
   NAMESPACE_SCOPE = 'ns';

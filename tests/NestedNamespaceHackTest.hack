@@ -7,7 +7,6 @@
  *
  */
 
-
 class NestedNamespaceHackTest extends AbstractHackTest {
   <<__Override>>
   protected function getFilename(): string {

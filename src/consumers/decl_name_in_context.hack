@@ -9,7 +9,6 @@
 
 namespace Facebook\DefinitionFinder;
 
-
 function decl_name_in_context(
   ConsumerContext $context,
   string $name,
