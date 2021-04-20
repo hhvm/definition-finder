@@ -40,8 +40,11 @@ async function try_parse_async(string $path): Awaitable<void> {
       inout $_exit_code,
     );
     $json = Str\trim($json);
+    $json_error = null;
     if (
-      \json_decode($json) === null && \json_last_error() === \JSON_ERROR_DEPTH
+      \json_decode_with_error($json, inout $json_error) is null &&
+      $json_error is nonnull &&
+      $json_error[0] === \JSON_ERROR_DEPTH
     ) {
       print $line."JSON TOO DEEP";
       return;
