@@ -41,7 +41,7 @@ final class StaticBinaryExpression extends Expression<mixed> {
       return new self(/* HH_FIXME[4110] */ $left % $right);
     }
     if ($op is HHAST\AmpersandToken) {
-      return new self(/* HH_FIXME[4110] */ $left & $right);
+      return new self(/* HH_FIXME[4110] */ /* HH_FIXME[4423] */ $left & $right);
     }
     if ($op is HHAST\AmpersandAmpersandToken) {
       return new self($left && $right);
@@ -77,10 +77,10 @@ final class StaticBinaryExpression extends Expression<mixed> {
       return new self(/* HH_FIXME[4240] */ $left >= $right);
     }
     if ($op is /* sic */ HHAST\CaratToken) {
-      return new self(/* HH_FIXME[4110] */ $left ^ $right);
+      return new self(/* HH_FIXME[4110] */ /* HH_FIXME[4423] */ $left ^ $right);
     }
     if ($op is /* sic */ HHAST\BarToken) {
-      return new self(/* HH_FIXME[4110] */ $left | $right);
+      return new self(/* HH_FIXME[4110] */ /* HH_FIXME[4423] */ $left | $right);
     }
     if ($op is /* sic */ HHAST\BarBarToken) {
       return new self($left || $right);
