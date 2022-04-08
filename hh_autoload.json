@@ -4,5 +4,6 @@
   ],
   "devRoots": [
     "tests/"
-  ]
+  ],
+  "useFactsIfAvailable": true
 }
