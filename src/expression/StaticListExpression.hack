@@ -18,10 +18,7 @@ final class StaticListExpression extends Expression<vec<mixed>> {
   protected static function matchImpl(
     HHAST\NodeList<HHAST\ListItem<HHAST\Node>> $n,
   ): ?Expression<vec<mixed>> {
-    $items = Vec\map(
-      $n->getChildrenOfItems(),
-      $item ==> StaticExpression::match($item),
-    );
+    $items = Vec\map($n->getChildrenOfItems(), StaticExpression::match<>);
     $out = vec[];
     foreach ($items as $item) {
       if ($item === null) {
