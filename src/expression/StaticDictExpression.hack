@@ -21,7 +21,7 @@ final class StaticDictExpression extends Expression<dict<arraykey, mixed>> {
   ): ?Expression<dict<arraykey, mixed>> {
     return Vec\map(
       $node->getMembers()?->getChildrenOfItemsOfType(HHAST\Node::class) ?? vec[],
-      $m ==> StaticElementInitializerExpression::match($m),
+      StaticElementInitializerExpression::match<>,
     )
       |> Vec\filter_nulls($$)
       |> Vec\map($$, $e ==> $e->getValue())
