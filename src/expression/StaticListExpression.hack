@@ -20,7 +20,7 @@ final class StaticListExpression extends Expression<vec<mixed>> {
   ): ?Expression<vec<mixed>> {
     $items = Vec\map(
       $n->getChildrenOfItems(),
-      $item ==> StaticExpression::match($item),
+      StaticExpression::match<>,
     );
     $out = vec[];
     foreach ($items as $item) {
