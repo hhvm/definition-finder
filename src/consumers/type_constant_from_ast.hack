@@ -20,6 +20,14 @@ function type_constant_from_ast(
     $node->getModifiers()?->getChildren() ?? vec[],
     $t ==> $t is HHAST\AbstractToken,
   );
+  if ($is_abstract) {
+    // multiple type constraints are supported at the syntax level
+    // but they do not typecheck yet; grab the first one for now
+    $constraints = $node->getTypeConstraints()?->getChildren() ?? vec[];
+    $typehint = C\first($constraints)?->getType();
+  } else {
+    $typehint = $node->getTypeSpecifier();
+  }
   return (
     new ScannedTypeConstant(
       $node,
@@ -28,9 +36,7 @@ function type_constant_from_ast(
       /* docblock = */ null,
       typehint_from_ast(
         $context,
-        $is_abstract
-          ? $node->getTypeConstraint()?->getType()
-          : $node->getTypeSpecifier(),
+        $typehint,
       ),
       $is_abstract
         ? AbstractnessToken::IS_ABSTRACT
