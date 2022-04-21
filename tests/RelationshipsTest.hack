@@ -90,18 +90,6 @@ class RelationshipsTest extends \Facebook\HackTest\HackTest {
     expect($def->getTraitNames())->toBeSame(vec['Herp', 'Derp']);
   }
 
-  public async function testUseTraitWithConflictResolution(): Awaitable<void> {
-    $data = "<?hh\n".
-      "class MyClass {\n".
-      "  use Foo, Bar {\n".
-      "    Foo::herp insteadof Bar;\n".
-      "    Bar::herp as derp;\n".
-      "  };\n".
-      '}';
-    $def = (await FileParser::fromDataAsync($data))->getClass('MyClass');
-    expect($def->getTraitNames())->toBeSame(vec['Foo', 'Bar']);
-  }
-
   public async function testUsesTraitsInNamespace(): Awaitable<void> {
     $data =
       "<?hh\n".'namespace MyNamespace;'.'class Foo { use Herp; use Derp; }';

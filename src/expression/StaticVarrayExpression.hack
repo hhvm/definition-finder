@@ -11,22 +11,22 @@ namespace Facebook\DefinitionFinder\Expression;
 
 use namespace Facebook\HHAST;
 
-final class StaticVarrayExpression extends Expression<varray<mixed>> {
+final class StaticVarrayExpression extends Expression<vec<mixed>> {
   const type TNode = HHAST\VarrayIntrinsicExpression;
 
   <<__Override>>
   protected static function matchImpl(
     this::TNode $node,
-  ): ?Expression<varray<mixed>> {
+  ): ?Expression<vec<mixed>> {
     $m = $node->getMembers();
     if ($m === null) {
-      return new self(varray[]);
+      return new self(vec[]);
     }
     $values = StaticListExpression::match($m);
     if ($values === null) {
       return null;
     }
-    $out = varray[];
+    $out = vec[];
     foreach ($values->getValue() as $value) {
       $out[] = $value;
     }

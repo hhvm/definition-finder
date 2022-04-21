@@ -54,16 +54,10 @@ function scope_from_ast_and_ns(
       $ast->getChildrenOfType(HHAST\MethodishDeclaration::class),
       $node ==> method_from_ast($context, $node),
     ),
-    /* trait use statements = */ Vec\concat(
-      Vec\map(
+    /* trait use statements = */ Vec\map(
         $ast->getChildrenOfType(HHAST\TraitUse::class),
         $node ==> $node->getNames()->getChildrenOfType(HHAST\Node::class),
-      ),
-      Vec\map(
-        $ast->getChildrenOfType(HHAST\TraitUseConflictResolution::class),
-        $node ==> $node->getNames()->getChildrenOfType(HHAST\Node::class),
-      ),
-    )
+      )
     |> Vec\flatten($$)
     |> Vec\map($$, $node ==> typehint_from_ast($context, $node))
     |> Vec\filter_nulls($$),
