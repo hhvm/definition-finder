@@ -20,7 +20,7 @@ use namespace HH\Lib\Vec;
 use type Facebook\HackTest\DataProvider;
 use function Facebook\FBExpect\expect;
 
-class AttributesTest extends \Facebook\HackTest\HackTest {
+final class AttributesTest extends \Facebook\HackTest\HackTest {
   private vec<ScannedClassish> $classes = vec[];
   private vec<ScannedFunction> $functions = vec[];
 

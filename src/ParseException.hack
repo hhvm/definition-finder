@@ -9,7 +9,7 @@
 
 namespace Facebook\DefinitionFinder;
 
-class ParseException extends \Exception {
+final class ParseException extends \Exception {
   public function __construct(
     private string $sourceFile,
     private ?SourcePosition $pos,

@@ -13,7 +13,7 @@ use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\{FileParser, ScannedClassish};
 use namespace HH\Lib\Vec;
 
-class AbstractClassContentsTest extends \Facebook\HackTest\HackTest {
+final class AbstractClassContentsTest extends \Facebook\HackTest\HackTest {
   private ?ScannedClassish $class;
   private ?vec<ScannedClassish> $classes;
 

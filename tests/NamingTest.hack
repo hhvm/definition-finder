@@ -14,7 +14,7 @@ use type Facebook\HackTest\DataProvider;
 use namespace HH\Lib\{C, Vec};
 use function Facebook\FBExpect\expect;
 
-class NamingTest extends \Facebook\HackTest\HackTest {
+final class NamingTest extends \Facebook\HackTest\HackTest {
   public async function testFunctionCalledSelect(): Awaitable<void> {
     // 'select' is a T_SELECT, not a T_STRING
     $data = '<?hh function select() {}';

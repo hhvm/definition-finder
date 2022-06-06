@@ -14,7 +14,7 @@ use type Facebook\DefinitionFinder\FileParser;
 use type Facebook\HackTest\DataProvider;
 use function Facebook\FBExpect\expect;
 
-class SelfTest extends \Facebook\HackTest\HackTest {
+final class SelfTest extends \Facebook\HackTest\HackTest {
 
   public function filenameProvider(): vec<(string, string)> {
     return Vec\map(
