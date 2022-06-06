@@ -13,7 +13,7 @@ use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\{FileParser, SourceType};
 use type Facebook\HackTest\DataProvider;
 
-class SourceTypeTest extends \Facebook\HackTest\HackTest {
+final class SourceTypeTest extends \Facebook\HackTest\HackTest {
 
   public function getExamples(): vec<(string, SourceType)> {
     return vec[

@@ -7,7 +7,7 @@
  *
  */
 
-class NoNamespaceHackTest extends AbstractHackTest {
+final class NoNamespaceHackTest extends AbstractHackTest {
   <<__Override>>
   protected function getFilename(): string {
     return 'no_namespace_hack.php';

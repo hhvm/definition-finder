@@ -9,5 +9,5 @@
 
 namespace Facebook\DefinitionFinder;
 
-class Exception extends \Exception {
+abstract class Exception extends \Exception {
 }

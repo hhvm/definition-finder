@@ -14,7 +14,7 @@ use type Facebook\DefinitionFinder\{FileParser, ScannedDefinition, ScannedFuncti
 
 use namespace HH\Lib\Vec;
 
-class DocCommentTest extends \Facebook\HackTest\HackTest {
+final class DocCommentTest extends \Facebook\HackTest\HackTest {
   private Map<string, ScannedDefinition> $defs = Map {};
 
   <<__Override>>

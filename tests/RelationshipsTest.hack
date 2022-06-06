@@ -13,7 +13,7 @@ use function Facebook\FBExpect\expect;
 use type Facebook\DefinitionFinder\FileParser;
 use namespace HH\Lib\{C, Vec};
 
-class RelationshipsTest extends \Facebook\HackTest\HackTest {
+final class RelationshipsTest extends \Facebook\HackTest\HackTest {
   public async function testClassExtends(): Awaitable<void> {
     $data = '<?hh class Foo extends Bar {}';
     $def = (await FileParser::fromDataAsync($data))->getClass('Foo');

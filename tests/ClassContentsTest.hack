@@ -14,7 +14,7 @@ use type Facebook\DefinitionFinder\{FileParser, ScannedClassish};
 use type Facebook\HackTest\DataProvider;
 use namespace HH\Lib\{C, Vec};
 
-class ClassContentsTest extends \Facebook\HackTest\HackTest {
+final class ClassContentsTest extends \Facebook\HackTest\HackTest {
   private ?ScannedClassish $class;
 
   <<__Override>>
